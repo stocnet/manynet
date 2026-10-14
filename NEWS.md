@@ -1,3 +1,219 @@
+# manynet 2.4.0
+
+## Package
+
+- Added design principles to the README and the contributing guide
+- Updated the contributing guide with table of contents and to agree with the package
+
+## Making
+
+- Added `read_geojson()` for reading the lines of a GeoJSON file, such as roads or rivers, as a spatial network
+  - Each line is a tie between its two ends, with the positions of the nodes as 'x', 'y', and 'z'
+  - Ties get a 'length' measured along the line, in metres for longitudes and latitudes and for Mercator projections
+  - Points in the file describe the nodes at their positions
+  - `junctions = TRUE` joins the ties that meet at a node where nothing else does
+  - `tolerance=` sets how far apart two ends can be and still be the same node
+- Added `write_geojson()` for writing a spatial network as points and the straight lines between them
+- Added `read_hif()` and `write_hif()` for the Hypergraph Interchange Format
+  - Reads the weights and attributes of nodes, of hyperedges, and of each node's membership of a hyperedge
+  - Reads a directed hyperedge's 'tail' as its 'from' side and its 'head' as its 'to' side
+  - Writes a non-hypergraph with each tie as a hyperedge of its two nodes
+- Added `collect_emails()` for collecting an email network from an exported mailbox
+  - Reads the headers of 'mbox' files, '.eml' files, and 'Maildir' folders
+  - Returns a dynamic, directed `stocnet` in which each tie is stamped with when its message was sent
+  - `ego=` names the owner of the mailbox, who is otherwise inferred
+  - `twomode = TRUE` instead returns addresses by messages
+- Improved most `create_*()` and `generate_*()` functions to return a named 'stocnet'
+- Improved `generate_*()` functions to share one order of arguments: `n`, then `p`, then `directed`, then `width`, wherever a function has them
+  - This is a breaking change for calls that pass the arguments of `generate_islands()`, `generate_fire()`, or `generate_citations()` by position
+  - `generate_islands()` now takes `groups=` for `islands=` and `width=` for `bridges=`
+  - `generate_fire()` now takes `p=` for `their_out=`
+  - `generate_citations()` now takes `degree=` for `ties=`
+  - `generate_man()` now takes `p=` for `man=`
+  - The former names still work
+- Added `generate_communities()` for generating unequal communities among nodes of unequal degree
+  - Follows the Lancichinetti-Fortunato-Radicchi benchmark for community detection
+  - For two-mode and directed networks, it generates an analogous benchmark
+  - `p=` sets the share of each node's ties that go to other communities
+  - `groups=` takes the number of communities, the smallest and largest they can be, or the size of each
+  - Records the community of each node in the node attribute "community"
+- Added `generate_core()` for generating a core and a periphery, as the random counterpart of `create_core()`
+  - `p=` takes the probability of a tie between the core and the periphery, or three for ties within the core, between the two, and within the periphery
+- Improved `generate_citations()` to leave only a share of each node's citations to chance
+  - `p=` sets that share, by default 1, and the others go to the nodes that came most recently
+  - `p = 0` returns the same network every time, and with `degree = Inf` the complete citation network
+- Improved `generate_islands()` to create islands of unequal size, and directed islands
+  - `groups=` takes the number of islands, the smallest and largest they can be, or the size of each
+  - Fixed islands of unequal size where the nodes do not divide equally: 10 nodes in 3 islands are now 4, 3, and 3, where they were 4, 4, and 2
+  - Records the island of each node in the node attribute "community"
+- Renamed `generate_configuration()` to `generate_degree()`, after the degrees it keeps rather than after the model
+  - `generate_configuration()` still works as a silent alias, so that calls and downstream packages keep working
+  - The networks it returns are still named "Configuration network"
+- Improved `generate_degree()` to be the random counterpart of `create_degree()`
+  - Takes a number of nodes as `n`, with `outdegree=` and `indegree=`, as well as a network
+  - `p=` sets the share of ties that are switched, so that a network can be randomised in part
+- Improved `generate_man()` to generate undirected networks, where there are no asymmetric dyads or `directed = FALSE`
+- Improved `generate_utilities()` to return utilities between -1 and 1 as a signed, weighted 'stocnet'
+  - Fixed utilities far outside -1 and 1 where a node's utilities summed to near 0
+  - `form=` takes "normal", "uniform", or "relative" for how the utilities are distributed
+  - `p=` sets the share of utilities that are ties, which are those furthest from 0, rather than `threshold=` muting small changes between steps
+  - `directed = FALSE` returns utilities that are the same for both nodes of a pair
+  - `steps=` now returns a longitudinal network with a wave for each step
+  - `volatility=` now scales a new draw of utilities that each step adds, by default 0.1
+  - `inertia=` sets the share of utilities that keep their value at each step
+  - Takes two-mode sizes and existing networks as `n`
+- Split the `generate_*()` documentation by how the networks are generated
+  - `generate_scalefree()`, `generate_fire()`, and `generate_citations()` are now documented under `?make_growth`
+  - `generate_smallworld()`, `generate_islands()`, `generate_communities()`, and `generate_core()` are now documented under `?make_groups`
+  - The arguments these functions share are now documented from one template each
+- Improved `create_wheel()` to return a `stocnet` with network information
+  - A signed wheel now carries signs, so it needs a 'netrics' version whose path and community functions read signed weights
+- Improved `create_lattice()` 
+  - Creates triangular grid lattices with `width = 6`, fixing documentation
+  - Creates honeycomb lattices with equal modes, e.g. `n = c(6,6)`
+- Fixed `create_ring()` to give no warning from `{igraph}` where `width=` is more than 1
+- Fixed `play_diffusion()` to play on 'stocnet' objects, including the package's own data (closes #172)
+
+## Classes
+
+- Added hyperedges to 'stocnet' objects, as ties among any number of nodes, see `?make_stocnet`
+  - A hyperedge is one row of the ties, with its members in `with` and `NA` in `from` and `to`
+  - `with_weight`, `with_direction`, and other `with_` columns hold a value for each member
+  - `info$hyperedges` names what the hyperedges are, and `info$simplicial` marks a simplicial complex
+  - A network can hold ties between two nodes in some layers and hyperedges in others
+  - `print()` and `describe_ties()` report the hyperedges and how many nodes they tie
+- Documented how the size and speed of a 'stocnet' compare with those of an 'igraph' object and a matrix, see `?make_stocnet`
+- Added `signed` to the reserved names of `info`, which records that a network is signed where none of its ties is negative
+
+## Coercion
+
+- Added `as_hypergraph()` and `as_stocnet.hypergraph()` to coerce to and from 'hypergraph' objects of `{HyperG}`
+  - Neither needs `{HyperG}` to be installed
+- Improved `as_igraph()` and `as_tidygraph()` to hold each hyperedge as a node of a second mode
+  - A `hyper` graph attribute marks the result, and `as_stocnet()` returns the hyperedges from it
+- Improved `as_network()` to hold hyperedges as `{network}` does, and `as_stocnet()` to read them
+  - A hyperedge with no members, or none on one side, is kept as a network attribute, with a warning
+- Improved `as_matrix()` to return the incidence matrix of a hypergraph, of nodes by hyperedges
+  - Holds the weight of each membership, negative on the 'from' side of a directed hyperedge
+- Improved `as_edgelist()` to list the memberships of the nodes of a hypergraph in its hyperedges
+- Fixed `as_nodelist()` to return `NULL` for a 'stocnet' whose nodes have neither labels nor attributes
+- Fixed `as_igraph()` and `as_stocnet()` to coerce a network in which only some nodes are labelled, where a 'stocnet' could not be coerced and the ties of an 'igraph' object lost their place
+- Added conversion from node_measure and node_member to matrices and stocnets (closes #161)
+  - Added `as_matrix.node_measure()` and `as_matrix.node_member()`
+  - Added `as_stocnet.node_measure()` and `as_stocnet.node_member()`
+  - `compare=` takes "absdiff", "diff", "sender", or "receiver" for a measure
+  - `compare=` takes "same" for a membership
+  - `twomode=TRUE` turns a membership into an affiliation matrix
+- Improved `as_matrix.stocnet()` to pass `twomode=` on to the matrix
+  - Added `...` to `as_matrix()` so that methods can take arguments
+- Improved `as_network()` to keep the direction of a two-mode network (closes #157)
+  - Fixed `as_network.stocnet()` to count the modes of a stocnet listed out of order
+- Fixed `as_diffusion()` to report every step of a diffusion (closes #179)
+  - A diffusion that does not leave its seeds now reports the step in which they were seeded, rather than an empty report
+  - The last step of a diffusion is no longer left out
+  - Added `as_diffusion.stocnet()`, with a `time` column and the nodes newly susceptible in `S_new`
+- Improved how `as_stocnet.array()` handles slices
+  - Joins `from_times()`, `from_layers()`, or `from_reporters()` slices
+  - Warns where a slice of time holds no ties, since such a moment is not recorded
+- Fixed `as_igraph()` to treat a 'stocnet' node attribute called "name" as its labels
+
+## Manipulating
+
+- Fixed `delete_nodes()` and `delete_isolates()` to keep a hyperedge with the members that remain
+- Fixed `delete_ties()` and `add_tie_attribute()` to count the ties of a hypergraph as its hyperedges
+- Fixed `bind_changes.stocnet()` to take node indices typed as numbers
+- Added `mutate.stocnet()` but `mutate_nodes()` remains preferred
+
+## Modifying
+
+- Improved `to_hypergraph()` to reformat a network as a hypergraph that every other function can read
+  - This is a breaking change: a 'stocnet' now lists the members of a hyperedge in `with`, not `from`
+  - The nodes of the second mode become hyperedges and no longer stay among the nodes
+  - Keeps the attributes of those nodes, and of the ties, which were dropped
+  - Reads the moments at which those nodes became active as the times of the hyperedges
+  - Each tie of a one-mode network now becomes a hyperedge of its two nodes, with a side each where it is directed
+  - Fixed the 'igraph', 'tbl_graph', and 'network' methods to return what `is_hypergraph()` marks TRUE
+- Added `to_simplicial()` to project a network into the largest faces of a simplicial complex
+  - Takes the maximal cliques of a one-mode network, which `to_hypergraph()` no longer does
+  - Keeps the hyperedges of a hypergraph that are not within another hyperedge
+- Improved `to_twomode()` to return a hypergraph as a two-mode network, for which it needs no `mark`
+- Improved `to_mode()`, `to_mode1()`, and `to_mode2()` to project a hypergraph onto its nodes or its hyperedges
+- Added `to_geodesic()` to return a network of the shortest path lengths between nodes (closes #183)
+  - A stronger tie is a shorter step where the network is weighted (Opsahl et al. 2010), and only positive ties are paths
+  - Returns the lengths of the paths through the hyperedges of a hypergraph (Berge 1973)
+- Fixed `to_ego()`, `to_component()`, `to_giant()`, and `to_simplex()` for a hypergraph
+- Fixed `to_backbone()` and `to_normalised()` to say that they need ties between two nodes
+- Fixed `to_blockmodel()` and `to_correlation()` to take a hypergraph as the two-mode network of its nodes and hyperedges
+- Fixed `from_layers()` to stack a 'stocnet' as it does other classes
+  - Networks of different classes can be stacked, and are returned in the class of the first
+  - Unlabelled networks of different sizes are stacked as sets of different nodes, with a warning that says so, where other classes stopped
+  - Unlabelled nodes are added to the nodes of a labelled network as new nodes in every class, with the same warning, where other classes took the labels by position
+- Added `to_signed()` method for a 'stocnet', which keeps the magnitude of the weights
+- Improved `to_mode()` to take a mode as `FALSE` or `TRUE`, as the modes of an unnamed two-mode network are marked
+  - Fixed `to_mode()` to report that the modes of a 'stocnet' are not named, where it offered "FALSE" and "TRUE" as their names
+- Improved every `from_*()` function to return the class of its inputs
+  - Partial `from_egos()` and `from_subgraphs()` returns a combined matrix
+  - Ternary `from_times()`, `from_layers()`, etc returns an array
+- Improved `to_directed()` to direct two-mode ties from the first mode to the second (closes #157)
+- Improved `to_multilevel.igraph()` to keep the network two-mode
+  - Writes 'lvl' beside 'type' rather than instead of it, so modes stay named
+  - Breaks a caller that relied on it to square the matrix, so it waits for 2.4
+- Split `from_*()` documentation into joining subgraphs and joining along a third dimension 
+  (a moment, a layer, or a reporter)
+- Fixed `to_simplex()` to remove only loops and keeps parallel ties
+- Fixed `to_correlation()` to return the class of object it was given
+- Added `to_concepts()` for projecting a network into its concept (Galois) lattice
+  - Reinstates `to_galois()` without a dependency on 'multiplex', and faster
+- Added `from_reporters()` to join each reporter's network into one structure
+- Added `to_reporter()` and `to_reporters()` to split a CSS into one or each reporter's report
+- Added `to_aggregated()` to combine ties over layers, reporters, targets, or moments, 
+  dyad by dyad, according to a `rule` (Krackhardt 1987)
+  - `over = NULL` combines parallel ties, which `to_simplex()` no longer does
+  - `reporters` gives sender's, receiver's, or locally aggregated reports of a CSS
+  - `to_flat()` is now an alias that combines layers
+- Added `to_disaggregated()` to turn tie weights into that many parallel ties
+  - Reverses `to_aggregated(over = NULL, rule = "sum")`
+- Fixed `to_named()` to give every node a name of its own in networks of more than 26 nodes
+
+## Describing
+
+- Fixed `net_tie_attributes()` to leave out "from" and "to" for a 'stocnet'
+- Fixed `node_labels()`, `tie_weights()`, and `tie_signs()` to describe nodes and hyperedges of a hypergraph
+
+## Marking
+
+- Improved `is_hypergraph()` to mark hypergraphs TRUE in the 'igraph', 'tbl_graph', and 'network' classes
+- Fixed `is_complex()`, `is_weighted()`, and `tie_is_parallel()` for a hypergraph
+- Fixed `is_signed()` to mark a network signed with `to_signed()` TRUE in every class where all its ties are positive
+- Renamed `is_egonet()` to `is_egolist()`, since it marks a list of networks
+  - `is_egocentric()` marks the networks that a name generator collects
+  - Fixed `is_egolist()` to mark an empty or unnamed list FALSE, rather than fail
+- Added `is_disaggregated()` to mark networks that hold parallel ties
+- Added `is_spatial()` to mark networks whose nodes have positions, as 'x' and 'y' or 'lat' and 'lon'
+  - A height is read from 'z', 'elevation', 'altitude', or 'alt', which `write_geojson()` writes as the third coordinate
+- Fixed `is_directed()` to mark a directed two-mode network TRUE (closes #157)
+
+## Data
+
+- Converted twelve networks into 'stocnet' objects, 
+  with how, where, and when each was collected recorded in their information
+  - `ison_southern_women`, `ison_dolphins`, `ison_emotions`, `ison_judo_moves`, and `ison_karateka`
+  - `fict_actually`, `fict_friends`, `fict_greys`, and `fict_thrones`
+  - `irps_911`, `irps_books`, and `irps_wwi`
+  - The tie attribute "type" of the multiplex networks among them is now "layer"
+- Rebuilt `ison_hightech` as a cognitive social structure
+  - Advice and friendship layers hold all 21 managers' reports
+  - `to_aggregated(over = "by", reporters = "sender")` returns previous network
+- Fixed `ison_laterals` to be undirected
+- Improved the documentation of these networks from their sources
+  - Fixed `ison_karateka` to say that the club was observed from 1970 to 1972, 
+    and that allegiances are in the "allegiance" node attribute
+  - Fixed `fict_friends` to no longer describe a "wave" tie attribute that it does not hold
+
+## Tutorials
+
+- Added "Asking for data" section to the "Making" tutorial
+
 # manynet 2.3.5
 
 ## Making

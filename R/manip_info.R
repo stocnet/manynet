@@ -20,6 +20,8 @@
 #'   - "modes" is the name(s) of the nodeset(s)
 #'   - "layers" is the name(s) of the tie type(s)
 #'   - "directed" is a logical vector indicating whether each layer is directed
+#'   - "signed" is a logical vector indicating whether each layer is signed,
+#'   which `to_signed()` sets and `to_unsigned()` removes
 #'   - "source" is the source of the network ("empirical" or "synthetic")
 #'   - "method" is the method of data collection or model used
 #'   (e.g. "survey", "interview","sensor","observation","archival", or "simulation")
@@ -47,11 +49,12 @@
 #'
 #'   - "symmetrisation" (GRAND 4.1), which `to_undirected()` sets.
 #'   - "dichotomisation" (4.2), which `to_unweighted()` sets.
-#'   - "projection" (4.3), which `to_mode1()` and `to_mode2()` set.
+#'   - "projection" (4.3), which `to_mode1()`, `to_mode2()`, and
+#'   `to_concepts()` set.
 #'   - "exclusion" (4.4), which the functions that drop nodes or ties set,
 #'   such as `delete_isolates()`, `to_component()`, and `to_uniplex()`.
-#'   - "aggregation" (4.5), which `to_flat()`, `join_ties()`,
-#'   and `to_blockmodel()` set.
+#'   - "aggregation" (4.5), which `to_aggregated()`, `to_flat()`,
+#'   `join_ties()`, and `to_blockmodel()` set.
 #'   - "imputation" (4.6), which `impute_ties()` and `impute_nodes()` set.
 #'
 #'   One further name, "normalisation", records what `to_normalised()` does.
@@ -59,6 +62,8 @@
 #'   dichotomises them (4.2 ends in an unweighted network)
 #'   nor aggregates them (4.5 combines what was separate),
 #'   but it changes the analytic network and so is recorded too.
+#'   Nor do they name "disaggregation", which `to_disaggregated()` sets
+#'   where it turns tie weights back into that many parallel ties.
 #'
 #'   A name that is absent means that transformation was not applied,
 #'   so `"symmetrisation" %in% names(as_infolist(.data)$transformations)`
@@ -193,7 +198,9 @@ add_info.stocnet <- function(.data, ...){
 # not checked there, so this list is longer than that one. An entry outside
 # this list is kept, since a network may record more than the class
 # recognises, but the user is told in case the name is a slip.
-.stocnet_info_fields <- c("name", "modes", "layers", "directed", "observation",
+.stocnet_info_fields <- c("name", "modes", "layers", "directed", "signed",
+                          "observation",
+                          "hyperedges", "simplicial",
                           "update", "sender", "receiver", "focal", "centered",
                           "source", "method", "location", "date", "boundary",
                           "doi", "system", "max_degree", "min_degree",
@@ -264,7 +271,8 @@ grand_transformations <- c("symmetrisation", "dichotomisation", "projection",
 # network, nor an aggregation, which combines what was separate. So it is
 # recorded under a name of its own, kept apart from the six so that the GRAND
 # vector stays a faithful list of the guidelines' items.
-manynet_transformations <- c(grand_transformations, "normalisation")
+manynet_transformations <- c(grand_transformations, "normalisation",
+                             "disaggregation")
 
 # Merges new entries into the transformations already recorded. An element
 # accumulates rather than replaces, so a network transformed twice in the same
@@ -513,7 +521,7 @@ snet_menu <- function(choices, title) utils::menu(choices = choices, title = tit
   dropped <- setdiff(info$layers, layers)
   if(length(dropped) == 0) return(info)
   info$layers <- if(length(layers) > 0) layers else NULL
-  for(field in c("directed", "observation", "update")){
+  for(field in c("directed", "signed", "observation", "update")){
     vals <- info[[field]]
     if(is.null(vals) || is.null(names(vals))) next
     keep <- intersect(names(vals), layers)

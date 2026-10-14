@@ -41,7 +41,11 @@ describe_network <- function(.data) {
          ifelse(is_multilevel(.data), "multilevel",
                 ifelse(is_twomode(.data), "two-mode",
                        ifelse(is_directed(.data), "directed", "undirected"))),
-         .network_noun(.data)
+         # Only a 'stocnet' has hyperedges of its own, and so only it is
+         # described as a hypergraph: another class holds one as the two-mode
+         # network that it is there.
+         if(inherits(.data, "stocnet") && is_hypergraph(.data))
+           .hypergraph_noun(.data) else .network_noun(.data)
   )
 }
 
@@ -52,6 +56,13 @@ describe_network <- function(.data) {
   if(is_cognitive(.data)) " cognitive social structure" else
     if(is_egocentric(.data)) " egocentric network" else
       if(is_gossip(.data)) " gossip network" else " network"
+}
+
+# A hypergraph that is closed under subsets is a simplicial complex, and one
+# that also holds ties between pairs of nodes is a network with hyperedges.
+.hypergraph_noun <- function(.data){
+  if(!all(.hyper_rows(.data$ties))) return(" network")
+  if(isTRUE(.data$info$simplicial)) " simplicial complex" else " hypergraph"
 }
 
 # Who reported the ties, and whom they are about, where the ties say.
@@ -135,6 +146,8 @@ describe_nodes <- function(.data){
 describe_ties <- function(.data){
   nt <- net_ties(.data)
   tie_name <- ifelse(is_directed(.data), "arcs", "ties")
+  if(inherits(.data, "stocnet") && is_hypergraph(.data))
+    return(.describe_hyperedges(.data, tie_name))
   # Parallel ties are reported as a count and not as a property of the network,
   # since a network holds them without every tie in it running parallel.
   npar <- sum(tie_is_parallel(.data))
@@ -155,6 +168,32 @@ describe_ties <- function(.data){
     return(paste0(phrase(parts), " ", tie_name, parallel))
   }
   paste0(nt, " ", tie_name, parallel)
+}
+
+# The ties of a network that holds hyperedges: how many hyperedges there are
+# and how many nodes they tie, and then the ties of any layer of dyads.
+.describe_hyperedges <- function(.data, tie_name){
+  ties <- .data$ties
+  hyper <- .hyper_rows(ties)
+  sizes <- lengths(ties$with[hyper])
+  # the hyperedges are called by their layers where they are in layers, and
+  # otherwise by what the network says its hyperedges are
+  called <- if("layer" %in% names(ties)) ties$layer[hyper] else
+    rep(.data$info$hyperedges %||% "", sum(hyper))
+  size <- if(!length(sizes)) "" else if(min(sizes) == max(sizes))
+    paste0(" of ", sizes[1], if(sizes[1] == 1) " node" else " nodes") else
+      paste0(" of ", min(sizes), " to ", max(sizes), " nodes")
+  npar <- sum(tie_is_parallel(.data) & hyper)
+  parallel <- if(npar) paste0(" (", npar, " parallel)") else ""
+  tab <- table(called)
+  hy <- paste0(phrase(paste0(tab, " ",
+                             ifelse(nzchar(names(tab)),
+                                    paste0(singularize(names(tab)), " "), ""),
+                             ifelse(tab == 1, "hyperedge", "hyperedges"))),
+               size, parallel)
+  if(all(hyper)) return(hy)
+  tab <- table(ties$layer[!hyper])
+  phrase(c(hy, paste0(tab, " ", singularize(names(tab)), " ", tie_name)))
 }
 
 #' @rdname class_describe

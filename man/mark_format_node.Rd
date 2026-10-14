@@ -7,7 +7,8 @@
 \alias{is_hypergraph}
 \alias{is_labelled}
 \alias{is_attributed}
-\alias{is_egonet}
+\alias{is_spatial}
+\alias{is_egolist}
 \title{Marking networks nodal formats}
 \usage{
 is_twomode(.data)
@@ -20,7 +21,9 @@ is_labelled(.data)
 
 is_attributed(.data)
 
-is_egonet(.data)
+is_spatial(.data)
+
+is_egolist(.data)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -40,12 +43,24 @@ All \verb{is_*()} functions return a logical scalar (TRUE or FALSE).
 \item \code{is_twomode()} marks networks TRUE if they contain two sets of nodes.
 \item \code{is_multilevel()} marks networks TRUE if they contain two or more levels
 of nodes that are tied both within and between levels.
+\item \code{is_hypergraph()} marks networks TRUE if they hold hyperedges,
+which are ties among any number of nodes.
 \item \code{is_labelled()} marks networks TRUE if there is a 'names' attribute
 for the nodes.
 \item \code{is_attributed()} marks networks TRUE if there are other nodal attributes
 than 'names' or 'type'.
-\item \code{is_egonet()} marks networks TRUE if it is a list of networks where each
-network contains only one node and its ties.
+\item \code{is_spatial()} marks networks TRUE if the nodes have positions,
+that is a pair of numeric nodal attributes called 'x' and 'y',
+or 'lat' and 'lon' ('long', 'lng'), or 'latitude' and 'longitude'.
+A position may also have a height,
+called 'z', 'elevation', 'altitude', or 'alt',
+though it takes no height to be spatial.
+Note that this is all a network records of a position,
+so a network read with the positions of a layout,
+such as one exported from Gephi, is marked spatial too.
+\item \code{is_egolist()} marks TRUE a list of networks, one for each node of a
+network, as \code{to_egos()} returns. Unlike the other marks here, it marks a
+list and not a network, so a single network is always FALSE.
 }
 }
 \details{
@@ -54,15 +69,17 @@ Below are the currently implemented S3 methods for these functions:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame default igraph list matrix network numeric stocnet
 is_attributed                  *                                           
-is_egonet                      *                                           
+is_egolist                     *                                           
 is_labelled            *       *      *    *      *       *               *
 is_multilevel                  *      *    *                              *
+is_spatial                     *                                           
 is_twomode             *       *      *    *      *       *       *       *
               tbl_graph
 is_attributed          
-is_egonet              
+is_egolist             
 is_labelled           *
 is_multilevel         *
+is_spatial             
 is_twomode            *
 }\if{html}{\out{</div>}}
 
@@ -86,7 +103,9 @@ is_multilevel(ison_southern_women)
 is_hypergraph(create_empty(3))
 is_labelled(create_empty(3))
 is_attributed(ison_algebra)
-is_egonet(fict_starwars)
+is_spatial(ison_algebra)
+is_spatial(mutate_nodes(create_ring(4), x = c(0, 1, 1, 0), y = c(0, 0, 1, 1)))
+is_egolist(to_egos(ison_adolescents))
 }
 \seealso{
 Other marks:

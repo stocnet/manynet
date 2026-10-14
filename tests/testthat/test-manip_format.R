@@ -184,9 +184,23 @@ test_that("to_named relabels an unlabelled network, or with names given", {
 
 test_that("multilevel works", {
   expect_true(is_twomode(ison_southern_women))
-  expect_false(is_twomode(to_multilevel(ison_southern_women)))
-  expect_false(is_twomode(to_multilevel(as_igraph(ison_southern_women))))
+  # A multilevel network is still two-mode: it has two nodesets, and ties both
+  # within and between them. So `to_multilevel()` leaves the modes marked,
+  # whichever class holds them.
+  expect_true(is_twomode(to_multilevel(ison_southern_women)))
+  expect_true(is_twomode(to_multilevel(as_igraph(ison_southern_women))))
+  expect_true(is_twomode(to_multilevel(as_stocnet(ison_southern_women))))
+  # A matrix has nowhere to record its modes, so a multilevel one is square
+  # and reads as one-mode. This is the one class that cannot keep them.
   expect_false(is_twomode(to_multilevel(as_matrix(ison_southern_women))))
+  # The levels are written for `{graphlayouts}`, beside the modes and not
+  # instead of them, so the mode names survive a round trip.
+  ml <- to_multilevel(as_igraph(ison_southern_women))
+  expect_true(all(c("type", "lvl") %in% igraph::vertex_attr_names(ml)))
+  expect_equal(mode_names(as_stocnet(ml)), mode_names(ison_southern_women))
+  # It is the ties that decide whether levels interlock, not the attribute
+  expect_false(is_multilevel(ml))
+  expect_true(is_multilevel(to_multilevel(as_igraph(fict_marvel))))
 })
 
 # Symmetrisation ####
@@ -271,4 +285,30 @@ test_that("to_unweighted records the threshold and the ties it deleted", {
   expect_length(as_infolist(to_unweighted(ison_adolescents))$transformations, 0)
   # a matrix has nowhere to hold information about itself
   expect_true(is.matrix(to_unweighted(as_matrix(w), threshold = 5)))
+})
+
+test_that("a network signed with only positive ties is still signed", {
+  # A stocnet holds the sign of a tie as the sign of its weight, so that the
+  # network is signed is recorded in its info, and carried to other classes.
+  ring <- create_ring(8)
+  for(x in list(as_stocnet(ring), as_tidygraph(ring), as_igraph(ring),
+                as_network(ring))){
+    pos <- to_signed(x, mark = rep(TRUE, 8))
+    expect_s3_class(pos, class(x)[1])
+    expect_true(is_signed(pos))
+    expect_false(is_weighted(pos))
+    expect_true(all(tie_signs(pos) == 1))
+    expect_true(is_signed(as_stocnet(pos)))
+    expect_true(as_stocnet(pos)$info$signed)
+    expect_true(is_signed(as_igraph(as_stocnet(pos))))
+    expect_true(is_signed(as_network(as_stocnet(pos))))
+    expect_false(is_signed(to_unsigned(pos)))
+    expect_false(is_signed(to_unsigned(as_igraph(as_stocnet(pos)))))
+  }
+  expect_null(to_unsigned(to_signed(as_stocnet(ring), rep(TRUE, 8)))$info$signed)
+  expect_false(is_signed(as_stocnet(ring)))
+  # a weighted network keeps the magnitude of its weights
+  wtd <- to_signed(mutate_ties(as_stocnet(ring), weight = 1:8),
+                   mark = rep(c(TRUE, FALSE), 4))
+  expect_equal(wtd$ties$weight, c(1, -2, 3, -4, 5, -6, 7, -8))
 })

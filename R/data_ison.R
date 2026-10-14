@@ -230,7 +230,21 @@
 #'
 #' @description
 #'   These data contain the frequent associations between the 62 dolphins of a
-#'   pod of dolphins living off Doubtful Sound, New Zealand.
+#'   community of bottlenose dolphins living in Doubtful Sound, New Zealand.
+#'   The network was constructed from systematic boat surveys of the fjord
+#'   over seven years, from November 1994 to November 2001.
+#'   Each time a school of dolphins was encountered,
+#'   its adult members were photographed and identified by the natural
+#'   markings on their dorsal fins, which gave the composition of 1,292 schools.
+#'   How closely two dolphins associated was measured by a half-weight index,
+#'   and compared to the index expected when the members of the schools are
+#'   permuted at random.
+#'   A tie joins a pair of 'preferred companions':
+#'   two dolphins that were seen in the same school
+#'   more often than expected by chance.
+#'   Lusseau (2003) reports 64 adult individuals;
+#'   the 62 here are those of the network that Lusseau and Newman (2004)
+#'   share, with the same 159 ties.
 #'   Additional information can be found in the literature cited below.
 #' @docType data
 #' @keywords datasets
@@ -245,6 +259,10 @@
 #'   _Proc. R. Soc. London B_ 270(S): S186-S188.
 #'   \doi{10.1098/rsbl.2003.0057}
 #'   
+#'   Lusseau, David, and Mark E. J. Newman. 2004.
+#'   "Identifying the role that animals play in their social networks".
+#'   _Proc. R. Soc. London B_ 271(S6).
+#'   \doi{10.1098/rsbl.2004.0225}
 #'   Lusseau, David. 2007. 
 #'   "Evidence for social role in a dolphin social network". 
 #'   _Evolutionary Ecology_ 21: 357–366. 
@@ -264,8 +282,12 @@
 #'   Emotions are highly interconnected, and one emotion often follows another.
 #'   This network describes the transitions between 18 different emotions as 
 #'   experienced in everyday life.
-#'   The data is collected from 11,000 participants who completed daily 
+#'   The data is collected from more than 11,000 participants,
+#'   who used a francophone smartphone application to complete short
 #'   questionnaires on the emotions they felt at a given moment.
+#'   They were asked about nine positive emotions
+#'   (alertness, amusement, awe, gratitude, hope, joy, love, pride, and
+#'   satisfaction) and nine negative emotions.
 #'   While Trampe et al. (2015) created and analysed an undirected network 
 #'   in their paper, the directed network constructed by Will Hipson 
 #'   is shared here.
@@ -397,9 +419,19 @@
 #'   on the west coast of the United States.
 #'   Three types of ties were collected:
 #'   
-#'   - _friends_: managers' answers to the question "Who is your friend?"
-#'   - _advice_: managers' answers to the question "To whom do you go to for advice?"
+#'   - _advice_: every manager's answers to the question
+#'   "Who would this person go to for help or advice at work?",
+#'   asked about each of the 21 managers in turn
+#'   - _friends_: every manager's answers to the question
+#'   "Who would this person consider to be a friend?",
+#'   again asked about each of the 21 managers
 #'   - _reports_: "To whom do you report?" based on company reports
+#'   
+#'   The advice and friendship layers are therefore cognitive social
+#'   structures: each manager reports on every tie among all 21 managers,
+#'   and each tie names the manager who reported it in its 'by' column.
+#'   The reports layer is taken from company records, so its ties name no
+#'   reporter.
 #'   
 #'   The data is anonymised, but four nodal attributes are included:
 #'   
@@ -409,12 +441,39 @@
 #'   where 3 = CEO, 2 = Vice President, and 1 = manager
 #'   - _dept_: one of four departments, B, C, D, E,
 #'   with the CEO alone in A
+#' @details
+#'   Most measures pool every report as a tie of its own, so a tie reported
+#'   by all 21 managers counts 21 times.
+#'   Use `to_reporter()` for one manager's view of the network,
+#'   or `to_aggregated(over = "by")` to combine the views.
+#'   Each manager's own report on their own ties,
+#'   `to_aggregated(ison_hightech, over = "by", reporters = "sender")`,
+#'   gives the network that earlier versions of this dataset held,
+#'   and that is often distributed as the high-tech managers network.
+#'   
+#'   The friendship reports come from `cssTools::highTechManagers`
+#'   (Yenigun, Ertan, and Siciliano 2016).
+#'   That dataset replaces manager 17's report on their own friendships,
+#'   which it describes as naming every other manager,
+#'   with the reports of the other managers about manager 17.
+#'   Here that row is instead taken from the friendship network of the earlier
+#'   versions, in which manager 17 names 18 of the other 20 managers.
+#'   The advice reports come from the transcription of the appendix of
+#'   Krackhardt (1987) by Izabel Aguiar.
+#' @source
+#'   Aguiar, Izabel. 2022. "Krackhardt's Cognitive Social Structures".
+#'   \url{https://github.com/izabelaguiar/krackhardt}
+#'   
+#'   Yenigun, Deniz, Gunes Ertan, and Michael Siciliano. 2016.
+#'   _cssTools: Cognitive Social Structure Tools_. R package version 1.0.
+#'   \doi{10.32614/CRAN.package.cssTools}
 #' @docType data
 #' @keywords datasets
 #' @name ison_hightech
 #' @usage data(ison_hightech)
 #' @references
 #'   Krackhardt, David. 1987. "Cognitive social structures". _Social Networks_ 9(2): 109-134.
+#'   \doi{10.1016/0378-8733(87)90009-8}
 #' @format
 #'   ```{r, echo = FALSE}
 #'   ison_hightech
@@ -470,12 +529,17 @@
 #' One-mode karateka network (Zachary 1977)
 #'
 #' @description
-#'   The network was observed in a university Karate club in 1977.
+#'   The network was observed in a university karate club over three years,
+#'   from 1970 to 1972, and published in 1977.
 #'   The network describes association patterns among 34 members
 #'   and maps out allegiance patterns between members and either Mr. Hi,
-#'   the instructor, or the John A. the club president
+#'   the instructor, or John A., the club president,
 #'   after an argument about hiking the price for lessons.
-#'   The allegiance of each node is listed in the `obc` argument
+#'   The club had near 60 members at the time.
+#'   The 34 in the network are those who met other members outside the club's
+#'   classes and meetings, and the 'weight' of a tie is the number of contexts
+#'   outside the club in which the two members met.
+#'   The allegiance of each node is listed in the 'allegiance' node attribute,
 #'   which takes the value 1 if the individual sided with Mr. Hi after the fight
 #'   and 2 if the individual sided with John A.
 #' @docType data

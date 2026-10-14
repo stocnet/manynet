@@ -129,6 +129,12 @@ coercion reciprocates the undirected layers of a network that has any
 directed layer, and coercion back collapses them again.
 This keeps the degree of a node in an undirected layer the same in every
 class, and makes the round trip lossless.
+\item 'signed' should be a logical indicating whether the network is signed.
+If there are multiple layers, this can be a named logical vector that says
+which layers are signed, where the names correspond to the layer names.
+Since the sign of a tie is held as the sign of its weight,
+this records that a network is signed where none of its ties is negative.
+A network with any negative weight is signed whether or not this is given.
 \item 'focal' should be a character vector indicating which variables are
 dependent (endogenous). These may be tie layers (dependent networks) and/or
 nodal variables recorded in the changes component (dependent behaviours),
@@ -274,6 +280,59 @@ How a network records time in its ties, and what each of these columns
 therefore means, is set out in the Time section of \code{\link[=to_time]{to_time()}}.
 }
 
+\section{Hypergraphs}{
+
+A hyperedge is a tie among any number of nodes, such as the people at a
+meeting, the authors of a paper, or the reactants and products of a
+reaction.
+A 'stocnet' object holds each hyperedge as one row of its ties,
+so that a hyperedge has a weight, a layer, a moment, and any other
+attribute in the same columns as a tie between two nodes has.
+\itemize{
+\item 'with' should be a list of integer vectors, each the nodes that are the
+members of a hyperedge.
+A hyperedge names no node in 'from' or 'to', which are \code{NA} on its row,
+and a tie between two nodes holds \code{NULL} in 'with'.
+\code{make_stocnet()} converts labels given in 'with' into indices,
+and adds 'from' and 'to' where the ties give only 'with'.
+A hyperedge may have a single member, or none.
+\item 'label' should be a character vector naming each hyperedge.
+\item 'weight' is the weight of the hyperedge as a whole.
+\item Any column whose name begins 'with_' should be a list that holds a
+value for each member of each hyperedge, in the order 'with' lists them.
+'with_weight' is the weight of each node's membership,
+and 'with_direction' says whether each member is on the 'from' or on the
+'to' side of a hyperedge that has two sides,
+as the senders and the receivers of a message have.
+The hyperedges are directed where the network is.
+}
+
+Two elements of the info describe the hyperedges.
+\itemize{
+\item 'hyperedges' should be a character string naming what the hyperedges
+are, as 'modes' names what the nodes are.
+\item 'simplicial' should be \code{TRUE} where the hyperedges are the largest
+faces of a simplicial complex,
+in which every subset of a hyperedge is a hyperedge too.
+Only the largest faces are held.
+}
+
+A network may hold ties between two nodes in some layers and hyperedges
+in others, so long as each layer holds one or the other.
+
+Other classes have no hyperedges of their own.
+\code{as_igraph()} and \code{as_tidygraph()} return a two-mode network in which
+each hyperedge is a node of the second mode,
+marked so that \code{is_hypergraph()} recognises it and \code{as_stocnet()} returns
+the hyperedges.
+\code{as_network()} returns a 'network' object that holds the hyperedges as
+\code{{network}} does, and \code{as_matrix()} the incidence matrix of nodes by
+hyperedges.
+See \code{\link[=to_hypergraph]{to_hypergraph()}}, \code{\link[=to_simplicial]{to_simplicial()}}, and \code{\link[=read_hif]{read_hif()}} for how to make
+or read a hypergraph, and \code{\link[=to_twomode]{to_twomode()}} and \code{\link[=to_mode]{to_mode()}} for how to hold
+or project one as a network of ties between two nodes.
+}
+
 \section{Globals}{
 
 There are several required names for the columns of the globals component of a stocnet object (if one is included).
@@ -327,6 +386,32 @@ Since most missing tie data is a node that did not report,
 this component is usually NULL.
 \code{\link[=as_missinglist]{as_missinglist()}} returns what it holds together with the ties that the
 non-responsive nodes imply, which is nearly always the larger part.
+}
+
+\section{Size and speed}{
+
+A 'stocnet' object is usually smaller in memory than the same network
+as an 'igraph' or 'tbl_graph' object.
+A network of a thousand nodes and four thousand ties takes about half
+the memory as a 'stocnet', whether it is sparse or dense, directed or
+not, and about four fifths where its nodes are named and carry
+attributes, since names and attributes take the same room in any class.
+Only a very small network, or one with no ties at all, is a little
+larger as a 'stocnet', since the list has a few kilobytes of its own.
+A matrix is by far the largest for any network that is not both small
+and dense, since it has a cell for every pair of nodes.
+
+What a 'stocnet' saves in memory it can cost in time,
+where a function works on another class.
+Many functions here, and in the packages that build on this one,
+calculate on an 'igraph' object or on a matrix,
+and coerce a 'stocnet' to one first,
+which takes a few milliseconds for a network of a thousand nodes.
+That is not noticeable in a single call,
+but adds up where a function is called many thousands of times,
+as in a simulation.
+There it is quicker to coerce once, with \code{as_igraph()} or \code{as_matrix()},
+and to pass the result to the functions inside the loop.
 }
 
 \section{Printing}{

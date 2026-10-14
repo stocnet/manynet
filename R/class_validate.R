@@ -31,12 +31,16 @@ validate_ties <- function(.data){
   if(is.null(.data$ties)) return(invisible(.data))
   expect_class(.data, "ties", "tbl_df")
   required_cols(.data, "ties", c("from", "to"))
+  # A hyperedge lists its members in 'with' and so names no node in 'from' or
+  # 'to', which hold NA on its row and on no other.
+  hyper <- validate_hyperedges(.data)
+  ends <- if(any(hyper)) c(seq_nodes(.data), NA) else seq_nodes(.data)
   reserved_cols(.data, "ties", "from", "integer", 
            aka = c("source", "sender", "ego"),
-           pool = seq_nodes(.data))
+           pool = ends)
   reserved_cols(.data, "ties", "to", "integer", 
            aka = c("target", "receiver", "alter"),
-           pool = seq_nodes(.data))
+           pool = ends)
   # 'by' names the node that reported a tie, as in a cognitive social
   # structure, and 'about' the node a tie is about, as in gossip. Either may be
   # NA, for a layer that no node reported or that is about no node.
@@ -63,6 +67,68 @@ validate_ties <- function(.data){
   reserved_cols(.data, "ties", "layer", "character",
            aka = c("type", "plex", "tie"))
   invisible(.data)
+}
+
+# The rows of the ties that are hyperedges, having checked that they are well
+# formed. A hyperedge lists its members in 'with', and any value it holds for
+# each member, such as that member's weight or the side of a directed
+# hyperedge it is on, in a 'with_' column of the same lengths.
+validate_hyperedges <- function(.data){
+  ties <- .data$ties
+  if(!"with" %in% names(ties)){
+    held <- .with_cols(ties)
+    if(length(held))
+      snet_abort("'ties${held}' hold{?s/} a value for each member",
+                 "of a hyperedge, so the ties must list those members in a",
+                 "'with' column.")
+    return(rep(FALSE, nrow(ties)))
+  }
+  if(!is.list(ties$with))
+    snet_abort("'ties$with' must be a list of the nodes in each hyperedge.")
+  hyper <- .hyper_rows(ties)
+  members <- unlist(ties$with)
+  if(length(members) && (!is.numeric(members) || anyNA(members) ||
+                         !all(members %in% seq_nodes(.data))))
+    snet_abort("'ties$with' must list the members of each hyperedge as",
+               "indices of the nodes, from 1 to {net_nodes(.data)}.")
+  # a node is a member of a hyperedge once, or once on each side of one that
+  # has two sides
+  sides <- if("with_direction" %in% names(ties) &&
+              is.list(ties$with_direction) &&
+              identical(lengths(ties$with_direction), lengths(ties$with)))
+    ties$with_direction else lapply(ties$with, function(x) rep("", length(x)))
+  if(any(mapply(function(x, d) anyDuplicated(paste(x, d)),
+                ties$with[hyper], sides[hyper]) > 0))
+    snet_abort("'ties$with' lists a node more than once in a hyperedge.")
+  dyad <- !is.na(ties$from) | !is.na(ties$to)
+  if(any(hyper & dyad))
+    snet_abort("A tie is either a dyad, with nodes in 'from' and 'to', or a",
+               "hyperedge, with nodes in 'with', and row{?s}",
+               "{which(hyper & dyad)} hold{?s/} both.")
+  if(any(!hyper & (is.na(ties$from) | is.na(ties$to))))
+    snet_abort("'ties$from' and 'ties$to' may be NA only for a hyperedge,",
+               "which lists its nodes in 'with'.")
+  sizes <- lengths(ties$with)
+  for(col in .with_cols(ties)){
+    if(!is.list(ties[[col]]) || !identical(lengths(ties[[col]]), sizes))
+      snet_abort("'ties${col}' must be a list holding one value for each",
+                 "member of each hyperedge, in the order 'with' lists them.")
+  }
+  # the side of a member may be NA, where it is not known
+  if("with_direction" %in% names(ties) &&
+     !all(unlist(ties$with_direction) %in% c("from", "to", NA)))
+    snet_abort("'ties$with_direction' must say whether each member of a",
+               "hyperedge is on its 'from' or its 'to' side.")
+  if("layer" %in% names(ties)){
+    mixed <- intersect(ties$layer[hyper], ties$layer[!hyper])
+    if(length(mixed))
+      snet_abort("Layer{?s} {.val {mixed}} hold{?s/} both dyads and",
+                 "hyperedges. A layer must hold one or the other.")
+  } else if(any(hyper) && !all(hyper))
+    snet_abort("These ties hold both dyads and hyperedges, so a 'layer'",
+               "column must say which layer each belongs to.")
+  reserved_cols(.data, "ties", "label", "character")
+  hyper
 }
 
 validate_changes <- function(.data){

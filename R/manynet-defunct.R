@@ -821,3 +821,10 @@ apply_changes <- function(.data, time) {
   .Deprecated("to_time", package = "manynet", old = "apply_changes")
   .apply_changes_upto(.data, as_changelist(.data), time)
 }
+
+#' @describeIn defunct Deprecated on 2026-09-21.
+#' @export
+is_egonet <- function(.data) {
+  .Deprecated("is_egolist", package = "manynet", old = "is_egonet")
+  is_egolist(.data)
+}

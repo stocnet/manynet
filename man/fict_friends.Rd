@@ -5,13 +5,13 @@
 \alias{fict_friends}
 \title{One-mode undirected Friends character scene co-appearances (McNulty, 2020)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Friends network -----------------------------------------------------------
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Friends -------------------------------------------------------------------
 #> # A labelled, weighted, undirected network of 650 characters and 2976 scene
 #> co-appearance ties
 #> 
 #> -- Nodes
 #> # A tibble: 650 x 1
-#>   name        
+#>   label       
 #>   <chr>       
 #> 1 Actor       
 #> 2 Alan        
@@ -42,16 +42,17 @@ data(fict_friends)
 One-mode network collected by \href{https://github.com/keithmcnulty/friends_analysis/}{McNulty (2020)}
 on the connections between the Friends TV series characters
 from Seasons 1 to 10.
-The \code{fict_friends} is an undirected network
-containing connections between characters organised by season number,
-which is reflected in the tie attribute 'wave'.
-The network contains 650 nodes
-Each tie represents the connection between a character pair (appear in the same scene),
-and the 'weight' of the tie is the number of scenes the character pair appears in together.
-For all networks, characters are named (eg. Phoebe, Ross, Rachel).
+The series aired from 1994 to 2004,
+and the network was collected from the scripts of its episodes.
+\code{fict_friends} is an undirected network of 650 named characters
+(e.g. Ross, Rachel, Monica, Chandler, Joey, and Phoebe).
+Each tie joins a pair of characters that appear in the same scene,
+and the 'weight' of the tie is the number of scenes,
+across all ten seasons, in which the pair appears together.
 }
 \references{
-McNulty, K. (2020).
-\emph{Network analysis of Friends scripts.}.
+McNulty, Keith. 2020.
+"Network analysis of Friends scripts".
+\url{https://github.com/keithmcnulty/friends_analysis/}
 }
 \keyword{datasets}

@@ -62,7 +62,7 @@ print.network_motif <- function(x, ...) {
 
 #' @export
 summary.network_motif <- function(object, ...,
-                               null = c("random","configuration"), 
+                               null = c("random","degree","configuration"), 
                                times = 500) {
   null <- paste0("generate_", match.arg(null))
   callItems <- trimws(strsplit(unlist(attr(object, "call")), 

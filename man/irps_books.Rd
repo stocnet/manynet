@@ -10,7 +10,7 @@
 #> 
 #> -- Nodes
 #> # A tibble: 105 x 2
-#>   name                       Leaning     
+#>   label                      Leaning     
 #>   <chr>                      <chr>       
 #> 1 1000 Years for Revenge     Neutral     
 #> 2 Bush vs. the Beltway       Conservative

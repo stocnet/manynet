@@ -51,7 +51,7 @@ Both record the reporter in a 'by' column.
 They are told apart by the network's 'observation' information,
 "cognitive" or "egocentric", and where that is not given,
 by whether any two reports share a node.
-Note that \code{is_egonet()} marks something else: a list of networks,
+Note that \code{is_egolist()} marks something else: a list of networks,
 each of one ego and its ties.
 
 A 'by' or 'about' column that holds only \code{NA} names no node,

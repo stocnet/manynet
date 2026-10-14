@@ -9,14 +9,26 @@
 #'   - `is_twomode()` marks networks TRUE if they contain two sets of nodes.
 #'   - `is_multilevel()` marks networks TRUE if they contain two or more levels
 #'   of nodes that are tied both within and between levels.
+#'   - `is_hypergraph()` marks networks TRUE if they hold hyperedges,
+#'   which are ties among any number of nodes.
 #'   - `is_labelled()` marks networks TRUE if there is a 'names' attribute
 #'   for the nodes.
 #'   - `is_attributed()` marks networks TRUE if there are other nodal attributes
 #'   than 'names' or 'type'.
-#'   - `is_egonet()` marks networks TRUE if it is a list of networks where each
-#'   network contains only one node and its ties.
+#'   - `is_spatial()` marks networks TRUE if the nodes have positions,
+#'   that is a pair of numeric nodal attributes called 'x' and 'y',
+#'   or 'lat' and 'lon' ('long', 'lng'), or 'latitude' and 'longitude'.
+#'   A position may also have a height,
+#'   called 'z', 'elevation', 'altitude', or 'alt',
+#'   though it takes no height to be spatial.
+#'   Note that this is all a network records of a position,
+#'   so a network read with the positions of a layout,
+#'   such as one exported from Gephi, is marked spatial too.
+#'   - `is_egolist()` marks TRUE a list of networks, one for each node of a
+#'   network, as `to_egos()` returns. Unlike the other marks here, it marks a
+#'   list and not a network, so a single network is always FALSE.
 #' @template param_data
-#' @eval detail_avail("is_(twomode|multilevel|labelled|attributed|egonet)")
+#' @eval detail_avail("is_(twomode|multilevel|labelled|attributed|spatial|egolist)")
 #' @family marks
 NULL
 
@@ -173,8 +185,27 @@ is_hypergraph.default <- function(.data) {
 
 #' @export
 is_hypergraph.stocnet <- function(.data) {
-  is.list(.data$ties$from)
+  any(.hyper_rows(.data$ties))
 }
+
+# Other classes have no hyperedges of their own. An 'igraph' holds each as a
+# node of a second mode, and says that it has done so in a 'hyper' attribute,
+# which is what tells a hypergraph from any other two-mode network.
+#' @export
+is_hypergraph.igraph <- function(.data) {
+  isTRUE(igraph::graph_attr(.data)[["hyper"]])
+}
+
+#' @export
+is_hypergraph.network <- function(.data) {
+  network::is.hyper(.data)
+}
+
+#' @export
+is_hypergraph.matrix <- function(.data) FALSE
+
+#' @export
+is_hypergraph.data.frame <- function(.data) FALSE
 
 #' @rdname mark_format_node
 #' @importFrom igraph is_named
@@ -241,14 +272,61 @@ is_attributed.default <- function(.data) {
 }
 
 #' @rdname mark_format_node
-#' @examples 
-#' is_egonet(fict_starwars)
+#' @examples
+#' is_spatial(ison_algebra)
+#' is_spatial(mutate_nodes(create_ring(4), x = c(0, 1, 1, 0), y = c(0, 0, 1, 1)))
 #' @export
-is_egonet <- function(.data) UseMethod("is_egonet")
+is_spatial <- function(.data) UseMethod("is_spatial")
 
 #' @export
-is_egonet.default <- function(.data) {
+is_spatial.default <- function(.data) {
+  !is.null(.node_coordinates(.data))
+}
+
+# The positions of the nodes, or NULL where the nodes have none.
+# A position is a pair of numeric nodal attributes, named as a plane names them
+# ('x' and 'y') or as a globe does ('lon' and 'lat'), which `geographic` tells
+# apart. A height may accompany either, as 'z' or under one of its other names.
+# Both `is_spatial()` and `write_geojson()` read positions from here,
+# so that a network marked spatial is one that can be written as such.
+.node_coordinates <- function(.data) {
+  attrs <- net_node_attributes(.data)
+  if(length(attrs) == 0) return(NULL)
+  find <- function(aka) attrs[tolower(attrs) %in% aka][1]
+  numbers <- function(var) {
+    if(is.na(var)) return(NULL)
+    val <- node_attribute(.data, var)
+    if(is.numeric(val)) val else NULL
+  }
+  pairs <- list(list(x = "x", y = "y", geographic = FALSE),
+                list(x = c("lon", "long", "lng", "longitude"),
+                     y = c("lat", "latitude"), geographic = TRUE))
+  for(pair in pairs) {
+    vars <- c(find(pair$x), find(pair$y))
+    x <- numbers(vars[1])
+    y <- numbers(vars[2])
+    if(is.null(x) || is.null(y)) next
+    height <- find(c("z", "elevation", "altitude", "alt"))
+    z <- numbers(height)
+    return(list(x = x, y = y, z = z, geographic = pair$geographic,
+                vars = c(vars, if(!is.null(z)) height)))
+  }
+  NULL
+}
+
+#' @rdname mark_format_node
+#' @examples 
+#' is_egolist(to_egos(ison_adolescents))
+#' @export
+is_egolist <- function(.data) UseMethod("is_egolist")
+
+#' @export
+is_egolist.default <- function(.data) {
   if(!is_list(.data)) return(FALSE)
+  # A list that is empty, or that does not name each of its networks,
+  # names no egos
+  if(length(.data) == 0 || is.null(names(.data)) || anyNA(names(.data)))
+    return(FALSE)
   if(all(unique(names(.data)) != "")) {
     length(names(.data)) == length(unique(unlist(unname(lapply(.data,
                                                                manynet::node_labels))))) &
@@ -274,6 +352,11 @@ is_egonet.default <- function(.data) {
 #'   these networks are marked FALSE unless the weights vary in magnitude.
 #'   - `is_directed()` marks networks TRUE if the ties specify which node
 #'   is the sender and which the receiver.
+#'   A two-mode network can be directed too, for example where its ties run
+#'   from speakers to the concepts they claim.
+#'   A two-mode matrix cannot record direction, however,
+#'   so it is always marked FALSE, and an edgelist whose two-mode ties all
+#'   run one way is marked FALSE too, since it cannot say otherwise.
 #'   - `is_labelled()` marks networks TRUE if there is a 'names' attribute
 #'   for the nodes.
 #'   - `is_attributed()` marks networks TRUE if there are other nodal attributes
@@ -288,8 +371,13 @@ is_egonet.default <- function(.data) {
 #'   of ties, such that there can be multiple ties between the same
 #'   sender and receiver.
 #'   - `is_uniplex()` marks networks TRUE if it is neither complex nor multiplex.
+#'   - `is_disaggregated()` marks networks TRUE if any of their ties are
+#'   parallel, as `tie_is_parallel()` marks them, so that
+#'   `to_aggregated(over = NULL)` can combine them.
+#'   A network marked FALSE holds no parallel ties, which does not mean that
+#'   it was aggregated.
 #' @template param_data
-#' @eval detail_avail("is_(weighted|directed|signed|complex|multiplex|uniplex)")
+#' @eval detail_avail("is_(weighted|directed|signed|complex|multiplex|uniplex|disaggregated)")
 #' @family marks
 NULL
 
@@ -337,6 +425,9 @@ is_weighted.tbl_graph <- function(.data) {
 
 #' @export
 is_weighted.stocnet <- function(.data) {
+  # a hypergraph is weighted too where the memberships of its hyperedges are
+  if("with_weight" %in% names(.data$ties) &&
+     !.holds_only_binary(unlist(.data$ties$with_weight))) return(TRUE)
   "weight" %in% names(.data$ties) &&
     !.holds_only_binary(.data$ties$weight) &&
     !.holds_only_signs(.data$ties$weight, "sign" %in% names(.data$ties))
@@ -383,27 +474,22 @@ is_directed.data.frame <- function(.data) {
       .infer_net_reciprocity(.data) == 1)
 }
 
-# A single bipartite relation runs between the modes and has no direction to
-# report, but a multilevel network also ties within a level, and those ties can
-# be directed. Such a network is therefore exempt from the two-mode rule, and
-# is marked by whatever its underlying object or its info records.
-.twomode_undirected <- function(.data) {
-  is_twomode(.data) && !is_multilevel(.data)
-}
-
+# A two-mode network is marked by what its object or its info records, as a
+# one-mode network is. Its ties can run one way, from a speaker to the concept
+# they claim, for example, and the classes that can hold that say so.
 #' @export
 is_directed.igraph <- function(.data) {
-  if(.twomode_undirected(.data)) FALSE else igraph::is_directed(.data)
+  igraph::is_directed(.data)
 }
 
 #' @export
 is_directed.stocnet <- function(.data) {
-  if(.twomode_undirected(.data)) FALSE else any(.data$info$directed)
+  any(.data$info$directed)
 }
 
 #' @export
 is_directed.tbl_graph <- function(.data) {
-  if(.twomode_undirected(.data)) FALSE else igraph::is_directed(.data)
+  igraph::is_directed(.data)
 }
 
 #' @export
@@ -413,6 +499,8 @@ is_directed.network <- function(.data) {
 
 #' @export
 is_directed.matrix <- function(.data) {
+  # A two-mode matrix has one cell for each pair of nodes across the modes,
+  # and so no cell in which the other direction could be recorded.
   if(is_twomode(.data)) FALSE else !isSymmetric(.data)
 }
 
@@ -449,6 +537,10 @@ is_signed.matrix <- function(.data) {
 #' @export
 is_signed.igraph <- function(.data) {
   if("sign" %in% igraph::edge_attr_names(.data)) return(TRUE)
+  # a network coerced from a 'stocnet' carries the record that it is signed,
+  # which says so even where no tie happens to be negative
+  if("signed" %in% igraph::graph_attr_names(.data) &&
+     isTRUE(any(igraph::graph_attr(.data, "signed")))) return(TRUE)
   # a signed network can also be held as negative weights, as it is in
   # 'stocnet' objects, so that coercion from one does not lose the sign
   "weight" %in% igraph::edge_attr_names(.data) &&
@@ -458,6 +550,9 @@ is_signed.igraph <- function(.data) {
 #' @export
 is_signed.stocnet <- function(.data) {
   if("sign" %in% net_tie_attributes(.data)) return(TRUE)
+  # the signs are held as the signs of the weights, so `info$signed` records
+  # that a network is signed where none of its ties happens to be negative
+  if(isTRUE(any(.data$info$signed))) return(TRUE)
   "weight" %in% net_tie_attributes(.data) &&
     any(.data$ties$weight < 0, na.rm = TRUE)
 }
@@ -470,6 +565,8 @@ is_signed.tbl_graph <- function(.data) {
 #' @export
 is_signed.network <- function(.data) {
   if("sign" %in% network::list.edge.attributes(.data)) return(TRUE)
+  # a network coerced from a 'stocnet' carries the record that it is signed
+  if(isTRUE(any(.data$gal$signed))) return(TRUE)
   "weight" %in% network::list.edge.attributes(.data) &&
     any(unlist(network::get.edge.attribute(.data, "weight")) < 0, na.rm = TRUE)
 }
@@ -509,7 +606,9 @@ is_complex.data.frame <- function(.data) {
 #' @export
 is_complex.stocnet <- function(.data) {
   # a stocnet keeps its ties in `.data$ties`, not at the top level
-  if(is.null(.data$ties)) FALSE else any(.data$ties$from == .data$ties$to)
+  # a hyperedge names no node in either column, and cannot be a loop
+  if(is.null(.data$ties)) FALSE else
+    any(.data$ties$from == .data$ties$to, na.rm = TRUE)
 }
 
 #' @export
@@ -575,6 +674,19 @@ is_multiplex.data.frame <- function(.data) {
 }
 
 #' @rdname mark_format_tie
+#' @examples
+#' is_disaggregated(ison_koenigsberg)
+#' @export
+is_disaggregated <- function(.data) UseMethod("is_disaggregated")
+
+#' @export
+is_disaggregated.default <- function(.data) {
+  # A matrix holds one value for each dyad, and so no parallel ties.
+  if(is.matrix(.data)) return(FALSE)
+  any(.parallel_ties(.data))
+}
+
+#' @rdname mark_format_tie
 #' @importFrom igraph is_simple
 #' @examples
 #' is_uniplex(create_star(3))
@@ -620,7 +732,7 @@ is_uniplex.igraph <- function(.data) {
 #'   They are told apart by the network's 'observation' information,
 #'   "cognitive" or "egocentric", and where that is not given,
 #'   by whether any two reports share a node.
-#'   Note that `is_egonet()` marks something else: a list of networks,
+#'   Note that `is_egolist()` marks something else: a list of networks,
 #'   each of one ego and its ties.
 #'   
 #'   A 'by' or 'about' column that holds only `NA` names no node,

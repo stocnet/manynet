@@ -102,11 +102,18 @@ to_named <- to_labelled
   indic[indic == 0] <- 26
   snet_info("Assigning alphabetic baby names at random.")
   # table(stringr::str_extract(manynet:::baby_names, "^."))
-  vapply(indic, 
-         function(x){
-           let <- LETTERS[x]
-           sample(baby_names[startsWith(baby_names, let)], 1)
-         }, FUN.VALUE = character(1))
+  # Each letter comes round again after 26 nodes, and the nodes that share a
+  # letter each draw a different name, so that no two nodes share a name.
+  # Where a letter has fewer names than nodes, the names are numbered apart.
+  out <- character(n)
+  for (x in unique(indic)) {
+    named <- unique(baby_names[startsWith(baby_names, LETTERS[x])])
+    out[indic == x] <- if (sum(indic == x) <= length(named)) 
+      named[sample.int(length(named), sum(indic == x))] else
+        make.unique(named[sample.int(length(named), sum(indic == x), 
+                                     replace = TRUE)], sep = "")
+  }
+  out
 }
 
 #' @rdname modif_labels

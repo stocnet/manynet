@@ -6,12 +6,12 @@
 \title{One-mode Game of Thrones kinship (Glander 2017)}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Game of Thrones Kinship ---------------------------------------------------
-#> # A labelled, multiplex, directed network of 208 characters and 404 kinship
-#> arcs
+#> # A labelled, multiplex, directed network of 208 characters and 156 spouse arcs
+#> and 248 parent arcs
 #> 
 #> -- Nodes
 #> # A tibble: 208 x 10
-#>   name          culture house  popularity Gender title birth death noble married
+#>   label         culture house  popularity Gender title birth death noble married
 #>   <chr>         <fct>   <chr>       <dbl> <chr>  <chr> <int> <int> <lgl> <lgl>  
 #> 1 Alys Arryn    <NA>    House~     0.0803 female ""       NA    NA FALSE TRUE   
 #> 2 Elys Waynwood <NA>    House~     0.0702 female "Ser"    NA    NA TRUE  TRUE   
@@ -23,7 +23,7 @@
 #> 
 #> -- Ties
 #> # A tibble: 404 x 3
-#>    from    to type  
+#>    from    to layer 
 #>   <int> <int> <chr> 
 #> 1     1     2 spouse
 #> 2     2     1 spouse
@@ -47,6 +47,9 @@ and some predictive factors such as whether they were nobles, married, etc.
 Shirin Glander extended this data set on character deaths in the TV series
 Game of Thrones with the kinship relationships between the characters,
 by scraping "A Wiki of Ice and Fire" and adding missing information by hand.
+The network holds two layers of kinship among 208 characters.
+A "parent" tie runs from the parent to the child,
+and a "spouse" tie is recorded in both directions.
 There is certainly more that can be done here.
 }
 \references{

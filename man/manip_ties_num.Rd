@@ -81,7 +81,7 @@ Below are the currently implemented S3 methods for these functions:
 \if{html}{\out{<div class="sourceCode">}}\preformatted{            default igraph network stocnet tbl_graph
 add_ties          *      *       *                 *
 bind_ties         *                      *         *
-delete_ties       *      *       *                 *
+delete_ties       *      *       *       *         *
 filter_ties       *      *               *         *
 }\if{html}{\out{</div>}}
 

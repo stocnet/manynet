@@ -72,7 +72,7 @@ Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods for these functions:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{                     data.frame default igraph stocnet tbl_graph
-add_tie_attribute             *       *      *                  
+add_tie_attribute             *       *      *       *          
 arrange_ties                          *              *         *
 delete_tie_attribute          *       *      *                  
 mutate_ties                           *              *         *

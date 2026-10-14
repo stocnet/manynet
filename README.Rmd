@@ -61,6 +61,7 @@ If you are looking for the network analytic functions that used to be in
 If you install and load `{migraph}`, 
 all these packages will be installed and loaded and you can use all functionality, past and present.
 
+- [Design principles](#design-principles)
 - [Making](#making)
     - [Importing network data](#importing-network-data)
     - [Identifying network data](#identifying-network-data)
@@ -77,6 +78,23 @@ all these packages will be installed and loaded and you can use all functionalit
   - [Development](#development)
 - [Relationship to other packages](#relationship-to-other-packages)
 - [Funding details](#funding-details)
+
+## Design principles
+
+`{manynet}` and the other [stocnet](https://github.com/stocnet) packages aim for three things:
+
+- **Declarative simplicity**: functions do one clearly named thing with few arguments.
+For example, `to_undirected()`, `to_unweighted()`, and `to_unsigned()` are separate functions
+rather than options of one.
+- **Pleasant predictability**: users can guess a function's behaviour from its family.
+For example, `is_*()` returns a logical, `as_*()` converts class, `to_*()` transforms within class,
+`create_*()` builds a deterministic network, and `generate_*()` draws a random one.
+- **Graceful inclusivity**: functions accept whatever network users bring and return something they can use.
+For example, `to_mode1()` works the same on a matrix, an edgelist, or an `{igraph}` object,
+and simply returns a network that is already one-mode.
+
+See the [contributing guide](https://github.com/stocnet/manynet/blob/main/.github/CONTRIBUTING.md#style)
+for how these principles translate into rules for the package.
 
 ## Making
 

@@ -209,6 +209,16 @@ delete_ties.default <- function(.data, ties){
 }
 
 #' @export
+delete_ties.stocnet <- function(.data, ties){
+  # The ties of a hypergraph are its hyperedges, which another class holds
+  # as nodes, so they are counted and deleted here and not there.
+  if(is_hypergraph(.data))
+    return(keep_ties(.data, setdiff(seq_len(nrow(.data$ties)), ties)))
+  # called directly, since `as_input()` would pick this method again
+  as_stocnet(delete_ties(as_igraph(.data), ties))
+}
+
+#' @export
 delete_ties.igraph <- function(.data, ties){
   igraph::delete_edges(.data, edges = ties)
 }
@@ -418,6 +428,19 @@ add_tie_attribute <- function(.data, attr_name, vector) UseMethod("add_tie_attri
 #' @export
 add_tie_attribute.default <- function(.data, attr_name, vector){
   as_input(.data, add_tie_attribute, attr_name = attr_name, vector = vector)
+}
+
+#' @export
+add_tie_attribute.stocnet <- function(.data, attr_name, vector){
+  # as for `delete_ties()`, the ties of a hypergraph are counted here
+  if(!is_hypergraph(.data))
+    return(as_stocnet(add_tie_attribute(as_igraph(.data), attr_name, vector)))
+  if(!length(vector) %in% c(1, nrow(.data$ties)))
+    snet_abort("{.arg vector} must hold one value, or one for each of the",
+               "{nrow(.data$ties)} ties, not {length(vector)}.")
+  out <- .data
+  out$ties[[attr_name]] <- vector
+  validate_stocnet(out)
 }
 
 #' @export

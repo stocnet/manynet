@@ -21,6 +21,9 @@
 #   chunks (learnr-only)
 # - replaces `question()`/`quiz()` chunks with a static callout pointing
 #   back to the interactive tutorial (`run_tute()`)
+# - keeps chunks labelled `explain-*` evaluated but hidden (`echo = FALSE,
+#   eval = TRUE`): these draw the explanatory figures that belong to the
+#   prose rather than to the exercises, so the preview shows them too
 
 chunk_start_re <- "^```\\{r[ ]*([A-Za-z0-9_.-]*)[ ]*(,\\s*(.*))?\\}\\s*$"
 
@@ -115,6 +118,12 @@ build_article <- function(src_path, out_path) {
     if (is_quiz[k]) return(strsplit(quiz_callout, "\n")[[1]])
     if (drop_primary[k]) return(NULL)
     opts <- strip_exercise_opts(chunks[[k]]$opts)
+    # explanatory figures are part of the prose, so they are drawn (and their
+    # code hidden) even though the rest of the article is not evaluated
+    if (grepl("^explain-", label)) {
+      opts <- paste(c(if (nzchar(opts)) opts, "echo = FALSE, eval = TRUE"),
+                    collapse = ", ")
+    }
     header <- paste0("```{r ", label, if (nzchar(opts)) paste0(", ", opts) else "", "}")
     c(header, resolved_body[[k]], "```")
   }

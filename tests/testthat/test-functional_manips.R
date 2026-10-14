@@ -156,6 +156,22 @@ test_that("rename_changes() renames changelog columns", {
   expect_true(is_acceptable_output(out))
 })
 
+test_that("bind_changes() takes node indices typed as numbers", {
+  # `c(1, 2, 3)` is a double, but a stocnet indexes its nodes by integer
+  events <- data.frame(time = c(0, 1, 1, 2, 3), node = c(1, 2, 3, 2, 4),
+                       var = "diffusion", value = c("I", "I", "I", "R", "I"))
+  for(x in list(create_filled(4), as_tidygraph(create_filled(4)),
+                as_igraph(create_filled(4)))){
+    out <- bind_changes(x, events)
+    expect_equal(nrow(as_changelist(out)), 5)
+    expect_equal(as.numeric(as_changelist(out)$node), events$node)
+  }
+  expect_type(bind_changes(create_filled(4), events)$changes$node, "integer")
+  # an index that is not whole is no node at all
+  events$node[1] <- 1.5
+  expect_error(bind_changes(create_filled(4), events))
+})
+
 test_that("bind_changes() adds to the changelog rather than replacing it", {
   mk <- function() create_filled(4) |>
     mutate_nodes(name = LETTERS[1:4], status = c(TRUE, FALSE, FALSE, FALSE))

@@ -19,6 +19,9 @@
 #'   - `read_gml()` imports GML files.
 #'   - `read_gdf()` imports GDF files.
 #'   - `read_gexf()` imports GEXF files, such as those exported by Gephi.
+#'   - `read_hif()` imports Hypergraph Interchange Format (HIF) files.
+#'   - `read_geojson()` imports the lines of a GeoJSON file,
+#'   such as roads, rivers, or routes, as a spatial network.
 #' @param file A character string with the system path to the file to import.
 #'   If left unspecified, an OS-specific file picker is opened to help users select it.
 #'   Note that in `read_ucinet()` the file path should be to the header file (.##h),
@@ -91,6 +94,51 @@
 #'   which makes the result a dynamic network (see [is_dynamic()]).
 #'   Where a directed network contains ties declared undirected or mutual,
 #'   those ties are reciprocated, since a network is directed or not as a whole.
+#'
+#'   `read_hif()` reads a file in the Hypergraph Interchange Format
+#'   (Coll et al. 2025), a JSON format that hypergraph libraries such as
+#'   HyperNetX, XGI, Hypergraphx, and SimpleHypergraphs.jl share.
+#'   It returns a 'stocnet' object that holds each hyperedge as a tie among
+#'   its nodes (see the Hypergraphs section of [make_stocnet()]).
+#'   The weights and attributes of the nodes and of the hyperedges become
+#'   their attributes,
+#'   and those of each node's membership of a hyperedge are kept with it,
+#'   as is the side of a directed hyperedge that the node is on:
+#'   its 'tail' is read as 'from' and its 'head' as 'to'.
+#'   The metadata become the information about the network,
+#'   and a file that says it holds an abstract simplicial complex
+#'   is marked as one.
+#'   An attribute that holds more than a single value is kept as the JSON
+#'   that records it.
+#'
+#'   `read_geojson()` reads each line in the file as a tie between its two ends,
+#'   and each place where the ends of lines meet as a node.
+#'   The positions of the nodes are held as 'x' and 'y' node attributes,
+#'   and 'z' where the file gives elevations,
+#'   in whatever coordinate reference system the file declares,
+#'   which makes the result a spatial network (see [is_spatial()]).
+#'   The properties of a line become the attributes of its tie,
+#'   together with a 'length' that is measured along the line,
+#'   unless the file gives the lines a 'length' of its own:
+#'   in metres where the coordinates are longitudes and latitudes,
+#'   or those of a Mercator projection (EPSG:3395 or EPSG:3857),
+#'   and otherwise in the units of the coordinates.
+#'   The shape of the line itself is not retained.
+#'   Any points in the file describe the nodes at their positions,
+#'   so that their properties, such as names, become node attributes,
+#'   and a point that no line ends at is read as an isolate.
+#'   Lines are often divided where nothing meets them,
+#'   say where the surface or the name of a road changes,
+#'   and so by default the ties that meet at such a node are joined,
+#'   unless a point describes that node.
+#'   A joined tie records the number of 'segments' it joins,
+#'   and its 'length' is the sum of theirs.
+#'   Its other numeric attributes are their means, weighted by their lengths,
+#'   which is not what is wanted of an attribute that is itself a total.
+#'   Where its segments differ on any other attribute,
+#'   each of their values is given, separated by semi-colons.
+#'   Lines that share the same two ends are kept as separate ties,
+#'   since they are different routes between the same places.
 #' @source
 #' `read_ucinet()` kindly supplied by Christian Steglich,
 #' constructed on 18 June 2015.
@@ -1089,6 +1137,10 @@ read_gexf <- function(file = file.choose()) {
 #'   - `write_gml()` exports GML files.
 #'   - `write_gdf()` exports GDF files.
 #'   - `write_gexf()` exports GEXF files, for example for use in Gephi.
+#'   - `write_hif()` exports a hypergraph as a Hypergraph Interchange Format
+#'   (HIF) file, which the main hypergraph libraries read.
+#'   - `write_geojson()` exports a spatial network as a GeoJSON file,
+#'   for example for use in a geographic information system.
 #' @details
 #'   Note that these functions are not as actively maintained as others
 #'   in the package, so please let us know if any are not currently working
@@ -1104,6 +1156,21 @@ read_gexf <- function(file = file.choose()) {
 #'   is written as an ordinary attribute, which reads back unchanged.
 #'   Node names are written as labels, since node ids are required by the format
 #'   and so are written as positions in the network.
+#'
+#'   `write_hif()` writes a hypergraph in the Hypergraph Interchange Format.
+#'   A network that is not a hypergraph is written as one,
+#'   as [to_hypergraph()] reformats it.
+#'   Nodes and hyperedges are identified by their labels where they have them,
+#'   and otherwise by their positions.
+#'
+#'   `write_geojson()` writes a spatial network (see [is_spatial()]),
+#'   with each node as a point and each tie as a line between two nodes,
+#'   and with their attributes as the properties of those features.
+#'   Since a network does not hold the shape of a tie, each line is straight.
+#'   A height the nodes have, as 'z', 'elevation', 'altitude', or 'alt',
+#'   is written as the third coordinate of their positions,
+#'   and so is read back as 'z'.
+#'   The direction of a tie is not written.
 #' @inheritParams mark_is
 #' @param filename Character string filename.
 #'   If missing, the files will have the same name as the object
@@ -1604,6 +1671,489 @@ write_dynetml <- function(.data,
                         value = "1")
   }
   xml2::write_xml(doc, filename)
+}
+
+# GeoJSON ####
+
+#' @rdname make_read
+#' @param junctions Whether to keep only the junctions and ends of the lines
+#'   as nodes, joining the lines that meet at a node where nothing else does.
+#'   By default TRUE.
+#'   Use FALSE to keep every line in the file as a tie of its own.
+#' @param tolerance How far apart two ends of lines can be and still be read
+#'   as the same node, in the units of the file's coordinates.
+#'   By default 0, so that only ends at the very same position are one node.
+#'   Surveyed or digitised lines seldom meet at the very same position,
+#'   so a small tolerance, say a metre, often recovers a better connected network.
+#' @export
+read_geojson <- function(file = file.choose(), junctions = TRUE,
+                         tolerance = 0) {
+  if(missing(file)) snet_success("Executing: read_geojson('{file}')")
+  if(!grepl("\\.(geo)?json$", file, ignore.case = TRUE))
+    file <- paste0(file, ".geojson")
+  thisRequires("jsonlite")
+  gj <- jsonlite::fromJSON(file, simplifyVector = FALSE)
+  feats <- .geojson_features(gj)
+  kinds <- vapply(feats, function(f) {
+    kind <- f$geometry$type
+    if(is.null(kind)) NA_character_ else kind
+  }, character(1))
+  lines <- .geojson_parts(feats, kinds, "LineString", "MultiLineString")
+  short <- vapply(lines$coords, nrow, integer(1)) < 2
+  lines <- list(feature = lines$feature[!short], coords = lines$coords[!short])
+  points <- .geojson_parts(feats, kinds, "Point", "MultiPoint")
+  if(length(lines$coords) == 0)
+    snet_abort(c("No lines found in {.file {file}}.",
+                 "i" = paste("A network is read from the 'LineString' and",
+                             "'MultiLineString' features of a GeoJSON file.")))
+  dropped <- sum(!kinds %in% c("LineString", "MultiLineString",
+                               "Point", "MultiPoint")) + sum(short)
+  if(dropped > 0)
+    snet_warn(paste("Dropped {dropped} feature{?s} that {?is/are} neither",
+                    "a line nor a point."))
+
+  # A file that declares no coordinate reference system holds longitudes and
+  # latitudes, as does one that declares the system that names those.
+  # The Mercator projections stretch distances the further they are from the
+  # equator, so their lengths are measured on the globe too.
+  crs <- gj$crs$properties$name
+  system <- if(is.null(crs) || grepl("CRS84|EPSG:+4326$", crs)) "globe" else
+    if(grepl("EPSG:+3395$", crs)) "mercator" else
+      if(grepl("EPSG:+(3857|900913)$", crs)) "webmercator" else "plane"
+
+  # The nodes are the points and the two ends of every line. Points come first
+  # so that a file of points and the lines between them, such as
+  # `write_geojson()` writes, is read with its nodes in the order it gives.
+  nlines <- length(lines$coords)
+  npoints <- length(points$coords)
+  pad <- function(pos) c(pos, NA)[1:3]
+  ends <- vapply(lines$coords, function(m) c(pad(m[1,]), pad(m[nrow(m),])),
+                 numeric(6))
+  pos <- rbind(matrix(vapply(points$coords, function(m) pad(m[1,]),
+                             numeric(3)), ncol = 3, byrow = TRUE),
+               matrix(ends, ncol = 3, byrow = TRUE))
+  key <- if(tolerance > 0) round(pos[,1:2, drop = FALSE] / tolerance) else
+    pos[,1:2, drop = FALSE]
+  key <- paste(key[,1], key[,2])
+  id <- match(key, unique(key))
+  first <- !duplicated(key)
+  nodes <- dplyr::tibble(x = pos[first,1], y = pos[first,2])
+  if(!all(is.na(pos[,3]))) nodes$z <- pos[first,3]
+
+  # A point describes the node at its position
+  placed <- id[seq_len(npoints)]
+  described <- .json_properties(lapply(feats[points$feature],
+                                          `[[`, "properties"))
+  for(var in setdiff(names(described), names(nodes))) {
+    nodes[[var]] <- rep(described[[var]][NA_integer_], nrow(nodes))
+    nodes[[var]][placed[!duplicated(placed)]] <-
+      described[[var]][!duplicated(placed)]
+  }
+
+  ties <- .json_properties(lapply(feats[lines$feature], `[[`, "properties"))
+  clash <- names(ties) %in% c("from", "to")
+  names(ties)[clash] <- paste0(names(ties)[clash], ".1")
+  ties <- dplyr::bind_cols(
+    dplyr::tibble(from = id[npoints + seq(1, 2 * nlines, by = 2)],
+                  to = id[npoints + seq(2, 2 * nlines, by = 2)]),
+    ties)
+  # A length the file gives is the length of the line as it was surveyed,
+  # which a file that draws its lines straight could not otherwise return
+  if(!is.numeric(ties[["length"]]))
+    ties$length <- vapply(lines$coords, .geojson_length, numeric(1),
+                          system = system)
+  if(junctions) {
+    joined <- .geojson_join(nodes, ties, protect = unique(placed))
+    nodes <- joined$nodes
+    ties <- joined$ties
+  }
+  snet_minor_info("Read {nrow(nodes)} node{?s} and {nrow(ties)} tie{?s}.")
+  info <- list(name = if(is.character(gj$name)) gj$name else
+    sub("\\.(geo)?json$", "", basename(file), ignore.case = TRUE),
+    directed = FALSE)
+  if(!is.null(crs)) info$crs <- crs
+  make_stocnet(info = info, nodes = nodes, ties = ties)
+}
+
+# The features of a GeoJSON object, whichever of the forms it takes: a
+# collection of features, a single feature, or a geometry with no properties.
+.geojson_features <- function(gj) {
+  switch(as.character(gj$type)[1],
+         FeatureCollection = gj$features,
+         Feature = list(gj),
+         GeometryCollection = lapply(gj$geometries,
+                                     function(g) list(geometry = g)),
+         list(list(geometry = gj)))
+}
+
+# The parts of the features of a kind, each as a matrix of positions, and the
+# feature each part belongs to. A 'Multi' geometry holds several parts, which
+# share the properties of their feature.
+.geojson_parts <- function(feats, kinds, single, multi) {
+  idx <- which(kinds %in% c(single, multi))
+  geoms <- lapply(idx, function(i) {
+    coords <- feats[[i]]$geometry$coordinates
+    if(kinds[i] == single) list(coords) else coords
+  })
+  coords <- lapply(unlist(geoms, recursive = FALSE), function(part) {
+    if(length(part) == 0) return(matrix(numeric(0), ncol = 2))
+    if(!is.list(part[[1]])) return(matrix(unlist(part), nrow = 1))
+    matrix(unlist(part), ncol = length(part[[1]]), byrow = TRUE)
+  })
+  list(feature = rep(idx, lengths(geoms)), coords = coords)
+}
+
+# The properties of features, or the attributes of the records of any other
+# JSON file, as a table with a row for each. A property a feature lacks is
+# missing, and one that holds more than a single value is kept as the JSON
+# that records it.
+.json_properties <- function(props) {
+  vars <- unique(unlist(lapply(props, names)))
+  if(length(vars) == 0) return(dplyr::tibble(.rows = length(props)))
+  out <- lapply(vars, function(var) {
+    vals <- lapply(props, `[[`, var)
+    vals[lengths(vals) == 0] <- NA
+    nested <- lengths(vals) > 1 | vapply(vals, is.list, logical(1))
+    vals[nested] <- lapply(vals[nested], function(val)
+      as.character(jsonlite::toJSON(val, auto_unbox = TRUE)))
+    unlist(vals)
+  })
+  names(out) <- vars
+  dplyr::as_tibble(out)
+}
+
+# The length of a line: along the plane in the units of its coordinates,
+# or in metres along the great circles between longitudes and latitudes,
+# which the coordinates of a Mercator projection are first returned to.
+.geojson_length <- function(m, system) {
+  if(system == "plane") return(sum(sqrt(diff(m[,1])^2 + diff(m[,2])^2)))
+  if(system == "globe") {
+    lon <- m[,1] * pi / 180
+    lat <- m[,2] * pi / 180
+  } else {
+    # the equatorial radius of the WGS 84 ellipsoid, which both projections use
+    lon <- m[,1] / 6378137
+    scaled <- exp(-m[,2] / 6378137)
+    lat <- pi / 2 - 2 * atan(scaled)
+    # World Mercator projects from the ellipsoid, and so has no closed inverse
+    if(system == "mercator") {
+      ecc <- 0.0818191908426215
+      for(i in 1:6)
+        lat <- pi / 2 - 2 * atan(scaled * ((1 - ecc * sin(lat)) /
+                                             (1 + ecc * sin(lat)))^(ecc / 2))
+    }
+  }
+  a <- sin(diff(lat) / 2)^2 +
+    cos(lat[-length(lat)]) * cos(lat[-1]) * sin(diff(lon) / 2)^2
+  sum(2 * 6371008.8 * asin(pmin(1, sqrt(a))))
+}
+
+# Joins the ties that meet at a node where nothing else does, so that the
+# nodes left are the junctions and the ends of the lines.
+# A node described by a point (`protect`) is kept, since it is a place and not
+# merely where a line was divided.
+.geojson_join <- function(nodes, ties, protect) {
+  n <- nrow(nodes)
+  m <- nrow(ties)
+  ends <- c(ties$from, ties$to)
+  tie <- rep(seq_len(m), 2)
+  through <- tabulate(ends, n) == 2
+  through[protect] <- FALSE
+  through[ties$from[ties$from == ties$to]] <- FALSE
+  if(!is.numeric(ties[["segments"]])) ties$segments <- rep(1L, m)
+  if(!any(through)) return(list(nodes = nodes, ties = ties))
+
+  # The two ties at each such node belong to one chain
+  at <- through[ends]
+  pairs <- matrix(tie[at][order(ends[at])], nrow = 2)
+  chain <- igraph::components(igraph::make_graph(as.vector(pairs), n = m,
+                                                 directed = FALSE))$membership
+  chain <- match(chain, unique(chain))
+  nchain <- max(chain)
+  # A ring that no other line meets has no end, so one of its nodes is kept
+  rings <- which(tabulate(chain[tie][!at], nchain) == 0)
+  if(length(rings)) {
+    inring <- chain[tie] %in% rings
+    through[tapply(ends[inring], chain[tie][inring], min)] <- FALSE
+    at <- through[ends]
+  }
+  # The ends of a chain are the two ends of its ties at nodes that are kept
+  ec <- chain[tie][!at]
+  en <- ends[!at][order(ec)]
+  ec <- sort(ec)
+  from <- en[!duplicated(ec)]
+  to <- en[duplicated(ec)]
+
+  size <- tabulate(chain, nchain)
+  multi <- size > 1
+  lead <- which(!duplicated(chain))
+  len <- ties$length
+  out <- list(from = from, to = to)
+  for(var in setdiff(names(ties), c("from", "to", "length", "segments"))) {
+    val <- ties[[var]]
+    res <- val[lead]
+    if(is.numeric(val)) {
+      # the mean along the chain, each tie counting for as much as its length
+      ok <- !is.na(val)
+      known <- rowsum(as.numeric(ok), chain)
+      along <- rowsum(ifelse(ok, len, 0), chain)
+      agg <- ifelse(along > 0, rowsum(ifelse(ok, val * len, 0), chain) / along,
+                    rowsum(ifelse(ok, val, 0), chain) / known)
+      agg[known == 0] <- NA
+      res <- as.numeric(res)
+      res[multi] <- agg[multi]
+    } else {
+      # the value the chain shares, or each of the values it takes
+      inmulti <- multi[chain] & !is.na(val)
+      vm <- val[inmulti]
+      cm <- chain[inmulti]
+      distinct <- !duplicated(data.frame(cm, vm))
+      vm <- vm[distinct]
+      cm <- cm[distinct]
+      res[multi] <- NA
+      res[cm[!duplicated(cm)]] <- vm[!duplicated(cm)]
+      if(anyDuplicated(cm)) {
+        res <- as.character(res)
+        each <- tapply(as.character(vm), cm, paste, collapse = "; ")
+        res[as.integer(names(each))] <- each
+      }
+    }
+    out[[var]] <- res
+  }
+  out$length <- as.vector(rowsum(len, chain))
+  out$segments <- as.vector(rowsum(ties$segments, chain))
+  kept <- !through
+  out$from <- cumsum(kept)[out$from]
+  out$to <- cumsum(kept)[out$to]
+  list(nodes = nodes[kept, , drop = FALSE], ties = dplyr::as_tibble(out))
+}
+
+#' @rdname make_write
+#' @export
+write_geojson <- function(.data,
+                          filename,
+                          ...) {
+  if (missing(filename)){
+    filename <- paste0(getwd(), "/", deparse(substitute(.data)), ".geojson")
+    snet_success("Writing to {.file {filename}}")
+  }
+  if(!grepl("\\.(geo)?json$", filename, ignore.case = TRUE))
+    filename <- paste0(filename, ".geojson")
+  thisRequires("jsonlite")
+  pos <- .node_coordinates(.data)
+  if(is.null(pos))
+    snet_abort(c("Only a spatial network can be written as GeoJSON.",
+                 "i" = paste("Add the positions of the nodes as 'x' and 'y',",
+                             "or 'lon' and 'lat', with {.fn mutate_nodes}.")))
+  net <- as_stocnet(.data)
+  xyz <- cbind(pos$x, pos$y, pos$z)
+  where <- lapply(seq_len(nrow(xyz)), function(i) {
+    at <- xyz[i,]
+    if(anyNA(at[1:2])) NULL else at[!is.na(at)]
+  })
+  nowhere <- lengths(where) == 0
+  if(any(nowhere))
+    snet_warn(paste("Dropped {sum(nowhere)} node{?s} with no position,",
+                    "and any ties to {?it/them}."))
+  records <- function(tbl) {
+    if(is.null(tbl) || ncol(tbl) == 0) return(NULL)
+    tbl[] <- lapply(tbl, function(col) if(is.factor(col)) as.character(col) else col)
+    unname(do.call(Map, c(list(f = function(...) list(...)), as.list(tbl))))
+  }
+  feature <- function(kind, coords, props) {
+    lapply(seq_along(coords), function(i)
+      list(type = "Feature",
+           properties = if(is.null(props)) NULL else props[[i]],
+           geometry = list(type = kind, coordinates = coords[[i]])))
+  }
+  places <- records(net$nodes[setdiff(names(net$nodes), pos$vars)])
+  feats <- feature("Point", where[!nowhere], places[!nowhere])
+  ties <- net$ties
+  if(!is.null(ties) && nrow(ties) > 0) {
+    ties <- ties[!nowhere[ties$from] & !nowhere[ties$to], , drop = FALSE]
+    feats <- c(feats, feature(
+      "LineString",
+      Map(function(from, to) list(where[[from]], where[[to]]),
+          ties$from, ties$to),
+      records(ties[setdiff(names(ties), c("from", "to"))])))
+  }
+  out <- list(type = "FeatureCollection")
+  if(!is.null(net$info$name)) out$name <- net$info$name
+  if(!is.null(net$info$crs))
+    out$crs <- list(type = "name", properties = list(name = net$info$crs))
+  out$features <- feats
+  writeLines(enc2utf8(jsonlite::toJSON(out, auto_unbox = TRUE, digits = NA,
+                                       null = "null", na = "null")),
+             filename, useBytes = TRUE)
+}
+
+# HIF ####
+
+#' @rdname make_read
+#' @references
+#' Coll, Martín, Cliff A. Joslyn, Nicholas W. Landry, Quintino Francesco Lotito,
+#' Audun Myers, Joshua Pickard, Brenda Praggastis, and Przemysław Szufel. 2025.
+#' "HIF: The hypergraph interchange format for higher-order networks".
+#' _Network Science_ 13: e21.
+#' \doi{10.1017/nws.2025.10018}
+#' @export
+read_hif <- function(file = file.choose()) {
+  if(missing(file)) snet_success("Executing: read_hif('{file}')")
+  if(!grepl("\\.json$", file, ignore.case = TRUE)) file <- paste0(file, ".json")
+  thisRequires("jsonlite")
+  hif <- jsonlite::fromJSON(file, simplifyVector = FALSE)
+  if(!is.list(hif) || !"incidences" %in% names(hif))
+    snet_abort("{.file {file}} is not a HIF file, which must list the",
+               "{.field incidences} of nodes in hyperedges.")
+  type <- hif[["network-type"]] %||% "undirected"
+  inc <- hif$incidences
+  ids <- function(records, id)
+    vapply(records, function(r) as.character(r[[id]]), character(1))
+  # A node or a hyperedge need not be listed apart from its incidences, and
+  # may be listed there more than once, in which case the first record is read.
+  nodes <- .hif_records(hif$nodes, "node", unique(ids(inc, "node")))
+  edges <- .hif_records(hif$edges, "edge", unique(ids(inc, "edge")))
+  inc <- inc[!duplicated(paste(ids(inc, "edge"), ids(inc, "node"),
+                               vapply(inc, function(r) r$direction %||% "",
+                                      character(1)), sep = "\r"))]
+  part <- factor(ids(inc, "edge"), levels = edges$label)
+  parts <- function(x) unname(split(x, part))
+  ties <- dplyr::tibble(from = NA_integer_, to = NA_integer_,
+                        with = parts(match(ids(inc, "node"), nodes$label)))
+  ties <- dplyr::bind_cols(ties, edges)
+  held <- function(field, empty) vapply(inc, function(r)
+    r[[field]] %||% empty, empty)
+  if(any(vapply(inc, function(r) !is.null(r$weight), logical(1))))
+    ties$with_weight <- parts(held("weight", NA_real_))
+  side <- c(tail = "from", head = "to")[held("direction", NA_character_)]
+  if(!all(is.na(side))) ties$with_direction <- parts(unname(side))
+  attrs <- .json_properties(lapply(inc, `[[`, "attrs"))
+  for(col in setdiff(names(attrs), c("weight", "direction")))
+    ties[[paste0("with_", col)]] <- parts(attrs[[col]])
+  # Identifiers that count the nodes or the hyperedges from one name nothing,
+  # so they are read as positions and not as labels.
+  nodes <- nodes[order(.hif_positions(nodes$label)), , drop = FALSE]
+  if(.hif_counted(nodes$label)){
+    ties$with <- lapply(ties$with, function(x) as.integer(nodes$label)[x])
+    nodes$label <- NULL
+  }
+  if(.hif_counted(ties$label)) ties$label <- NULL
+  info <- hif$metadata %||% list()
+  names(info) <- gsub("-", "_", names(info))
+  names(info)[names(info) == "title"] <- "name"
+  names(info)[names(info) == "collection_date"] <- "date"
+  info$directed <- type == "directed"
+  if(type == "asc") info$simplicial <- TRUE
+  snet_minor_info("Read {nrow(nodes)} node{?s} and {nrow(ties)} hyperedge{?s}.")
+  make_stocnet(info = info, nodes = nodes, ties = ties)
+}
+
+# The records of the nodes or of the hyperedges of a HIF file as a table, with
+# a row for each one that is listed or that an incidence names. Each record
+# holds an identifier, perhaps a weight, and perhaps further attributes.
+.hif_records <- function(records, id, named) {
+  listed <- vapply(records, function(r) as.character(r[[id]]), character(1))
+  records <- records[!duplicated(listed)]
+  listed <- unique(listed)
+  out <- dplyr::tibble(label = c(listed, setdiff(named, listed)))
+  weight <- vapply(records, function(r) as.numeric(r$weight %||% NA),
+                   numeric(1))
+  attrs <- .json_properties(lapply(records, `[[`, "attrs"))
+  # an attribute named as a column of the ties is would be mistaken for it
+  clash <- names(attrs) %in% c("label", "weight", "from", "to", "with")
+  names(attrs)[clash] <- paste0(names(attrs)[clash], ".1")
+  listed <- dplyr::bind_cols(dplyr::tibble(.rows = length(listed)), attrs)
+  if(!all(is.na(weight))) listed$weight <- weight
+  dplyr::bind_cols(out, listed[c(seq_len(nrow(listed)),
+                                 rep(NA, nrow(out) - nrow(listed))), ,
+                               drop = FALSE])
+}
+
+# Whether identifiers do no more than count from one, and the order they
+# count in, which is the order they are listed in where they do not.
+.hif_counted <- function(ids) {
+  length(ids) > 0 && !anyNA(suppressWarnings(as.integer(ids))) &&
+    setequal(ids, as.character(seq_along(ids)))
+}
+
+.hif_positions <- function(ids) {
+  if(.hif_counted(ids)) as.integer(ids) else seq_along(ids)
+}
+
+#' @rdname make_write
+#' @export
+write_hif <- function(.data,
+                      filename,
+                      ...) {
+  if (missing(filename)){
+    filename <- paste0(getwd(), "/", deparse(substitute(.data)), ".json")
+    snet_success("Writing to {.file {filename}}")
+  }
+  if(!grepl("\\.json$", filename, ignore.case = TRUE))
+    filename <- paste0(filename, ".json")
+  thisRequires("jsonlite")
+  net <- .dyads_to_hyper(to_hypergraph(as_stocnet(.data)))
+  nodes <- net$nodes
+  ties <- net$ties
+  n <- net_nodes(net)
+  wcols <- .with_cols(ties)
+  node_ids <- nodes[["label"]] %||% seq_len(n)
+  edge_ids <- ties[["label"]] %||% seq_len(nrow(ties))
+  # A record lists what it has a value for, since the format takes a missing
+  # weight or attribute to be one that is left out.
+  record <- function(table, i, id, key) {
+    out <- stats::setNames(list(id), key)
+    if(is.numeric(table[["weight"]]) && !is.na(table$weight[i]))
+      out$weight <- table$weight[i]
+    attrs <- .hif_values(table[i, setdiff(names(table),
+                                          c("label", "weight", "from", "to",
+                                            "with", wcols)), drop = FALSE])
+    if(length(attrs)) out$attrs <- attrs
+    out
+  }
+  out <- list(`network-type` = if(isTRUE(net$info$simplicial)) "asc" else
+    if(is_directed(net)) "directed" else "undirected")
+  info <- net$info[setdiff(names(net$info), c("directed", "simplicial"))]
+  if(length(info)){
+    names(info)[names(info) == "name"] <- "title"
+    names(info)[names(info) == "date"] <- "collection-date"
+    names(info) <- gsub("_", "-", names(info))
+    out$metadata <- lapply(info, function(x)
+      if(is.list(x) || is.numeric(x) || is.logical(x)) x else as.character(x))
+  }
+  out$incidences <- unlist(lapply(seq_len(nrow(ties)), function(e) {
+    lapply(seq_along(ties$with[[e]]), function(k) {
+      rec <- list(edge = edge_ids[e], node = node_ids[ties$with[[e]][k]])
+      held <- lapply(stats::setNames(wcols, sub("^with_", "", wcols)),
+                     function(col) ties[[col]][[e]][k])
+      held <- held[!vapply(held, function(x) is.null(x) || is.na(x),
+                           logical(1))]
+      if(!is.null(held$weight)) rec$weight <- held$weight
+      if(!is.null(held$direction))
+        rec$direction <- c(from = "tail", to = "head")[[held$direction]]
+      held <- held[setdiff(names(held), c("weight", "direction"))]
+      if(length(held)) rec$attrs <- held
+      rec
+    })
+  }), recursive = FALSE) %||% list()
+  out$nodes <- lapply(seq_len(n), function(i)
+    record(nodes %||% dplyr::tibble(.rows = n), i, node_ids[i], "node"))
+  out$edges <- lapply(seq_len(nrow(ties)), function(i)
+    record(ties, i, edge_ids[i], "edge"))
+  writeLines(enc2utf8(jsonlite::toJSON(out, auto_unbox = TRUE, digits = NA,
+                                       pretty = TRUE)),
+             filename, useBytes = TRUE)
+}
+
+# The values in one row of a table as a named list for writing, less those
+# that are missing. A date is written as text, as JSON has no dates.
+.hif_values <- function(row) {
+  out <- lapply(row, function(x) {
+    x <- if(is.list(x)) x[[1]] else x
+    if(inherits(x, c("Date", "POSIXt", "factor", "mdate"))) as.character(x) else
+      as.vector(x)
+  })
+  out[!vapply(out, function(x) length(x) == 0 || all(is.na(x)), logical(1))]
 }
 
 # nocov end

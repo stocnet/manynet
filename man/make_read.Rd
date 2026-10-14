@@ -12,6 +12,8 @@
 \alias{read_gml}
 \alias{read_gdf}
 \alias{read_gexf}
+\alias{read_geojson}
+\alias{read_hif}
 \title{Making networks from external files}
 \source{
 \code{read_ucinet()} kindly supplied by Christian Steglich,
@@ -37,6 +39,10 @@ read_gml(file = file.choose())
 read_gdf(file = file.choose())
 
 read_gexf(file = file.choose())
+
+read_geojson(file = file.choose(), junctions = TRUE, tolerance = 0)
+
+read_hif(file = file.choose())
 }
 \arguments{
 \item{file}{A character string with the system path to the file to import.
@@ -59,6 +65,17 @@ of the network. By default TRUE.
 Where ego is added, ties from ego to each of its alters are also added,
 and every tie gains a 'by' column identifying the ego that reported it,
 which makes the network an egocentric network (see \code{\link[=is_egocentric]{is_egocentric()}}).}
+
+\item{junctions}{Whether to keep only the junctions and ends of the lines
+as nodes, joining the lines that meet at a node where nothing else does.
+By default TRUE.
+Use FALSE to keep every line in the file as a tie of its own.}
+
+\item{tolerance}{How far apart two ends of lines can be and still be read
+as the same node, in the units of the file's coordinates.
+By default 0, so that only ends at the very same position are one node.
+Surveyed or digitised lines seldom meet at the very same position,
+so a small tolerance, say a metre, often recovers a better connected network.}
 }
 \value{
 \code{read_edgelist()} and \code{read_nodelist()} import a list rather than a
@@ -90,6 +107,9 @@ including those exported by Network Canvas.
 \item \code{read_gml()} imports GML files.
 \item \code{read_gdf()} imports GDF files.
 \item \code{read_gexf()} imports GEXF files, such as those exported by Gephi.
+\item \code{read_hif()} imports Hypergraph Interchange Format (HIF) files.
+\item \code{read_geojson()} imports the lines of a GeoJSON file,
+such as roads, rivers, or routes, as a spatial network.
 }
 }
 \details{
@@ -146,6 +166,58 @@ Dynamic files are read with their 'start' and 'end' times,
 which makes the result a dynamic network (see \code{\link[=is_dynamic]{is_dynamic()}}).
 Where a directed network contains ties declared undirected or mutual,
 those ties are reciprocated, since a network is directed or not as a whole.
+
+\code{read_hif()} reads a file in the Hypergraph Interchange Format
+(Coll et al. 2025), a JSON format that hypergraph libraries such as
+HyperNetX, XGI, Hypergraphx, and SimpleHypergraphs.jl share.
+It returns a 'stocnet' object that holds each hyperedge as a tie among
+its nodes (see the Hypergraphs section of \code{\link[=make_stocnet]{make_stocnet()}}).
+The weights and attributes of the nodes and of the hyperedges become
+their attributes,
+and those of each node's membership of a hyperedge are kept with it,
+as is the side of a directed hyperedge that the node is on:
+its 'tail' is read as 'from' and its 'head' as 'to'.
+The metadata become the information about the network,
+and a file that says it holds an abstract simplicial complex
+is marked as one.
+An attribute that holds more than a single value is kept as the JSON
+that records it.
+
+\code{read_geojson()} reads each line in the file as a tie between its two ends,
+and each place where the ends of lines meet as a node.
+The positions of the nodes are held as 'x' and 'y' node attributes,
+and 'z' where the file gives elevations,
+in whatever coordinate reference system the file declares,
+which makes the result a spatial network (see \code{\link[=is_spatial]{is_spatial()}}).
+The properties of a line become the attributes of its tie,
+together with a 'length' that is measured along the line,
+unless the file gives the lines a 'length' of its own:
+in metres where the coordinates are longitudes and latitudes,
+or those of a Mercator projection (EPSG:3395 or EPSG:3857),
+and otherwise in the units of the coordinates.
+The shape of the line itself is not retained.
+Any points in the file describe the nodes at their positions,
+so that their properties, such as names, become node attributes,
+and a point that no line ends at is read as an isolate.
+Lines are often divided where nothing meets them,
+say where the surface or the name of a road changes,
+and so by default the ties that meet at such a node are joined,
+unless a point describes that node.
+A joined tie records the number of 'segments' it joins,
+and its 'length' is the sum of theirs.
+Its other numeric attributes are their means, weighted by their lengths,
+which is not what is wanted of an attribute that is itself a total.
+Where its segments differ on any other attribute,
+each of their values is given, separated by semi-colons.
+Lines that share the same two ends are kept as separate ties,
+since they are different routes between the same places.
+}
+\references{
+Coll, Martín, Cliff A. Joslyn, Nicholas W. Landry, Quintino Francesco Lotito,
+Audun Myers, Joshua Pickard, Brenda Praggastis, and Przemysław Szufel. 2025.
+"HIF: The hypergraph interchange format for higher-order networks".
+\emph{Network Science} 13: e21.
+\doi{10.1017/nws.2025.10018}
 }
 \seealso{
 \link{as}
@@ -154,11 +226,13 @@ Other makes:
 \code{\link{make_collect}},
 \code{\link{make_create}},
 \code{\link{make_ego}},
+\code{\link{make_emails}},
 \code{\link{make_explicit}},
+\code{\link{make_groups}},
+\code{\link{make_growth}},
 \code{\link{make_learning}},
 \code{\link{make_play}},
 \code{\link{make_random}},
-\code{\link{make_stochastic}},
 \code{\link{make_write}}
 }
 \concept{makes}

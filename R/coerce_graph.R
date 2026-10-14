@@ -132,11 +132,18 @@ as_igraph.tbl_graph <- function(.data,
 #' @export
 as_igraph.network <- function(.data,
                               twomode = FALSE) {
+  # A hyperedge has no two ends for an 'igraph' to tie, so a 'network' object
+  # that holds hyperedges is read as a 'stocnet' and coerced from there.
+  if (network::is.hyper(.data)) return(as_igraph(as_stocnet(.data)))
   # A 'network' object holds the ties it records as missing among its edges,
   # which a sociomatrix reports as missing cells and igraph refuses to build a
   # graph from. Those take the richer path, where they become a graph
   # attribute rather than edges, as igraph can mark no edge as missing.
   if (!is.null(as_missinglist(.data)))
+    return(as_igraph(as_stocnet(.data), twomode = twomode))
+  # A biadjacency matrix cannot carry direction, so a directed two-mode
+  # network is read from its ties too.
+  if (network::is.bipartite(.data) && isTRUE(.data$gal$directed))
     return(as_igraph(as_stocnet(.data), twomode = twomode))
   # Extract node attributes
   attr <- names(.data[[3]][[1]])
@@ -290,18 +297,29 @@ as_igraph.network <- function(.data,
 as_igraph.stocnet <- function(.data, twomode = FALSE) {
   # `.data$info$directed` is authoritative here, so use it rather than letting
   # graph_from_data_frame() default every stocnet to a directed graph.
+  # An 'igraph' has no hyperedges, so each is held as a node of a further
+  # mode that its members are tied to, and the graph is marked as holding a
+  # hypergraph so that it can be told from a two-mode network and read back.
+  if(is_hypergraph(.data)){
+    out <- as_igraph(.hyper_to_twomode(.data), twomode = twomode)
+    return(igraph::set_graph_attr(out, "hyper", TRUE))
+  }
   directed <- is_directed(.data)
   # Note that the nodes are counted by their rows and not by their columns,
   # since a table of rows without columns is how a stocnet records the size of
   # a network whose nodes have no attributes, isolates included.
-  if(is.null(as_nodelist(.data)) || nrow(as_nodelist(.data)) == 0){
+  if(is.null(.data$nodes) || nrow(.data$nodes) == 0){
     out <- igraph::graph_from_data_frame(as_edgelist(.data), directed = directed)
     out <- to_unlabelled(out)
   } else {
-    vertices <- as_nodelist(.data)
-    if(is_labelled(.data))
+    vertices <- .data$nodes
+    # A stocnet labels its nodes in 'label', but 'name' counts as a label too
+    # (see `is_labelled()`), as where `mutate_nodes(name = )` named them.
+    if("label" %in% names(vertices)){
       vertices <- vertices |> dplyr::mutate(name = label) |>
         dplyr::select(name, dplyr::everything(), -label)
+    } else if("name" %in% names(vertices))
+      vertices <- dplyr::select(vertices, name, dplyr::everything())
     # igraph records two modes in a logical 'type' attribute, which its
     # bipartite functions require, and three or more in the 'lvl' attribute
     # that `to_multilevel()` writes and `as_stocnet()` maps back to 'mode'.
@@ -320,7 +338,11 @@ as_igraph.stocnet <- function(.data, twomode = FALSE) {
         dplyr::mutate(lvl = match(mode, lvls)) |>
         dplyr::select(dplyr::any_of("name"), dplyr::everything(), -mode)
     }
-    if(is_labelled(.data)){
+    # Where only some of the nodes are labelled, as where `from_layers()` adds
+    # unlabelled nodes to labelled ones, the labels cannot tell the nodes
+    # apart, so the network is built by position and labelled afterwards.
+    partial <- is_labelled(.data) && anyNA(vertices$name)
+    if(is_labelled(.data) && !partial){
       out <- igraph::graph_from_data_frame(as_edgelist(.data),
                                            directed = directed,
                                            vertices = vertices)
@@ -334,10 +356,12 @@ as_igraph.stocnet <- function(.data, twomode = FALSE) {
       vertices <- dplyr::mutate(vertices,
                                 name = as.character(seq_len(nrow(vertices))))
       vertices <- dplyr::select(vertices, name, dplyr::everything())
-      out <- igraph::graph_from_data_frame(as_edgelist(.data),
-                                           directed = directed,
+      labels <- if(partial) .data$nodes$label %||% .data$nodes$name
+      ties <- if(partial) .reciprocate_layers(.data) else as_edgelist(.data)
+      out <- igraph::graph_from_data_frame(ties, directed = directed,
                                            vertices = vertices)
       out <- to_unlabelled(out)
+      if(partial) out <- igraph::set_vertex_attr(out, "name", value = labels)
     }
     
   }
@@ -758,9 +782,18 @@ as_network.matrix <- function(.data,
                       names.eval  = ifelse(valued, "weight", NULL))
 }
 
+# A sociomatrix holds one value for each dyad, so it cannot carry the
+# direction of a two-mode network, nor the reporter or target of each tie.
+# Those networks are built from their ties instead, as a stocnet is.
+.network_via_ties <- function(.data){
+  (is_twomode(.data) && igraph::is_directed(.data)) ||
+    any(c("by", "about") %in% igraph::edge_attr_names(.data))
+}
+
 #' @export
 as_network.igraph <- function(.data,
                               twomode = FALSE) {
+  if(.network_via_ties(.data)) return(as_network.stocnet(as_stocnet(.data)))
   name <- type <- NULL
   attr <- as.data.frame(igraph::vertex_attr(.data))
   if ("name" %in% colnames(attr)) attr <- subset(attr, select = c(-name))
@@ -775,6 +808,7 @@ as_network.igraph <- function(.data,
 #' @export
 as_network.tbl_graph <- function(.data,
                                  twomode = FALSE) {
+  if(.network_via_ties(.data)) return(as_network.stocnet(as_stocnet(.data)))
   nodes <- name <- type <- NULL
   attr <- as.data.frame(activate(.data, nodes))[-1]
   if ("name" %in% colnames(attr)) attr <- subset(attr, select = c(-name))
@@ -849,8 +883,126 @@ as_network.data.frame <- function(.data,
   )
 }
 
+# A 'network' object holds a hyperedge as an edge with several nodes at its
+# tail and at its head. Where the hyperedge has no sides, its members are at
+# both, which is how `{network}` reads an undirected hyperedge itself.
+.hyper_to_network <- function(.data){
+  ties <- .data$ties
+  nodes <- .data$nodes
+  hyper <- .hyper_rows(ties)
+  sided <- .hyper_directed(.data)
+  tails <- as.list(ties$from)
+  heads <- as.list(ties$to)
+  for(i in which(hyper)){
+    members <- ties$with[[i]]
+    if(sided){
+      # the 'from' side is listed first, as the tail is read back before the
+      # head, and whatever each member holds is kept in step with it
+      side <- order(ties$with_direction[[i]] != "from")
+      for(col in .with_cols(ties)) ties[[col]][[i]] <- ties[[col]][[i]][side]
+      members <- ties$with[[i]] <- members[side]
+      tails[[i]] <- members[ties$with_direction[[i]] == "from"]
+      heads[[i]] <- members[ties$with_direction[[i]] == "to"]
+    } else tails[[i]] <- heads[[i]] <- members
+  }
+  # `{network}` refuses an edge with nothing at its tail or its head, so a
+  # hyperedge with no members, or with none on one side, is carried beside
+  # the edges and put back among them on the way back.
+  held <- lengths(tails) == 0 | lengths(heads) == 0
+  out <- network::network.initialize(net_nodes(.data),
+                                     directed = is_directed(.data),
+                                     hyper = TRUE, loops = TRUE,
+                                     multiple = TRUE)
+  if(any(!held)){
+    out <- network::add.edges(out, tail = tails[!held], head = heads[!held])
+    cols <- setdiff(names(ties), c("from", "to", "with",
+                                   if(sided) "with_direction"))
+    for(col in cols)
+      out <- network::set.edge.attribute(out, col, as.list(ties[[col]][!held]))
+  }
+  for(col in names(nodes)){
+    out <- network::set.vertex.attribute(
+      out, if(col == "label") "vertex.names" else col,
+      if(col == "label") as.character(nodes[[col]]) else nodes[[col]])
+  }
+  out <- set_network_info(out, as_infolist(.data))
+  if(any(held)){
+    snet_warn("{sum(held)} hyperedge{?s} {?has/have} no members, or none on",
+              "one side, which a {.cls network} object cannot hold as an edge.",
+              "{?It is/They are} kept as a network attribute instead.")
+    out <- network::set.network.attribute(
+      out, "hyperedges_held", cbind(.row = which(held), ties[held, ]))
+  }
+  if(!all(hyper))
+    out <- network::set.network.attribute(out, "layer_hyper",
+                                          unique(ties$layer[hyper]))
+  if(!is.null(as_changelist(.data)) && length(as_changelist(.data)) > 0)
+    out <- network::set.network.attribute(out, "changes", as_changelist(.data))
+  if(!is.null(as_globallist(.data)) && length(as_globallist(.data)) > 0)
+    out <- network::set.network.attribute(out, "globals", as_globallist(.data))
+  out
+}
+
+# The reverse: the edges of a 'network' object that holds hyperedges, as ties.
+.network_to_hyper <- function(.data){
+  edges <- Filter(Negate(is.null), .data$mel)
+  in_layer <- .data$gal$layer_hyper
+  layers <- vapply(edges, function(e) as.character(e$atl$layer %||% NA),
+                   character(1))
+  hyper <- if(is.null(in_layer)) rep(TRUE, length(edges)) else
+    layers %in% in_layer
+  # the hyperedges have sides where the layers they are in are directed
+  sided <- .data$gal$layer_directed
+  sided <- if(is.null(sided)) is_directed(.data) else
+    isTRUE(any(sided[unique(layers[hyper])]))
+  ties <- dplyr::tibble(from = rep(NA_integer_, length(edges)),
+                        to = NA_integer_,
+                        with = vector("list", length(edges)))
+  sides <- vector("list", length(edges))
+  for(i in seq_along(edges)){
+    tail <- as.integer(edges[[i]]$outl)
+    head <- as.integer(edges[[i]]$inl)
+    if(!hyper[i]){
+      ties$from[i] <- tail[1]
+      ties$to[i] <- head[1]
+    } else if(sided){
+      ties$with[[i]] <- c(tail, head)
+      sides[[i]] <- rep(c("from", "to"), c(length(tail), length(head)))
+    } else ties$with[[i]] <- tail
+  }
+  attrs <- setdiff(unique(unlist(lapply(edges, function(e) names(e$atl)))),
+                   "na")
+  for(col in attrs){
+    values <- lapply(edges, function(e) e$atl[[col]])
+    # what each member holds stays a list, and anything else is one value
+    if(!grepl("^with_", col)){
+      values[lengths(values) == 0] <- NA
+      if(all(lengths(values) == 1)) values <- do.call(c, values)
+    }
+    ties[[col]] <- values
+  }
+  if(sided && any(hyper)) ties$with_direction <- sides
+  held <- .data$gal$hyperedges_held
+  if(!is.null(held)){
+    rows <- held$.row
+    held <- dplyr::as_tibble(held[setdiff(names(held), ".row")])
+    ties <- dplyr::bind_rows(ties, held)
+    ties <- ties[order(c(setdiff(seq_len(nrow(ties)), rows), rows)), ]
+    ties <- ties[names(held)]
+  }
+  ties
+}
+
 #' @export
 as_network.stocnet <- function(.data, twomode = FALSE) {
+  # 'network' is the one other class with hyperedges of its own
+  if(is_hypergraph(.data)) return(.hyper_to_network(.data))
+  # 'network' counts the first 'bipartite' nodes as the first mode, but a
+  # stocnet need not list its modes in that order: `add_nodes()` puts a node
+  # of the first mode after the second, for example. So the nodes are sorted
+  # by mode first, which renumbers their ties, missing ties, and changes too.
+  second <- if (is_twomode(.data)) as.logical(node_is_mode(.data)) else NULL
+  if (is.unsorted(second)) .data <- arrange_nodes(.data, !!second)
   # Networks are constructed directly from the node and tie tables so that
   # multiple edges (multiplex/multi-wave) and their tie attributes (e.g. layer,
   # time, weight) are retained rather than collapsed into a sociomatrix.
@@ -869,12 +1021,12 @@ as_network.stocnet <- function(.data, twomode = FALSE) {
     ties <- dplyr::bind_rows(dplyr::mutate(ties, na = FALSE), missing)
   }
   # For two-mode networks the 'bipartite' count is the number of first-mode
-  # nodes. manynet orders nodes first-mode-first, with ties running from the
+  # nodes, which the sorting above has put first, with ties running from the
   # first mode ('from') to the second ('to'), matching network's convention.
   bipartite <- FALSE
   skip_cols <- "na"
   if (is_twomode(.data)) {
-    bipartite <- sum(nodes$mode == unique(nodes$mode)[1])
+    bipartite <- sum(!second)
     # 'mode' is implied by the bipartite structure, so it is not stored as a
     # vertex attribute (it is reconstructed on the way back).
     skip_cols <- c(skip_cols, "mode")
@@ -1038,6 +1190,9 @@ as_stocnet.igraph <- function(.data, twomode = FALSE, ...) {
   changes <- as_changelist(.data)
   ties <- as_edgelist(.data)
   globals <- as_globallist(.data)
+  # A stocnet holds the sign of a tie as the sign of its weight, so that the
+  # network is signed is recorded, or it is lost where no tie is negative.
+  if("sign" %in% igraph::edge_attr_names(.data)) info$signed <- TRUE
   # A network whose nodes have neither names nor attributes has no nodelist,
   # and its isolates appear in no tie, so its size is recorded as a table of
   # rows without columns rather than lost.
@@ -1045,6 +1200,13 @@ as_stocnet.igraph <- function(.data, twomode = FALSE, ...) {
     nodes <- dplyr::tibble(.rows = igraph::vcount(.data))
 
   if(is_labelled(.data)){
+    # Where only some of the nodes are labelled, a label cannot say which
+    # node a tie is to, so the ends of the ties are read by position.
+    if(anyNA(nodes$name) && !is.null(ties)){
+      ends <- igraph::as_edgelist(as_igraph(.data), names = FALSE)
+      ties$from <- as.integer(ends[, 1])
+      ties$to <- as.integer(ends[, 2])
+    }
     ties <- .index_tie_nodes(ties, nodes$name)
     nodes$label <- nodes$name
     nodes$name <- NULL
@@ -1063,6 +1225,9 @@ as_stocnet.igraph <- function(.data, twomode = FALSE, ...) {
       nodes$mode <- as.character(nodes$type)
     }
     nodes$type <- NULL
+    # `to_multilevel()` writes 'lvl' beside 'type'. Where 'type' has named the
+    # modes, the level numbers say the same thing less well, so they go.
+    nodes$lvl <- NULL
   } else if(!is.null(nodes) && "lvl" %in% names(nodes)){
     # `to_multilevel.igraph()` records the levels of a network in a 'lvl'
     # attribute, since an igraph 'type' attribute forbids ties within a mode.
@@ -1118,7 +1283,25 @@ as_stocnet.igraph <- function(.data, twomode = FALSE, ...) {
   out <- rename_ties(out)
   out <- .conform_info(out)
   validate_stocnet(out)
+  # A graph marked as holding a hypergraph holds each hyperedge as a node of
+  # its last mode, which becomes a tie among its members again here.
+  if(is_hypergraph(.data)){
+    out$info$hyper <- NULL
+    out <- .twomode_to_hyper(out, .hyperedge_nodes(.data))
+  }
   out
+}
+
+# Which nodes of a graph marked as a hypergraph are its hyperedges: those of
+# the second mode, or of the last level where the nodes have modes themselves.
+.hyperedge_nodes <- function(.data){
+  attrs <- igraph::vertex_attr_names(.data)
+  if("type" %in% attrs) return(as.logical(igraph::V(.data)$type))
+  if("lvl" %in% attrs){
+    lvl <- igraph::V(.data)$lvl
+    return(lvl == max(lvl))
+  }
+  rep(FALSE, igraph::vcount(.data))
 }
 
 # The info of a network read from a file holds whatever that file recorded
@@ -1159,6 +1342,134 @@ as_stocnet.igraph <- function(.data, twomode = FALSE, ...) {
   out$info[dropped] <- NULL
   out
 }
+
+#' @rdname coerce_graph
+#' @param compare For a node measure or a node membership, how the values of
+#'   two nodes are compared to give the tie between them;
+#'   see `as_matrix()`.
+#'   Comparing by "same" or "absdiff" gives an undirected network,
+#'   and comparing by "diff", "sender", or "receiver" a directed one.
+#'   A comparison of zero is no tie.
+#' @export
+as_stocnet.node_measure <- function(.data, twomode = FALSE,
+                                    compare = c("absdiff", "diff", "sender",
+                                                "receiver"), ...) {
+  compare <- match.arg(compare)
+  .stocnet_from_comparison(as_matrix(.data, compare = compare),
+                           directed = compare != "absdiff",
+                           twomode = .from_twomode(.data))
+}
+
+#' @rdname coerce_graph
+#' @export
+as_stocnet.node_member <- function(.data, twomode = FALSE,
+                                   compare = "same", ...) {
+  .stocnet_from_comparison(as_matrix(.data, twomode = twomode,
+                                     compare = compare),
+                           directed = FALSE,
+                           twomode = isTRUE(twomode) || .from_twomode(.data))
+}
+
+# Whether a vector of node values comes from a two-mode network, in which
+# case its comparison pairs the first mode with the second.
+.from_twomode <- function(.data){
+  mode <- attr(.data, "mode")
+  !is.null(mode) && any(mode) && !all(mode)
+}
+
+# A matrix of comparisons is symmetric for some comparisons and not for
+# others, but which it is follows from the comparison and not from the values:
+# the values of every node can happen to be equal.
+# Nor does being two-mode follow from the shape of the matrix: modes of equal
+# size give a square one.
+.stocnet_from_comparison <- function(mat, directed, twomode = FALSE){
+  out <- as_stocnet(mat, twomode = twomode)
+  if(directed && !isTRUE(any(out$info$directed))){
+    ties <- out$ties
+    if(!is.null(ties) && nrow(ties) && !is_twomode(out)){
+      back <- ties[ties$from != ties$to, , drop = FALSE]
+      back[c("from", "to")] <- back[c("to", "from")]
+      out$ties <- dplyr::bind_rows(ties, back)
+    }
+    out$info$directed <- TRUE
+  }
+  out
+}
+
+# A 'hypergraph' object of the `{HyperG}` package is a list of one sparse
+# incidence matrix, 'M', with a row for each hyperedge and a column for each
+# node. It always names its nodes, by their positions where they have no names.
+# Both functions leave the sparse matrix to igraph, which reads and writes
+# one, so that neither `{HyperG}` nor `{Matrix}` is needed here.
+#' @export
+as_stocnet.hypergraph <- function(.data, twomode = FALSE, ...) {
+  M <- .data$M
+  # the hyperedges are the first mode here, since they are the rows
+  ends <- igraph::as_edgelist(igraph::graph_from_biadjacency_matrix(M),
+                              names = FALSE)
+  ends <- ends[order(ends[, 1], ends[, 2]), , drop = FALSE]
+  ties <- dplyr::tibble(from = NA_integer_, to = NA_integer_,
+                        with = unname(split(as.integer(ends[, 2] - nrow(M)),
+                                            factor(ends[, 1],
+                                                   levels = seq_len(nrow(M))))))
+  if(!is.null(rownames(M))) ties$label <- rownames(M)
+  nodes <- dplyr::tibble(label = colnames(M) %||% as.character(seq_len(ncol(M))))
+  if(.hif_counted(nodes$label)) nodes <- dplyr::tibble(.rows = ncol(M))
+  make_stocnet(info = list(directed = FALSE), nodes = nodes, ties = ties)
+}
+
+#' @rdname coerce_graph
+#' @section Hypergraphs:
+#'   `as_hypergraph()` returns a 'hypergraph' object of the `{HyperG}` package,
+#'   which is a sparse incidence matrix of hyperedges by nodes,
+#'   and `as_stocnet()` reads one.
+#'   A network that is not a hypergraph is reformatted as one first,
+#'   as by [to_hypergraph()].
+#'   A 'hypergraph' object holds which nodes each hyperedge has and their
+#'   names, and nothing else, so weights, attributes, directions,
+#'   and times are not carried.
+#'   Neither function needs `{HyperG}` to be installed.
+#'
+#'   Note that [is_hypergraph()] marks a network of any class that holds
+#'   hyperedges, of which a 'stocnet' object holds the most
+#'   (see the Hypergraphs section of [make_stocnet()]).
+#' @examples
+#' as_hypergraph(create_ring(4))
+#' @export
+as_hypergraph <- function(.data) UseMethod("as_hypergraph")
+
+#' @export
+as_hypergraph.default <- function(.data) {
+  net <- .dyads_to_hyper(to_hypergraph(as_stocnet(.data)))
+  ties <- net$ties
+  # A 'hypergraph' object holds which nodes each hyperedge has, and no more.
+  lost <- c(if(.hyper_directed(net)) "directions",
+            if(is_weighted(net) || "with_weight" %in% names(ties)) "weights",
+            if(length(setdiff(names(ties), c("from", "to", "with", "label",
+                                             "weight", "with_weight",
+                                             "with_direction"))) ||
+               length(setdiff(names(net$nodes), "label"))) "attributes")
+  if(length(lost))
+    snet_warn("A {.cls hypergraph} object of {.pkg HyperG} holds no {lost},",
+              "so those of this network were not carried.")
+  n <- net_nodes(net)
+  m <- nrow(ties)
+  # The memberships alone, as the ties of hyperedges to nodes. The hyperedges
+  # are the first mode, so that they are the rows of the matrix.
+  members <- lapply(ties$with, unique)
+  graph <- igraph::make_bipartite_graph(
+    rep(c(FALSE, TRUE), c(m, n)),
+    rbind(rep(seq_len(m), lengths(members)), m + unlist(members)))
+  M <- igraph::as_biadjacency_matrix(graph, sparse = TRUE)
+  # `{HyperG}` makes its matrix column-compressed, where igraph returns triplets
+  M <- tryCatch(methods::as(M, "CsparseMatrix"), error = function(e) M)
+  dimnames(M) <- list(ties[["label"]],
+                      net$nodes[["label"]] %||% as.character(seq_len(n)))
+  structure(list(M = M), class = "hypergraph")
+}
+
+#' @export
+as_hypergraph.hypergraph <- function(.data) .data
 
 #' @export
 as_stocnet.matrix <- function(.data,
@@ -1201,8 +1512,10 @@ as_stocnet.array <- function(.data, twomode = FALSE, ...,
   if(attribute %in% c("by", "about") && d[3] != n)
     snet_abort("'{attribute}' needs one slice for each of the {n} nodes,",
                "but this array has {d[3]}.")
-  # The nodes are read from the first slice, as a matrix of them would be.
+  # The nodes are read from the first slice, as a matrix of them would be,
+  # without what that slice alone records about who did not report.
   nodes <- as_stocnet(.data[, , 1], twomode = twomode)$nodes
+  if(!is.null(nodes)) nodes$na <- NULL
   labels <- nodes[["label"]]
   slices <- dimnames(.data)[[3]]
   third <- switch(attribute,
@@ -1222,36 +1535,47 @@ as_stocnet.array <- function(.data, twomode = FALSE, ...,
   # them is.
   directed <- if(attribute == "layer") !twomode & !symmetric else
     rep(!twomode && !all(symmetric), d[3])
-  ties <- dplyr::bind_rows(lapply(seq_len(d[3]), function(k){
+  # Whether the ties carry values is decided for the array as a whole, so that
+  # the slices that hold only ones do not read as ties of unknown value.
+  cells <- .data[!is.na(.data)]
+  valued <- any(cells != 0 & cells != 1)
+  # Each slice is a network of its own, and they are joined as the matching
+  # `from_*()` function joins a list of them, so that the two agree.
+  nets <- lapply(seq_len(d[3]), function(k){
     slice <- .data[, , k]
     # An undirected slice holds each tie once, on its dyad.
     if(!twomode && !directed[k]) slice[lower.tri(slice)] <- 0
     idx <- which(is.na(slice) | slice != 0, arr.ind = TRUE)
-    if(!nrow(idx)) return(NULL)
-    dplyr::tibble(from = as.integer(idx[, 1]),
-                  to = as.integer(idx[, 2] + if(twomode) d[1] else 0L),
-                  value = slice[idx], slice = k)
-  }))
-  if(nrow(ties)){
-    ties[[attribute]] <- third[ties$slice]
-    ties$slice <- NULL
+    ties <- dplyr::tibble(from = as.integer(idx[, 1]),
+                          to = as.integer(idx[, 2] + if(twomode) d[1] else 0L))
+    if(valued) ties$weight <- slice[idx]
     # A missing cell records a tie that was not observed, which is split
     # from the ties by `make_stocnet()`.
-    ties$na <- is.na(ties$value)
-    if(all(ties$value[!ties$na] == 1)) ties$value <- NULL else
-      names(ties)[names(ties) == "value"] <- "weight"
-    if(!any(ties$na)) ties$na <- NULL
-  } else if(attribute %in% c("by", "about")){
-    # An array in which nobody reported a tie is still reports, so the column
-    # that says so is kept, even without a row to hold a value in it.
-    ties <- dplyr::tibble(from = integer(0), to = integer(0))
-    ties[[attribute]] <- integer(0)
-  } else ties <- NULL
-  info <- list(directed = if(attribute == "layer")
-    stats::setNames(directed, third) else directed[1])
-  if(attribute == "by") info$observation <- "cognitive"
-  if(attribute == "layer") info$layers <- unique(third)
-  make_stocnet(info = info, nodes = nodes, ties = ties)
+    if(anyNA(slice[idx])) ties$na <- is.na(slice[idx])
+    make_stocnet(info = list(directed = directed[k]), nodes = nodes,
+                 ties = ties)
+  })
+  names(nets) <- if(attribute %in% c("by", "about") && !is.null(labels))
+    labels[third] else as.character(third)
+  # The moments of a network are counted from its ties, so a slice that holds
+  # no tie leaves no moment behind it.
+  if(attribute == "time"){
+    empty <- vapply(seq_len(d[3]), function(k)
+      all(!is.na(.data[, , k]) & .data[, , k] == 0), logical(1))
+    if(any(empty))
+      snet_warn("{sum(empty)} slice{?s} of this array hold{?s/} no ties",
+                "({.val {as.character(third[empty])}}),",
+                "and a moment without ties is not recorded in the network.")
+  }
+  switch(attribute,
+         "time" = from_times(nets),
+         "by" = from_reporters(nets),
+         "about" = .join_third(nets, "about"),
+         "layer" = if(length(nets) == 1)
+           mutate_info(mutate_ties(nets[[1]], layer = third[1]),
+                       layers = third[1],
+                       directed = stats::setNames(directed[1], third[1])) else
+             from_layers(nets))
 }
   
 #' @export
@@ -1259,11 +1583,17 @@ as_stocnet.network <- function(.data,
                            twomode = FALSE, ...) {
   # Read edges together with all their attributes in a single, aligned pass so
   # that tie attributes (e.g. layer, time, weight) stay matched to their edges.
-  edf <- network::as.data.frame.network(.data, unit = "edges", na.rm = FALSE)
+  hyper <- network::is.hyper(.data)
+  edf <- if(hyper) data.frame() else
+    network::as.data.frame.network(.data, unit = "edges", na.rm = FALSE)
   # An edge marked in the reserved 'na' attribute records a missing tie rather
   # than a tie, so it is read out of the edges here and compressed below.
-  missing <- as_missinglist(.data)
-  if (nrow(edf) == 0) {
+  missing <- if(hyper) NULL else as_missinglist(.data)
+  if (hyper) {
+    # `as.data.frame.network()` expects an edge to have one node at each end,
+    # so the edges of a hypergraph are read from the object itself.
+    ties <- .network_to_hyper(.data)
+  } else if (nrow(edf) == 0) {
     ties <- dplyr::tibble(from = integer(0), to = integer(0))
   } else {
     # `.tail`/`.head` are reported as vertex names; convert them back to the
@@ -1290,11 +1620,18 @@ as_stocnet.network <- function(.data,
   info <- .data$gal[setdiff(names(.data$gal),
                             c("n", "mnext", "directed", "hyper", "loops",
                               "multiple", "bipartite", "changes", "globals", "global",
-                              "layer_directed"))]
+                              "layer_directed", "layer_hyper",
+                              "hyperedges_held"))]
   # As for igraph, an undirected layer reciprocated on the way out is
   # collapsed again here, so that the round trip is lossless.
-  collapsed <- .collapse_layers(ties, .data$gal$layer_directed, is_directed(.data))
-  if(is.null(collapsed)) info$directed <- is_directed(.data) else {
+  # A hypergraph is written without reciprocating any layer, since its ties
+  # are not all dyads, so there is nothing to collapse in one.
+  collapsed <- if(hyper) NULL else
+    .collapse_layers(ties, .data$gal$layer_directed, is_directed(.data))
+  # see `as_stocnet.igraph()` for why this is recorded
+  if("sign" %in% network::list.edge.attributes(.data)) info$signed <- TRUE
+  if(is.null(collapsed)) info$directed <-
+    (if(hyper) .data$gal$layer_directed) %||% is_directed(.data) else {
     ties <- collapsed$ties
     info$directed <- collapsed$directed
   }
@@ -1837,7 +2174,10 @@ as_diffusion.diff_model <- function(.data, twomode = FALSE, events) {
 
 #' @export
 as_diffusion.mnet <- function(.data, twomode = FALSE, events) {
-  events <- as_changelist(.data)
+  if (missing(events)) events <- as_changelist(.data)
+  # a network can record other changes too, such as when its nodes are active
+  if ("var" %in% names(events)) 
+    events <- events[events$var == "diffusion", , drop = FALSE]
   nodes <- c(net_nodes(.data))
   sumchanges <- events |> dplyr::group_by(time) |> 
     dplyr::reframe(S_new = sum(value == "S"),
@@ -1896,8 +2236,10 @@ as_diffusion.igraph <- function(.data, twomode = FALSE, events) {
     dplyr::reframe(I_new = sum(event == "I"),
                    E_new = sum(event == "E"),
                    R_new = sum(event == "R"))
-  report <- dplyr::tibble(t = seq_len(max(events$t)) - 1,
-                          n = net_nodes(net)) |> 
+  # Every step from the seeding to the last event, so that a diffusion that
+  # does not leave its seeds still reports the step in which they were seeded.
+  report <- dplyr::tibble(t = 0:max(events$t),
+                          n = c(net_nodes(net))) |> 
     dplyr::left_join(sumchanges, by = dplyr::join_by(t))
   report[is.na(report)] <- 0
   report$R <- cumsum(report$R_new)
@@ -1924,6 +2266,11 @@ as_diffusion.igraph <- function(.data, twomode = FALSE, events) {
   report <- dplyr::select(report, dplyr::any_of(c("t", "n", "S", "s", "E", "E_new", "I", "I_new", "R", "R_new")))
   make_diff_model(events, report, .data)
 }
+
+# A diffusion is reported in the same way whatever class it was played on,
+# with a `time` column and the nodes newly susceptible in `S_new`.
+#' @export
+as_diffusion.stocnet <- as_diffusion.mnet
 
 #' @export
 as_diffusion.diffnet <- function(.data, twomode = FALSE, events) {

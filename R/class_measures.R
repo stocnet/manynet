@@ -156,7 +156,7 @@ summary.node_measure <- function(object, ...,
 
 #' @export
 summary.network_measure <- function(object, ...,
-                                  null = c("random","configuration"), 
+                                  null = c("random","degree","configuration"), 
                                   times = 500) {
   null <- paste0("generate_", match.arg(null))
   callItems <- trimws(strsplit(attr(object, "call"), 

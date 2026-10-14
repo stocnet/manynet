@@ -12,6 +12,9 @@
 #'   but rather simply removes the distinction between the two modes.
 #'   - `to_twomode()` reformats one-mode network data into two-mode network data, 
 #'   using a mark to distinguish the two sets of nodes.
+#'   It also reformats a hypergraph into a two-mode network,
+#'   in which each hyperedge is a node of the second mode,
+#'   and for this needs no mark.
 #'   - `to_multilevel()` reformats two-mode network data into multimodal network data, 
 #'   which allows for more levels and ties within modes.
 #' 
@@ -19,6 +22,10 @@
 #'   for example `to_onemode()` is used on a network that is already one-mode,
 #'   the network data is returned unaltered.
 #'   No warning is given so that these functions can be used to ensure conformance.
+#'
+#'   Note that a multilevel network is still two-mode, so `as_matrix()` returns
+#'   its incidence matrix. For the square matrix of both modes,
+#'   use `to_onemode()` or `as_matrix(.data, twomode = FALSE)`.
 #'   
 #'   Unlike the `as_*()` group of functions,
 #'   these functions always return the same class as they are given,
@@ -79,7 +86,23 @@ to_twomode.default <- function(.data, mark){
 }
 
 #' @export
+to_twomode.stocnet <- function(.data, mark){
+  # A hypergraph needs no mark: its nodes are one mode and its hyperedges
+  # become the other.
+  if(missing(mark) && is_hypergraph(.data)){
+    out <- .hyper_to_twomode(.data)
+    out$info$simplicial <- NULL
+    return(validate_stocnet(out))
+  }
+  as_stocnet(to_twomode(as_igraph(.data), mark))
+}
+
+#' @export
 to_twomode.igraph <- function(.data, mark){
+  # An 'igraph' holds a hypergraph as a two-mode network already, so all that
+  # tells the two apart is the mark that it is one.
+  if(missing(mark) && is_hypergraph(.data))
+    return(igraph::delete_graph_attr(.data, "hyper"))
   igraph::V(.data)$type <- mark
   to_undirected(.data)
 }
@@ -112,8 +135,12 @@ to_multilevel.tbl_graph <- function(.data) {
 #' @export
 to_multilevel.igraph <- function(.data) {
   if(is_twomode(.data)){
+    # 'type' is kept alongside 'lvl'. A multilevel network is still two-mode:
+    # it has two nodesets, and ties both within and between them, which is what
+    # `is_multilevel()` reads and what `fict_marvel` records. Deleting 'type'
+    # would unmark the modes, contradicting that mark, and would lose the mode
+    # names on a round trip, since `as_stocnet()` reads them against 'type'.
     igraph::V(.data)$lvl <- ifelse(igraph::V(.data)$type, 2, 1)
-    .data <- igraph::delete_vertex_attr(.data, "type")
   }
   .data
 }

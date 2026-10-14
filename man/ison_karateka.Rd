@@ -5,13 +5,13 @@
 \alias{ison_karateka}
 \title{One-mode karateka network (Zachary 1977)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Zachary's karate club network ---------------------------------------------
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Zachary's karate club -----------------------------------------------------
 #> # A labelled, weighted, undirected network of 34 club members and 78
 #> association ties
 #> 
 #> -- Nodes
 #> # A tibble: 34 x 2
-#>   name  allegiance
+#>   label allegiance
 #>   <chr>      <dbl>
 #> 1 Mr Hi          1
 #> 2 2              1
@@ -39,12 +39,17 @@
 data(ison_karateka)
 }
 \description{
-The network was observed in a university Karate club in 1977.
+The network was observed in a university karate club over three years,
+from 1970 to 1972, and published in 1977.
 The network describes association patterns among 34 members
 and maps out allegiance patterns between members and either Mr. Hi,
-the instructor, or the John A. the club president
+the instructor, or John A., the club president,
 after an argument about hiking the price for lessons.
-The allegiance of each node is listed in the \code{obc} argument
+The club had near 60 members at the time.
+The 34 in the network are those who met other members outside the club's
+classes and meetings, and the 'weight' of a tie is the number of contexts
+outside the club in which the two members met.
+The allegiance of each node is listed in the 'allegiance' node attribute,
 which takes the value 1 if the individual sided with Mr. Hi after the fight
 and 2 if the individual sided with John A.
 }

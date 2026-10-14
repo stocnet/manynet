@@ -11,7 +11,7 @@
 #> 
 #> -- Nodes
 #> # A tibble: 18 x 1
-#>   name     
+#>   label    
 #>   <chr>    
 #> 1 Alertness
 #> 2 Amusement
@@ -42,8 +42,12 @@ data(ison_emotions)
 Emotions are highly interconnected, and one emotion often follows another.
 This network describes the transitions between 18 different emotions as
 experienced in everyday life.
-The data is collected from 11,000 participants who completed daily
+The data is collected from more than 11,000 participants,
+who used a francophone smartphone application to complete short
 questionnaires on the emotions they felt at a given moment.
+They were asked about nine positive emotions
+(alertness, amusement, awe, gratitude, hope, joy, love, pride, and
+satisfaction) and nine negative emotions.
 While Trampe et al. (2015) created and analysed an undirected network
 in their paper, the directed network constructed by Will Hipson
 is shared here.

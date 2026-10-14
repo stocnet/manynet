@@ -225,3 +225,12 @@ test_that("arranging nodes keeps the ties recorded as missing", {
   expect_equal(nrow(arranged$missings), 1)
   expect_equal(as_matrix(arranged), arr[4:1, 4:1, 4:1])
 })
+
+test_that("mutate changes the nodes of a stocnet as mutate_nodes does", {
+  net <- as_stocnet(create_ring(4))
+  out <- mutate(net, status = c(TRUE, FALSE, FALSE, FALSE))
+  expect_s3_class(out, "stocnet")
+  expect_equal(out, mutate_nodes(net, status = c(TRUE, FALSE, FALSE, FALSE)))
+  expect_equal(node_attribute(out, "status"), c(TRUE, FALSE, FALSE, FALSE))
+  expect_equal(dplyr::mutate(net, tst = 1), mutate_nodes(net, tst = 1))
+})

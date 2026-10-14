@@ -124,6 +124,9 @@
 #'   Shirin Glander extended this data set on character deaths in the TV series 
 #'   Game of Thrones with the kinship relationships between the characters, 
 #'   by scraping "A Wiki of Ice and Fire" and adding missing information by hand.
+#'   The network holds two layers of kinship among 208 characters.
+#'   A "parent" tie runs from the parent to the child,
+#'   and a "spouse" tie is recorded in both directions.
 #'   There is certainly more that can be done here.
 #' @docType data
 #' @keywords datasets
@@ -194,20 +197,21 @@
 #' One-mode network collected by \href{https://github.com/keithmcnulty/friends_analysis/}{McNulty (2020)}
 #' on the connections between the Friends TV series characters
 #' from Seasons 1 to 10.
-#' The `fict_friends` is an undirected network
-#' containing connections between characters organised by season number,
-#' which is reflected in the tie attribute 'wave'.
-#' The network contains 650 nodes
-#' Each tie represents the connection between a character pair (appear in the same scene),
-#' and the 'weight' of the tie is the number of scenes the character pair appears in together.
-#' For all networks, characters are named (eg. Phoebe, Ross, Rachel).
+#' The series aired from 1994 to 2004,
+#' and the network was collected from the scripts of its episodes.
+#' `fict_friends` is an undirected network of 650 named characters
+#' (e.g. Ross, Rachel, Monica, Chandler, Joey, and Phoebe).
+#' Each tie joins a pair of characters that appear in the same scene,
+#' and the 'weight' of the tie is the number of scenes,
+#' across all ten seasons, in which the pair appears together.
 #' @docType data
 #' @keywords datasets
 #' @name fict_friends
 #' @usage data(fict_friends)
 #' @references
-#'   McNulty, K. (2020).
-#'   \emph{Network analysis of Friends scripts.}.
+#'   McNulty, Keith. 2020.
+#'   "Network analysis of Friends scripts".
+#'   \url{https://github.com/keithmcnulty/friends_analysis/}
 #' @format
 #'   ```{r, echo = FALSE}
 #'   fict_friends
@@ -237,13 +241,22 @@
 #'   - 'season': season that the character joined the show
 #'   - 'sign': character's astrological starsign, if known
 #'   
-#' The data is current up to (I think?) season 10?
-#'   
+#'   The characters are those that joined the show in its first ten seasons.
+#'   A tie records that two characters had a sexual contact,
+#'   and is neither directed nor weighted.
 #' @docType data
 #' @keywords datasets
 #' @name fict_greys
 #' @author Gary Weissman and Benjamin Lind
 #' @usage data(fict_greys)
+#' @references
+#'   Weissman, Gary.
+#'   "Grey's Anatomy network of sexual relations".
+#'   \url{https://gweissman.github.io/post/grey-s-anatomy-network-of-sexual-relations/}
+#'
+#'   Lind, Benjamin. 2012.
+#'   "Lessons on exponential random graph modeling from Grey's Anatomy hook-ups".
+#'   \url{http://badhessian.org/2012/09/lessons-on-exponential-random-graph-modeling-from-greys-anatomy-hook-ups/}
 #' @format 
 #'   ```{r, echo = FALSE}
 #'   fict_greys
@@ -265,6 +278,7 @@
 #'   These were added by Korakot Janteerasakul from the following source:
 #'   \url{https://en.wikipedia.org/wiki/Love_Actually#/media/File:Love_Actually_(2003)_Interconnections.svg}.
 #'   
+#'   No tie is directed.
 #'   Unlike `fict_marvel`, the layers here are not simply the levels: four of
 #'   the five run within the characters, so the network is multiplex as well
 #'   as multilevel, and `describe_network()` reports both.

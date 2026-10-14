@@ -12,6 +12,8 @@
 \alias{write_gdf}
 \alias{write_gexf}
 \alias{write_dynetml}
+\alias{write_geojson}
+\alias{write_hif}
 \title{Making networks to external files}
 \source{
 \code{write_ucinet()} kindly supplied by Christian Steglich,
@@ -37,6 +39,10 @@ write_gdf(.data, filename, ...)
 write_gexf(.data, filename, ...)
 
 write_dynetml(.data, filename, ...)
+
+write_geojson(.data, filename, ...)
+
+write_hif(.data, filename, ...)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -80,6 +86,10 @@ file formats:
 \item \code{write_gml()} exports GML files.
 \item \code{write_gdf()} exports GDF files.
 \item \code{write_gexf()} exports GEXF files, for example for use in Gephi.
+\item \code{write_hif()} exports a hypergraph as a Hypergraph Interchange Format
+(HIF) file, which the main hypergraph libraries read.
+\item \code{write_geojson()} exports a spatial network as a GeoJSON file,
+for example for use in a geographic information system.
 }
 }
 \details{
@@ -97,6 +107,21 @@ A colour named some other way, such as "red",
 is written as an ordinary attribute, which reads back unchanged.
 Node names are written as labels, since node ids are required by the format
 and so are written as positions in the network.
+
+\code{write_hif()} writes a hypergraph in the Hypergraph Interchange Format.
+A network that is not a hypergraph is written as one,
+as \code{\link[=to_hypergraph]{to_hypergraph()}} reformats it.
+Nodes and hyperedges are identified by their labels where they have them,
+and otherwise by their positions.
+
+\code{write_geojson()} writes a spatial network (see \code{\link[=is_spatial]{is_spatial()}}),
+with each node as a point and each tie as a line between two nodes,
+and with their attributes as the properties of those features.
+Since a network does not hold the shape of a tie, each line is straight.
+A height the nodes have, as 'z', 'elevation', 'altitude', or 'alt',
+is written as the third coordinate of their positions,
+and so is read back as 'z'.
+The direction of a tie is not written.
 }
 \seealso{
 \link{as}
@@ -105,11 +130,13 @@ Other makes:
 \code{\link{make_collect}},
 \code{\link{make_create}},
 \code{\link{make_ego}},
+\code{\link{make_emails}},
 \code{\link{make_explicit}},
+\code{\link{make_groups}},
+\code{\link{make_growth}},
 \code{\link{make_learning}},
 \code{\link{make_play}},
 \code{\link{make_random}},
-\code{\link{make_read}},
-\code{\link{make_stochastic}}
+\code{\link{make_read}}
 }
 \concept{makes}

@@ -51,6 +51,7 @@ package `{netrics}`. If you install and load `{migraph}`, all these
 packages will be installed and loaded and you can use all functionality,
 past and present.
 
+- [Design principles](#design-principles)
 - [Making](#making)
   - [Importing network data](#importing-network-data)
   - [Identifying network data](#identifying-network-data)
@@ -68,6 +69,27 @@ past and present.
   - [Development](#development)
 - [Relationship to other packages](#relationship-to-other-packages)
 - [Funding details](#funding-details)
+
+## Design principles
+
+`{manynet}` and the other [stocnet](https://github.com/stocnet) packages
+aim for three things:
+
+- **Declarative simplicity**: functions do one clearly named thing with
+  few arguments. For example, `to_undirected()`, `to_unweighted()`, and
+  `to_unsigned()` are separate functions rather than options of one.
+- **Pleasant predictability**: users can guess a function’s behaviour
+  from its family. For example, `is_*()` returns a logical, `as_*()`
+  converts class, `to_*()` transforms within class, `create_*()` builds
+  a deterministic network, and `generate_*()` draws a random one.
+- **Graceful inclusivity**: functions accept whatever network users
+  bring and return something they can use. For example, `to_mode1()`
+  works the same on a matrix, an edgelist, or an `{igraph}` object, and
+  simply returns a network that is already one-mode.
+
+See the [contributing
+guide](https://github.com/stocnet/manynet/blob/main/.github/CONTRIBUTING.md#style)
+for how these principles translate into rules for the package.
 
 ## Making
 
@@ -128,8 +150,8 @@ The package includes three families of network data:
   `fict_lotr`, `fict_marvel`, `fict_potter`, `fict_starwars`,
   `fict_thrones`
 - International/political networks: `irps_911`, `irps_blogs`,
-  `irps_books`, `irps_nuclear`, `irps_revere`, `irps_supremecourt`,
-  `irps_tribes`, `irps_usgeo`, `irps_wwi`
+  `irps_books`, `irps_corruption`, `irps_nuclear`, `irps_revere`,
+  `irps_supremecourt`, `irps_tribes`, `irps_usgeo`, `irps_wwi`
 
 #### Inventing network data
 
@@ -152,10 +174,10 @@ different output each time they are run, e.g.:
 
 <img src="https://www.jameshollway.com/post/manynet/README-generate_egs-1.png" alt="Graphs of small-world and scale-free networks of 15 nodes"/>
 
-See also `generate_citations()`, `generate_configuration()`,
-`generate_fire()`, `generate_islands()`, `generate_man()`,
-`generate_random()`, `generate_scalefree()`, `generate_smallworld()`,
-`generate_utilities()`.
+See also `generate_citations()`, `generate_communities()`,
+`generate_configuration()`, `generate_core()`, `generate_fire()`,
+`generate_islands()`, `generate_man()`, `generate_random()`,
+`generate_scalefree()`, `generate_smallworld()`, `generate_utilities()`.
 
 Note that all these functions can create directed or undirected,
 one-mode or two-mode networks. Creating two-mode networks is as easy as
@@ -237,8 +259,9 @@ Available verbs for manipulating **changes**: `add_changes()`,
 `filter_changes()`, `gather_changes()`, `mutate_changes()`,
 `rename_changes()`, `select_changes()`
 
-Available verbs for manipulating **globals**: `mutate_globals()`,
-`rename_globals()`, `select_globals()`
+Available verbs for manipulating **globals**: `arrange_globals()`,
+`bind_globals()`, `delete_globals()`, `filter_globals()`,
+`mutate_globals()`, `rename_globals()`, `select_globals()`
 
 ## Modifying
 
@@ -254,10 +277,11 @@ directed to undirected via `to_undirected()`.
 
 <img src="https://www.jameshollway.com/post/manynet/README-directed_egs-1.png" alt="Graphs illustrating modification of a network's directedness"/>
 
-See also `to_directed()`, `to_imputed()`, `to_labelled()`, `to_named()`,
-`to_permuted()`, `to_reciprocated()`, `to_redirected()`, `to_signed()`,
-`to_undirected()`, `to_unlabelled()`, `to_unnamed()`, `to_unsigned()`,
-`to_unweighted()`, `to_weighted()`.
+See also `to_aggregated()`, `to_directed()`, `to_disaggregated()`,
+`to_imputed()`, `to_labelled()`, `to_named()`, `to_normalised()`,
+`to_normalized()`, `to_permuted()`, `to_reciprocated()`,
+`to_redirected()`, `to_signed()`, `to_undirected()`, `to_unlabelled()`,
+`to_unnamed()`, `to_unsigned()`, `to_unweighted()`, `to_weighted()`.
 
 ### Transforming
 
@@ -284,11 +308,11 @@ distinguishable as those `to_*()` functions that are named in the
 plural. Split data can be rejoined using the `from_*()` family of
 functions.
 
-See also `to_blocks()`, `to_components()`, `to_egos()`, `to_layers()`,
-`to_motifs()`, `to_no_isolates()`, `to_slices()`, `to_subgraphs()`,
-`to_ties()`, `to_times()`, `to_waves()` and `from_egos()`,
-`from_layers()`, `from_slices()`, `from_subgraphs()`, `from_ties()`,
-`from_times()`, `from_waves()`.
+See also `to_blocks()`, `to_components()`, `to_concepts()`, `to_egos()`,
+`to_layers()`, `to_motifs()`, `to_no_isolates()`, `to_reporters()`,
+`to_slices()`, `to_subgraphs()`, `to_ties()`, `to_times()`, `to_waves()`
+and `from_egos()`, `from_layers()`, `from_reporters()`, `from_slices()`,
+`from_subgraphs()`, `from_ties()`, `from_times()`, `from_waves()`.
 
 ## Cheat sheet
 

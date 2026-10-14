@@ -11,22 +11,22 @@
 #> 
 #> -- Nodes
 #> # A tibble: 32 x 5
-#>   name    Surname    Title active type 
-#>   <chr>   <chr>      <chr> <lgl>  <lgl>
-#> 1 Evelyn  Jefferson  Mrs   TRUE   FALSE
-#> 2 Laura   Mandeville Miss  TRUE   FALSE
-#> 3 Theresa Anderson   Miss  TRUE   FALSE
-#> 4 Brenda  Rogers     Miss  TRUE   FALSE
+#>   label   mode  Surname    Title active
+#>   <chr>   <chr> <chr>      <chr> <lgl> 
+#> 1 Evelyn  women Jefferson  Mrs   TRUE  
+#> 2 Laura   women Mandeville Miss  TRUE  
+#> 3 Theresa women Anderson   Miss  TRUE  
+#> 4 Brenda  women Rogers     Miss  TRUE  
 #> # i 28 more rows
 #> 
 #> -- Changes
 #> # A tibble: 14 x 4
-#>   time        node var    value
-#>   <date[1d]> <int> <chr>  <lgl>
-#> 1 1936-02-23    29 active TRUE 
-#> 2 1936-02-25    23 active TRUE 
-#> 3 1936-03-02    20 active TRUE 
-#> 4 1936-03-15    25 active TRUE 
+#>   time        node var        value
+#>   <date[1d]> <int> <chr>     <list>
+#> 1 1936-02-23    29 active TRUE<lgl>
+#> 2 1936-02-25    23 active TRUE<lgl>
+#> 3 1936-03-02    20 active TRUE<lgl>
+#> 4 1936-03-15    25 active TRUE<lgl>
 #> # i 10 more rows
 #> 
 #> -- Ties

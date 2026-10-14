@@ -21,8 +21,7 @@
 #'
 #'   Each filter is applied to the ties as the network holds them. Where a
 #'   network holds parallel ties, each is filtered on its own rather than as
-#'   the bundle they make together, so use `to_simplex()` first where that is
-#'   not wanted.
+#'   the bundle they make together.
 #'
 #'   Only closed-form filters are offered here. For the backbone models that
 #'   resample a null distribution, such as the stochastic and fixed degree
@@ -138,6 +137,7 @@ to_backbone.default <- function(.data, filter = NULL, threshold = NULL,
 #' @export
 to_backbone.stocnet <- function(.data, filter = NULL, threshold = NULL,
                                 endpoints = c("either", "both")){
+  .needs_dyads(.data, "to_backbone")
   spec <- .backbone_spec(.data, filter, threshold)
   keep <- .backbone_keep(.data, spec, endpoints)
   out <- keep_ties(.data, which(keep))
@@ -217,7 +217,8 @@ to_backbone.stocnet <- function(.data, filter = NULL, threshold = NULL,
   if(repeats == 0) return(invisible(NULL))
   advice <- if(is_longitudinal(.data) || is_dynamic(.data))
     "Please use {.fn to_time} or {.fn to_waves} to filter one moment at a time." else
-      "Please use {.fn to_simplex} or {.fn to_flat} to gather them first."
+      paste("Please use {.fn to_aggregated} to gather them first,",
+            "with {.code over = NULL} for parallel ties or {.code over = \"layer\"} for layers.")
   snet_warn("This network ties some pairs of nodes more than once,",
             "so {repeats} tie{?s} {?is/are} tested on {?its/their} own rather",
             "than as part of the bundle {?it makes/they make}.", advice)

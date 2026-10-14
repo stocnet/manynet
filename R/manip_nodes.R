@@ -151,7 +151,7 @@ delete_isolates.list <- function(.data) {
 delete_isolates.stocnet <- function(.data) {
   if(is.null(.data$nodes) || nrow(.data$nodes) == 0) return(.data)
   # A node tied at any wave is not an isolate, so changes count as well as ties
-  tied <- c(.data$ties$from, .data$ties$to)
+  tied <- c(.data$ties$from, .data$ties$to, unlist(.data$ties[["with"]]))
   if(!is.null(.data$changes) && nrow(.data$changes) > 0)
     tied <- c(tied, .data$changes$node)
   kept <- which(seq_len(nrow(.data$nodes)) %in% tied)
@@ -269,6 +269,10 @@ filter_nodes.stocnet <- function(.data, ..., .by = NULL){
 # so that every caller that drops nodes reindexes the same way.
 keep_nodes <- function(.data, kept){
   if(is.null(.data$nodes) || nrow(.data$nodes) == 0) return(.data)
+  # Where the nodes to keep were found in another class, which holds each
+  # hyperedge of a hypergraph as a node after the nodes themselves, those
+  # that point beyond the nodes are hyperedges and not nodes to keep.
+  kept <- kept[kept <= nrow(.data$nodes)]
 
   out_nodes <- .data$nodes[kept, , drop = FALSE]
 
@@ -486,6 +490,14 @@ delete_node_attribute.tbl_graph <- function(.data, attr_name){
 #' @export
 mutate <- tidygraph::mutate
 
+# A stocnet is not a tidygraph, so the verb is given a method of its own.
+# The nodes are what it changes, as they are what a tidygraph has active
+# unless told otherwise.
+#' @exportS3Method dplyr::mutate
+mutate.stocnet <- function(.data, ...){
+  mutate_nodes(.data, ...)
+}
+
 #' @rdname manip_nodes_attr
 #' @importFrom tidygraph mutate
 #' @export
@@ -520,6 +532,10 @@ mutate_nodes.stocnet <- function(.data, ...){
     out <- .data
     out$nodes <- out$nodes |> 
       dplyr::mutate(...)
+    # A stocnet labels its nodes in 'label', where other classes use 'name',
+    # so nodes that are named as theirs are, are labelled.
+    if ("name" %in% names(out$nodes) && !"label" %in% names(out$nodes))
+      out$nodes <- dplyr::rename(out$nodes, label = "name")
     out
   })
 }
@@ -671,7 +687,7 @@ join_nodes.stocnet <- function(.data, object2, .by = NULL,
                                  join_type = c("full","left", "right", "inner")){
   join_type <- match.arg(join_type)
   out <- .data
-  if(inherits(object2, "stocnet")) nodelist <- as_nodelist(object2) else
+  if(inherits(object2, "stocnet")) nodelist <- object2$nodes else
     nodelist <- object2
   if(is.null(.data$nodes) && net_nodes(.data) == nrow(nodelist)) 
     return(make_stocnet(info = .data$info, nodes = nodelist, ties = .data$ties, 

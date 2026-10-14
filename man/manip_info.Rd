@@ -30,6 +30,8 @@ net_attributes(.data)
 \item "modes" is the name(s) of the nodeset(s)
 \item "layers" is the name(s) of the tie type(s)
 \item "directed" is a logical vector indicating whether each layer is directed
+\item "signed" is a logical vector indicating whether each layer is signed,
+which \code{to_signed()} sets and \code{to_unsigned()} removes
 \item "source" is the source of the network ("empirical" or "synthetic")
 \item "method" is the method of data collection or model used
 (e.g. "survey", "interview","sensor","observation","archival", or "simulation")
@@ -89,11 +91,12 @@ It holds a named list, one element for each of them:
 \itemize{
 \item "symmetrisation" (GRAND 4.1), which \code{to_undirected()} sets.
 \item "dichotomisation" (4.2), which \code{to_unweighted()} sets.
-\item "projection" (4.3), which \code{to_mode1()} and \code{to_mode2()} set.
+\item "projection" (4.3), which \code{to_mode1()}, \code{to_mode2()}, and
+\code{to_concepts()} set.
 \item "exclusion" (4.4), which the functions that drop nodes or ties set,
 such as \code{delete_isolates()}, \code{to_component()}, and \code{to_uniplex()}.
-\item "aggregation" (4.5), which \code{to_flat()}, \code{join_ties()},
-and \code{to_blockmodel()} set.
+\item "aggregation" (4.5), which \code{to_aggregated()}, \code{to_flat()},
+\code{join_ties()}, and \code{to_blockmodel()} set.
 \item "imputation" (4.6), which \code{impute_ties()} and \code{impute_nodes()} set.
 }
 
@@ -102,6 +105,8 @@ The guidelines do not name it, since rescaling tie values neither
 dichotomises them (4.2 ends in an unweighted network)
 nor aggregates them (4.5 combines what was separate),
 but it changes the analytic network and so is recorded too.
+Nor do they name "disaggregation", which \code{to_disaggregated()} sets
+where it turns tie weights back into that many parallel ties.
 
 A name that is absent means that transformation was not applied,
 so \code{"symmetrisation" \%in\% names(as_infolist(.data)$transformations)}

@@ -143,8 +143,16 @@ test_that("as_network converts correctly",{
   expect_s3_class(as_network(mat1), "network")
   expect_s3_class(as_network(ison_southern_women), "network")
   expect_equal(as_network(as_network(data2)), as_network(data2))
-  expect_equal(as_network(as_igraph(ison_southern_women)),
-               as_network(ison_southern_women))
+  # The two routes build the edge list in different orders, which a 'network'
+  # object records but which says nothing about the network, so what the two
+  # agree on is compared rather than the objects themselves.
+  via <- as_network(as_igraph(ison_southern_women))
+  direct <- as_network(ison_southern_women)
+  expect_equal(as_matrix(via), as_matrix(direct))
+  expect_equal(sort(network::list.network.attributes(via)),
+               sort(network::list.network.attributes(direct)))
+  expect_equal(sort(network::list.vertex.attributes(via)),
+               sort(network::list.vertex.attributes(direct)))
   expect_equal(igraph::vcount(as_igraph(as_network(dplyr::as_tibble(data2)))),
                igraph::vcount(as_igraph(as_network(data2))))
   expect_equal(is_directed(ison_southern_women),
@@ -652,6 +660,13 @@ test_that("an array of more than three dimensions is refused", {
   expect_error(as_stocnet(array(0, dim = c(2, 2, 2, 2))), "4 dimensions")
 })
 
+test_that("an array warns of a wave that holds no ties", {
+  # Such a wave cannot be recorded, which is said rather than hidden
+  lull <- array(0, dim = c(3, 3, 2))
+  lull[1, 2, 1] <- 1
+  expect_warning(as_stocnet(lull, attribute = "time"), "no ties")
+})
+
 test_that("an array in which nobody reported a tie stays an array of reports", {
   nodes <- c("A", "B", "C")
   empty <- array(0, dim = c(3, 3, 3), dimnames = list(nodes, nodes, nodes))
@@ -760,4 +775,169 @@ test_that("each layer's own design decides what a silent node misses", {
   expect_equal(back$nodes$na, mixed$nodes$na)
   expect_null(back$missings)
   expect_equal(nrow(as_missinglist(back)), nrow(missing))
+})
+
+test_that("from_reporters joins reports as the array route reads them", {
+  arr <- css_array()
+  reports <- lapply(seq_len(4), function(o) as_stocnet(arr[, , o]))
+  names(reports) <- dimnames(arr)[[3]]
+  css <- from_reporters(reports)
+  expect_true(is_cognitive(css))
+  # reports built on their own may be undirected, but the join is directed
+  expect_equal(as_matrix(css), arr)
+  direct <- as_stocnet(arr, attribute = "by")
+  sorted <- function(x) x$ties[do.call(order, x$ties), ]
+  expect_equal(sorted(css), sorted(direct), ignore_attr = TRUE)
+  expect_equal(css$nodes, direct$nodes)
+  # each class of report is joined into that class
+  expect_s3_class(from_reporters(lapply(reports, as_igraph)), "igraph")
+  expect_equal(from_reporters(lapply(setNames(seq_len(4), dimnames(arr)[[3]]),
+                                     function(o) arr[, , o])), arr)
+  expect_error(from_reporters(list(Z = reports[[1]])), "do not name nodes")
+})
+
+# Directed two-mode networks (#157) --------------------------------------------
+
+test_that("ison_southern_women is undirected in every class", {
+  sw <- ison_southern_women
+  for (x in list(sw, as_igraph(sw), as_tidygraph(sw), as_network(sw),
+                 as_matrix(sw), as_edgelist(sw)))
+    expect_false(is_directed(x))
+})
+
+test_that("a directed two-mode network keeps its direction across classes", {
+  d <- suppressMessages(to_directed(ison_southern_women))
+  expect_true(is_directed(d))
+  expect_true(is_twomode(d))
+  for (cl in c("as_igraph", "as_tidygraph", "as_network", "as_stocnet")) {
+    x <- get(cl)(d)
+    expect_true(is_directed(x), label = cl)
+    expect_true(is_twomode(x), label = cl)
+    expect_equal(as.numeric(net_ties(x)), 89, label = cl)
+  }
+  back <- as_igraph(as_network(as_igraph(d)))
+  expect_true(igraph::is_directed(back))
+  expect_true(is_directed(as_stocnet(as_network(d))))
+})
+
+test_that("a two-mode matrix or one-way edgelist cannot record direction", {
+  d <- suppressMessages(to_directed(ison_southern_women))
+  expect_false(is_directed(as_matrix(d)))
+  expect_false(is_directed(as_edgelist(d)))
+})
+
+test_that("to_directed orients two-mode ties from the first mode", {
+  d <- suppressMessages(to_directed(ison_southern_women))
+  el <- as_edgelist(d)
+  mode <- node_is_mode(d)
+  labels <- node_names(d)
+  expect_true(all(!mode[match(el$from, labels)] & mode[match(el$to, labels)]))
+  el <- as_edgelist(to_redirected(d))
+  expect_true(all(mode[match(el$from, labels)] & !mode[match(el$to, labels)]))
+})
+
+test_that("the laterals are undirected two-mode networks", {
+  for (net in ison_laterals) {
+    expect_true(is_twomode(net))
+    expect_false(is_directed(net))
+    expect_false(is_directed(as_network(net)))
+  }
+})
+
+# Node vectors into dyadic matrices (#161) --------------------------------------
+
+test_that("as_matrix compares the values of a node measure", {
+  net <- add_node_attribute(create_ring(4), "name", LETTERS[1:4])
+  x <- make_node_measure(c(1, 3, NA, 6), net)
+  expect_equal(as_matrix(x)["A", "D"], 5)
+  expect_equal(as_matrix(x, compare = "diff")["A", "D"], -5)
+  expect_equal(as_matrix(x, compare = "diff")["D", "A"], 5)
+  expect_equal(as_matrix(x, compare = "sender")["B", "D"], 3)
+  expect_equal(as_matrix(x, compare = "receiver")["B", "D"], 6)
+  expect_true(is.na(as_matrix(x)["A", "C"]))
+  expect_equal(unname(diag(as_matrix(x))), rep(0, 4))
+  expect_error(as_matrix(x, compare = "same"), "membership")
+})
+
+test_that("as_matrix compares the groups of a node membership", {
+  net <- add_node_attribute(create_ring(4), "name", LETTERS[1:4])
+  g <- make_node_member(c(1, 1, 2, 2), net)
+  expect_equal(unname(as_matrix(g)),
+               matrix(c(0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0), 4, 4))
+  expect_equal(unname(as_matrix(g, twomode = TRUE)),
+               matrix(c(1, 1, 0, 0, 0, 0, 1, 1), 4, 2))
+  expect_error(as_matrix(g, compare = "absdiff"), "same")
+})
+
+test_that("comparisons of a two-mode vector pair the first mode with the second", {
+  x <- make_node_measure(seq_len(32), ison_southern_women)
+  expect_equal(dim(as_matrix(x, compare = "sender")), c(18, 14))
+  expect_true(is_twomode(as_stocnet(x)))
+  # Modes of equal size give a square matrix, which is two-mode all the same
+  even <- create_lattice(c(4, 4))
+  y <- make_node_measure(seq_len(8), even)
+  expect_equal(dim(as_matrix(y)), c(4, 4))
+  expect_true(is_twomode(as_stocnet(y)))
+  expect_true(is_twomode(as_stocnet(y, compare = "sender")))
+  expect_true(is_twomode(as_stocnet(make_node_member(rep(1:2, 4), even))))
+})
+
+test_that("as_stocnet gives the direction that the comparison implies", {
+  net <- add_node_attribute(create_ring(4), "name", LETTERS[1:4])
+  expect_false(is_directed(as_stocnet(make_node_measure(c(1, 3, 2, 6), net))))
+  diffs <- as_stocnet(make_node_measure(c(1, 3, 2, 6), net), compare = "diff")
+  expect_true(is_directed(diffs))
+  expect_equal(as.numeric(net_ties(diffs)), 12)
+  # equal values would give a symmetric matrix, but a sender comparison is
+  # directed all the same
+  same <- as_stocnet(make_node_measure(c(2, 2, 2, 2), net), compare = "sender")
+  expect_true(is_directed(same))
+  expect_equal(as.numeric(net_ties(same)), 12)
+  expect_equal(as.numeric(net_ties(as_stocnet(make_node_member(c(1, 1, 2, 2),
+                                                               net)))), 2)
+})
+
+test_that("the comparisons agree with the matrices that migraph builds", {
+  # migraph's `ego()`, `alter()`, `same()`, and `dist()` terms build these
+  # matrices inline, and its regression then drops the diagonal
+  age <- node_attribute(ison_lawfirm, "age")
+  x <- make_node_measure(age, ison_lawfirm)
+  n <- length(age)
+  off <- !diag(n)
+  rows <- matrix(age, n, n)
+  cols <- matrix(age, n, n, byrow = TRUE)
+  expect_equal(unname(as_matrix(x, compare = "sender"))[off], rows[off])
+  expect_equal(unname(as_matrix(x, compare = "receiver"))[off], cols[off])
+  expect_equal(unname(as_matrix(x, compare = "absdiff"))[off],
+               abs(rows - cols)[off])
+  office <- node_attribute(ison_lawfirm, "office")
+  g <- make_node_member(office, ison_lawfirm)
+  rows <- matrix(office, n, n)
+  cols <- matrix(office, n, n, byrow = TRUE)
+  expect_equal(unname(as_matrix(g))[off], ((rows == cols) * 1)[off])
+})
+
+test_that("as_network() counts the modes of a stocnet listed out of order", {
+  # `add_nodes()` puts a node of the first mode after the second mode
+  sw <- add_nodes(ison_southern_women, 1, list(name = "Nobody", type = FALSE))
+  nw <- as_network(sw)
+  expect_equal(network::get.network.attribute(nw, "bipartite"), 19)
+  expect_equal(as_matrix(nw), as_matrix(sw))
+  expect_equal(net_ties(as_stocnet(nw)), net_ties(sw))
+})
+
+test_that("as_matrix() squares a two-mode 'stocnet' where asked", {
+  sw <- ison_southern_women
+  n <- net_nodes(sw)
+  # The default still reads the modes from the network itself
+  expect_equal(dim(as_matrix(sw)), c(18, 14))
+  expect_equal(dim(as_matrix(sw, twomode = TRUE)), c(18, 14))
+  # `twomode = FALSE` asks for both modes in one square matrix,
+  # as it does for an igraph, where `to_multilevel()` keeps the modes marked
+  square <- as_matrix(sw, twomode = FALSE)
+  expect_equal(dim(square), c(n, n))
+  expect_equal(square, as_matrix(as_igraph(sw), twomode = FALSE))
+  # A one-mode network is square either way
+  expect_equal(dim(as_matrix(ison_adolescents, twomode = FALSE)),
+               dim(as_matrix(ison_adolescents)))
 })

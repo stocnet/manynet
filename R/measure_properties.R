@@ -45,8 +45,9 @@ net_nodes.default <- function(.data){
 
 #' @export
 net_nodes.stocnet <- function(.data){
-  dplyr::coalesce(nrow(.data$nodes),
-                  length(unique(c(.data$ties$from, .data$ties$to))))
+  # a hyperedge names its nodes in 'with', and none in 'from' or 'to'
+  ends <- c(.data$ties$from, .data$ties$to, unlist(.data$ties[["with"]]))
+  dplyr::coalesce(nrow(.data$nodes), length(unique(ends[!is.na(ends)])))
 }
 
 #' @export
@@ -190,7 +191,7 @@ layer_ties.stocnet <- function(.data){
 # Counts ties per layer, aligned to `lnames`.
 # Only subdivides by the `type`/`layer` values when these correspond one-to-one
 # with the layer names; otherwise (e.g. a single curated layer name grouping
-# finer tie types, as in `fict_thrones`) returns the total tie count.
+# finer tie types) returns the total tie count.
 .layer_ties <- function(lnames, types, nt){
   if(is.null(lnames) || is.null(types)) return(as.integer(nt))
   utypes <- unique(types)
@@ -278,13 +279,15 @@ mode_nodes.matrix <- function(.data){
 
 #' @export
 mode_nodes.igraph <- function(.data){
-  if(is_twomode(.data)){
+  # A 'lvl' attribute can name more than the two modes a 'type' attribute can,
+  # so it is read first where a network carries both, as `net_modes.igraph()`
+  # reads it. `to_multilevel()` writes 'lvl' beside 'type' rather than instead
+  # of it, so both are there whenever the levels have been written.
+  if("lvl" %in% igraph::vertex_attr_names(.data)){
+    .count_modes(igraph::vertex_attr(.data, "lvl"), mode_names(.data))
+  } else if(is_twomode(.data)){
     c(sum(!igraph::V(.data)$type),
       sum(igraph::V(.data)$type))
-  } else if("lvl" %in% igraph::vertex_attr_names(.data)){
-    # A 'lvl' attribute can name more than the two modes a 'type' attribute
-    # can, so each of its levels is counted here.
-    .count_modes(igraph::vertex_attr(.data, "lvl"), mode_names(.data))
   } else {
     igraph::vcount(.data)
   }
@@ -571,7 +574,10 @@ net_tie_attributes.igraph <- function(.data){
 
 #' @export
 net_tie_attributes.stocnet <- function(.data){
-  names(.data$ties)
+  # 'from' and 'to' say which nodes a tie is between, and are not attributes
+  # of it. The other reserved columns, such as 'weight' and 'time', are
+  # attributes that the tie has, and are reported as for other classes.
+  setdiff(names(.data$ties), c("from", "to"))
 }
 
 #' @export

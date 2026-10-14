@@ -6,6 +6,10 @@
 #'   These functions reformat manynet-consistent data.
 #' 
 #'   - `to_directed()` reformats undirected network data to a directed network.
+#'   In a one-mode network each tie is given a direction at random.
+#'   In a two-mode network every tie runs from the first mode to the second,
+#'   which `to_redirected()` reverses.
+#'   A two-mode matrix cannot record direction, so it stays as it is.
 #'   - `to_undirected()` reformats directed network data to an undirected network,
 #'   so that any pair of nodes with at least one directed edge will be
 #'   connected by an undirected edge in the new network.
@@ -52,10 +56,21 @@ to_directed.default <- function(.data){
 
 #' @export
 to_directed.igraph <- function(.data) {
-  if(!is_directed.igraph(.data)){
-    snet_info("Directions are assigned to existing ties at random.")
-    igraph::as_directed(.data, mode = "random")
-  } else .data
+  if(is_directed.igraph(.data)) return(.data)
+  if(is_twomode(.data)){
+    # The ties between two modes are directed one way, from the first mode to
+    # the second, as the directed two-mode networks collected in practice run.
+    # `to_redirected()` turns them all around.
+    out <- igraph::as_directed(.data, mode = "arbitrary")
+    type <- igraph::V(out)$type
+    el <- igraph::as_edgelist(out, names = FALSE)
+    back <- which(type[el[, 1]] & !type[el[, 2]])
+    if(length(back)) out <- igraph::reverse_edges(out, back)
+    snet_info("Ties are directed from the first mode to the second.")
+    return(out)
+  }
+  snet_info("Directions are assigned to existing ties at random.")
+  igraph::as_directed(.data, mode = "random")
 }
 
 #' @rdname modif_direction

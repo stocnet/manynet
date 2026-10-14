@@ -8,8 +8,7 @@
 \alias{as_infolist}
 \alias{as_globallist}
 \alias{as_missinglist}
-\alias{as_matrix}
-\title{Coercing into lists or matrices}
+\title{Coercing into lists}
 \usage{
 as_nodelist(.data)
 
@@ -22,8 +21,6 @@ as_infolist(.data)
 as_globallist(.data)
 
 as_missinglist(.data)
-
-as_matrix(.data, twomode = NULL)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -51,22 +48,20 @@ By default FALSE.}
 \value{
 The currently implemented coercions or translations are:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{               data.frame default diff_model igraph matrix network
-as_changelist           *                         *      *       *
-as_edgelist             *                         *      *       *
-as_globallist           *                         *      *       *
-as_infolist             *                         *      *       *
-as_matrix               *                  *      *      *       *
-as_missinglist          *       *                 *      *       *
-as_nodelist             *                         *      *       *
-               network.goldfish siena stocnet tbl_graph
-as_changelist                               *         *
-as_edgelist                   *     *       *         *
-as_globallist                               *          
-as_infolist                                 *         *
-as_matrix                     *     *       *         *
-as_missinglist                              *         *
-as_nodelist                                 *         *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{               data.frame default igraph matrix network network.goldfish siena
+as_changelist           *              *      *       *                       
+as_edgelist             *              *      *       *                *     *
+as_globallist           *              *      *       *                       
+as_infolist             *              *      *       *                       
+as_missinglist          *       *      *      *       *                       
+as_nodelist             *              *      *       *                       
+               stocnet tbl_graph
+as_changelist        *         *
+as_edgelist          *         *
+as_globallist        *          
+as_infolist          *         *
+as_missinglist       *         *
+as_nodelist          *         *
 }\if{html}{\out{</div>}}
 }
 \description{
@@ -81,24 +76,11 @@ and translating the information contained in the original object:
 as missing, as a tibble.
 \item \code{as_infolist()} coerces the object into a list of network-level information,
 such as the names of the nodes and ties, if not given in the nodelist or edgelist.
-\item \code{as_matrix()} coerces the object into an adjacency (one-mode/unipartite) or incidence (two-mode/bipartite) matrix.
-If the network is a cognitive social structure or an egocentric network
-(i.e. the edgelist contains a 'by' column naming who reported each tie),
-or a gossip network (with an 'about' column naming whom each tie is about),
-\code{as_matrix()} returns a three-dimensional array instead,
-with dimensions for senders, receivers, and reporters (or targets).
-Every node takes a row, a column, and a slice, in the order of the nodes,
-and a tie recorded as missing holds \code{NA}.
-Where such a network has several layers, a list of one array for each
-layer is returned.
-Where a network holds parallel ties, i.e. where \code{tie_is_parallel()} is TRUE
-for any tie, the cells of the matrix report how many ties join each pair
-of nodes, and so may be greater than one even where the network is
-neither weighted nor signed.
 }
 
-These coercions are extractive in the sense that they will lose any information that cannot be contained in the target format.
-for example, \code{as_matrix()} will lose any information about edge attributes, such as edge types or weights.
+These coercions are extractive in the sense that they will lose any
+information that cannot be contained in the target format.
+For coercion into a matrix, see \code{as_matrix()}.
 }
 \details{
 Edgelists are expected to be held in data.frame or tibble class objects.
@@ -110,12 +92,6 @@ strings/factors if the network is labelled.
 If the sets of senders and receivers overlap, a one-mode network is inferred.
 If the sets contain no overlap, a two-mode network is inferred.
 If a third, numeric column is present, a weighted network will be created.
-
-Matrices can be either adjacency (one-mode) or incidence (two-mode) matrices.
-Incidence matrices are typically inferred from unequal dimensions,
-but since in rare cases a matrix with equal dimensions may still
-be an incidence matrix, an additional argument \code{twomode} can be
-specified to override this heuristic.
 }
 \section{Missing ties}{
 
@@ -184,7 +160,6 @@ A matrix holds each as a missing cell.
 \examples{
 test <- data.frame(from = c("A","B","B","C","C"), to = c("I","G","I","G","H"))
 as_edgelist(test)
-as_matrix(test)
 as_igraph(test)
 as_tidygraph(test)
 as_network(test)
@@ -192,6 +167,7 @@ as_missinglist(ison_classmates)
 }
 \seealso{
 Other coercions:
-\code{\link{coerce_graph}}
+\code{\link{coerce_graph}},
+\code{\link{coerce_matrix}}
 }
 \concept{coercions}
