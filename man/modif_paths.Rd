@@ -6,7 +6,7 @@
 \alias{to_mentoring}
 \alias{to_tree}
 \alias{to_dominating}
-\alias{to_path}
+\alias{to_geodesic}
 \title{Modifying networks paths}
 \usage{
 to_matching(.data, mark = "type", capacities = NULL)
@@ -17,7 +17,7 @@ to_tree(.data)
 
 to_dominating(.data, from, direction = c("out", "in"))
 
-to_path(.data, from, to)
+to_geodesic(.data)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -56,8 +56,6 @@ described in Valente and Davis (1999).}
 \item{direction}{Character string, “out” bases the measure on outgoing ties,
 “in” on incoming ties, and "all" on either/the sum of the two.
 By default "all".}
-
-\item{to}{The index or name of the node at which the path should end.}
 }
 \value{
 An object of the same class as the function was given,
@@ -72,19 +70,18 @@ These functions return tidygraphs containing only special sets of ties:
 \item \code{to_tree()} returns the spanning tree in some network data or,
 if the data is unconnected, a forest of spanning trees.
 \item \code{to_dominating()} returns the dominating tree of the network.
-\item \code{to_path()} returns only the ties on the shortest paths between two nodes.
+\item \code{to_geodesic()} returns a network of the shortest path lengths between nodes.
 }
 }
 \details{
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame default igraph matrix network stocnet tbl_graph
-to_dominating                  *      *                                 
-to_matching            *       *      *      *       *                 *
-to_mentoring                   *      *                                 
-to_path                        *      *                      *         *
-to_tree                        *      *                                 
+\if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame default igraph matrix network tbl_graph
+to_dominating                  *      *                         
+to_matching            *       *      *      *       *         *
+to_mentoring                   *      *                         
+to_tree                        *      *                         
 }\if{html}{\out{</div>}}
 }
 \section{Matching}{
@@ -136,23 +133,37 @@ facility location, sensor placement, control theory applied to networks,
 and backbone selection in ad hoc wireless routing.
 }
 
-\section{Paths}{
+\section{Geodesics}{
 
-This function returns a network of all the nodes, with only the ties
-that lie on a shortest path from one node to another.
-Where several paths are equally short, the ties of all of them are kept,
-and where no path joins the two nodes, no tie is.
-A path is as long as the number of ties in it, whatever their weights.
+This function returns a weighted network of the same nodes,
+in which each tie is the length of the shortest path, or geodesic,
+from one node to another.
+A pair of nodes that no path joins has no tie,
+and so a matrix of the result holds 0 for it off the diagonal.
+Where the network is directed, a path follows the direction of its ties;
+use \code{to_undirected()} first for paths that do not.
+
+Where the network is signed, only its positive ties are paths.
+Where it is weighted, a stronger tie is a shorter step:
+each tie costs the mean tie weight divided by its own weight
+(Opsahl, Agneessens, and Skvoretz 2010), so that a tie of average weight
+is a step of one.
+The paths of a cognitive social structure are those of its locally
+aggregated structure, in which a tie is present where both of its nodes
+report it.
+A two-mode network returns the paths between all of its nodes,
+of either mode.
 
 In a hypergraph, a path runs from node to node through the hyperedges
-that they share, with no node or hyperedge visited twice (Berge 1973).
-Its length is the number of hyperedges in it,
-and the hyperedges on the shortest such paths are the ties returned.
+they share, and its length is the number of hyperedges it passes through
+(Berge 1973).
+The result is a network of the nodes alone, which is the same as the
+network of geodesics of the hypergraph's projection, \code{to_mode(.data, 1)}.
 }
 
 \examples{
 to_matching(ison_southern_women)
-to_path(ison_adolescents, "Betty", "Alice")
+to_geodesic(ison_adolescents)
 }
 \references{
 \subsection{On matching}{
@@ -204,7 +215,12 @@ Haynes, Teresa W., Stephen T. Hedetniemi, and Peter J. Slater. 1998.
 \emph{Fundamentals of Domination in Graphs}. CRC Press.
 }
 
-\subsection{On paths in hypergraphs}{
+\subsection{On geodesics}{
+
+Opsahl, Tore, Filip Agneessens, and John Skvoretz. 2010.
+"Node centrality in weighted networks: Generalizing degree and shortest paths".
+\emph{Social Networks} 32(3): 245-251.
+\doi{10.1016/j.socnet.2010.03.006}
 
 Berge, Claude. 1973.
 \emph{Graphs and Hypergraphs}. North-Holland.

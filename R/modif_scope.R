@@ -561,6 +561,17 @@ to_blockmodel <- function(.data, membership, FUN = mean) UseMethod("to_blockmode
 
 #' @export
 to_blockmodel.default <- function(.data, membership, FUN = mean){
+  # A hypergraph is blocked as the two-mode network of its nodes and its
+  # hyperedges, so the membership partitions both, the nodes first.
+  if(.holds_hyperedges(.data)){
+    size <- as.numeric(net_nodes(.data)) + as.numeric(net_ties(.data))
+    if(length(membership) != size)
+      snet_abort("{.arg membership} should be a single vector of length",
+                 "{size}, giving the partition of the {net_nodes(.data)}",
+                 "nodes and then of the {net_ties(.data)} hyperedges,",
+                 "but it is of length {length(membership)}.")
+    return(to_blockmodel(to_twomode(.data), membership, FUN))
+  }
   as_input(.data, to_blockmodel, membership, FUN)
 }
 

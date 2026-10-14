@@ -262,23 +262,14 @@ test_that("the counts of a hypergraph agree however they are taken", {
   expect_equal(unname(berge), unname(shared))
 })
 
-test_that("to_path() returns the ties on the shortest paths", {
-  path <- to_path(ison_adolescents, "Betty", "Alice")
-  expect_equal(as.numeric(net_ties(path)), 2)
-  expect_equal(as.numeric(net_nodes(path)),
-               as.numeric(net_nodes(ison_adolescents)))
-  ring <- to_path(create_ring(6), 1, 4)
-  expect_equal(as.numeric(net_ties(ring)), 6)
-  expect_equal(as.numeric(net_ties(to_path(create_ring(6, directed = TRUE),
-                                            1, 4))), 3)
-  expect_equal(as.numeric(net_ties(to_path(create_empty(3), 1, 2))), 0)
-  expect_error(to_path(create_ring(6), 1, 9), "not a node")
-  expect_error(to_path(create_ring(6), 1), "from.*to")
-  # in a hypergraph, the hyperedges on the shortest paths
-  h <- hyper_fixtures()$undirected
-  expect_equal(to_path(h, "A", "D")$ties$label, c("e1", "e2"))
-  expect_equal(to_path(h, "A", "B")$ties$label, "e1")
-  expect_equal(nrow(to_path(h, "A", "E")$ties), 0)
+test_that("a hypergraph is blocked and correlated as a two-mode network", {
+  h <- to_hypergraph(as_stocnet(ison_southern_women))
+  sw <- as_stocnet(ison_southern_women)
+  groups <- rep(1:2, length.out = 32)
+  expect_equal(as_matrix(to_blockmodel(h, groups)),
+               as_matrix(to_blockmodel(sw, groups)))
+  expect_error(to_blockmodel(h, rep(1:2, 9)), "18 nodes and then of the 14")
+  expect_equal(as_matrix(to_correlation(h)), as_matrix(to_correlation(sw)))
 })
 
 test_that("functions that need dyads say so of a hypergraph", {

@@ -310,6 +310,10 @@ to_correlation <- function(.data, method = NULL) UseMethod("to_correlation")
 
 #' @export
 to_correlation.default <- function(.data, method = NULL){
+  # a hypergraph is correlated as the two-mode network of its nodes and its
+  # hyperedges, which is how every class but a 'stocnet' holds it anyway
+  if(.holds_hyperedges(.data))
+    return(to_correlation(to_twomode(.data), method = method))
   # the method follows the format of the network, which a matrix of it does
   # not always show, as where no tie of a directed network is unreciprocated
   as_input(.data, to_correlation, method = method %||% .cor_method(.data))

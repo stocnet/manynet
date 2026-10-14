@@ -138,10 +138,12 @@
   - Keeps the hyperedges of a hypergraph that are not within another hyperedge
 - Improved `to_twomode()` to return a hypergraph as a two-mode network, for which it needs no `mark`
 - Improved `to_mode()`, `to_mode1()`, and `to_mode2()` to project a hypergraph onto its nodes or its hyperedges
-- Added `to_path()` to return only the ties on the shortest paths between two nodes
-  - Returns the hyperedges on the shortest paths through a hypergraph (Berge 1973)
+- Added `to_geodesic()` to return a network of the shortest path lengths between nodes (closes #183)
+  - A stronger tie is a shorter step where the network is weighted (Opsahl et al. 2010), and only positive ties are paths
+  - Returns the lengths of the paths through the hyperedges of a hypergraph (Berge 1973)
 - Fixed `to_ego()`, `to_component()`, `to_giant()`, and `to_simplex()` for a hypergraph
 - Fixed `to_backbone()` and `to_normalised()` to say that they need ties between two nodes
+- Fixed `to_blockmodel()` and `to_correlation()` to take a hypergraph as the two-mode network of its nodes and hyperedges
 - Fixed `from_layers()` to stack a 'stocnet' as it does other classes
   - Networks of different classes can be stacked, and are returned in the class of the first
   - Unlabelled networks of different sizes are stacked as sets of different nodes, with a warning that says so, where other classes stopped

@@ -10,13 +10,13 @@
 #'   - `to_tree()` returns the spanning tree in some network data or, 
 #'   if the data is unconnected, a forest of spanning trees.
 #'   - `to_dominating()` returns the dominating tree of the network.
-#'   - `to_path()` returns only the ties on the shortest paths between two nodes.
+#'   - `to_geodesic()` returns a network of the shortest path lengths between nodes.
 #' @details
 #'   Not all functions have methods available for all object classes.
 #'   Below are the currently implemented S3 methods:
 #'  
 #'   ```{r, echo = FALSE, comment=""}
-#'   available_methods(collect_functions("to_.*(match|mentor|tree|dominat|path)"))
+#'   available_methods(collect_functions("to_.*(match|mentor|tree|dominat|geodesic)"))
 #'   ```
 #' @template param_data
 #' @template fam_modif
@@ -326,100 +326,104 @@ to_dominating.igraph <- function(.data, from, direction = c("out","in")) {
 }
 
 #' @rdname modif_paths
-#' @section Paths:
-#'   This function returns a network of all the nodes, with only the ties
-#'   that lie on a shortest path from one node to another.
-#'   Where several paths are equally short, the ties of all of them are kept,
-#'   and where no path joins the two nodes, no tie is.
-#'   A path is as long as the number of ties in it, whatever their weights.
+#' @section Geodesics:
+#'   This function returns a weighted network of the same nodes,
+#'   in which each tie is the length of the shortest path, or geodesic,
+#'   from one node to another.
+#'   A pair of nodes that no path joins has no tie,
+#'   and so a matrix of the result holds 0 for it off the diagonal.
+#'   Where the network is directed, a path follows the direction of its ties;
+#'   use `to_undirected()` first for paths that do not.
+#'
+#'   Where the network is signed, only its positive ties are paths.
+#'   Where it is weighted, a stronger tie is a shorter step:
+#'   each tie costs the mean tie weight divided by its own weight
+#'   (Opsahl, Agneessens, and Skvoretz 2010), so that a tie of average weight
+#'   is a step of one.
+#'   The paths of a cognitive social structure are those of its locally
+#'   aggregated structure, in which a tie is present where both of its nodes
+#'   report it.
+#'   A two-mode network returns the paths between all of its nodes,
+#'   of either mode.
 #'
 #'   In a hypergraph, a path runs from node to node through the hyperedges
-#'   that they share, with no node or hyperedge visited twice (Berge 1973).
-#'   Its length is the number of hyperedges in it,
-#'   and the hyperedges on the shortest such paths are the ties returned.
+#'   they share, and its length is the number of hyperedges it passes through
+#'   (Berge 1973).
+#'   The result is a network of the nodes alone, which is the same as the
+#'   network of geodesics of the hypergraph's projection, `to_mode(.data, 1)`.
 #' @references
-#' ## On paths in hypergraphs
+#' ## On geodesics
+#' Opsahl, Tore, Filip Agneessens, and John Skvoretz. 2010.
+#' "Node centrality in weighted networks: Generalizing degree and shortest paths".
+#' _Social Networks_ 32(3): 245-251.
+#' \doi{10.1016/j.socnet.2010.03.006}
+#'
 #' Berge, Claude. 1973.
 #' _Graphs and Hypergraphs_. North-Holland.
-#' @param to The index or name of the node at which the path should end.
 #' @examples
-#' to_path(ison_adolescents, "Betty", "Alice")
+#' to_geodesic(ison_adolescents)
 #' @export
-to_path <- function(.data, from, to) UseMethod("to_path")
+to_geodesic <- function(.data) UseMethod("to_geodesic")
 
 #' @export
-to_path.default <- function(.data, from, to){
-  as_input(.data, to_path, from = from, to = to)
-}
-
-#' @export
-to_path.igraph <- function(.data, from, to) {
-  ends <- .path_ends(.data, from, to)
-  on <- .on_shortest_paths(.data, ends[1], ends[2])
-  out <- igraph::delete_edges(.data, which(!on$ties))
-  .record_exclusion(out, .data, "not on a shortest path", "ties")
+to_geodesic.default <- function(.data){
+  as_input(.data, to_geodesic)
 }
 
 #' @export
-to_path.tbl_graph <- function(.data, from, to) {
-  as_tidygraph(to_path(as_igraph(.data), from, to))
+to_geodesic.igraph <- function(.data) {
+  if(is_cognitive(.data))
+    .data <- to_aggregated(.data, over = "by", rule = "min", reporters = "both")
+  graph <- to_onemode(to_positive(.data))
+  lengths <- .geodesic_lengths(graph)
+  out <- .geodesic_network(graph, lengths)
+  .record_transformation(out, "projection", "geodesic distances")
 }
 
 #' @export
-to_path.stocnet <- function(.data, from, to) {
-  if(!is_hypergraph(.data))
-    return(as_stocnet(to_path(as_igraph(.data), from, to)))
-  # A path through a hypergraph is a path through its nodes and hyperedges in
-  # turn, so the hyperedges on a shortest one are found where each hyperedge is
-  # a node itself. The nodes keep their positions there.
-  ends <- .path_ends(.data, from, to)
-  graph <- as_igraph(.hyper_to_twomode(.data))
-  on <- .on_shortest_paths(graph, ends[1], ends[2])
-  hyper <- .hyper_rows(.data$ties)
-  kept <- rep(FALSE, nrow(.data$ties))
-  kept[hyper] <- on$nodes[net_nodes(.data) + seq_len(sum(hyper))]
-  # a dyad of a network that also has hyperedges is on a path as any tie is
-  dyads <- .data$ties[!hyper, , drop = FALSE]
-  kept[!hyper] <- on$out[dyads$from] + 1 + on$back[dyads$to] == on$length |
-    (!is_directed(.data) &
-       on$out[dyads$to] + 1 + on$back[dyads$from] == on$length)
-  out <- .data
-  out$ties <- out$ties[kept, , drop = FALSE]
-  .record_exclusion(out, .data, "not on a shortest path", "ties")
+to_geodesic.tbl_graph <- function(.data) {
+  as_tidygraph(to_geodesic(as_igraph(.data)))
 }
 
-# The two ends of a path as positions among the nodes, however they are named.
-.path_ends <- function(.data, from, to){
-  if(missing(from) || missing(to))
-    snet_abort("{.fun to_path} needs the nodes that the paths run",
-               "{.arg from} and {.arg to}.")
-  find <- function(node, arg){
-    if(length(node) != 1)
-      snet_abort("{.arg {arg}} must be one node, as an index or a name.")
-    out <- if(is.character(node)) match(node, node_labels(.data)) else
-      as.integer(node)
-    if(is.na(out) || out < 1 || out > as.numeric(net_nodes(.data)))
-      snet_abort("{.arg {arg}} is {.val {node}}, which is not a node of this",
-                 "network.")
-    out
-  }
-  c(find(from, "from"), find(to, "to"))
+#' @export
+to_geodesic.stocnet <- function(.data) {
+  if(!is_hypergraph(.data)) return(as_stocnet(to_geodesic(as_igraph(.data))))
+  # A path through a hypergraph steps from a node to a hyperedge and on to
+  # another node, so its length is half that of the path where each
+  # hyperedge is a node itself. Only the nodes are kept.
+  n <- as.numeric(net_nodes(.data))
+  graph <- as_igraph(to_twomode(.data))
+  lengths <- igraph::distances(graph, v = seq_len(n), to = seq_len(n),
+                               mode = if(.hyper_directed(.data)) "out" else
+                                 "all", weights = NA) / 2
+  nodes <- igraph::delete_vertices(graph, n + seq_len(igraph::vcount(graph) - n))
+  nodes <- to_onemode(nodes)
+  out <- as_stocnet(.geodesic_network(nodes, lengths))
+  .record_transformation(out, "projection", "geodesic distances")
 }
 
-# Which ties and which nodes lie on a shortest path between two nodes. A tie
-# does where the distance to its start, the tie itself, and the distance from
-# its end add up to the distance between the two nodes.
-.on_shortest_paths <- function(graph, from, to){
-  out <- igraph::distances(graph, v = from, mode = "out", weights = NA)[1, ]
-  back <- igraph::distances(graph, v = to, mode = "in", weights = NA)[1, ]
-  length <- out[to]
-  ends <- igraph::as_edgelist(graph, names = FALSE)
-  # with no path between them, no tie can add up to the distance
-  if(!is.finite(length)) length <- -1
-  ties <- out[ends[, 1]] + 1 + back[ends[, 2]] == length
-  if(!igraph::is_directed(graph))
-    ties <- ties | out[ends[, 2]] + 1 + back[ends[, 1]] == length
-  list(ties = unname(ties), nodes = unname(out + back == length),
-       out = unname(out), back = unname(back), length = unname(length))
+# The length of the shortest path between each pair of nodes, following the
+# direction of the ties where they have one, and with a stronger tie a
+# shorter step where they are weighted.
+.geodesic_lengths <- function(graph){
+  weights <- if(is_weighted(graph)){
+    w <- igraph::E(graph)$weight
+    mean(w) / w
+  } else NA
+  igraph::distances(graph, mode = if(igraph::is_directed(graph)) "out" else
+    "all", weights = weights)
 }
 
+# A network of the same nodes, with a tie weighted by its length for each
+# pair of nodes that a path joins, once for each pair where the network is
+# undirected.
+.geodesic_network <- function(graph, lengths){
+  directed <- igraph::is_directed(graph)
+  pairs <- which(is.finite(lengths) & lengths > 0, arr.ind = TRUE)
+  if(!directed) pairs <- pairs[pairs[, 1] < pairs[, 2], , drop = FALSE]
+  pairs <- pairs[order(pairs[, 1], pairs[, 2]), , drop = FALSE]
+  out <- igraph::delete_edges(graph, igraph::E(graph))
+  for(attr in igraph::edge_attr_names(out))
+    out <- igraph::delete_edge_attr(out, attr)
+  igraph::add_edges(out, t(pairs), weight = lengths[pairs])
+}
