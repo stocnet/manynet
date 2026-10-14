@@ -3,14 +3,22 @@
 to_anti() reformats network data into its complement, where only ties not present in the original network
 are included in the new network.
 to_simplex() reformats complex network data, containing loops, to simplex network data, without any loops.
+Parallel ties are kept, since a second tie between two nodes is not a
+loop; tie_is_parallel() marks them.
 to_uniplex() reformats multiplex network data to a single type of tie.
 to_layer() is an alias, using the layer-based vocabulary of
 layer_names(), net_layers(), and to_layers().
 Use to_layers() to split a network into all of its layers at once.
-to_flat() reduces multiplex network data to a single relation by
-combining the values of all its layers, dyad by dyad, according to a rule.
+to_aggregated() combines the ties of a network that differ only in
+one tie column, dyad by dyad, according to a rule:
+its layers, the reports of its reporters, the gossip about each target,
+or its moments. It can also combine parallel ties.
 Where to_uniplex() selects one layer and discards the rest,
-to_flat() retains what every layer records.
+to_aggregated() retains what every layer records.
+to_flat() is an alias that combines layers, and takes the rule as
+its second argument.
+to_disaggregated() turns tie weights back into that many parallel
+ties, reversing to_aggregated(over = NULL, rule = &quot;sum&quot;).
 
 
 If the format condition is not met,
@@ -37,7 +45,7 @@ only transforming these objects' properties."><meta property="og:image" content=
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.0</span>
       </span>
     </div>
 
@@ -112,15 +120,23 @@ only transforming these objects' properties."><meta property="og:image" content=
     <div class="ref-description">
     <p>These functions reformat manynet-consistent data.</p><ul><li><p><code>to_anti()</code> reformats network data into its complement, where only ties <em>not</em> present in the original network
 are included in the new network.</p></li>
-<li><p><code>to_simplex()</code> reformats complex network data, containing loops, to simplex network data, without any loops.</p></li>
+<li><p><code>to_simplex()</code> reformats complex network data, containing loops, to simplex network data, without any loops.
+Parallel ties are kept, since a second tie between two nodes is not a
+loop; <code><a href="measure_attributes_ties.html">tie_is_parallel()</a></code> marks them.</p></li>
 <li><p><code>to_uniplex()</code> reformats multiplex network data to a single type of tie.
 <code>to_layer()</code> is an alias, using the layer-based vocabulary of
 <code><a href="member_names.html">layer_names()</a></code>, <code><a href="measure_dims.html">net_layers()</a></code>, and <code><a href="modif_split.html">to_layers()</a></code>.
 Use <code><a href="modif_split.html">to_layers()</a></code> to split a network into all of its layers at once.</p></li>
-<li><p><code>to_flat()</code> reduces multiplex network data to a single relation by
-combining the values of all its layers, dyad by dyad, according to a rule.
+<li><p><code>to_aggregated()</code> combines the ties of a network that differ only in
+one tie column, dyad by dyad, according to a rule:
+its layers, the reports of its reporters, the gossip about each target,
+or its moments. It can also combine parallel ties.
 Where <code>to_uniplex()</code> selects one layer and discards the rest,
-<code>to_flat()</code> retains what every layer records.</p></li>
+<code>to_aggregated()</code> retains what every layer records.
+<code>to_flat()</code> is an alias that combines layers, and takes the <code>rule</code> as
+its second argument.</p></li>
+<li><p><code>to_disaggregated()</code> turns tie weights back into that many parallel
+ties, reversing <code>to_aggregated(over = NULL, rule = "sum")</code>.</p></li>
 </ul><p>If the format condition is not met,
 for example <code><a href="modif_direction.html">to_undirected()</a></code> is used on a network that is already undirected,
 the network data is returned unaltered.
@@ -139,7 +155,20 @@ only transforming these objects' properties.</p>
 <span></span>
 <span><span class="fu">to_layer</span><span class="op">(</span><span class="va">.data</span>, <span class="va">layer</span>, <span class="va">tie</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">to_flat</span><span class="op">(</span><span class="va">.data</span>, rule <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"max"</span>, <span class="st">"min"</span>, <span class="st">"mean"</span>, <span class="st">"sum"</span>, <span class="st">"product"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">to_aggregated</span><span class="op">(</span></span>
+<span>  <span class="va">.data</span>,</span>
+<span>  over <span class="op">=</span> <span class="st">"layer"</span>,</span>
+<span>  rule <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"max"</span>, <span class="st">"min"</span>, <span class="st">"mean"</span>, <span class="st">"sum"</span>, <span class="st">"product"</span><span class="op">)</span>,</span>
+<span>  reporters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"all"</span>, <span class="st">"sender"</span>, <span class="st">"receiver"</span>, <span class="st">"both"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">to_flat</span><span class="op">(</span></span>
+<span>  <span class="va">.data</span>,</span>
+<span>  rule <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"max"</span>, <span class="st">"min"</span>, <span class="st">"mean"</span>, <span class="st">"sum"</span>, <span class="st">"product"</span><span class="op">)</span>,</span>
+<span>  over <span class="op">=</span> <span class="st">"layer"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">to_disaggregated</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -168,6 +197,21 @@ and is returned unchanged.</p></dd>
 <dd><p>Deprecated name for <code>layer</code>, retained for one version.</p></dd>
 
 
+<dt id="arg-over">over<a class="anchor" aria-label="anchor" href="#arg-over"></a></dt>
+<dd><p>The tie column over which ties are combined, one of
+the columns that <code><a href="coerce_graph.html">as_stocnet()</a></code> takes from the third dimension of an
+array:</p><ul><li><p>"layer" (the default) combines the layers of a multiplex network,</p></li>
+<li><p>"by" combines the reports of the reporters in a cognitive social
+structure,</p></li>
+<li><p>"about" combines the gossip about each target,</p></li>
+<li><p>"time" combines the moments of a longitudinal network.</p></li>
+</ul><p><code>NULL</code> combines only parallel ties, the ties that <code><a href="measure_attributes_ties.html">tie_is_parallel()</a></code>
+marks. <code>to_disaggregated()</code> reverses this where <code>rule = "sum"</code>.</p>
+<p>Each tie counts by its weight, or by its sign where it has no weight,
+and otherwise as 1. Signed values can cancel one another out,
+and a combined value of zero is no tie.</p></dd>
+
+
 <dt id="arg-rule">rule<a class="anchor" aria-label="anchor" href="#arg-rule"></a></dt>
 <dd><p>How the networks' tie values are reconciled into a single value
 per dyad. A dyad tied in only one of the networks counts as untied in the
@@ -185,6 +229,16 @@ network records one, and strong ties are rewarded disproportionately.</p></li>
 unobserved in any of the networks is unobserved in the result.
 Use <code><a href="modif_miss.html">impute_ties()</a></code> first to state a different assumption.</p></dd>
 
+
+<dt id="arg-reporters">reporters<a class="anchor" aria-label="anchor" href="#arg-reporters"></a></dt>
+<dd><p>Which reports are combined where <code>over = "by"</code>:</p><ul><li><p>"all" (the default) combines the reports of every reporter.</p></li>
+<li><p>"sender" takes, for the tie from i to j, the report of i.</p></li>
+<li><p>"receiver" takes, for the tie from i to j, the report of j.</p></li>
+<li><p>"both" combines the reports of i and j by the <code>rule</code>.
+With <code>rule = "min"</code> this is the intersection locally aggregated structure
+of Krackhardt (1987), and with <code>rule = "max"</code> it is the union one.</p></li>
+</ul></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -200,18 +254,65 @@ Below are the currently implemented S3 methods:</p>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="cf">for</span> generic <span class="st">'to_uniplex'</span></span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>Warning <span class="cf">in</span> utils<span class="sc">::</span><span class="fu">.S3methods</span>(f)<span class="sc">:</span> generic <span class="cf">function</span> <span class="st">'to_layer'</span> dispatches methods</span>
 <span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="cf">for</span> generic <span class="st">'to_uniplex'</span></span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>           data.frame default igraph matrix stocnet tbl_graph</span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>to_anti             <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>      <span class="er">*</span>                 <span class="er">*</span></span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>to_flat                     <span class="sc">*</span>                               <span class="er">*</span></span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>to_simplex          <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
-<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>to_uniplex                  <span class="dv">2</span>                               <span class="dv">2</span></span></code></pre><p></p></div>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>                 array data.frame default igraph matrix stocnet tbl_graph</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>to_aggregated        <span class="sc">*</span>                  <span class="er">*</span>                     <span class="er">*</span>         <span class="er">*</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>to_anti                         <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>      <span class="er">*</span>                 <span class="er">*</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>to_disaggregated                        <span class="sc">*</span>             <span class="er">*</span>       <span class="er">*</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>to_simplex                      <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>to_uniplex                              <span class="dv">2</span>                               <span class="dv">2</span></span></code></pre><p></p></div>
+    </div>
+    <div id="aggregating-reports">
+    <h2>Aggregating reports</h2>
+
+
+<p>Over reporters, "max" gives a tie where any reporter reports one,
+"min" where all of them do, "mean" the share of the reporters that do,
+and "sum" how many of them do.
+A consensus structure is therefore
+<code>to_aggregated(.data, over = "by", rule = "mean")</code> followed by
+<code>to_unweighted(threshold = 0.5)</code>.
+A reporter that did not report is left out of the reports that are
+combined, rather than making every tie missing, and a tie is missing
+only where none of the reporters it is pooled over reported it.
+Egocentric data has no roster that all the egos report on,
+so its reports cannot be combined.</p>
+    </div>
+    <div id="disaggregating">
+    <h2>Disaggregating</h2>
+
+
+<p><code>to_disaggregated()</code> turns each tie of weight w into w parallel ties,
+and so reverses <code>to_aggregated(over = NULL, rule = "sum")</code>.
+No other aggregation can be reversed, since the values it combined are
+not kept; <code><a href="modif_split.html">to_layers()</a></code>, <code><a href="modif_split.html">to_reporters()</a></code>, and <code><a href="modif_split.html">to_times()</a></code> split a
+network into its parts without losing them.
+The weights must be whole numbers.
+A negative weight becomes that many negative ties, held as weights of -1,
+which is how a signed network holds its signs.
+A matrix cannot hold parallel ties, so it is returned as it is.</p>
+    </div>
+    <div id="references">
+    <h2>References</h2>
+
+<div class="section">
+<h3 id="on-aggregating-cognitive-social-structures">On aggregating cognitive social structures<a class="anchor" aria-label="anchor" href="#on-aggregating-cognitive-social-structures"></a></h3>
+
+
+<p>Krackhardt, David. 1987.
+"Cognitive social structures".
+<em>Social Networks</em>, 9(2): 109-134.
+<a href="https://doi.org/10.1016/0378-8733%2887%2990009-8" class="external-link">doi:10.1016/0378-8733(87)90009-8</a></p>
+</div>
+
     </div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p>Other modifications:
 <code><a href="modif_backbone.html">modif_backbone</a></code>,
+<code><a href="modif_concepts.html">modif_concepts</a></code>,
 <code><a href="modif_direction.html">modif_direction</a></code>,
-<code><a href="modif_from.html">modif_from</a></code>,
+<code><a href="modif_from_parts.html">modif_from_parts</a></code>,
+<code><a href="modif_from_ternary.html">modif_from_ternary</a></code>,
 <code><a href="modif_labels.html">modif_labels</a></code>,
 <code><a href="modif_levels.html">modif_levels</a></code>,
 <code><a href="modif_miss.html">modif_miss</a></code>,
@@ -228,18 +329,18 @@ Below are the currently implemented S3 methods:</p>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">to_anti</span><span class="op">(</span><span class="va">ison_southern_women</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, two-mode network of 18 nodes and 14 nodes and 163 ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, two-mode network of 18 FALSEs and 14 TRUEs and 163 ties</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 32 × 2</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   type  name     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> FALSE Evelyn   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> FALSE Laura    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> FALSE Theresa  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> FALSE Brenda   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> FALSE Charlotte</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> FALSE Frances  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   label     mode </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Evelyn    FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Laura     FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Theresa   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Brenda    FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Charlotte FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Frances   FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 26 more rows</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
@@ -258,19 +359,21 @@ Below are the currently implemented S3 methods:</p>
 <span class="r-in"><span>  <span class="fu"><a href="manip_ties_attr.html">mutate_ties</a></span><span class="op">(</span>type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"friend"</span>, <span class="st">"enemy"</span><span class="op">)</span>, <span class="fl">10</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">to_uniplex</span><span class="op">(</span><span class="st">"friend"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Filled network</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────────</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A undirected network of 5 nodes and 5 friend ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A undirected network of 5 nodes and 7 friend ties</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 7 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     1     3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     2     3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     2     5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     3     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     1     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     2     3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     3     4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     3     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 1 more row</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span><span class="fu">to_flat</span><span class="op">(</span><span class="va">ison_florentine</span>, rule <span class="op">=</span> <span class="st">"sum"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">to_aggregated</span><span class="op">(</span><span class="va">ison_florentine</span>, rule <span class="op">=</span> <span class="st">"sum"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, weighted, undirected network of 16 nodes and 27 ties</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># Transformed by aggregation: layers (sum)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
@@ -297,6 +400,32 @@ Below are the currently implemented S3 methods:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     3     5      2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     3     6      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 21 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu">to_disaggregated</span><span class="op">(</span><span class="fu">to_aggregated</span><span class="op">(</span><span class="va">ison_koenigsberg</span>, over <span class="op">=</span> <span class="cn">NULL</span>, rule <span class="op">=</span> <span class="st">"sum"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Seven Bridges of Koenigsberg</span> <span style="color: #00BBBB;">──────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 4 landmasses and 7 bridge ties (4 parallel)</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># Transformed by aggregation and disaggregation</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   label      lat   lon</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Altstadt  54.7  20.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Kneiphof  54.7  20.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Lomse     54.7  20.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Vorstadt  54.7  20.5</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 7 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     1     2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     1     3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     2     3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     2     4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     2     4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 1 more row</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>

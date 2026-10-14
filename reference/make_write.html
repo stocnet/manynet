@@ -12,6 +12,10 @@ write_graphml() exports GraphML files.
 write_gml() exports GML files.
 write_gdf() exports GDF files.
 write_gexf() exports GEXF files, for example for use in Gephi.
+write_hif() exports a hypergraph as a Hypergraph Interchange Format
+(HIF) file, which the main hypergraph libraries read.
+write_geojson() exports a spatial network as a GeoJSON file,
+for example for use in a geographic information system.
 
 "><meta property="og:image" content="https://stocnet.github.io/manynet/logo.png"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -31,7 +35,7 @@ write_gexf() exports GEXF files, for example for use in Gephi.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.0</span>
       </span>
     </div>
 
@@ -116,6 +120,10 @@ file formats:</p><ul><li><p><code>write_matrix()</code> exports an adjacency mat
 <li><p><code>write_gml()</code> exports GML files.</p></li>
 <li><p><code>write_gdf()</code> exports GDF files.</p></li>
 <li><p><code>write_gexf()</code> exports GEXF files, for example for use in Gephi.</p></li>
+<li><p><code>write_hif()</code> exports a hypergraph as a Hypergraph Interchange Format
+(HIF) file, which the main hypergraph libraries read.</p></li>
+<li><p><code>write_geojson()</code> exports a spatial network as a GeoJSON file,
+for example for use in a geographic information system.</p></li>
 </ul></div>
 
     <div id="ref-usage">
@@ -137,7 +145,11 @@ file formats:</p><ul><li><p><code>write_matrix()</code> exports an adjacency mat
 <span></span>
 <span><span class="fu">write_gexf</span><span class="op">(</span><span class="va">.data</span>, <span class="va">filename</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">write_dynetml</span><span class="op">(</span><span class="va">.data</span>, <span class="va">filename</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">write_dynetml</span><span class="op">(</span><span class="va">.data</span>, <span class="va">filename</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">write_geojson</span><span class="op">(</span><span class="va">.data</span>, <span class="va">filename</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">write_hif</span><span class="op">(</span><span class="va">.data</span>, <span class="va">filename</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="source">
@@ -196,6 +208,19 @@ A colour named some other way, such as "red",
 is written as an ordinary attribute, which reads back unchanged.
 Node names are written as labels, since node ids are required by the format
 and so are written as positions in the network.</p>
+<p><code>write_hif()</code> writes a hypergraph in the Hypergraph Interchange Format.
+A network that is not a hypergraph is written as one,
+as <code><a href="modif_project.html">to_hypergraph()</a></code> reformats it.
+Nodes and hyperedges are identified by their labels where they have them,
+and otherwise by their positions.</p>
+<p><code>write_geojson()</code> writes a spatial network (see <code><a href="mark_format_node.html">is_spatial()</a></code>),
+with each node as a point and each tie as a line between two nodes,
+and with their attributes as the properties of those features.
+Since a network does not hold the shape of a tie, each line is straight.
+A height the nodes have, as 'z', 'elevation', 'altitude', or 'alt',
+is written as the third coordinate of their positions,
+and so is read back as 'z'.
+The direction of a tie is not written.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -204,12 +229,14 @@ and so are written as positions in the network.</p>
 <code><a href="make_collect.html">make_collect</a></code>,
 <code><a href="make_create.html">make_create</a></code>,
 <code><a href="make_ego.html">make_ego</a></code>,
+<code><a href="make_emails.html">make_emails</a></code>,
 <code><a href="make_explicit.html">make_explicit</a></code>,
+<code><a href="make_groups.html">make_groups</a></code>,
+<code><a href="make_growth.html">make_growth</a></code>,
 <code><a href="make_learning.html">make_learning</a></code>,
 <code><a href="make_play.html">make_play</a></code>,
 <code><a href="make_random.html">make_random</a></code>,
-<code><a href="make_read.html">make_read</a></code>,
-<code><a href="make_stochastic.html">make_stochastic</a></code></p></div>
+<code><a href="make_read.html">make_read</a></code></p></div>
     </div>
 
   </div>

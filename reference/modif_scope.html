@@ -16,6 +16,9 @@ moment, in whichever of the ways set out in the Time section it records
 time. to_wave() is an alias, using the wave-based vocabulary of
 net_waves() and to_waves(). For one network per moment, see
 to_times().
+to_reporter() scopes a cognitive social structure to the report of
+one of its reporters. For one network per reporter, see
+to_reporters().
 to_subgraph() scopes a network into a subgraph by filtering on some node-related logical statement.
 to_blockmodel() reduces a network to the ties between the blocks of a
 given partition membership vector.
@@ -38,7 +41,7 @@ given partition membership vector.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.0</span>
       </span>
     </div>
 
@@ -127,6 +130,9 @@ moment, in whichever of the ways set out in the Time section it records
 time. <code>to_wave()</code> is an alias, using the wave-based vocabulary of
 <code><a href="measure_dims.html">net_waves()</a></code> and <code><a href="modif_split.html">to_waves()</a></code>. For one network per moment, see
 <code><a href="modif_split.html">to_times()</a></code>.</p></li>
+<li><p><code>to_reporter()</code> scopes a cognitive social structure to the report of
+one of its reporters. For one network per reporter, see
+<code><a href="modif_split.html">to_reporters()</a></code>.</p></li>
 <li><p><code>to_subgraph()</code> scopes a network into a subgraph by filtering on some node-related logical statement.</p></li>
 <li><p><code>to_blockmodel()</code> reduces a network to the ties between the blocks of a
 given partition membership vector.</p></li>
@@ -138,6 +144,8 @@ given partition membership vector.</p></li>
 <span><span class="fu">to_time</span><span class="op">(</span><span class="va">.data</span>, time <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">to_wave</span><span class="op">(</span><span class="va">.data</span>, time <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">to_reporter</span><span class="op">(</span><span class="va">.data</span>, <span class="va">reporter</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">to_component</span><span class="op">(</span><span class="va">.data</span>, component <span class="op">=</span> <span class="fl">1</span>, connectivity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"weak"</span>, <span class="st">"strong"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -191,6 +199,11 @@ except in an interval network, which is defined between the moments it
 records as well as at them.</p></dd>
 
 
+<dt id="arg-reporter">reporter<a class="anchor" aria-label="anchor" href="#arg-reporter"></a></dt>
+<dd><p>Label or index of the node whose report on the network
+is to be retained, in a cognitive social structure.</p></dd>
+
+
 <dt id="arg-component">component<a class="anchor" aria-label="anchor" href="#arg-component"></a></dt>
 <dd><p>Which component to retain.
 By default 1, i.e. the largest (giant) component,
@@ -239,13 +252,14 @@ Functions that split a network return a list of such objects.</p>
     <h2>Details</h2>
     <p>Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>              data.frame default igraph matrix network stocnet tbl_graph</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>to_blockmodel          <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span>                 <span class="er">*</span></span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>to_component           <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>to_ego                         <span class="sc">*</span>      <span class="er">*</span>                      <span class="er">*</span>         <span class="er">*</span></span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>to_egos                <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>to_subgraph            <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>to_subgraphs                   <span class="sc">*</span>      <span class="er">*</span>              <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span></code></pre><p></p></div>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>              array data.frame default igraph matrix network stocnet tbl_graph</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>to_blockmodel                <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span>                 <span class="er">*</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>to_component                 <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>to_ego                               <span class="sc">*</span>      <span class="er">*</span>                      <span class="er">*</span>         <span class="er">*</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>to_egos                      <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>to_reporter       <span class="sc">*</span>                  <span class="er">*</span>                             <span class="er">*</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>to_subgraph                  <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>to_subgraphs                         <span class="sc">*</span>      <span class="er">*</span>              <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span></code></pre><p></p></div>
     </div>
     <div id="time">
     <h2>Time</h2>
@@ -302,8 +316,10 @@ in <code>{netrics}</code>.</p>
 many moments there are to ask for.</p>
 <p>Other modifications:
 <code><a href="modif_backbone.html">modif_backbone</a></code>,
+<code><a href="modif_concepts.html">modif_concepts</a></code>,
 <code><a href="modif_direction.html">modif_direction</a></code>,
-<code><a href="modif_from.html">modif_from</a></code>,
+<code><a href="modif_from_parts.html">modif_from_parts</a></code>,
+<code><a href="modif_from_ternary.html">modif_from_ternary</a></code>,
 <code><a href="modif_labels.html">modif_labels</a></code>,
 <code><a href="modif_levels.html">modif_levels</a></code>,
 <code><a href="modif_miss.html">modif_miss</a></code>,
@@ -353,12 +369,14 @@ many moments there are to ask for.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span>  <span class="co"># The ties an interval network held in a given year:</span></span></span>
 <span class="r-in"><span>  <span class="fu">to_time</span><span class="op">(</span><span class="va">irps_wwi</span>, <span class="fl">1901</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A dynamic, labelled, signed, undirected network of 6 nodes and 11 ties from</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;">1872 to 1918</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># World War I Protagonists</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A dynamic, labelled, signed, undirected network of 6 European major powers</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;">and 11 relationship ties from 1872 to 1918</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># Transformed by exclusion: not tied at time 1901 (9 ties excluded)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 1</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   name </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   label</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> GBR  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> FRA  </span>
@@ -369,14 +387,14 @@ many moments there are to ask for.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 11 × 5</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to  sign begin   end</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2    -<span style="color: #BB0000;">1</span>  <span style="text-decoration: underline;">1</span>872  <span style="text-decoration: underline;">1</span>904</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     1     3    -<span style="color: #BB0000;">1</span>  <span style="text-decoration: underline;">1</span>872  <span style="text-decoration: underline;">1</span>907</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     1     4    -<span style="color: #BB0000;">1</span>  <span style="text-decoration: underline;">1</span>872  <span style="text-decoration: underline;">1</span>918</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     2     4    -<span style="color: #BB0000;">1</span>  <span style="text-decoration: underline;">1</span>872  <span style="text-decoration: underline;">1</span>918</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     2     5    -<span style="color: #BB0000;">1</span>  <span style="text-decoration: underline;">1</span>872  <span style="text-decoration: underline;">1</span>918</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     4     5     1  <span style="text-decoration: underline;">1</span>872  <span style="text-decoration: underline;">1</span>918</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to weight begin   end</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2     -<span style="color: #BB0000;">1</span>  <span style="text-decoration: underline;">1</span>872  <span style="text-decoration: underline;">1</span>904</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     1     3     -<span style="color: #BB0000;">1</span>  <span style="text-decoration: underline;">1</span>872  <span style="text-decoration: underline;">1</span>907</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     1     4     -<span style="color: #BB0000;">1</span>  <span style="text-decoration: underline;">1</span>872  <span style="text-decoration: underline;">1</span>918</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     2     4     -<span style="color: #BB0000;">1</span>  <span style="text-decoration: underline;">1</span>872  <span style="text-decoration: underline;">1</span>918</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     2     5     -<span style="color: #BB0000;">1</span>  <span style="text-decoration: underline;">1</span>872  <span style="text-decoration: underline;">1</span>918</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     4     5      1  <span style="text-decoration: underline;">1</span>872  <span style="text-decoration: underline;">1</span>918</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 5 more rows</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span>  <span class="co"># The state an event network had accumulated to by a given day:</span></span></span>
@@ -410,13 +428,31 @@ many moments there are to ask for.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     5   343 2011-03-13      1 TRUE   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 443 more rows</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="va">css</span> <span class="op">&lt;-</span> <span class="fu"><a href="coerce_graph.html">as_stocnet</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="fl">27</span>, <span class="fl">1</span>, <span class="fl">0.5</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">3</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span>, attribute <span class="op">=</span> <span class="st">"by"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">to_reporter</span><span class="op">(</span><span class="va">css</span>, <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A complex, directed network of 3 nodes and 8 arcs</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># Transformed by exclusion: not reported by 2 (7 ties excluded)</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 8 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     2     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     3     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     1     2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     2     2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     3     2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span>  <span class="fu">to_component</span><span class="op">(</span><span class="va">fict_greys</span>, <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Component 2 of Grey's Anatomy</span> <span style="color: #00BBBB;">─────────────────────────────────────────────</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 6 nodes and 5 ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 6 characters and 5 hook-up ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># Transformed by exclusion: not in component 2 (47 nodes excluded)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 7</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   name            sex   race  birthyear position  season sign       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   label           sex   race  birthyear position  season sign       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Adele Webber    F     Black      <span style="text-decoration: underline;">1</span>949 Non-Staff      2 <span style="color: #949494;">"</span>Leo<span style="color: #949494;">"</span>      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Catherine Avery F     Other      <span style="text-decoration: underline;">1</span>950 Attending      8 <span style="color: #949494;">"</span>Capricorn<span style="color: #949494;">"</span></span>
@@ -437,11 +473,12 @@ many moments there are to ask for.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span>  <span class="fu">to_component</span><span class="op">(</span><span class="va">fict_greys</span>, <span class="st">"Miranda Bailey"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Component containing Miranda Bailey of Grey's Anatomy</span> <span style="color: #00BBBB;">─────────────────────</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 4 nodes and 3 ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 4 characters and 3 hook-up ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># Transformed by exclusion: not in the component containing Miranda Bailey</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 7</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   name           sex   race  birthyear position  season sign     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   label          sex   race  birthyear position  season sign     </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Miranda Bailey F     Black      <span style="text-decoration: underline;">1</span>969 Attending      1 Virgo    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Ben Warren     M     Black      <span style="text-decoration: underline;">1</span>972 Other          6 Aquarius </span>
@@ -458,11 +495,12 @@ many moments there are to ask for.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span>  <span class="fu">to_giant</span><span class="op">(</span><span class="va">fict_greys</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Giant component of Grey's Anatomy</span> <span style="color: #00BBBB;">─────────────────────────────────────────</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 40 nodes and 46 ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 40 characters and 46 hook-up ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># Transformed by exclusion: not in component 1 (13 nodes excluded)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 40 × 7</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   name               sex   race  birthyear position  season sign  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   label              sex   race  birthyear position  season sign  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Addison Montgomery F     White      <span style="text-decoration: underline;">1</span>967 Attending      1 Libra </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Teddy Altman       F     White      <span style="text-decoration: underline;">1</span>969 Attending      6 Pisces</span>

@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.0</span>
       </span>
     </div>
 
@@ -205,6 +205,8 @@ bundled in a package</label></li>
 describe its size and type</label></li>
 <li><label><input type="checkbox">  Coerce networks between classes
 with the <code>as_*()</code> functions</label></li>
+<li><label><input type="checkbox">  Ask other researchers for network
+data they have not published</label></li>
 <li><label><input type="checkbox">  Import network data from
 edgelists, nodelists, and other file formats</label></li>
 <li><label><input type="checkbox">  Export a network to work with it
@@ -645,7 +647,7 @@ edgelist?</p>
 <p><span class="callout-label"><strong>In brief</strong>:</span> The
 <code>as_*()</code> functions (<code><a href="../reference/coerce_graph.html">as_igraph()</a></code>,
 <code><a href="../reference/coerce_graph.html">as_tidygraph()</a></code>, <code><a href="../reference/coerce_graph.html">as_network()</a></code>,
-<code><a href="../reference/coerce_list.html">as_matrix()</a></code>, <code><a href="../reference/coerce_list.html">as_edgelist()</a></code>) coerce network
+<code><a href="../reference/coerce_matrix.html">as_matrix()</a></code>, <code><a href="../reference/coerce_list.html">as_edgelist()</a></code>) coerce network
 data from any compatible class into the named class, as losslessly as
 possible. Since all <a href="https://stocnet.github.io/manynet/">manynet</a> functions work on all
 compatible classes, you rarely <em>need</em> to coerce, but it is there
@@ -657,7 +659,8 @@ when another package expects a specific format.</p>
 <h2 id="external-data">External data<a class="anchor" aria-label="anchor" href="#external-data"></a>
 </h2>
 <p><span class="page-toc">On this page: <span class="page-toc-link" onclick="document.getElementById('section-external-finding-data').scrollIntoView({behavior:'auto',block:'start'});">Finding
-data</span> · <span class="page-toc-link" onclick="document.getElementById('section-importing-edgelists').scrollIntoView({behavior:'auto',block:'start'});">Importing
+data</span> · <span class="page-toc-link" onclick="document.getElementById('section-asking-for-data').scrollIntoView({behavior:'auto',block:'start'});">Asking
+for data</span> · <span class="page-toc-link" onclick="document.getElementById('section-importing-edgelists').scrollIntoView({behavior:'auto',block:'start'});">Importing
 edgelists</span> · <span class="page-toc-link" onclick="document.getElementById('section-exporting-edgelists').scrollIntoView({behavior:'auto',block:'start'});">Exporting
 edgelists</span> · <span class="page-toc-link" onclick="document.getElementById('section-importing-other-formats').scrollIntoView({behavior:'auto',block:'start'});">Importing
 other formats</span></span></p>
@@ -690,6 +693,79 @@ open standards, and still others keep data in a very standard edgelist
 (and perhaps nodelist) format in .csv files or similar. Fortunately,
 <a href="https://stocnet.github.io/manynet/">manynet</a> has functions to help with importing data from
 such formats too.</p>
+</div>
+<div class="section level3">
+<h3 id="asking-for-data">Asking for data<a class="anchor" aria-label="anchor" href="#asking-for-data"></a>
+</h3>
+<p>Not all network data is online, though. A great deal of it sits on
+researchers’ own computers, collected for a particular study and never
+deposited in a repository. If you come across a paper that analyses a
+network you would like to work with, it is usually worth asking the
+authors for it. Christian Kreibich’s <a href="https://medium.com/@ckreibich/how-to-ask-for-datasets-d5ef791cb38c" class="external-link">guide
+to asking for datasets</a> offers some good advice, adapted here for
+network data:</p>
+<ul>
+<li>
+<strong>Don’t be shy.</strong> Most researchers are glad that
+someone wants to use their data, and a polite request never hurts, even
+to a well-known name.</li>
+<li>
+<strong>Make your purpose clear.</strong> Explain what you plan to
+do with the data and how you intend to publish the results. Nobody wants
+to hand a hard-won dataset to someone unlikely to use it, whereas a
+clear project, or even an offer to collaborate, makes the request
+interesting.</li>
+<li>
+<strong>Do your homework, and be concrete.</strong> Name the exact
+paper, table, or figure, rather than “your recent paper”. For network
+data, say which network you mean: which nodes and ties, which wave or
+year, whether it is one-mode or two-mode, and whether you also need the
+nodal attributes. It also helps to ask for the codebook or
+questionnaire, since how the ties were elicited (e.g. from a roster or
+by free recall, with or without a cap on nominations) shapes what the
+network can tell you.</li>
+<li>
+<strong>Make your affiliation clear.</strong> Write from your
+institutional email address, and say which group you belong to and, if
+you are a student, who your supervisor is.</li>
+<li>
+<strong>Find the right point of contact.</strong> Start with the
+corresponding or first author, and write to one person at a time rather
+than to every author in parallel.</li>
+<li>
+<strong>Be respectful if the answer is no.</strong> Network data is
+often particularly sensitive: a tie describes at least two people, only
+one of whom may have reported it, and a node’s position in the network
+can identify them even once names are removed. The authors may want to
+share but be unable to, for legal or ethical reasons.</li>
+<li>
+<strong>Be responsible with what you receive.</strong> Do not try to
+de-anonymise the data, and do not pass it on without explicit
+permission; send anyone who asks you for it back to the original
+authors. If you think you have found an error in the data, check
+carefully and tell the authors first.</li>
+<li>
+<strong>Be grateful.</strong> Acknowledge and cite the people who
+shared the data in anything you publish, and send them a copy of your
+results.</li>
+</ul>
+<div class="callout">
+<p><span class="callout-label"><strong>Try it yourself</strong>:</span>
+This section includes an interactive quiz in the live tutorial — run
+<code>run_tute()</code> at the R console to try it.</p>
+</div>
+<div class="callout">
+<p><span class="callout-label"><strong>Going further</strong>:</span>
+Some network data you already hold yourself. Your own mailbox, for
+instance, records who wrote to whom and when. Export it to file from
+your email client (as an ‘mbox’ file, say), and
+<code><a href="../reference/make_emails.html">collect_emails()</a></code> will read the headers of each message,
+though never its subject or body, into a network of the addresses that
+wrote to one another. The same care applies, though: your correspondents
+did not ask to be data.</p>
+</div>
+<p>Whether you download it from a repository or receive it by email, the
+next step is to get the data into R.</p>
 </div>
 <div class="section level3">
 <h3 id="importing-edgelists">Importing edgelists<a class="anchor" aria-label="anchor" href="#importing-edgelists"></a>
@@ -840,40 +916,44 @@ Along the way, you have learned to use these functions:</p>
 <td>gather an ego network interactively at the console</td>
 </tr>
 <tr class="even">
+<td><code><a href="../reference/make_emails.html">collect_emails()</a></code></td>
+<td>gather a network of who writes to whom from an exported mailbox</td>
+</tr>
+<tr class="odd">
 <td>
 <code><a href="../reference/measure_dims.html">net_nodes()</a></code>, <code><a href="../reference/measure_dims.html">net_ties()</a></code>,
 <code><a href="../reference/measure_dims.html">mode_nodes()</a></code>
 </td>
 <td>count a network’s nodes, ties, and nodes per mode</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>
 <code><a href="../reference/measure_attributes_nodes.html">node_labels()</a></code>, <code><a href="../reference/member_names.html">net_node_attributes()</a></code>
 </td>
 <td>list node names and nodal attributes</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>
 <code><a href="../reference/mark_format_node.html">is_twomode()</a></code>, <code><a href="../reference/mark_format_tie.html">is_directed()</a></code>,
 <code><a href="../reference/mark_format_node.html">is_labelled()</a></code>, …</td>
 <td>TRUE/FALSE checks of network properties</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>
 <code><a href="../reference/coerce_graph.html">as_igraph()</a></code>, <code><a href="../reference/coerce_graph.html">as_tidygraph()</a></code>,
-<code><a href="../reference/coerce_graph.html">as_network()</a></code>, <code><a href="../reference/coerce_list.html">as_matrix()</a></code>,
+<code><a href="../reference/coerce_graph.html">as_network()</a></code>, <code><a href="../reference/coerce_matrix.html">as_matrix()</a></code>,
 <code><a href="../reference/coerce_list.html">as_edgelist()</a></code>
 </td>
 <td>coerce networks between classes</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>
 <code><a href="../reference/make_read.html">read_edgelist()</a></code>, <code><a href="../reference/make_read.html">read_nodelist()</a></code>,
 <code><a href="../reference/make_write.html">write_edgelist()</a></code>, <code><a href="../reference/make_write.html">write_nodelist()</a></code>
 </td>
 <td>import/export edgelists and nodelists</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>
 <code><a href="../reference/make_read.html">read_pajek()</a></code>, <code><a href="../reference/make_read.html">read_ucinet()</a></code>,
 <code><a href="../reference/make_read.html">read_graphml()</a></code>, <code><a href="../reference/make_read.html">read_dynetml()</a></code>, …</td>

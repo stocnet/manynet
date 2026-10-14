@@ -4,11 +4,14 @@ but include some element of randomisation.
 They are particularly useful for creating a distribution of networks
 for exploring or testing network properties.
 generate_random() generates a random network with ties appearing at some probability.
-generate_configuration() generates a random network consistent with a
-given degree distribution.
+generate_degree() generates a random network consistent with a
+given degree distribution, as the random counterpart of create_degree().
+generate_configuration() is an alias, since this is the configuration
+model.
 generate_man() generates a random network conditional on the dyad census
 of Mutual, Asymmetric, and Null dyads, respectively.
-generate_utilities() generates a random utility matrix.
+generate_utilities() generates the utility that each node finds in
+each other node, as a signed and weighted network.
 
 
 These functions can create either one-mode or two-mode networks.
@@ -36,7 +39,7 @@ and the number of modes, nodes, and directedness will be inferred."><meta proper
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.0</span>
       </span>
     </div>
 
@@ -113,11 +116,14 @@ and the number of modes, nodes, and directedness will be inferred."><meta proper
 but include some element of randomisation.
 They are particularly useful for creating a distribution of networks
 for exploring or testing network properties.</p><ul><li><p><code>generate_random()</code> generates a random network with ties appearing at some probability.</p></li>
-<li><p><code>generate_configuration()</code> generates a random network consistent with a
-given degree distribution.</p></li>
+<li><p><code>generate_degree()</code> generates a random network consistent with a
+given degree distribution, as the random counterpart of <code><a href="make_create.html">create_degree()</a></code>.
+<code>generate_configuration()</code> is an alias, since this is the configuration
+model.</p></li>
 <li><p><code>generate_man()</code> generates a random network conditional on the dyad census
 of Mutual, Asymmetric, and Null dyads, respectively.</p></li>
-<li><p><code>generate_utilities()</code> generates a random utility matrix.</p></li>
+<li><p><code>generate_utilities()</code> generates the utility that each node finds in
+each other node, as a signed and weighted network.</p></li>
 </ul><p>These functions can create either one-mode or two-mode networks.
 To create a one-mode network, pass the main argument <code>n</code> a single integer,
 indicating the number of nodes in the network.
@@ -131,11 +137,27 @@ and the number of modes, nodes, and directedness will be inferred.</p>
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">generate_random</span><span class="op">(</span><span class="va">n</span>, p <span class="op">=</span> <span class="fl">0.5</span>, directed <span class="op">=</span> <span class="cn">FALSE</span>, with_attr <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">generate_configuration</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
+<span><span class="fu">generate_degree</span><span class="op">(</span><span class="va">n</span>, p <span class="op">=</span> <span class="fl">1</span>, directed <span class="op">=</span> <span class="cn">FALSE</span>, outdegree <span class="op">=</span> <span class="cn">NULL</span>, indegree <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">generate_man</span><span class="op">(</span><span class="va">n</span>, man <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="fu">generate_configuration</span><span class="op">(</span></span>
+<span>  <span class="va">n</span>,</span>
+<span>  p <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  directed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  outdegree <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  indegree <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">generate_utilities</span><span class="op">(</span><span class="va">n</span>, steps <span class="op">=</span> <span class="fl">1</span>, volatility <span class="op">=</span> <span class="fl">0</span>, threshold <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">generate_man</span><span class="op">(</span><span class="va">n</span>, p <span class="op">=</span> <span class="cn">NULL</span>, directed <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">generate_utilities</span><span class="op">(</span></span>
+<span>  <span class="va">n</span>,</span>
+<span>  p <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  directed <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  form <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"normal"</span>, <span class="st">"uniform"</span>, <span class="st">"relative"</span><span class="op">)</span>,</span>
+<span>  steps <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  volatility <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>  inertia <span class="op">=</span> <span class="fl">0</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -153,12 +175,21 @@ a network of the same dimensions will be created.</p></li>
 
 
 <dt id="arg-p">p<a class="anchor" aria-label="anchor" href="#arg-p"></a></dt>
-<dd><p>Proportion of possible ties in the network that are realised or,
-if integer greater than 1, the number of ties in the network.</p></dd>
+<dd><p>The main probability of the model,
+which is what makes a network of it more or less random.
+It always follows <code>n</code>, and what it is the probability of depends on
+the model.
+For <code>generate_random()</code>, it is the proportion of possible ties in the network that are realised or, if an integer greater than 1, the number of ties in the network, by default 0.5. For <code>generate_degree()</code>, it is the share of the ties that are switched with one another, by default 1, so that 0 returns the network as it was. For <code>generate_man()</code>, it is a vector of three: the proportions of Mutual, Asymmetric, and Null dyads, which is inferred from <code>n</code> if that is a network and is otherwise <code>c(0.25, 0.5, 0.25)</code>. For <code>generate_utilities()</code>, it is the share of the utilities that are ties, by default 1.</p></dd>
 
 
 <dt id="arg-directed">directed<a class="anchor" aria-label="anchor" href="#arg-directed"></a></dt>
-<dd><p>Whether to generate network as directed. By default FALSE.</p></dd>
+<dd><p>Logical whether the network should be directed.
+By default <code>directed = FALSE</code>,
+but for the functions that the usage above shows another default for.
+A network given as <code>n</code> sets the direction instead.
+If the opposite direction is desired,
+use <code><a href="modif_direction.html">to_redirected()</a></code> on the output of these functions.
+In two-mode networks, the directed argument is ignored.</p></dd>
 
 
 <dt id="arg-with-attr">with_attr<a class="anchor" aria-label="anchor" href="#arg-with-attr"></a></dt>
@@ -167,65 +198,137 @@ should be retained.
 By default TRUE.</p></dd>
 
 
-<dt id="arg--data">.data<a class="anchor" aria-label="anchor" href="#arg--data"></a></dt>
-<dd><p>An object of a <code>{manynet}</code>-consistent class:</p><ul><li><p>adjacency or incidence <code>matrix</code> from <code>{base}</code> R</p></li>
-<li><p>edgelist <code>data.frame</code> from <code>{base}</code> R or <code>tbl/tbl_df</code> from <code>{tibble}</code></p></li>
-<li><p>stocnet <code>stocnet</code>, from the <code>{manynet}</code> package</p></li>
-<li><p>igraph <code>igraph</code>, from the <code>{igraph}</code> package</p></li>
-<li><p>network <code>network</code>, from the <code>{network}</code> package</p></li>
-<li><p>tidygraph <code>tbl_graph</code>, from the <code>{tidygraph}</code> package</p></li>
+<dt id="arg-outdegree">outdegree<a class="anchor" aria-label="anchor" href="#arg-outdegree"></a></dt>
+<dd><p>Numeric scalar or vector indicating the
+desired outdegree distribution.
+Note that a scalar (single number) will result in a k-regular graph.
+By default NULL.
+If <code>n</code> is an existing network object and the outdegree is not specified,
+then the outdegree distribution will be inferred from that of the network.
+If only the indegree is specified, then in one-mode networks the outdegree
+will mirror it, and in two-mode networks the same number of ties will be
+spread as evenly as possible across the nodes in the first mode.
+If neither is specified, the sparsest connected structure is created:
+a cycle in one-mode networks, and in two-mode networks one in which the
+larger mode is 1-regular.</p></dd>
+
+
+<dt id="arg-indegree">indegree<a class="anchor" aria-label="anchor" href="#arg-indegree"></a></dt>
+<dd><p>Numeric vector indicating the desired indegree distribution.
+By default NULL but not required unless a directed network is desired.
+If <code>n</code> is an existing directed network object and the indegree is not specified,
+then the indegree distribution will be inferred from that of the network.
+Otherwise it is filled in from the outdegree as described above.</p></dd>
+
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>Arguments under the names they had in earlier versions,
+which still work: <code>man</code> for <code>p</code> in <code>generate_man()</code>.</p></dd>
+
+
+<dt id="arg-form">form<a class="anchor" aria-label="anchor" href="#arg-form"></a></dt>
+<dd><p>How the utilities are distributed between -1 and 1.</p><ul><li><p>"normal" (the default) draws them from a normal distribution around 0,
+so that most nodes are close to indifferent about most others
+and only a few are much liked or much disliked.</p></li>
+<li><p>"uniform" draws every utility between -1 and 1 as likely as any other.</p></li>
+<li><p>"relative" draws them from a normal distribution and then divides each
+node's utilities by the largest of them, whether liked or disliked,
+so that each node's utilities are relative to the node it feels most
+strongly about.</p></li>
 </ul></dd>
 
 
-<dt id="arg-man">man<a class="anchor" aria-label="anchor" href="#arg-man"></a></dt>
-<dd><p>Vector of Mutual, Asymmetric, and Null dyads, respectively.
-These are treated as proportions, e.g. <code>c(0.25, 0.5, 0.25)</code>;
-counts such as <code>c(10,0,20)</code> are read as relative weights and normalised,
-so the dyad census is reproduced in expectation rather than exactly.
-Is inferred from <code>n</code> if it is an existing network object,
-and otherwise defaults to <code>c(0.25, 0.5, 0.25)</code>,
-which is the dyad distribution of a random (Erdős-Rényi) digraph
-in which each arc is present with probability 0.5.</p>
-<p>For two-mode networks, <code>man</code> is conditioned on the dyads between
-the modes.
-Since ties in two-mode networks are undirected,
-both mutual and asymmetric dyads are realised as a tie,
-so only their sum is consequential there.</p></dd>
-
-
 <dt id="arg-steps">steps<a class="anchor" aria-label="anchor" href="#arg-steps"></a></dt>
-<dd><p>Number of simulation steps to run.
-By default 1: a single, one-shot simulation.
-If more than 1, further iterations will update the utilities
-depending on the values of the volatility and threshold parameters.</p></dd>
+<dd><p>Number of moments at which to return the utilities.
+By default 1.
+If more than 1, the utilities change from each moment to the next
+by as much as <code>volatility</code> allows,
+and a longitudinal network with a wave for each moment is returned.</p></dd>
 
 
 <dt id="arg-volatility">volatility<a class="anchor" aria-label="anchor" href="#arg-volatility"></a></dt>
-<dd><p>How much change there is between steps.
-Only if volatility is more than 1 do further simulation steps make sense.
-This is passed on to <code><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">stats::rnorm</a></code> as the <code>sd</code> or standard deviation
-parameter.</p></dd>
+<dd><p>How much the utilities change between moments.
+At each step a new set of utilities is drawn as <code>form</code> describes,
+multiplied by <code>volatility</code>, and added to those there are.
+By default 0.1, so that a utility changes by a tenth of a new draw.</p></dd>
 
 
-<dt id="arg-threshold">threshold<a class="anchor" aria-label="anchor" href="#arg-threshold"></a></dt>
-<dd><p>This parameter can be used to mute or disregard stepwise
-changes in utility that are minor.
-The default 0 will recognise all changes in utility,
-but raising the threshold will mute any changes less than this threshold.</p></dd>
+<dt id="arg-inertia">inertia<a class="anchor" aria-label="anchor" href="#arg-inertia"></a></dt>
+<dd><p>The share of utilities that keep their value at each step,
+from 0 to 1.
+These are the utilities that would have changed the least,
+so that with some inertia utilities stay as they are until a change large
+enough comes along, rather than all drifting a little at every step.
+By default 0, so that every utility changes at every step.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>By default a <code>tbl_graph</code> object is returned,
-but this can be coerced into other types of objects
-using <code><a href="coerce_list.html">as_edgelist()</a></code>, <code><a href="coerce_list.html">as_matrix()</a></code>,
-<code><a href="coerce_graph.html">as_tidygraph()</a></code>, or <code><a href="coerce_graph.html">as_network()</a></code>.</p>
-<p>By default, all networks are created as undirected.
+    <p>A <code>stocnet</code> object is returned,
+which can be coerced into other types of objects
+using <code><a href="coerce_list.html">as_edgelist()</a></code>, <code><a href="coerce_matrix.html">as_matrix()</a></code>,
+<code><a href="coerce_graph.html">as_tidygraph()</a></code>, <code><a href="coerce_graph.html">as_igraph()</a></code>, or <code><a href="coerce_graph.html">as_network()</a></code>.
+<code><a href="make_create.html">create_ring()</a></code>, <code><a href="make_create.html">create_lattice()</a></code>,
+<code>generate_random()</code>, <code><a href="make_groups.html">generate_smallworld()</a></code>, and
+<code><a href="make_growth.html">generate_scalefree()</a></code> return a <code>tbl_graph</code> or <code>igraph</code> object for now,
+since the released versions of the packages built on this one expect
+one from them.</p>
+<p>By default, most networks are created as undirected.
 This can be overruled with the argument <code>directed = TRUE</code>.
 This will return a directed network in which the arcs are
 out-facing or equivalent.
 This direction can be swapped using <code><a href="modif_direction.html">to_redirected()</a></code>.
 In two-mode networks, the directed argument is ignored.</p>
+    </div>
+    <div id="details">
+    <h2>Details</h2>
+    <p><code>generate_degree()</code> keeps the degree of every node and is random
+in which nodes are tied.
+The degrees are those of the network given as <code>n</code>,
+or those given as <code>outdegree</code> and <code>indegree</code>, as for <code><a href="make_create.html">create_degree()</a></code>.
+It then switches the ends of pairs of ties, which changes who is tied to
+whom but not how many ties anyone has.
+With <code>p = 1</code>, the default, a network is drawn anew from those degrees.
+With a lower <code>p</code> only that share of the ties are switched,
+so that the result is in part the network it started from.</p>
+<p>For <code>generate_man()</code>, counts such as <code>p = c(10, 0, 20)</code> are read as
+relative weights and normalised,
+so the dyad census is reproduced in expectation rather than exactly.
+The default is the dyad distribution of a random (Erdős-Rényi) digraph
+in which each arc is present with probability 0.5.
+The network is directed unless there are no asymmetric dyads,
+as with <code>p = c(0.1, 0, 0.1)</code>, since it then has no direction to speak of.
+<code>directed</code> overrules this either way, and where an undirected network
+is asked for from asymmetric dyads, a dyad is tied where it would have
+been mutual or asymmetric.
+The same holds for two-mode networks, whose ties are undirected,
+so only the sum of the mutual and asymmetric dyads is consequential there.</p>
+<p>A utility is how much a node gains or loses from a tie to another node,
+from -1 for the most it could lose to 1 for the most it could gain.
+<code>generate_utilities()</code> returns these as the weights of a signed network.
+In a one-mode network every node has a utility for every other node.
+In a two-mode network each node of the first mode has a utility for
+each node of the second mode.</p>
+<p>Utilities say what ties nodes would like, not what ties there are,
+so they can serve as the basis for a model of how ties come about.
+The examples show two such models.
+Where a node can tie to another without its consent,
+the ties are the positive utilities.
+Where a tie needs the consent of both nodes,
+the ties are those where the lower of the two utilities is positive.</p>
+<p>With <code>p</code> below 1, a node is indifferent to the utilities closest to 0,
+and only the share <code>p</code> of them that are furthest from 0 are ties,
+whether positive or negative.
+With <code>directed = FALSE</code>, the two nodes of a pair find the same in each
+other, and the network is undirected.</p>
+<p>Where there is more than one step,
+how far from 0 a utility must be to be a tie is set at the first moment
+and kept, so a tie can come and go as a utility crosses it.
+A utility cannot rise above 1 or fall below -1,
+and one that a change would take further stays at that limit
+until a change brings it back.
+Over many steps the utilities therefore spread out towards the limits,
+and more of them are far enough from 0 to be ties than at the start.</p>
     </div>
     <div id="references">
     <h2>References</h2>
@@ -265,46 +368,99 @@ San Francisco: Jossey-Bass.</p>
 <code><a href="make_collect.html">make_collect</a></code>,
 <code><a href="make_create.html">make_create</a></code>,
 <code><a href="make_ego.html">make_ego</a></code>,
+<code><a href="make_emails.html">make_emails</a></code>,
 <code><a href="make_explicit.html">make_explicit</a></code>,
+<code><a href="make_groups.html">make_groups</a></code>,
+<code><a href="make_growth.html">make_growth</a></code>,
 <code><a href="make_learning.html">make_learning</a></code>,
 <code><a href="make_play.html">make_play</a></code>,
 <code><a href="make_read.html">make_read</a></code>,
-<code><a href="make_stochastic.html">make_stochastic</a></code>,
 <code><a href="make_write.html">make_write</a></code></p></div>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">generate_random</span><span class="op">(</span><span class="fl">12</span>, <span class="fl">0.4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH b8d3eba U--- 12 21 -- Erdos-Renyi (gnp) graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 0e7e9a9 U--- 12 28 -- Erdos-Renyi (gnp) graph</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (g/c), type (g/c), loops (g/l), p (g/n)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from b8d3eba:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1-- 2  1-- 3  1-- 4  2-- 4  4-- 5  5-- 6  5-- 7  5-- 8  7-- 8  2-- 9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [11]  4-- 9  1--10  2--10  7--10  1--11  2--11  3--11  7--11  9--11  6--12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [21] 11--12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 0e7e9a9:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 1-- 2 1-- 3 2-- 3 1-- 4 4-- 5 3-- 6 4-- 6 1-- 7 3-- 7 4-- 7 6-- 7 2-- 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] 5-- 8 2-- 9 3-- 9 5-- 9 7-- 9 4--10 7--10 8--10 4--11 6--11 8--11 1--12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [25] 5--12 6--12 8--12 9--12</span>
 <span class="r-in"><span><span class="co"># generate_random(c(6, 6), 0.4)</span></span></span>
-<span class="r-in"><span><span class="fu">generate_man</span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A directed network of 6 nodes and 17 arcs</span></span>
+<span class="r-in"><span><span class="fu">generate_degree</span><span class="op">(</span><span class="fl">12</span>, outdegree <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Configuration network</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A undirected network of 12 nodes and 18 ties</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 17 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 18 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     2     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     2     4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     2     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     1     7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     1    10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     2     3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     2     4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     3     7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 12 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu">generate_degree</span><span class="op">(</span><span class="fu"><a href="make_create.html">create_core</a></span><span class="op">(</span><span class="fl">12</span><span class="op">)</span>, p <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Configuration network</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A undirected network of 12 nodes and 51 ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 51 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     1     3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     1     4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     1     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     1     6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     1     7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 45 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu">generate_man</span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Dyad census network</span> <span style="color: #00BBBB;">───────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A directed network of 6 nodes and 15 arcs</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 15 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     1     4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     1     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     2     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     2     6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     3     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 11 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     3     2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 9 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu">generate_man</span><span class="op">(</span><span class="fl">6</span>, p <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.3</span>, <span class="fl">0</span>, <span class="fl">0.7</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Dyad census network</span> <span style="color: #00BBBB;">───────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A undirected network of 6 nodes and 7 ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 7 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     1     3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     2     3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     1     4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     1     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     4     6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 1 more row</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu">generate_man</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A two-mode network of 4 nodes and 6 nodes and 17 ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Dyad census network</span> <span style="color: #00BBBB;">───────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A two-mode network of 4 FALSEs and 6 TRUEs and 20 ties</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 10 × 1</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   type </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mode </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> FALSE</span>
@@ -314,16 +470,160 @@ San Francisco: Jossey-Bass.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more rows</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 17 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 20 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     1     6</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     1     7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     1    10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     1     9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     2     5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     2     7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     2     6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 14 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="op">(</span><span class="va">utils</span> <span class="op">&lt;-</span> <span class="fu">generate_utilities</span><span class="op">(</span><span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Utilities network</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A signed, weighted, directed network of 6 nodes and 30 arcs</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 30 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to  weight</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2  0.250 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     1     3  0.015<span style="text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     1     4 -<span style="color: #BB0000;">0.104</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     1     5  0.465 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     1     6 -<span style="color: #BB0000;">0.493</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     2     1  0.610 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 24 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu">generate_utilities</span><span class="op">(</span><span class="fl">6</span>, p <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Utilities network</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A signed, weighted, directed network of 6 nodes and 8 arcs</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 8 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to weight</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     3     1  0.475</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     3     2  0.427</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     4     3 -<span style="color: #BB0000;">0.991</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     5     3  0.506</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     5     6 -<span style="color: #BB0000;">0.412</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     6     1 -<span style="color: #BB0000;">0.462</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu">generate_utilities</span><span class="op">(</span><span class="fl">6</span>, directed <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Utilities network</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A signed, weighted, undirected network of 6 nodes and 15 ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 15 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to  weight</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2 -<span style="color: #BB0000;">0.454</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     1     3 -<span style="color: #BB0000;">0.454</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     1     4 -<span style="color: #BB0000;">0.301</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     1     5 -<span style="color: #BB0000;">0.081</span><span style="color: #BB0000; text-decoration: underline;">8</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     1     6 -<span style="color: #BB0000;">0.022</span><span style="color: #BB0000; text-decoration: underline;">7</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     2     3 -<span style="color: #BB0000;">0.229</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 9 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu">generate_utilities</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">6</span><span class="op">)</span>, form <span class="op">=</span> <span class="st">"uniform"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Utilities network</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A signed, weighted, two-mode network of 4 FALSEs and 6 TRUEs and 24 ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 10 × 1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mode </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> TRUE </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> TRUE </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 24 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to  weight</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     5  0.231 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     2     5  0.859 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     3     5  0.963 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     4     5 -<span style="color: #BB0000;">0.067</span><span style="color: #BB0000; text-decoration: underline;">9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     1     6  0.776 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     2     6  0.969 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 18 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu">generate_utilities</span><span class="op">(</span><span class="fl">6</span>, steps <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Utilities network</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A longitudinal, signed, weighted, directed network of 6 nodes and 90 arcs</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;">over 3 waves</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 90 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to  weight  time</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2  0.550      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     1     3  0.368      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     1     4  0.103      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     1     5  0.384      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     1     6 -<span style="color: #BB0000;">0.157</span>      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     2     1 -<span style="color: #BB0000;">0.069</span><span style="color: #BB0000; text-decoration: underline;">5</span>     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 84 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu">generate_utilities</span><span class="op">(</span><span class="fl">6</span>, steps <span class="op">=</span> <span class="fl">3</span>, volatility <span class="op">=</span> <span class="fl">0.5</span>, inertia <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Utilities network</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A longitudinal, signed, weighted, directed network of 6 nodes and 90 arcs</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;">over 3 waves</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 90 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to  weight  time</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2  0.260      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     1     3  0.242      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     1     4 -<span style="color: #BB0000;">0.914</span>      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     1     5 -<span style="color: #BB0000;">0.088</span><span style="color: #BB0000; text-decoration: underline;">3</span>     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     1     6 -<span style="color: #BB0000;">0.443</span>      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     2     1 -<span style="color: #BB0000;">0.139</span>      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 84 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="co"># the ties that one node wants</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="modif_weight.html">to_unsigned</a></span><span class="op">(</span><span class="va">utils</span>, keep <span class="op">=</span> <span class="st">"positive"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Utilities network</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A weighted, directed network of 6 nodes and 17 arcs</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># Transformed by exclusion: negative ties (13 ties excluded)</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 17 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to weight</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2 0.250 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     1     3 0.015<span style="text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     1     5 0.465 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     2     1 0.610 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     2     5 0.348 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     2     6 0.259 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 11 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="co"># the ties that both nodes want</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="modif_weight.html">to_unsigned</a></span><span class="op">(</span><span class="fu"><a href="modif_direction.html">to_undirected</a></span><span class="op">(</span><span class="va">utils</span>, rule <span class="op">=</span> <span class="st">"min"</span><span class="op">)</span>, keep <span class="op">=</span> <span class="st">"positive"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A weighted, undirected network of 6 nodes and 6 ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># Transformed by symmetrisation: min and exclusion: negative ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to weight</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2 0.250 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     1     3 0.015<span style="text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     2     5 0.154 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     2     6 0.038<span style="text-decoration: underline;">8</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     3     4 0.115 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     5     6 0.020<span style="text-decoration: underline;">4</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>

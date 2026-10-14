@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.0</span>
       </span>
     </div>
 
@@ -96,11 +96,11 @@
           <p class="section-desc"></p><p>Functions for importing and exporting networks from and to a range of external formats.</p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="make_read.html">read_matrix()</a></code> <code><a href="make_read.html">read_edgelist()</a></code> <code><a href="make_read.html">read_nodelist()</a></code> <code><a href="make_read.html">read_pajek()</a></code> <code><a href="make_read.html">read_ucinet()</a></code> <code><a href="make_read.html">read_dynetml()</a></code> <code><a href="make_read.html">read_graphml()</a></code> <code><a href="make_read.html">read_gml()</a></code> <code><a href="make_read.html">read_gdf()</a></code> <code><a href="make_read.html">read_gexf()</a></code> </p>
+          <p><code><a href="make_read.html">read_matrix()</a></code> <code><a href="make_read.html">read_edgelist()</a></code> <code><a href="make_read.html">read_nodelist()</a></code> <code><a href="make_read.html">read_pajek()</a></code> <code><a href="make_read.html">read_ucinet()</a></code> <code><a href="make_read.html">read_dynetml()</a></code> <code><a href="make_read.html">read_graphml()</a></code> <code><a href="make_read.html">read_gml()</a></code> <code><a href="make_read.html">read_gdf()</a></code> <code><a href="make_read.html">read_gexf()</a></code> <code><a href="make_read.html">read_geojson()</a></code> <code><a href="make_read.html">read_hif()</a></code> </p>
         </td>
         <td><p>Making networks from external files</p></td>
       </tr><tr><td>
-          <p><code><a href="make_write.html">write_matrix()</a></code> <code><a href="make_write.html">write_edgelist()</a></code> <code><a href="make_write.html">write_nodelist()</a></code> <code><a href="make_write.html">write_pajek()</a></code> <code><a href="make_write.html">write_ucinet()</a></code> <code><a href="make_write.html">write_graphml()</a></code> <code><a href="make_write.html">write_gml()</a></code> <code><a href="make_write.html">write_gdf()</a></code> <code><a href="make_write.html">write_gexf()</a></code> <code><a href="make_write.html">write_dynetml()</a></code> </p>
+          <p><code><a href="make_write.html">write_matrix()</a></code> <code><a href="make_write.html">write_edgelist()</a></code> <code><a href="make_write.html">write_nodelist()</a></code> <code><a href="make_write.html">write_pajek()</a></code> <code><a href="make_write.html">write_ucinet()</a></code> <code><a href="make_write.html">write_graphml()</a></code> <code><a href="make_write.html">write_gml()</a></code> <code><a href="make_write.html">write_gdf()</a></code> <code><a href="make_write.html">write_gexf()</a></code> <code><a href="make_write.html">write_dynetml()</a></code> <code><a href="make_write.html">write_geojson()</a></code> <code><a href="make_write.html">write_hif()</a></code> </p>
         </td>
         <td><p>Making networks to external files</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
@@ -124,13 +124,17 @@
         </td>
         <td><p>Making networks with defined structures</p></td>
       </tr><tr><td>
-          <p><code><a href="make_random.html">generate_random()</a></code> <code><a href="make_random.html">generate_configuration()</a></code> <code><a href="make_random.html">generate_man()</a></code> <code><a href="make_random.html">generate_utilities()</a></code> </p>
+          <p><code><a href="make_groups.html">generate_smallworld()</a></code> <code><a href="make_groups.html">generate_islands()</a></code> <code><a href="make_groups.html">generate_communities()</a></code> <code><a href="make_groups.html">generate_core()</a></code> </p>
+        </td>
+        <td><p>Making networks with groups</p></td>
+      </tr><tr><td>
+          <p><code><a href="make_growth.html">generate_scalefree()</a></code> <code><a href="make_growth.html">generate_fire()</a></code> <code><a href="make_growth.html">generate_citations()</a></code> </p>
+        </td>
+        <td><p>Making networks that grow</p></td>
+      </tr><tr><td>
+          <p><code><a href="make_random.html">generate_random()</a></code> <code><a href="make_random.html">generate_degree()</a></code> <code><a href="make_random.html">generate_configuration()</a></code> <code><a href="make_random.html">generate_man()</a></code> <code><a href="make_random.html">generate_utilities()</a></code> </p>
         </td>
         <td><p>Making unconditional and conditional random networks</p></td>
-      </tr><tr><td>
-          <p><code><a href="make_stochastic.html">generate_smallworld()</a></code> <code><a href="make_stochastic.html">generate_scalefree()</a></code> <code><a href="make_stochastic.html">generate_fire()</a></code> <code><a href="make_stochastic.html">generate_islands()</a></code> <code><a href="make_stochastic.html">generate_citations()</a></code> </p>
-        </td>
-        <td><p>Making networks with a stochastic element</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h3 id="collecting">Collecting <a href="#collecting" class="anchor" aria-hidden="true"></a></h3>
           <p class="section-desc"></p><p>Functions for collecting data from external sources, such as interviews or APIs, and converting them into networks.</p>
@@ -143,6 +147,10 @@
           <p><code><a href="make_ego.html">collect_ego()</a></code> </p>
         </td>
         <td><p>Making ego networks through interviewing</p></td>
+      </tr><tr><td>
+          <p><code><a href="make_emails.html">collect_emails()</a></code> </p>
+        </td>
+        <td><p>Making networks from email metadata</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h3 id="playing">Playing <a href="#playing" class="anchor" aria-hidden="true"></a></h3>
           <p class="section-desc"></p><p>Functions for simulating diffusion or learning processes, i.e. nodal change, upon networks.</p>
@@ -160,13 +168,17 @@
           <p class="section-desc"></p><p>Functions for modifying networks into other classes. All functions for coercing networks into other classes have the prefix <code>as_</code>. Those ending in <code>list</code> are extractive, and so will result in some information loss, but coercion to and especially between graph classes is as lossless as possible.</p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="coerce_graph.html">as_igraph()</a></code> <code><a href="coerce_graph.html">as_tidygraph()</a></code> <code><a href="coerce_graph.html">as_network()</a></code> <code><a href="coerce_graph.html">as_stocnet()</a></code> <code><a href="coerce_graph.html">as_siena()</a></code> <code><a href="coerce_graph.html">as_graphAM()</a></code> <code><a href="coerce_graph.html">as_diffusion()</a></code> <code><a href="coerce_graph.html">as_diffnet()</a></code> </p>
+          <p><code><a href="coerce_graph.html">as_igraph()</a></code> <code><a href="coerce_graph.html">as_tidygraph()</a></code> <code><a href="coerce_graph.html">as_network()</a></code> <code><a href="coerce_graph.html">as_stocnet()</a></code> <code><a href="coerce_graph.html">as_hypergraph()</a></code> <code><a href="coerce_graph.html">as_siena()</a></code> <code><a href="coerce_graph.html">as_graphAM()</a></code> <code><a href="coerce_graph.html">as_diffusion()</a></code> <code><a href="coerce_graph.html">as_diffnet()</a></code> </p>
         </td>
         <td><p>Coercing into graph objects</p></td>
       </tr><tr><td>
-          <p><code><a href="coerce_list.html">as_nodelist()</a></code> <code><a href="coerce_list.html">as_changelist()</a></code> <code><a href="coerce_list.html">as_edgelist()</a></code> <code><a href="coerce_list.html">as_infolist()</a></code> <code><a href="coerce_list.html">as_globallist()</a></code> <code><a href="coerce_list.html">as_missinglist()</a></code> <code><a href="coerce_list.html">as_matrix()</a></code> </p>
+          <p><code><a href="coerce_list.html">as_nodelist()</a></code> <code><a href="coerce_list.html">as_changelist()</a></code> <code><a href="coerce_list.html">as_edgelist()</a></code> <code><a href="coerce_list.html">as_infolist()</a></code> <code><a href="coerce_list.html">as_globallist()</a></code> <code><a href="coerce_list.html">as_missinglist()</a></code> </p>
         </td>
-        <td><p>Coercing into lists or matrices</p></td>
+        <td><p>Coercing into lists</p></td>
+      </tr><tr><td>
+          <p><code><a href="coerce_matrix.html">as_matrix()</a></code> </p>
+        </td>
+        <td><p>Coercing into matrices</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="manipulating">Manipulating <a href="#manipulating" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>Functions for manipulating aspects within networks, such as their nodes, ties, changes, and network metadata (information). This includes functions to add and delete nodes and ties, as well as to add and delete nodal and tie attributes.</p>
@@ -240,7 +252,7 @@
         </td>
         <td><p>Modifying node labels</p></td>
       </tr><tr><td>
-          <p><code><a href="modif_plexity.html">to_anti()</a></code> <code><a href="modif_plexity.html">to_simplex()</a></code> <code><a href="modif_plexity.html">to_uniplex()</a></code> <code><a href="modif_plexity.html">to_layer()</a></code> <code><a href="modif_plexity.html">to_flat()</a></code> </p>
+          <p><code><a href="modif_plexity.html">to_anti()</a></code> <code><a href="modif_plexity.html">to_simplex()</a></code> <code><a href="modif_plexity.html">to_uniplex()</a></code> <code><a href="modif_plexity.html">to_layer()</a></code> <code><a href="modif_plexity.html">to_aggregated()</a></code> <code><a href="modif_plexity.html">to_flat()</a></code> <code><a href="modif_plexity.html">to_disaggregated()</a></code> </p>
         </td>
         <td><p>Modifying network complexity</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
@@ -252,11 +264,11 @@
         </td>
         <td><p>Modifying networks to their backbone</p></td>
       </tr><tr><td>
-          <p><code><a href="modif_paths.html">to_matching()</a></code> <code><a href="modif_paths.html">to_mentoring()</a></code> <code><a href="modif_paths.html">to_tree()</a></code> <code><a href="modif_paths.html">to_dominating()</a></code> </p>
+          <p><code><a href="modif_paths.html">to_matching()</a></code> <code><a href="modif_paths.html">to_mentoring()</a></code> <code><a href="modif_paths.html">to_tree()</a></code> <code><a href="modif_paths.html">to_dominating()</a></code> <code><a href="modif_paths.html">to_geodesic()</a></code> </p>
         </td>
         <td><p>Modifying networks paths</p></td>
       </tr><tr><td>
-          <p><code><a href="modif_scope.html">to_ego()</a></code> <code><a href="modif_scope.html">to_time()</a></code> <code><a href="modif_scope.html">to_wave()</a></code> <code><a href="modif_scope.html">to_component()</a></code> <code><a href="modif_scope.html">to_giant()</a></code> <code><a href="modif_scope.html">to_subgraph()</a></code> <code><a href="modif_scope.html">to_blockmodel()</a></code> </p>
+          <p><code><a href="modif_scope.html">to_ego()</a></code> <code><a href="modif_scope.html">to_time()</a></code> <code><a href="modif_scope.html">to_wave()</a></code> <code><a href="modif_scope.html">to_reporter()</a></code> <code><a href="modif_scope.html">to_component()</a></code> <code><a href="modif_scope.html">to_giant()</a></code> <code><a href="modif_scope.html">to_subgraph()</a></code> <code><a href="modif_scope.html">to_blockmodel()</a></code> </p>
         </td>
         <td><p>Modifying networks scope</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
@@ -267,10 +279,18 @@
           <p><code><a href="modif_levels.html">to_onemode()</a></code> <code><a href="modif_levels.html">to_twomode()</a></code> <code><a href="modif_levels.html">to_multilevel()</a></code> </p>
         </td>
         <td><p>Modifying network levels</p></td>
-      </tr><tr><td>
-          <p><code><a href="modif_project.html">to_mode1()</a></code> <code><a href="modif_project.html">to_mode2()</a></code> <code><a href="modif_project.html">to_mode()</a></code> <code><a href="modif_project.html">to_linegraph()</a></code> <code><a href="modif_project.html">to_hypergraph()</a></code> </p>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h3 id="projecting">Projecting <a href="#projecting" class="anchor" aria-hidden="true"></a></h3>
+          <p class="section-desc"></p><p>Functions for projecting a two-mode network into ties among one of its node sets, or into a lattice of its concepts.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="modif_project.html">to_mode1()</a></code> <code><a href="modif_project.html">to_mode2()</a></code> <code><a href="modif_project.html">to_mode()</a></code> <code><a href="modif_project.html">to_linegraph()</a></code> <code><a href="modif_project.html">to_hypergraph()</a></code> <code><a href="modif_project.html">to_simplicial()</a></code> </p>
         </td>
         <td><p>Modifying networks projection</p></td>
+      </tr><tr><td>
+          <p><code><a href="modif_concepts.html">to_concepts()</a></code> </p>
+        </td>
+        <td><p>Modifying networks into concept lattices</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h3 id="converting">Converting <a href="#converting" class="anchor" aria-hidden="true"></a></h3>
           <p class="section-desc"></p><p>Functions for permuting networks or constructing a network from how alike another network’s nodes are.</p>
@@ -288,7 +308,7 @@
           <p class="section-desc"></p><p>Functions for splitting networks into a list of networks, or (re)joining a list of networks into a single network.</p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="modif_split.html">to_egos()</a></code> <code><a href="modif_split.html">to_subgraphs()</a></code> <code><a href="modif_split.html">to_layers()</a></code> <code><a href="modif_split.html">to_components()</a></code> <code><a href="modif_split.html">to_waves()</a></code> <code><a href="modif_split.html">to_times()</a></code> <code><a href="modif_split.html">to_slices()</a></code> </p>
+          <p><code><a href="modif_split.html">to_egos()</a></code> <code><a href="modif_split.html">to_subgraphs()</a></code> <code><a href="modif_split.html">to_layers()</a></code> <code><a href="modif_split.html">to_reporters()</a></code> <code><a href="modif_split.html">to_components()</a></code> <code><a href="modif_split.html">to_waves()</a></code> <code><a href="modif_split.html">to_times()</a></code> <code><a href="modif_split.html">to_slices()</a></code> </p>
         </td>
         <td><p>Splitting networks into lists</p></td>
       </tr><tr><td>
@@ -296,9 +316,13 @@
         </td>
         <td><p>Listing the motifs a network can contain</p></td>
       </tr><tr><td>
-          <p><code><a href="modif_from.html">from_subgraphs()</a></code> <code><a href="modif_from.html">from_egos()</a></code> <code><a href="modif_from.html">from_waves()</a></code> <code><a href="modif_from.html">from_slices()</a></code> <code><a href="modif_from.html">from_times()</a></code> <code><a href="modif_from.html">from_layers()</a></code> <code><a href="modif_from.html">from_ties()</a></code> </p>
+          <p><code><a href="modif_from_parts.html">from_subgraphs()</a></code> <code><a href="modif_from_parts.html">from_egos()</a></code> </p>
         </td>
-        <td><p>Joining lists of networks, graphs, and matrices</p></td>
+        <td><p>Joining parts of a network</p></td>
+      </tr><tr><td>
+          <p><code><a href="modif_from_ternary.html">from_waves()</a></code> <code><a href="modif_from_ternary.html">from_slices()</a></code> <code><a href="modif_from_ternary.html">from_times()</a></code> <code><a href="modif_from_ternary.html">from_layers()</a></code> <code><a href="modif_from_ternary.html">from_ties()</a></code> <code><a href="modif_from_ternary.html">from_reporters()</a></code> </p>
+        </td>
+        <td><p>Joining networks along a third dimension</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h3 id="missing">Missing <a href="#missing" class="anchor" aria-hidden="true"></a></h3>
           <p class="section-desc"></p><p>Functions for modifying how missing data is treated.</p>
@@ -356,11 +380,11 @@
         </td>
         <td><p>Marking networks cognitive formats</p></td>
       </tr><tr><td>
-          <p><code><a href="mark_format_node.html">is_twomode()</a></code> <code><a href="mark_format_node.html">is_multilevel()</a></code> <code><a href="mark_format_node.html">is_hypergraph()</a></code> <code><a href="mark_format_node.html">is_labelled()</a></code> <code><a href="mark_format_node.html">is_attributed()</a></code> <code><a href="mark_format_node.html">is_egonet()</a></code> </p>
+          <p><code><a href="mark_format_node.html">is_twomode()</a></code> <code><a href="mark_format_node.html">is_multilevel()</a></code> <code><a href="mark_format_node.html">is_hypergraph()</a></code> <code><a href="mark_format_node.html">is_labelled()</a></code> <code><a href="mark_format_node.html">is_attributed()</a></code> <code><a href="mark_format_node.html">is_spatial()</a></code> <code><a href="mark_format_node.html">is_egolist()</a></code> </p>
         </td>
         <td><p>Marking networks nodal formats</p></td>
       </tr><tr><td>
-          <p><code><a href="mark_format_tie.html">is_weighted()</a></code> <code><a href="mark_format_tie.html">is_directed()</a></code> <code><a href="mark_format_tie.html">is_signed()</a></code> <code><a href="mark_format_tie.html">is_complex()</a></code> <code><a href="mark_format_tie.html">is_multiplex()</a></code> <code><a href="mark_format_tie.html">is_uniplex()</a></code> </p>
+          <p><code><a href="mark_format_tie.html">is_weighted()</a></code> <code><a href="mark_format_tie.html">is_directed()</a></code> <code><a href="mark_format_tie.html">is_signed()</a></code> <code><a href="mark_format_tie.html">is_complex()</a></code> <code><a href="mark_format_tie.html">is_multiplex()</a></code> <code><a href="mark_format_tie.html">is_disaggregated()</a></code> <code><a href="mark_format_tie.html">is_uniplex()</a></code> </p>
         </td>
         <td><p>Marking networks tie formats</p></td>
       </tr><tr><td>

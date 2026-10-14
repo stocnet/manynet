@@ -25,7 +25,7 @@ net_attributes() lists the information attributes of the network.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.0</span>
       </span>
     </div>
 
@@ -133,6 +133,8 @@ and can be used for printing a grand table in the <code>{grand}</code> package.<
 <li><p>"modes" is the name(s) of the nodeset(s)</p></li>
 <li><p>"layers" is the name(s) of the tie type(s)</p></li>
 <li><p>"directed" is a logical vector indicating whether each layer is directed</p></li>
+<li><p>"signed" is a logical vector indicating whether each layer is signed,
+which <code><a href="modif_weight.html">to_signed()</a></code> sets and <code><a href="modif_weight.html">to_unsigned()</a></code> removes</p></li>
 <li><p>"source" is the source of the network ("empirical" or "synthetic")</p></li>
 <li><p>"method" is the method of data collection or model used
 (e.g. "survey", "interview","sensor","observation","archival", or "simulation")</p></li>
@@ -179,17 +181,20 @@ If no method is available for any class, an error will be thrown.</p>
 which names six ways raw data is turned into analytic data.
 It holds a named list, one element for each of them:</p><ul><li><p>"symmetrisation" (GRAND 4.1), which <code><a href="modif_direction.html">to_undirected()</a></code> sets.</p></li>
 <li><p>"dichotomisation" (4.2), which <code><a href="modif_weight.html">to_unweighted()</a></code> sets.</p></li>
-<li><p>"projection" (4.3), which <code><a href="modif_project.html">to_mode1()</a></code> and <code><a href="modif_project.html">to_mode2()</a></code> set.</p></li>
+<li><p>"projection" (4.3), which <code><a href="modif_project.html">to_mode1()</a></code>, <code><a href="modif_project.html">to_mode2()</a></code>, and
+<code><a href="modif_concepts.html">to_concepts()</a></code> set.</p></li>
 <li><p>"exclusion" (4.4), which the functions that drop nodes or ties set,
 such as <code><a href="manip_nodes_num.html">delete_isolates()</a></code>, <code><a href="modif_scope.html">to_component()</a></code>, and <code><a href="modif_plexity.html">to_uniplex()</a></code>.</p></li>
-<li><p>"aggregation" (4.5), which <code><a href="modif_plexity.html">to_flat()</a></code>, <code><a href="manip_ties_attr.html">join_ties()</a></code>,
-and <code><a href="modif_scope.html">to_blockmodel()</a></code> set.</p></li>
+<li><p>"aggregation" (4.5), which <code><a href="modif_plexity.html">to_aggregated()</a></code>, <code><a href="modif_plexity.html">to_flat()</a></code>,
+<code><a href="manip_ties_attr.html">join_ties()</a></code>, and <code><a href="modif_scope.html">to_blockmodel()</a></code> set.</p></li>
 <li><p>"imputation" (4.6), which <code><a href="modif_miss.html">impute_ties()</a></code> and <code><a href="modif_miss.html">impute_nodes()</a></code> set.</p></li>
 </ul><p>One further name, "normalisation", records what <code><a href="modif_weight.html">to_normalised()</a></code> does.
 The guidelines do not name it, since rescaling tie values neither
 dichotomises them (4.2 ends in an unweighted network)
 nor aggregates them (4.5 combines what was separate),
-but it changes the analytic network and so is recorded too.</p>
+but it changes the analytic network and so is recorded too.
+Nor do they name "disaggregation", which <code><a href="modif_plexity.html">to_disaggregated()</a></code> sets
+where it turns tie weights back into that many parallel ties.</p>
 <p>A name that is absent means that transformation was not applied,
 so <code>"symmetrisation" %in% names(as_infolist(.data)$transformations)</code>
 answers whether a network was symmetrised

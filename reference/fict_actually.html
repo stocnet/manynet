@@ -6,6 +6,7 @@ Added to this are multiplex, one-mode networks of character relationships,
 including &quot;romantic&quot;, &quot;family&quot;, &quot;friendship&quot;, and &quot;professional&quot; ties.
 These were added by Korakot Janteerasakul from the following source:
 https://en.wikipedia.org/wiki/Love_Actually#/media/File:Love_Actually_(2003)_Interconnections.svg.
+No tie is directed.
 Unlike fict_marvel, the layers here are not simply the levels: four of
 the five run within the characters, so the network is multiplex as well
 as multilevel, and describe_network() reports both."><meta property="og:image" content="https://stocnet.github.io/manynet/logo.png"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -26,7 +27,7 @@ as multilevel, and describe_network() reports both."><meta property="og:image" c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.0</span>
       </span>
     </div>
 
@@ -106,7 +107,8 @@ appearances across 76 scenes, as parsed from the script.</p>
 including "romantic", "family", "friendship", and "professional" ties.
 These were added by Korakot Janteerasakul from the following source:
 <a href="https://en.wikipedia.org/wiki/Love_Actually#/media/File:Love_Actually_(2003)_Interconnections.svg" class="external-link">https://en.wikipedia.org/wiki/Love_Actually#/media/File:Love_Actually_(2003)_Interconnections.svg</a>.</p>
-<p>Unlike <code>fict_marvel</code>, the layers here are not simply the levels: four of
+<p>No tie is directed.
+Unlike <code>fict_marvel</code>, the layers here are not simply the levels: four of
 the five run within the characters, so the network is multiplex as well
 as multilevel, and <code><a href="class_describe.html">describe_network()</a></code> reports both.</p>
     </div>
@@ -117,26 +119,26 @@ as multilevel, and <code><a href="class_describe.html">describe_network()</a></c
 
     <div id="format">
     <h2>Format</h2>
-    <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co">#&gt; -- # Love actually interactions ------------------------------------------------</span></span>
+    <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co">#&gt; -- # Love Actually -------------------------------------------------------------</span></span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="co">#&gt; # A labelled, multiplex, multilevel network of 20 characters and 76 scenes and</span></span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co">#&gt; 7 romance ties, 162 appearance ties, 7 friendship ties, 10 professional ties,</span></span>
 <span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co">#&gt; and 3 family ties</span></span>
 <span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co">#&gt;</span></span>
 <span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co">#&gt; -- Nodes</span></span>
 <span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co">#&gt; # A tibble: 96 x 6</span></span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="co">#&gt;   type  name    Actor          Gender Nationality Occupation</span></span>
-<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="co">#&gt;   &lt;lgl&gt; &lt;chr&gt;   &lt;chr&gt;          &lt;chr&gt;  &lt;chr&gt;       &lt;chr&gt;</span></span>
-<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="co">#&gt; 1 FALSE Aurelia Lúcia Moniz    Female Portuguese  Assistant</span></span>
-<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="co">#&gt; 2 FALSE Billy   Bill Nighy     Male   British     Singer</span></span>
-<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="co">#&gt; 3 FALSE Colin   Kris Marshall  Male   British     Travels to America</span></span>
-<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="co">#&gt; 4 FALSE Daniel  Liam Neeson    Male   British     Widower</span></span>
-<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a><span class="co">#&gt; 5 FALSE Harry   Alan Rickman   Male   British     Agency Director</span></span>
-<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a><span class="co">#&gt; 6 FALSE John    Martin Freeman Male   British     Nude stand-in</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="co">#&gt;   label   mode       Actor          Gender Nationality Occupation</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;          &lt;chr&gt;  &lt;chr&gt;       &lt;chr&gt;</span></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="co">#&gt; 1 Aurelia characters Lúcia Moniz    Female Portuguese  Assistant</span></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="co">#&gt; 2 Billy   characters Bill Nighy     Male   British     Singer</span></span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="co">#&gt; 3 Colin   characters Kris Marshall  Male   British     Travels to America</span></span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="co">#&gt; 4 Daniel  characters Liam Neeson    Male   British     Widower</span></span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a><span class="co">#&gt; 5 Harry   characters Alan Rickman   Male   British     Agency Director</span></span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a><span class="co">#&gt; 6 John    characters Martin Freeman Male   British     Nude stand-in</span></span>
 <span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a><span class="co">#&gt; # i 90 more rows</span></span>
 <span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a><span class="co">#&gt;</span></span>
 <span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a><span class="co">#&gt; -- Ties</span></span>
 <span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a><span class="co">#&gt; # A tibble: 189 x 3</span></span>
-<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a><span class="co">#&gt;    from    to type</span></span>
+<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a><span class="co">#&gt;    from    to layer</span></span>
 <span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;chr&gt;</span></span>
 <span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a><span class="co">#&gt; 1     1     7 romance</span></span>
 <span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a><span class="co">#&gt; 2     1    51 appearance</span></span>

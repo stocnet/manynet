@@ -28,7 +28,7 @@ visible, both for analysis and for drawing."><meta property="og:image" content="
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.0</span>
       </span>
     </div>
 
@@ -195,8 +195,7 @@ transformation is recorded. Every other class is coerced to it and back
 again, so all of them are supported.</p>
 <p>Each filter is applied to the ties as the network holds them. Where a
 network holds parallel ties, each is filtered on its own rather than as
-the bundle they make together, so use <code><a href="modif_plexity.html">to_simplex()</a></code> first where that is
-not wanted.</p>
+the bundle they make together.</p>
 <p>Only closed-form filters are offered here. For the backbone models that
 resample a null distribution, such as the stochastic and fixed degree
 sequence models, or that extract the backbone of a two-mode projection,
@@ -280,8 +279,10 @@ media networks".
 <code><a href="modif_direction.html">modif_direction</a></code>,
 <code><a href="modif_weight.html">modif_weight</a></code></p>
 <p>Other modifications:
+<code><a href="modif_concepts.html">modif_concepts</a></code>,
 <code><a href="modif_direction.html">modif_direction</a></code>,
-<code><a href="modif_from.html">modif_from</a></code>,
+<code><a href="modif_from_parts.html">modif_from_parts</a></code>,
+<code><a href="modif_from_ternary.html">modif_from_ternary</a></code>,
 <code><a href="modif_labels.html">modif_labels</a></code>,
 <code><a href="modif_levels.html">modif_levels</a></code>,
 <code><a href="modif_miss.html">modif_miss</a></code>,

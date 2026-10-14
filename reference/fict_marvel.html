@@ -36,7 +36,7 @@ Read these relationships from the ties table rather than from a matrix.'><meta p
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.0</span>
       </span>
     </div>
 
@@ -124,7 +124,7 @@ the network as multilevel and not also as multiplex or two-mode,
 though <code><a href="mark_format_tie.html">is_multiplex()</a></code> and <code><a href="mark_format_node.html">is_twomode()</a></code> both mark it TRUE.</p>
 <p>Note that 69 pairs of characters hold two relationship ties rather than
 one, which <code><a href="measure_attributes_ties.html">tie_is_parallel()</a></code> marks, covering 138 of the 1241 ties.
-Since <code><a href="coerce_list.html">as_matrix()</a></code> sums the signs of the ties joining a pair of nodes,
+Since <code><a href="coerce_matrix.html">as_matrix()</a></code> sums the signs of the ties joining a pair of nodes,
 the 68 pairs holding both a friendship and an enmity report 0 in the
 matrix, which is indistinguishable from an absent tie, and the one pair
 holding two enmities reports -2.
