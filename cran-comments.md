@@ -7,4 +7,9 @@
 
 ## R CMD check results
 
-0 errors | 0 warnings | 0 notes
+0 errors | 0 warnings | 1 note
+
+* Number of updates in past 6 months: 7.
+  Three of these were quick fixes in June for errors in CRAN's checks;
+  this is a minor release whose features the next releases of its
+  reverse dependencies build on.
