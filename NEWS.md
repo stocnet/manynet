@@ -19,6 +19,8 @@
 
 ## Modifying
 
+- Improved `from_reporters()` to align matrix and network reports (closes #190)
+  - Marks unreported nodes' reports as missing (closes #189)
 - Fixed `to_simplex()` to remove only loops and keeps parallel ties
 - Improved every `from_*()` function to return the class of its inputs
   - Partial `from_egos()` and `from_subgraphs()` returns a combined matrix

@@ -248,7 +248,8 @@ from_ties <- from_layers
 #'   `from_reporters()` takes the reporter of each network from the names of
 #'   the list, which may be the labels of the nodes or their positions.
 #'   Where the list is not named, the networks are taken to be the reports of
-#'   the first nodes, in order.
+#'   the first nodes, in order. A matrix result has one slice per node.
+#'   A node omitted from the list has a missing report, not an empty report.
 #' @examples
 #' reports <- list(A = create_ring(4), B = create_star(4))
 #' from_reporters(lapply(reports, add_node_attribute, "name", LETTERS[1:4]))
@@ -256,8 +257,21 @@ from_ties <- from_layers
 from_reporters <- function(netlist) {
   if(!is.list(netlist) || !length(netlist) || is_manynet(netlist))
     snet_abort("Please declare a list of networks, one for each reporter.")
-  if(.all_matrices(netlist)) return(.stack_matrices(netlist))
-  .as_class_of(.join_third(netlist, "by"), netlist[[1]])
+  if (.all_matrices(netlist)) return(.stack_reporter_matrices(netlist))
+  out <- .join_third(netlist, "by")
+  reporters <- .third_node_index(names(netlist), out$nodes[["label"]],
+                                 length(netlist))
+  unreported <- setdiff(seq_len(nrow(out$nodes)), reporters)
+  if (length(unreported)) {
+    n <- nrow(out$nodes)
+    missings <- expand.grid(from = seq_len(n), to = seq_len(n),
+                            by = unreported, KEEP.OUT.ATTRS = FALSE)
+    missings <- dplyr::bind_rows(as_missinglist(out), missings)
+    out <- make_stocnet(info = out$info, nodes = out$nodes, ties = out$ties,
+                        changes = out$changes, globals = out$globals,
+                        missings = missings)
+  }
+  .as_class_of(out, netlist[[1]])
 }
 
 # Helpers for joining ####
@@ -326,6 +340,24 @@ from_reporters <- function(netlist) {
     list(rownames(first), colnames(first), slices)
   array(unlist(mats), dim = c(nrow(first), ncol(first), length(mats)),
         dimnames = dimnames)
+}
+
+# A list of reporter matrices has one slice per node. Nodes without a report
+# are missing observations, not reports containing no ties.
+.stack_reporter_matrices <- function(netlist) {
+  reports <- .stack_matrices(netlist)
+  labels <- unique(c(rownames(reports), colnames(reports)))
+  n <- if (length(labels)) length(labels) else max(dim(reports)[1:2])
+  reporters <- .third_node_index(names(netlist), labels, length(netlist))
+  dims <- c(dim(reports)[1:2], n)
+  dimnames <- list(rownames(reports), colnames(reports),
+                   if (length(labels)) labels else NULL)
+  out <- array(NA, dim = dims, dimnames = dimnames)
+  storage.mode(out) <- storage.mode(reports)
+  for (i in seq_along(reporters)) {
+    out[, , reporters[i]] <- reports[, , i]
+  }
+  out
 }
 
 # Joins a list of stocnets over the same nodes into one, recording which of
