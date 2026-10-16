@@ -10,6 +10,10 @@
   - Ties can have both 'length' (distance) and 'weight' (strength)
   - A tie column called 'distance' gets a warning that it might be better called 'length'
 
+## Coercion
+
+- Improved `as_*.data.frame()` to read columns called 'length' or 'distance'
+
 # manynet 2.4.0
 
 ## Package
