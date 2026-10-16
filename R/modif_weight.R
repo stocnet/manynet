@@ -308,7 +308,11 @@ to_signed.network <- function(.data, mark = NULL){
 
 #' @rdname modif_weight
 #' @param measure A numeric vector (measure) that will be added as the tie
-#'   weights to the network.
+#'   weights to the network,
+#'   or the name of a numeric tie attribute whose values become the weights,
+#'   such as "length".
+#'   A length is a distance, so a long tie becomes a heavy one:
+#'   see [tie_lengths()] for when that is wanted.
 #'   If this is NULL, then the tie weights will be drawn from a 
 #'   Poisson distribution with \eqn{\lambda = 4}.
 #' @export
@@ -325,6 +329,12 @@ to_weighted.tbl_graph <- function(.data, measure = NULL){
     measure <- stats::rpois(net_ties(.data), lambda = 4)
     snet_info("Since no measure values given, weights are generated from",
               "a Poisson distribution with lambda = 4.")
+  } else if(is.character(measure) && length(measure) == 1){
+    vals <- tie_attribute(.data, measure)
+    if(!is.numeric(vals))
+      snet_abort("{.arg measure} names {.val {measure}},",
+                 "which is not a numeric tie attribute of this network.")
+    measure <- as.numeric(vals)
   }
   .data |> mutate_ties(weight = measure)
 }

@@ -14,6 +14,11 @@
 
 - Improved `as_*.data.frame()` to read columns called 'length' or 'distance'
 
+## Modifying
+
+- Improved `to_weighted()` to also convert a numeric tie attribute, e.g. `to_weighted(.data, "length")`
+- Improved `to_backbone()` to filter lengths (without weights) on their inverse, so a short tie counts as a strong one
+
 # manynet 2.4.0
 
 ## Package
