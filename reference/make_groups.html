@@ -44,7 +44,7 @@ and the number of modes, nodes, and directedness will be inferred."><meta proper
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.1</span>
       </span>
     </div>
 
@@ -253,8 +253,10 @@ By default 1.</p></dd>
 
 
 <dt id="arg-mark">mark<a class="anchor" aria-label="anchor" href="#arg-mark"></a></dt>
-<dd><p>A logical vector the length of the nodes in the network.
-This can be created by, among other things, any <code>node_is_*()</code> function.</p></dd>
+<dd><p>A logical vector the length of the nodes in the network,
+with <code>TRUE</code> for a node of the core.
+This can be created by, among other things, any <code>node_is_*()</code> function.
+Where <code>mark</code> is not logical, the core is the first of its two groups.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -330,9 +332,7 @@ With three, the core can be less than complete and the periphery less
 than empty, as Borgatti and Everett (2000) describe of observed networks.
 <code>mark</code> says which nodes are in the core, with <code>TRUE</code> for a node of the
 core, and by default they are the first half of the nodes, or of each
-mode.
-Note that <code><a href="make_create.html">create_core()</a></code> for now reads a logical <code>mark</code> the other way
-round, with <code>TRUE</code> for a node of the periphery.</p>
+mode.</p>
     </div>
     <div id="references">
     <h2>References</h2>
@@ -393,18 +393,18 @@ Weighted Graphs with Overlapping Communities.”
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">generate_smallworld</span><span class="op">(</span><span class="fl">12</span>, <span class="fl">0.025</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 563d0be U--- 12 24 -- Watts-Strogatz random graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH da22e92 U--- 12 24 -- Watts-Strogatz random graph</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (g/c), dim (g/n), size (g/n), nei (g/n), p (g/n), loops</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | (g/l), multiple (g/l)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 563d0be:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from da22e92:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1-- 2  2-- 3  3-- 4  4-- 5  5-- 6  6-- 7  7-- 8  8-- 9  9--10 10--11</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [11] 11--12  1--12  1-- 3  1--11  2--12  2-- 4  3-- 5  4-- 6  5-- 7  6-- 8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [21]  7-- 9  8--10  9--11 10--12</span>
 <span class="r-in"><span><span class="fu">generate_smallworld</span><span class="op">(</span><span class="fl">12</span>, <span class="fl">0.25</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 5ec7267 U--- 12 24 -- Watts-Strogatz random graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH b26dc87 U--- 12 24 -- Watts-Strogatz random graph</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (g/c), dim (g/n), size (g/n), nei (g/n), p (g/n), loops</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | (g/l), multiple (g/l)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 5ec7267:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from b26dc87:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  7-- 9  2-- 3  3-- 4  4-- 5  7--11  6-- 7  7-- 8  8-- 9  9--10  6--12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [11] 11--12  1--12  3-- 6  1--11  2--12  4-- 8  3-- 5  4-- 6  5-- 7  5-- 8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [21]  3-- 7  8--10  9--11  5--10</span>

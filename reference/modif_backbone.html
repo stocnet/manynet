@@ -28,7 +28,7 @@ visible, both for analysis and for drawing."><meta property="og:image" content="
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.1</span>
       </span>
     </div>
 
@@ -155,7 +155,9 @@ whose endpoints rank each other similarly. Ignores tie weights, and so is
 the only filter available for an unweighted network. Reads a directed
 network as an undirected one, since it counts shared neighbours.</p></li>
 </ul><p>By default <code>NULL</code>, which uses "lans" where the network is weighted and
-"simmelian" where it is not. "lans" leads because it assumes nothing about
+"simmelian" where it is not.
+A network with lengths (see <code><a href="measure_attributes_values.html">tie_lengths()</a></code>) but no weights is filtered
+on the inverse of its lengths, so that a short tie counts as a strong one. "lans" leads because it assumes nothing about
 the shape of the weights, and because it retains each node's strongest tie
 whatever that shape is. "disparity" is the better known filter, but its
 null model expects heavy-tailed weights: where weights are more even, a

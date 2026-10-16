@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.1</span>
       </span>
     </div>
 
@@ -546,7 +546,7 @@ This section includes an interactive quiz in the live tutorial — run
 weighted </dfn></abbr> network, ties carry a numeric value — a count of
 messages, a volume of trade, a strength of friendship.
 <code><a href="../reference/mark_format_tie.html">is_weighted()</a></code> checks for weights, and
-<code><a href="../reference/measure_attributes_ties.html">tie_weights()</a></code> returns them as a vector, one value per
+<code><a href="../reference/measure_attributes_values.html">tie_weights()</a></code> returns them as a vector, one value per
 tie.</p>
 <p>Many methods expect a binary network though, and even when weights
 can be used, you may want to concentrate on the strongest ties.
@@ -599,12 +599,12 @@ signed </dfn></abbr> network, every tie is marked positive or negative.
 <code>irps_wwi</code> is a classic example: the shifting alliances
 (<code>+</code>) and enmities (<code>-</code>) among the six great
 powers of Europe before the First World War. <code><a href="../reference/mark_format_tie.html">is_signed()</a></code>
-checks for signs, and <code><a href="../reference/measure_attributes_ties.html">tie_signs()</a></code> retrieves them
+checks for signs, and <code><a href="../reference/measure_attributes_values.html">tie_signs()</a></code> retrieves them
 (<code>1</code> for positive, <code>-1</code> for negative).
 <strong>Print the network and retrieve its signs.</strong></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">irps_wwi</span></span>
-<span><span class="fu"><a href="../reference/measure_attributes_ties.html">tie_signs</a></span><span class="op">(</span><span class="va">irps_wwi</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/measure_attributes_values.html">tie_signs</a></span><span class="op">(</span><span class="va">irps_wwi</span><span class="op">)</span></span></code></pre></div>
 <p>Many measures are only defined for unsigned networks, and sometimes
 the positive and negative ties are best analysed as separate networks —
 friendship networks and conflict networks often obey quite different
@@ -666,7 +666,7 @@ positive or negative ties (and <code><a href="../reference/modif_weight.html">to
 Check each property with
 <code><a href="../reference/mark_format_tie.html">is_directed()</a></code>/<code><a href="../reference/mark_format_tie.html">is_weighted()</a></code>/<code><a href="../reference/mark_format_tie.html">is_signed()</a></code>,
 and inspect values with
-<code><a href="../reference/measure_attributes_ties.html">tie_weights()</a></code>/<code><a href="../reference/measure_attributes_ties.html">tie_signs()</a></code>.</p>
+<code><a href="../reference/measure_attributes_values.html">tie_weights()</a></code>/<code><a href="../reference/measure_attributes_values.html">tie_signs()</a></code>.</p>
 </div>
 </div>
 </div>
@@ -859,7 +859,7 @@ projected networks, representing shared connections to nodes of the
 other mode, are
 <abbr><dfn title="A weighted network is where the ties have been assigned weights.">
 weighted </dfn></abbr> — which connects back to the Weights section:
-everything you learned there (<code><a href="../reference/measure_attributes_ties.html">tie_weights()</a></code>,
+everything you learned there (<code><a href="../reference/measure_attributes_values.html">tie_weights()</a></code>,
 <code><a href="../reference/modif_weight.html">to_unweighted()</a></code>, thresholds) applies to projections
 too.</p>
 <p><strong>Retrieve the tie weights from your women projection. Find the
@@ -1455,7 +1455,7 @@ data! Along the way, you have learned to use these functions:</p>
 <tr class="odd">
 <td>
 <code>to_unsigned(keep = )</code>, <code><a href="../reference/modif_weight.html">to_signed()</a></code>,
-<code><a href="../reference/measure_attributes_ties.html">tie_signs()</a></code>
+<code><a href="../reference/measure_attributes_values.html">tie_signs()</a></code>
 </td>
 <td>split or create signed networks</td>
 </tr>

@@ -36,7 +36,7 @@ such as roads, rivers, or routes, as a spatial network.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.1</span>
       </span>
     </div>
 
@@ -306,6 +306,9 @@ and so by default the ties that meet at such a node are joined,
 unless a point describes that node.
 A joined tie records the number of 'segments' it joins,
 and its 'length' is the sum of theirs.
+A length is a distance and not a weight (see <code><a href="measure_attributes_values.html">tie_lengths()</a></code>),
+so the network is weighted only where the file gives its lines a 'weight'.
+Measures of shortest paths read the lengths as they are.
 Its other numeric attributes are their means, weighted by their lengths,
 which is not what is wanted of an attribute that is itself a total.
 Where its segments differ on any other attribute,

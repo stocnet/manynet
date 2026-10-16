@@ -38,7 +38,7 @@ only transforming these objects' properties."><meta property="og:image" content=
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.1</span>
       </span>
     </div>
 
@@ -186,7 +186,11 @@ which retains every tie but replaces its sign with its magnitude.</p></dd>
 
 <dt id="arg-measure">measure<a class="anchor" aria-label="anchor" href="#arg-measure"></a></dt>
 <dd><p>A numeric vector (measure) that will be added as the tie
-weights to the network.
+weights to the network,
+or the name of a numeric tie attribute whose values become the weights,
+such as "length".
+A length is a distance, so a long tie becomes a heavy one:
+see <code><a href="measure_attributes_values.html">tie_lengths()</a></code> for when that is wanted.
 If this is NULL, then the tie weights will be drawn from a
 Poisson distribution with \(\lambda = 4\).</p></dd>
 

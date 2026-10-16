@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.1</span>
       </span>
     </div>
 
@@ -89,7 +89,37 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="2.4.0" id="manynet-240">manynet 2.4.0<a class="anchor" aria-label="anchor" href="#manynet-240"></a></h2>
+<h2 class="page-header" data-toc-text="2.4.1" id="manynet-241">manynet 2.4.1<a class="anchor" aria-label="anchor" href="#manynet-241"></a></h2>
+<div class="section level3">
+<h3 id="making-2-4-1">Making<a class="anchor" aria-label="anchor" href="#making-2-4-1"></a></h3>
+<ul><li>Fixed <code><a href="../reference/make_create.html">create_core()</a></code> to read a logical <code>mark</code> with <code>TRUE</code> for a core node</li>
+</ul></div>
+<div class="section level3">
+<h3 id="classes-2-4-1">Classes<a class="anchor" aria-label="anchor" href="#classes-2-4-1"></a></h3>
+<ul><li>Improved <code><a href="../reference/make_stocnet.html">validate_stocnet()</a></code> to check that a tie’s ‘length’ is numeric and non-negative
+<ul><li>Ties can have both ‘length’ (distance) and ‘weight’ (strength)</li>
+<li>A tie column called ‘distance’ gets a warning that it might be better called ‘length’</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="coercion-2-4-1">Coercion<a class="anchor" aria-label="anchor" href="#coercion-2-4-1"></a></h3>
+<ul><li>Improved <code>as_*.data.frame()</code> to read columns called ‘length’ or ‘distance’</li>
+</ul></div>
+<div class="section level3">
+<h3 id="modifying-2-4-1">Modifying<a class="anchor" aria-label="anchor" href="#modifying-2-4-1"></a></h3>
+<ul><li>Improved <code><a href="../reference/modif_weight.html">to_weighted()</a></code> to also convert a numeric tie attribute, e.g. <code>to_weighted(.data, "length")</code>
+</li>
+<li>Improved <code><a href="../reference/modif_backbone.html">to_backbone()</a></code> to filter lengths (without weights) on their inverse, so a short tie counts as a strong one</li>
+<li>Fixed <code><a href="../reference/modif_split.html">to_reporters()</a></code> and <code><a href="../reference/modif_scope.html">to_reporter()</a></code> for a CSS with a non-CSS layer, such as <code>ison_hightech</code> (closes <a href="https://github.com/stocnet/manynet/issues/187" class="external-link">#187</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="describing-2-4-1">Describing<a class="anchor" aria-label="anchor" href="#describing-2-4-1"></a></h3>
+<ul><li>Added <code><a href="../reference/measure_attributes_values.html">tie_lengths()</a></code> for the lengths of the ties in a network</li>
+<li>Added <code><a href="../reference/measure_attributes_ties.html">tie_nodes()</a></code> for the number of nodes that each tie joins (closes stocnet/netrics#43)</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.4.0" id="manynet-240">manynet 2.4.0<small>2026-10-14</small><a class="anchor" aria-label="anchor" href="#manynet-240"></a></h2>
 <div class="section level3">
 <h3 id="package-2-4-0">Package<a class="anchor" aria-label="anchor" href="#package-2-4-0"></a></h3>
 <ul><li>Added design principles to the README and the contributing guide</li>
@@ -350,7 +380,7 @@
 <div class="section level3">
 <h3 id="describing-2-4-0">Describing<a class="anchor" aria-label="anchor" href="#describing-2-4-0"></a></h3>
 <ul><li>Fixed <code><a href="../reference/member_names.html">net_tie_attributes()</a></code> to leave out “from” and “to” for a ‘stocnet’</li>
-<li>Fixed <code><a href="../reference/measure_attributes_nodes.html">node_labels()</a></code>, <code><a href="../reference/measure_attributes_ties.html">tie_weights()</a></code>, and <code><a href="../reference/measure_attributes_ties.html">tie_signs()</a></code> to describe nodes and hyperedges of a hypergraph</li>
+<li>Fixed <code><a href="../reference/measure_attributes_nodes.html">node_labels()</a></code>, <code><a href="../reference/measure_attributes_values.html">tie_weights()</a></code>, and <code><a href="../reference/measure_attributes_values.html">tie_signs()</a></code> to describe nodes and hyperedges of a hypergraph</li>
 </ul></div>
 <div class="section level3">
 <h3 id="marking-2-4-0">Marking<a class="anchor" aria-label="anchor" href="#marking-2-4-0"></a></h3>

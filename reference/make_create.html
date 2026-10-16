@@ -61,7 +61,7 @@ and the number of modes, nodes, and directedness will be inferred."><meta proper
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.1</span>
       </span>
     </div>
 
@@ -269,8 +269,10 @@ Otherwise it is filled in from the outdegree as described above.</p></dd>
 
 
 <dt id="arg-mark">mark<a class="anchor" aria-label="anchor" href="#arg-mark"></a></dt>
-<dd><p>A logical vector the length of the nodes in the network.
-This can be created by, among other things, any <code>node_is_*()</code> function.</p></dd>
+<dd><p>A logical vector the length of the nodes in the network,
+with <code>TRUE</code> for a node of the core.
+This can be created by, among other things, any <code>node_is_*()</code> function.
+Where <code>mark</code> is not logical, the core is the first of its two groups.</p></dd>
 
 </dl></div>
     <div id="value">
