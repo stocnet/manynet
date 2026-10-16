@@ -279,7 +279,9 @@ Conventions to preserve when writing or editing functions:
   and are stored as *integer indices* into `nodes`, not labels — `make_stocnet()`
   matches labels to indices on construction. Reserved columns are `layer` (multiplex),
   `weight` (negative weights mean a signed network, a missing weight a tie of unknown
-  value), `time` (longitudinal), `by` (the node that reported a tie, as in
+  value), `length` (a distance, such as the length of a road; a larger length is a
+  further tie, where a larger weight is a stronger one, so a tie can have both and
+  neither stands in for the other: see `tie_lengths()`), `time` (longitudinal), `by` (the node that reported a tie, as in
   a cognitive social structure or an egocentric network), and `about` (the node a tie
   is about, as in gossip). `by` and `about` are integer indices into `nodes` too, and
   may hold `NA` for a layer that no node reported or that is about no node. Anything

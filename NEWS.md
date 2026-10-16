@@ -4,6 +4,12 @@
 
 - Fixed `create_core()` to read a logical `mark` with `TRUE` for a core node
 
+## Classes
+
+- Improved `validate_stocnet()` to check that a tie's 'length' is numeric and non-negative
+  - Ties can have both 'length' (distance) and 'weight' (strength)
+  - A tie column called 'distance' gets a warning that it might be better called 'length'
+
 # manynet 2.4.0
 
 ## Package
