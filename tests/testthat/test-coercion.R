@@ -789,6 +789,22 @@ test_that("from_reporters joins reports as the array route reads them", {
   expect_error(from_reporters(list(Z = reports[[1]])), "do not name nodes")
 })
 
+test_that("from_reporters returns a full array with missing reporter slices", {
+  arr <- css_array()
+  reports <- list(A = arr[, , "A"], C = arr[, , "C"])
+  expected <- array(NA, dim = dim(arr), dimnames = dimnames(arr))
+  expected[, , "A"] <- reports$A
+  expected[, , "C"] <- reports$C
+
+  matrices <- from_reporters(reports)
+  expect_identical(dim(matrices), dim(arr))
+  expect_identical(dimnames(matrices)[[3]], dimnames(arr)[[3]])
+  expect_equal(matrices, expected)
+
+  networks <- from_reporters(lapply(reports, as_stocnet))
+  expect_equal(as_matrix(networks), expected)
+})
+
 # Directed two-mode networks (#157) --------------------------------------------
 
 test_that("ison_southern_women is undirected in every class", {
