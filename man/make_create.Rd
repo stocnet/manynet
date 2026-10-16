@@ -89,8 +89,10 @@ If \code{n} is an existing directed network object and the indegree is not speci
 then the indegree distribution will be inferred from that of the network.
 Otherwise it is filled in from the outdegree as described above.}
 
-\item{mark}{A logical vector the length of the nodes in the network.
-This can be created by, among other things, any \verb{node_is_*()} function.}
+\item{mark}{A logical vector the length of the nodes in the network,
+with \code{TRUE} for a node of the core.
+This can be created by, among other things, any \verb{node_is_*()} function.
+Where \code{mark} is not logical, the core is the first of its two groups.}
 }
 \value{
 A \code{stocnet} object is returned,

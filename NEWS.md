@@ -1,3 +1,9 @@
+# manynet 2.4.1
+
+## Making
+
+- Fixed `create_core()` to read a logical `mark` with `TRUE` for a core node
+
 # manynet 2.4.0
 
 ## Package

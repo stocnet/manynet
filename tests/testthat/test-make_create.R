@@ -177,6 +177,16 @@ test_that("core-periphery creation works", {
   expect_equal(as.numeric(net_nodes(create_core(c(10,4)))), 14)
 })
 
+test_that("core-periphery creation reads a logical mark as the core", {
+  core <- c(TRUE, TRUE, TRUE, FALSE, FALSE, FALSE)
+  expect_equal(as_matrix(create_core(6, mark = core)),
+               as_matrix(create_core(6)))
+  expect_equal(as_matrix(create_core(6, mark = !core))[4:6, 4:6],
+               1 - diag(3))
+  expect_equal(sum(as_matrix(create_core(c(2,2), mark = c(TRUE, FALSE, TRUE, FALSE)))),
+               3)
+})
+
 # test_that("nest creation works", {
 #   expect_equal(create_nest(2,4, as = "matrix"), matrix(c(1,1,0,1,0,0,0,0),2,4))
 #   expect_s3_class(create_nest(2,4, as = "igraph"), "igraph")
