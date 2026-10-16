@@ -18,6 +18,7 @@
 
 - Improved `to_weighted()` to also convert a numeric tie attribute, e.g. `to_weighted(.data, "length")`
 - Improved `to_backbone()` to filter lengths (without weights) on their inverse, so a short tie counts as a strong one
+- Fixed `to_reporters()` and `to_reporter()` for a CSS with a non-CSS layer, such as `ison_hightech` (closes #187)
 
 ## Describing
 

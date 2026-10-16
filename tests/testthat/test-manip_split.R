@@ -418,6 +418,17 @@ test_that("from_reporters reverses to_reporters, nonresponse and all", {
   expect_true(is_cognitive(back))
 })
 
+test_that("to_reporters keeps ties that no node reported in every report", {
+  reports <- to_reporters(ison_hightech)
+  expect_length(reports, 21)
+  for(report in reports) expect_silent(validate_stocnet(report))
+  formal <- sum(is.na(ison_hightech$ties$by))
+  expect_equal(sum(reports[[1]]$ties$layer == "reports"), formal)
+  expect_equal(to_reporter(ison_hightech, 1), reports[[1]])
+  expect_equal(net_layers(to_reporter(ison_hightech, 1)),
+               net_layers(ison_hightech))
+})
+
 test_that("to_reporters treats a network without reports as one view", {
   expect_length(suppressMessages(to_reporters(ison_adolescents)), 1)
   expect_equal(suppressMessages(to_reporter(as_stocnet(ison_adolescents), 1)),
