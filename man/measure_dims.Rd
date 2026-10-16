@@ -86,6 +86,7 @@ mode_nodes(to_mode1(ison_southern_women))
 \seealso{
 Other measures:
 \code{\link{measure_attributes_nodes}},
-\code{\link{measure_attributes_ties}}
+\code{\link{measure_attributes_ties}},
+\code{\link{measure_attributes_values}}
 }
 \concept{measures}

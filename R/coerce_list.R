@@ -227,12 +227,13 @@ as_edgelist.data.frame <- function(.data, twomode = FALSE) {
   } else if(ncol(.data) == 3 &&
             (any(names(.data) != c("from", "to", "weight")) |
             any(names(.data) != c("from", "to", "sign"))) &&
-            # a third column naming the reporter or target of each tie is not
-            # a weight
-            !names(.data)[3] %in% c("by", "about")) {
+            # a third column naming the reporter or target of each tie, or
+            # giving its length, is not a weight
+            !names(.data)[3] %in% c("by", "about", .not_weights)) {
     names(.data) <- c("from", "to", "weight")
     .data
-  } else if(ncol(.data) == 3 && names(.data)[3] %in% c("by", "about")) {
+  } else if(ncol(.data) == 3 &&
+            names(.data)[3] %in% c("by", "about", .not_weights)) {
     # only the ends are renamed, whatever they were called
     names(.data)[1:2] <- c("from", "to")
     .data

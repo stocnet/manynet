@@ -54,6 +54,11 @@ validate_ties <- function(.data){
   reserved_cols(.data, "ties", "weight", 
                 class = c("numeric","integer"), 
            aka = c("value", "strength", "val", "sign"))
+  # A length is a distance and not a strength, so it is held apart from the
+  # weight, and a tie can have both. See `tie_lengths()`.
+  reserved_cols(.data, "ties", "length",
+                class = c("numeric","integer"),
+                aka = "distance")
   # Note that 'begin' and 'end' are not among the names for a time here.
   # These mark the span over which a tie is present, which `is_dynamic()`
   # reads as such, rather than a time that is named some other way.

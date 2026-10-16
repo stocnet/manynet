@@ -102,7 +102,9 @@ NULL
 #'   network as an undirected one, since it counts shared neighbours.
 #'
 #'   By default `NULL`, which uses "lans" where the network is weighted and
-#'   "simmelian" where it is not. "lans" leads because it assumes nothing about
+#'   "simmelian" where it is not.
+#'   A network with lengths (see [tie_lengths()]) but no weights is filtered
+#'   on the inverse of its lengths, so that a short tie counts as a strong one. "lans" leads because it assumes nothing about
 #'   the shape of the weights, and because it retains each node's strongest tie
 #'   whatever that shape is. "disparity" is the better known filter, but its
 #'   null model expects heavy-tailed weights: where weights are more even, a
@@ -159,7 +161,10 @@ to_backbone.stocnet <- function(.data, filter = NULL, threshold = NULL,
 # that cannot be filtered says so rather than announcing a filter it will not
 # run.
 .backbone_spec <- function(.data, filter, threshold){
-  weighted <- is_weighted(.data)
+  # A network with lengths but no weights is filtered on how close its ties
+  # are, so that a short tie counts as a strong one. See `.backbone_ties()`.
+  lengthed <- !is_weighted(.data) && .holds_lengths(.data)
+  weighted <- is_weighted(.data) || lengthed
   if(is.null(filter)) filter <- if(weighted) "lans" else "simmelian"
   filter <- match.arg(filter, .backbone_filters)
   if(is_signed(.data))
@@ -175,6 +180,9 @@ to_backbone.stocnet <- function(.data, filter = NULL, threshold = NULL,
     snet_abort("{.arg threshold} must be a single number.")
   snet_info("Using the {.val {filter}} filter at a threshold of",
             "{.val {threshold}}.")
+  if(lengthed && filter != "simmelian")
+    snet_info("Since the network has lengths but no weights, the inverse of",
+              "each tie's length is read as its weight.")
   if(weighted && filter == "simmelian")
     snet_info("The {.val simmelian} filter reads a network's structure",
               "rather than its weights, so the weights here are ignored.")
@@ -234,6 +242,7 @@ to_backbone.stocnet <- function(.data, filter = NULL, threshold = NULL,
     from <- as.integer(.data$ties$from)
     to <- as.integer(.data$ties$to)
     weight <- .data$ties[["weight"]]
+    len <- .data$ties[["length"]]
     nodes <- nrow(.data$nodes)
   } else {
     graph <- as_igraph(.data)
@@ -241,8 +250,11 @@ to_backbone.stocnet <- function(.data, filter = NULL, threshold = NULL,
     from <- as.integer(el[,1])
     to <- as.integer(el[,2])
     weight <- igraph::edge_attr(graph, "weight")
+    len <- igraph::edge_attr(graph, "length")
     nodes <- igraph::vcount(graph)
   }
+  # A length is a distance, so a short tie is the strong one
+  if(is.null(weight) && !is.null(len)) weight <- 1 / len
   if(is.null(weight)) weight <- rep(1, length(from))
   list(from = from, to = to, weight = as.numeric(weight), nodes = nodes)
 }

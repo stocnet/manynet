@@ -50,6 +50,7 @@ node_is_mode(ison_southern_women)
 \seealso{
 Other measures:
 \code{\link{measure_attributes_ties}},
+\code{\link{measure_attributes_values}},
 \code{\link{measure_dims}}
 }
 \concept{measures}

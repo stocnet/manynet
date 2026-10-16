@@ -159,7 +159,9 @@ including the reports of nodes that reported no ties.
 A reporter that did not report at all gives a network whose ties are
 all missing.
 Ties that no node reported, such as a layer taken from records,
-belong to no report and are left out.
+are seen in the same way by every reporter, and so are kept in every
+report, as \code{to_aggregated(over = "by")} keeps them.
+\code{from_reporters()} then joins them as reported by every reporter.
 A network that names no reporter is returned as a list of length one,
 as \code{to_layers()} returns a network that holds no layers.
 Egocentric data cannot be split this way, since each ego reports on its

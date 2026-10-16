@@ -53,7 +53,11 @@ which retains every tie but replaces its sign with its magnitude.}
 \item{mark}{A mark (logical vector) the length of the ties in the network.}
 
 \item{measure}{A numeric vector (measure) that will be added as the tie
-weights to the network.
+weights to the network,
+or the name of a numeric tie attribute whose values become the weights,
+such as "length".
+A length is a distance, so a long tie becomes a heavy one:
+see \code{\link[=tie_lengths]{tie_lengths()}} for when that is wanted.
 If this is NULL, then the tie weights will be drawn from a
 Poisson distribution with \eqn{\lambda = 4}.}
 

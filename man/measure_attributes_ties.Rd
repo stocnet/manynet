@@ -3,8 +3,7 @@
 \name{measure_attributes_ties}
 \alias{measure_attributes_ties}
 \alias{tie_attribute}
-\alias{tie_weights}
-\alias{tie_signs}
+\alias{tie_nodes}
 \alias{tie_is_twomode}
 \alias{tie_is_parallel}
 \alias{tie_is_backbone}
@@ -12,9 +11,7 @@
 \usage{
 tie_attribute(.data, attr_name)
 
-tie_weights(.data)
-
-tie_signs(.data)
+tie_nodes(.data)
 
 tie_is_twomode(.data)
 
@@ -64,7 +61,9 @@ network as an undirected one, since it counts shared neighbours.
 }
 
 By default \code{NULL}, which uses "lans" where the network is weighted and
-"simmelian" where it is not. "lans" leads because it assumes nothing about
+"simmelian" where it is not.
+A network with lengths (see \code{\link[=tie_lengths]{tie_lengths()}}) but no weights is filtered
+on the inverse of its lengths, so that a short tie counts as a strong one. "lans" leads because it assumes nothing about
 the shape of the weights, and because it retains each node's strongest tie
 whatever that shape is. "disparity" is the better known filter, but its
 null model expects heavy-tailed weights: where weights are more even, a
@@ -89,8 +88,10 @@ since the others weigh both endpoints at once.}
 These functions extract certain attributes from network data:
 \itemize{
 \item \code{tie_attribute()} returns an attribute's values for the ties in a network.
-\item \code{tie_weights()} returns the weights of the ties in a network.
-\item \code{tie_signs()} returns the signs of the ties in a network.
+\item \code{tie_nodes()} returns the number of nodes that each tie in a network
+joins. A tie between two nodes joins 2, and a loop joins 1.
+A hyperedge joins its members, which may be any number of nodes,
+so a summary of this gives the distribution of hyperedge sizes.
 \item \code{tie_is_twomode()} returns whether each tie in a network is a cross-mode tie.
 \item \code{tie_is_parallel()} returns whether each tie in a network runs parallel
 to another, i.e. whether another tie joins the same pair of nodes at the
@@ -140,8 +141,8 @@ one even where it is neither weighted nor signed.
 
 \examples{
 tie_attribute(ison_algebra, "task_tie")
-tie_weights(to_mode1(ison_southern_women))
-tie_signs(to_uniplex(fict_marvel,"relationship"))
+tie_nodes(ison_adolescents)
+tie_nodes(to_hypergraph(ison_southern_women))
 tie_is_twomode(fict_actually)
 tie_is_parallel(ison_koenigsberg)
 tie_is_backbone(ison_networkers)
@@ -152,6 +153,7 @@ and which documents each filter and the works they come from.
 
 Other measures:
 \code{\link{measure_attributes_nodes}},
+\code{\link{measure_attributes_values}},
 \code{\link{measure_dims}}
 }
 \concept{measures}

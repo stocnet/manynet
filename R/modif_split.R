@@ -242,7 +242,9 @@ to_layers.data.frame <- function(.data){
 #'   A reporter that did not report at all gives a network whose ties are
 #'   all missing.
 #'   Ties that no node reported, such as a layer taken from records,
-#'   belong to no report and are left out.
+#'   are seen in the same way by every reporter, and so are kept in every
+#'   report, as `to_aggregated(over = "by")` keeps them.
+#'   `from_reporters()` then joins them as reported by every reporter.
 #'   A network that names no reporter is returned as a list of length one,
 #'   as `to_layers()` returns a network that holds no layers.
 #'   Egocentric data cannot be split this way, since each ego reports on its
@@ -301,11 +303,13 @@ to_reporters.stocnet <- function(.data){
     as.character(labels)
 }
 
-# One reporter's view of the network: the ties it reported, and the ties it
-# was asked about but did not report on, as missing ties.
+# One reporter's view of the network: the ties it reported, the ties that no
+# node reported (such as a layer taken from records), and the ties it was
+# asked about but did not report on, as missing ties.
 .reporter_slice <- function(.data, r){
   ties <- .data$ties
-  mine <- ties[ties$by %in% r, setdiff(names(ties), "by"), drop = FALSE]
+  mine <- ties[ties$by %in% r | is.na(ties$by), setdiff(names(ties), "by"),
+               drop = FALSE]
   missing <- as_missinglist(.data)
   if(!is.null(missing) && "by" %in% names(missing)){
     missing <- missing[missing$by %in% r, setdiff(names(missing), "by"),

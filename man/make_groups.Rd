@@ -96,8 +96,10 @@ mode, or for the ties sent and the ties received.}
 sizes are drawn.
 By default 1.}
 
-\item{mark}{A logical vector the length of the nodes in the network.
-This can be created by, among other things, any \verb{node_is_*()} function.}
+\item{mark}{A logical vector the length of the nodes in the network,
+with \code{TRUE} for a node of the core.
+This can be created by, among other things, any \verb{node_is_*()} function.
+Where \code{mark} is not logical, the core is the first of its two groups.}
 }
 \value{
 A \code{stocnet} object is returned,
@@ -209,8 +211,6 @@ than empty, as Borgatti and Everett (2000) describe of observed networks.
 \code{mark} says which nodes are in the core, with \code{TRUE} for a node of the
 core, and by default they are the first half of the nodes, or of each
 mode.
-Note that \code{create_core()} for now reads a logical \code{mark} the other way
-round, with \code{TRUE} for a node of the periphery.
 }
 \examples{
 generate_smallworld(12, 0.025)

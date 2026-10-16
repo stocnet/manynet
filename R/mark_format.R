@@ -388,6 +388,11 @@ NULL
 #' @export
 is_weighted <- function(.data) UseMethod("is_weighted")
 
+# A third column of an edgelist is read as its weights unless it is named as
+# something else that is numeric. A length is a distance, not a strength, so a
+# 'length' column is kept as such (see `tie_lengths()`).
+.not_weights <- c("length", "distance")
+
 # A signed network's ties are often held compactly as weights of -1 and 1,
 # so that coercion from one format to another does not lose the sign.
 # Such a 'weight' column records only signs and not weights,
@@ -450,7 +455,9 @@ is_weighted.network <- function(.data) {
 #' @export
 is_weighted.data.frame <- function(.data) {
   if(!(ncol(.data)>=3 &&
-       ("weight" %in% names(.data) | is.numeric(.data[,3])))) return(FALSE)
+       ("weight" %in% names(.data) |
+          (is.numeric(.data[,3]) && !names(.data)[3] %in% .not_weights))))
+    return(FALSE)
   wts <- if("weight" %in% names(.data)) .data[["weight"]] else .data[[3]]
   !.holds_only_signs(wts, "sign" %in% names(.data))
 }

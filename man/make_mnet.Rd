@@ -56,6 +56,7 @@ but printed as an edgelist.
 Here the convention is for the first column of the edgelist to be called
 'from' and the second column 'to', even if the network is not directed.
 Additional reserved columns include 'weight' for weighted networks,
+'length' for the distances that ties span (see \code{\link[=tie_lengths]{tie_lengths()}}),
 'wave' for longitudinal networks, 'type' for multiplex networks,
 and 'sign' for signed networks.
 }

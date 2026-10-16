@@ -1,3 +1,30 @@
+# manynet 2.4.1
+
+## Making
+
+- Fixed `create_core()` to read a logical `mark` with `TRUE` for a core node
+
+## Classes
+
+- Improved `validate_stocnet()` to check that a tie's 'length' is numeric and non-negative
+  - Ties can have both 'length' (distance) and 'weight' (strength)
+  - A tie column called 'distance' gets a warning that it might be better called 'length'
+
+## Coercion
+
+- Improved `as_*.data.frame()` to read columns called 'length' or 'distance'
+
+## Modifying
+
+- Improved `to_weighted()` to also convert a numeric tie attribute, e.g. `to_weighted(.data, "length")`
+- Improved `to_backbone()` to filter lengths (without weights) on their inverse, so a short tie counts as a strong one
+- Fixed `to_reporters()` and `to_reporter()` for a CSS with a non-CSS layer, such as `ison_hightech` (closes #187)
+
+## Describing
+
+- Added `tie_lengths()` for the lengths of the ties in a network
+- Added `tie_nodes()` for the number of nodes that each tie joins (closes stocnet/netrics#43)
+
 # manynet 2.4.0
 
 ## Package
