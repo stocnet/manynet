@@ -98,8 +98,10 @@ node_is_mode <- function(.data){
 #'   These functions extract certain attributes from network data:
 #'   
 #'   - `tie_attribute()` returns an attribute's values for the ties in a network.
-#'   - `tie_weights()` returns the weights of the ties in a network.
-#'   - `tie_signs()` returns the signs of the ties in a network.
+#'   - `tie_nodes()` returns the number of nodes that each tie in a network
+#'   joins. A tie between two nodes joins 2, and a loop joins 1.
+#'   A hyperedge joins its members, which may be any number of nodes,
+#'   so a summary of this gives the distribution of hyperedge sizes.
 #'   - `tie_is_twomode()` returns whether each tie in a network is a cross-mode tie. 
 #'   - `tie_is_parallel()` returns whether each tie in a network runs parallel
 #'   to another, i.e. whether another tie joins the same pair of nodes at the
@@ -152,7 +154,49 @@ tie_attribute.network <- function(.data, attr_name){
   stats::setNames(lapply(attr_names, function(x) FUN(.data, x)), attr_names)
 }
 
-#' @rdname measure_attributes_ties
+#' Describing the values of ties in a network
+#' @name measure_attributes_values
+#' @description
+#'   These functions extract the values that a network reserves for its ties:
+#'
+#'   - `tie_weights()` returns the weights of the ties in a network.
+#'   - `tie_lengths()` returns the lengths of the ties in a network.
+#'   - `tie_signs()` returns the signs of the ties in a network.
+#'
+#'   Each returns a vector the same length as the number of ties in the
+#'   network, and 1 for every tie where the network records no such value.
+#' @details
+#'   A weight, a length, and a sign each say something different about a tie,
+#'   and a tie can have all three.
+#'   A road can be 12 kilometres long (its length),
+#'   carry 3,000 vehicles a day (its weight),
+#'   and be a road that its users like or dislike (its sign).
+#'
+#'   - A __weight__ is a strength: a larger weight is a stronger tie.
+#'   It is held as 'weight', and `is_weighted()` reports whether a network has
+#'   one. Measures of strength and degree, and of how much a tie can carry,
+#'   such as maximum flow, read it.
+#'   - A __length__ is a distance: a larger length is a tie that is further
+#'   to cross. It is held as 'length'.
+#'   `read_geojson()` measures one along each line it reads.
+#'   Measures of shortest paths, such as closeness and betweenness in
+#'   `{netrics}`, read it, and so does a spatial layout in `{autograph}`.
+#'   - A __sign__ is a valence: whether a tie is positive or negative.
+#'   A 'stocnet' holds it as the sign of the weight,
+#'   and other classes as 'sign' (see `is_signed()`).
+#'
+#'   A network that records only lengths is not weighted,
+#'   and a network that records only weights has no lengths.
+#'   A measure that needs one where the network gives only the other
+#'   makes its own choice of how to read it, and documents that choice.
+#'   To read the lengths as weights, or the reverse, use for example
+#'   `to_weighted(.data, "length")`.
+#' @family measures
+#' @template param_data
+#' @seealso [measure_attributes_ties] for the other attributes of ties.
+NULL
+
+#' @rdname measure_attributes_values
 #' @examples
 #' tie_weights(to_mode1(ison_southern_women))
 #' @export
@@ -167,7 +211,27 @@ tie_weights <- function(.data){
   make_tie_measure(out, .data)
 }
 
-#' @rdname measure_attributes_ties
+#' @rdname measure_attributes_values
+#' @examples
+#' tie_lengths(mutate_ties(create_ring(4), length = c(1, 2.5, 1, 2.5)))
+#' @export
+tie_lengths <- function(.data){
+  # Lengths are read from the stocnet, which holds each tie, and each
+  # hyperedge, as one row in the order the network gives them.
+  ties <- as_stocnet(.data)$ties
+  out <- ties[["length"]] %||% rep(1, nrow(ties))
+  make_tie_measure(out, .data)
+}
+
+# Whether a network records lengths that differ, and so carry information:
+# a column of ones says no more than that each tie is present.
+.holds_lengths <- function(.data){
+  len <- if(inherits(.data, "stocnet")) .data$ties[["length"]] else
+    igraph::edge_attr(as_igraph(.data), "length")
+  is.numeric(len) && length(unique(stats::na.omit(len))) > 1
+}
+
+#' @rdname measure_attributes_values
 #' @examples 
 #' tie_signs(to_uniplex(fict_marvel,"relationship"))
 #' @export
@@ -184,6 +248,26 @@ tie_signs <- function(.data){
     out <- sign(igraph::edge_attr(.data, "weight"))
   if(is.null(out)) out <- rep(1, net_ties(.data))
   make_tie_measure(out, .data)
+}
+
+#' @rdname measure_attributes_ties
+#' @examples
+#' tie_nodes(ison_adolescents)
+#' tie_nodes(to_hypergraph(ison_southern_women))
+#' @export
+tie_nodes <- function(.data){
+  # A stocnet holds each tie, and each hyperedge, as one row of its ties, and
+  # a hyperedge names its members in 'with' rather than in 'from' and 'to'.
+  if(inherits(.data, "stocnet")){
+    ties <- .data$ties
+    hyper <- .hyper_rows(ties)
+    out <- ifelse(ties$from == ties$to, 1, 2)
+    out[hyper] <- lengths(lapply(ties[["with"]][hyper], unique))
+    return(make_tie_measure(as.numeric(out), .data))
+  }
+  .data <- as_igraph(.data)
+  ends <- igraph::ends(.data, igraph::E(.data), names = FALSE)
+  make_tie_measure(ifelse(ends[,1] == ends[,2], 1, 2), .data)
 }
 
 #' @rdname measure_attributes_ties

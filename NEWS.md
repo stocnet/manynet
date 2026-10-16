@@ -19,6 +19,11 @@
 - Improved `to_weighted()` to also convert a numeric tie attribute, e.g. `to_weighted(.data, "length")`
 - Improved `to_backbone()` to filter lengths (without weights) on their inverse, so a short tie counts as a strong one
 
+## Describing
+
+- Added `tie_lengths()` for the lengths of the ties in a network
+- Added `tie_nodes()` for the number of nodes that each tie joins (closes stocnet/netrics#43)
+
 # manynet 2.4.0
 
 ## Package

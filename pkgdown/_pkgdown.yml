@@ -224,6 +224,7 @@ reference:
       `tie_*()` functions return a vector of values the length
       of the ties in the network.
     contents:
+      - measure_attributes_values
       - starts_with("tie_is_")
     
   - title: "Practicing"
