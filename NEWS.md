@@ -1,3 +1,9 @@
+# manynet 2.4.2
+
+## Package
+
+- Updated CONTRIBUTING with updates on how to write "Accelerated..." NEWS items
+
 # manynet 2.4.1
 
 ## Making

@@ -555,12 +555,28 @@ Start each bullet with a verb matching the change type:
   or the pull request description
 - `Renamed ... to ...` — function or data name migrations
 - `Improved ...` — functional updates to existing behaviour
+- `Accelerated ...` — the same behaviour, made faster;
+  give the speed-up in a sub-bullet (see below)
 - `Updated ...` — documentation changes
 - `Removed ...` / `Dropped ...` — functionality or dependencies taken out
 - `Moved ...` / `Migrated ...` — functionality relocated to another package or file
 - `Split ...` — one function or file divided into several
 
 Any of these verbs can also lead a sub-bullet.
+
+An `Accelerated ...` bullet says how the function was made faster,
+and a sub-bullet says by how much and for what input, e.g.:
+
+```
+- Accelerated `to_correlation()` by correlating reciprocal and complex networks at once
+  - ~40x faster for a directed network of 400 nodes
+```
+
+Time the old and the new version on the same input,
+and give a rounded figure as `~40x`, a range as `~40-140x`,
+or a lower bound as `>1000x`.
+Name the input the figure was measured on,
+since the speed-up usually grows with the size of the network.
 
 Name a function by the generic, e.g. `net_modes()`, where the change reaches
 every class it dispatches on.
