@@ -307,16 +307,20 @@ to_backbone.stocnet <- function(.data, filter = NULL, threshold = NULL,
 # Locally adaptive network sparsification. The score is the share of a node's
 # own tie weights that are at least as large as this one, so the node's
 # heaviest tie always scores zero and its lightest scores one.
+# The weights are sorted within each node, so that how many of a node's
+# weights are no larger than a tie's is where the run of weights equal to it
+# ends, counted from where the node's weights begin.
 .bb_lans <- function(ids, weight, nodes){
   out <- rep(NA_real_, length(weight))
-  for(idx in split(seq_along(weight), factor(ids, levels = seq_len(nodes)))){
-    if(!length(idx)) next
-    own <- weight[idx]
-    obs <- !is.na(own)
-    if(!any(obs)) next
-    out[idx] <- 1 - vapply(own, function(w)
-      mean(own[obs] <= w), numeric(1))
-  }
+  obs <- which(!is.na(weight))
+  if(!length(obs)) return(out)
+  o <- obs[order(ids[obs], weight[obs])]
+  id <- ids[o]
+  w <- weight[o]
+  last <- c(id[-1] != id[-length(id)] | w[-1] != w[-length(w)], TRUE)
+  run_end <- rev(cummin(rev(ifelse(last, seq_along(o), Inf))))
+  at_most <- run_end - match(id, id) + 1
+  out[o] <- 1 - at_most / tabulate(id, nodes)[id]
   out
 }
 
@@ -382,33 +386,32 @@ to_backbone.stocnet <- function(.data, filter = NULL, threshold = NULL,
 .bb_simmelian <- function(ties, directed){
   n <- ties$nodes
   m <- length(ties$from)
-  adj <- vector("list", n)
-  for(v in seq_len(n)) adj[[v]] <- integer(0)
-  for(e in seq_len(m)){
-    adj[[ties$from[e]]] <- c(adj[[ties$from[e]]], ties$to[e])
-    adj[[ties$to[e]]] <- c(adj[[ties$to[e]]], ties$from[e])
-  }
-  adj <- lapply(adj, unique)
+  # each node's neighbours in the order its ties list them, each tie adding
+  # its other endpoint to both of its own
+  adj <- split(c(rbind(ties$to, ties$from)),
+               factor(c(rbind(ties$from, ties$to)), levels = seq_len(n)))
+  adj <- unname(lapply(adj, unique))
   # Neighbours ranked by shared neighbours, the embeddedness of the tie
-  # between them, with the most embedded first.
+  # between them, with the most embedded first. The neighbours a node shares
+  # with each of its own are counted at once over their neighbourhoods.
   ranked <- lapply(seq_len(n), function(v){
     nb <- setdiff(adj[[v]], v)
     if(!length(nb)) return(integer(0))
-    shared <- vapply(nb, function(u) length(intersect(adj[[v]], adj[[u]])),
-                     numeric(1))
+    theirs <- adj[nb]
+    common <- unlist(theirs, use.names = FALSE) %in% adj[[v]]
+    shared <- tabulate(rep(seq_along(nb), lengths(theirs))[common], length(nb))
     nb[order(-shared)]
   })
+  # Of the two rankings' first k neighbours, a neighbour is in both once k
+  # reaches the lower of its two ranks, so the overlap at every k is a
+  # running count of those ranks.
   vapply(seq_len(m), function(e){
     a <- ranked[[ties$from[e]]]
     b <- ranked[[ties$to[e]]]
-    if(!length(a) || !length(b)) return(1)
-    best <- 0
-    for(k in seq_len(min(length(a), length(b)))){
-      top_a <- a[seq_len(k)]
-      top_b <- b[seq_len(k)]
-      shared <- length(intersect(top_a, top_b))
-      best <- max(best, shared / length(union(top_a, top_b)))
-    }
-    1 - best
+    top <- min(length(a), length(b))
+    if(!top) return(1)
+    both <- pmax(seq_along(a), match(a, b, nomatch = length(b) + 1L))
+    shared <- cumsum(tabulate(both[both <= top], top))
+    1 - max(0, shared / (2*seq_len(top) - shared))
   }, numeric(1))
 }

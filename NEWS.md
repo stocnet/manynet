@@ -23,6 +23,12 @@
   - ~40-140x faster for a one-mode network of 400 nodes, depending on the measure
   - Ranks ("spearman", "kendall"), "maxcrossmin", and missing ties still go pair by pair
   - Fixed it returning `Inf` for "overlap" with valued ties
+- Accelerated `to_correlation()` by correlating reciprocal and complex networks at once
+  - ~40x faster for a directed network of 400 nodes
+- Accelerated `to_backbone()` for the "simmelian" and "lans" filters
+  - "simmelian" is ~80x faster for 300 nodes, and "lans" ~15x faster for 2000 nodes
+- Accelerated `to_simplicial()` by counting the nodes each pair of faces shares at once
+  - ~20x faster for a two-mode network of 1000 by 400 nodes
 - Accelerated `impute_ties.matrix()` by writing all imputed ties at once
   - ~25x faster for 1000 nodes with 100000 missing cells
 - Accelerated `impute_nodes()` by finding the neighbours of all incomplete nodes at once

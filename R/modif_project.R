@@ -654,6 +654,34 @@ to_simplicial.tbl_graph <- function(.data){
   as_tidygraph(to_simplicial(as_stocnet(.data)))
 }
 
+# Which faces lie within another: a larger one, or an earlier one of the same
+# nodes, that holds all of their nodes. A face holds all of another's nodes
+# where the two share as many nodes as the other has, so the nodes each pair
+# of faces share are counted at once, from the faces each node is in. An empty
+# face shares no node, but lies within any other face all the same.
+.faces_within <- function(faces){
+  sizes <- lengths(faces)
+  k <- length(faces)
+  face <- rep(seq_len(k), sizes)
+  node <- match(unlist(faces, use.names = FALSE),
+                unique(unlist(faces, use.names = FALSE)))
+  by_node <- split(face, node)
+  i <- unlist(lapply(by_node, function(f) rep(f, length(f))), use.names = FALSE)
+  j <- unlist(lapply(by_node, function(f) rep(f, each = length(f))),
+              use.names = FALSE)
+  apart <- i != j
+  shared <- rle(sort((i[apart] - 1) * k + j[apart]))
+  i <- (shared$values - 1) %/% k + 1
+  j <- (shared$values - 1) %% k + 1
+  holds <- shared$lengths == sizes[i] &
+    (sizes[j] > sizes[i] | (sizes[j] == sizes[i] & j < i))
+  out <- rep(FALSE, k)
+  out[i[holds]] <- TRUE
+  empty <- which(sizes == 0)
+  out[empty] <- any(sizes > 0) | seq_along(empty) > 1
+  out
+}
+
 #' @export
 to_simplicial.network <- function(.data){
   as_network(to_simplicial(as_stocnet(.data)))
@@ -664,13 +692,7 @@ to_simplicial.stocnet <- function(.data) {
   if(is_twomode(.data) || is_hypergraph(.data)){
     out <- .dyads_to_hyper(to_hypergraph(.data))
     faces <- lapply(out$ties$with, function(x) sort(unique(x)))
-    sizes <- lengths(faces)
-    # a face is kept unless a larger one, or an earlier one of the same
-    # nodes, holds all of its nodes
-    within <- vapply(seq_along(faces), function(i)
-      any(vapply(seq_along(faces), function(j)
-        j != i && (sizes[j] > sizes[i] || (sizes[j] == sizes[i] && j < i)) &&
-          all(faces[[i]] %in% faces[[j]]), logical(1))), logical(1))
+    within <- .faces_within(faces)
     largest <- keep_ties(out, which(!within))
     largest$info$simplicial <- TRUE
     return(.record_exclusion(largest, out, "faces of a larger hyperedge",
