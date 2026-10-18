@@ -4,6 +4,11 @@
 
 - Updated CONTRIBUTING with updates on how to write "Accelerated..." NEWS items
 
+## Making
+
+- Accelerated `generate_scalefree()` for two-mode networks by keeping degrees as they grow
+  - ~250x faster for 1000 by 200 nodes, and >1000x faster for 2000 by 500 nodes
+
 # manynet 2.4.1
 
 ## Making
