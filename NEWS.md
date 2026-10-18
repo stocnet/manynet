@@ -16,6 +16,14 @@
 - Accelerated `as_network.igraph()` and `as_network.tbl_graph()` by matching ties at once
   - Tie attributes other than weights are now copied ~6x faster for 1000 nodes and 20000 ties
 
+
+## Describing
+
+- Accelerated `is_aperiodic()` by finding cycle lengths from walks, not simple paths
+  - This avoids enumerating paths, which grows exponentially in denser networks
+  - ~1000x faster for directed networks of 30 to 60 nodes with `max_path_length = 6`
+- Fixed `is_aperiodic()` never returning where one cycle length divided the next of three
+
 # manynet 2.4.1
 
 ## Making
