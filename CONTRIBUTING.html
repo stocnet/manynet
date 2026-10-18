@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.2</span>
       </span>
     </div>
 
@@ -396,6 +396,8 @@
 <li>
 <code>Improved ...</code> — functional updates to existing behaviour</li>
 <li>
+<code>Accelerated ...</code> — the same behaviour, made faster; give the speed-up in a sub-bullet (see below)</li>
+<li>
 <code>Updated ...</code> — documentation changes</li>
 <li>
 <code>Removed ...</code> / <code>Dropped ...</code> — functionality or dependencies taken out</li>
@@ -404,6 +406,10 @@
 <li>
 <code>Split ...</code> — one function or file divided into several</li>
 </ul><p>Any of these verbs can also lead a sub-bullet.</p>
+<p>An <code>Accelerated ...</code> bullet says how the function was made faster, and a sub-bullet says by how much and for what input, e.g.:</p>
+<pre><code>- Accelerated `to_correlation()` by correlating reciprocal and complex networks at once
+  - ~40x faster for a directed network of 400 nodes</code></pre>
+<p>Time the old and the new version on the same input, and give a rounded figure as <code>~40x</code>, a range as <code>~40-140x</code>, or a lower bound as <code>&gt;1000x</code>. Name the input the figure was measured on, since the speed-up usually grows with the size of the network.</p>
 <p>Name a function by the generic, e.g. <code><a href="reference/measure_dims.html">net_modes()</a></code>, where the change reaches every class it dispatches on. Where it reaches only one method, spell that method out in full, e.g. <code>net_modes.igraph()</code>, so that a reader knows which classes the change applies to.</p>
 <p>Keep every bullet to one line of fewer than 81 characters ideally (a few more or less is fine). If a bullet wraps, it holds too much: shorten it, or split it into a lead bullet and sub-bullets. Each bullet stands on its own, and states what changed, not why or how unless there is space for context. Explanation belongs in the function documentation or the vignettes.</p>
 <p>Where several bullets describe parallel changes, reuse the sentence structure, so that a reader sees the parallelism at a glance. Use one word for one thing throughout a version’s entries, rather than varying the wording for effect.</p>

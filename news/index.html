@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.2</span>
       </span>
     </div>
 
@@ -88,6 +88,61 @@
       <small>Source: <a href="https://github.com/stocnet/manynet/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.4.2" id="manynet-242">manynet 2.4.2<a class="anchor" aria-label="anchor" href="#manynet-242"></a></h2>
+<div class="section level3">
+<h3 id="package-2-4-2">Package<a class="anchor" aria-label="anchor" href="#package-2-4-2"></a></h3>
+<ul><li>Updated CONTRIBUTING with updates on how to write “Accelerated…” NEWS items</li>
+</ul></div>
+<div class="section level3">
+<h3 id="making-2-4-2">Making<a class="anchor" aria-label="anchor" href="#making-2-4-2"></a></h3>
+<ul><li>Accelerated <code><a href="../reference/make_growth.html">generate_scalefree()</a></code> for two-mode networks by keeping degrees as they grow
+<ul><li>~250x faster for 1000 by 200 nodes, and &gt;1000x faster for 2000 by 500 nodes</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="coercion-2-4-2">Coercion<a class="anchor" aria-label="anchor" href="#coercion-2-4-2"></a></h3>
+<ul><li>Accelerated <code><a href="../reference/coerce_graph.html">as_siena()</a></code> by writing all ties into each array at once
+<ul><li>~5x faster for three waves of 300 nodes</li>
+</ul></li>
+<li>Accelerated <code>as_network.igraph()</code> and <code>as_network.tbl_graph()</code> by matching ties at once
+<ul><li>Tie attributes other than weights are now copied ~6x faster for 1000 nodes and 20000 ties</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="modifying-2-4-2">Modifying<a class="anchor" aria-label="anchor" href="#modifying-2-4-2"></a></h3>
+<ul><li>Improved <code><a href="../reference/modif_proximity.html">to_proximity()</a></code> speed and treatment of valued ties
+<ul><li>Accelerated by comparing every pair of nodes at once for most measures</li>
+<li>~40-140x faster for a one-mode network of 400 nodes, depending on the measure</li>
+<li>Ranks (“spearman”, “kendall”), “maxcrossmin”, and missing ties still go pair by pair</li>
+<li>Fixed it returning <code>Inf</code> for “overlap” with valued ties</li>
+</ul></li>
+<li>Accelerated <code><a href="../reference/modif_proximity.html">to_correlation()</a></code> by correlating reciprocal and complex networks at once
+<ul><li>~40x faster for a directed network of 400 nodes</li>
+</ul></li>
+<li>Accelerated <code><a href="../reference/modif_backbone.html">to_backbone()</a></code> for the “simmelian” and “lans” filters
+<ul><li>“simmelian” is ~80x faster for 300 nodes, and “lans” ~15x faster for 2000 nodes</li>
+</ul></li>
+<li>Accelerated <code><a href="../reference/modif_project.html">to_simplicial()</a></code> by counting the nodes each pair of faces shares at once
+<ul><li>~20x faster for a two-mode network of 1000 by 400 nodes</li>
+</ul></li>
+<li>Accelerated <code>impute_ties.matrix()</code> by writing all imputed ties at once
+<ul><li>~25x faster for 1000 nodes with 100000 missing cells</li>
+</ul></li>
+<li>Accelerated <code><a href="../reference/modif_miss.html">impute_nodes()</a></code> by finding the neighbours of all incomplete nodes at once
+<ul><li>The “neighbourhood” rule is ~40x faster for 5000 nodes</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="describing-2-4-2">Describing<a class="anchor" aria-label="anchor" href="#describing-2-4-2"></a></h3>
+<ul><li>Accelerated <code><a href="../reference/mark_features.html">is_aperiodic()</a></code> by finding cycle lengths from walks, not simple paths
+<ul><li>This avoids enumerating paths, which grows exponentially in denser networks</li>
+<li>~1000x faster for directed networks of 30 to 60 nodes with <code>max_path_length = 6</code>
+</li>
+</ul></li>
+<li>Fixed <code><a href="../reference/mark_features.html">is_aperiodic()</a></code> never returning where one cycle length divided the next of three</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.4.1" id="manynet-241">manynet 2.4.1<a class="anchor" aria-label="anchor" href="#manynet-241"></a></h2>
 <div class="section level3">
