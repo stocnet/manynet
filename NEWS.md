@@ -16,6 +16,13 @@
 - Accelerated `as_network.igraph()` and `as_network.tbl_graph()` by matching ties at once
   - Tie attributes other than weights are now copied ~6x faster for 1000 nodes and 20000 ties
 
+## Modifying
+
+- Improved `to_proximity()` speed and treatment of valued ties
+  - Accelerated by comparing every pair of nodes at once for most measures
+  - ~40-140x faster for a one-mode network of 400 nodes, depending on the measure
+  - Ranks ("spearman", "kendall"), "maxcrossmin", and missing ties still go pair by pair
+  - Fixed it returning `Inf` for "overlap" with valued ties
 
 ## Describing
 
