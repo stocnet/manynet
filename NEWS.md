@@ -1,3 +1,46 @@
+# manynet 2.4.2
+
+## Package
+
+- Updated CONTRIBUTING with updates on how to write "Accelerated..." NEWS items
+
+## Making
+
+- Accelerated `generate_scalefree()` for two-mode networks by keeping degrees as they grow
+  - ~250x faster for 1000 by 200 nodes, and >1000x faster for 2000 by 500 nodes
+
+## Coercion
+
+- Accelerated `as_siena()` by writing all ties into each array at once
+  - ~5x faster for three waves of 300 nodes
+- Accelerated `as_network.igraph()` and `as_network.tbl_graph()` by matching ties at once
+  - Tie attributes other than weights are now copied ~6x faster for 1000 nodes and 20000 ties
+
+## Modifying
+
+- Improved `to_proximity()` speed and treatment of valued ties
+  - Accelerated by comparing every pair of nodes at once for most measures
+  - ~40-140x faster for a one-mode network of 400 nodes, depending on the measure
+  - Ranks ("spearman", "kendall"), "maxcrossmin", and missing ties still go pair by pair
+  - Fixed it returning `Inf` for "overlap" with valued ties
+- Accelerated `to_correlation()` by correlating reciprocal and complex networks at once
+  - ~40x faster for a directed network of 400 nodes
+- Accelerated `to_backbone()` for the "simmelian" and "lans" filters
+  - "simmelian" is ~80x faster for 300 nodes, and "lans" ~15x faster for 2000 nodes
+- Accelerated `to_simplicial()` by counting the nodes each pair of faces shares at once
+  - ~20x faster for a two-mode network of 1000 by 400 nodes
+- Accelerated `impute_ties.matrix()` by writing all imputed ties at once
+  - ~25x faster for 1000 nodes with 100000 missing cells
+- Accelerated `impute_nodes()` by finding the neighbours of all incomplete nodes at once
+  - The "neighbourhood" rule is ~40x faster for 5000 nodes
+
+## Describing
+
+- Accelerated `is_aperiodic()` by finding cycle lengths from walks, not simple paths
+  - This avoids enumerating paths, which grows exponentially in denser networks
+  - ~1000x faster for directed networks of 30 to 60 nodes with `max_path_length = 6`
+- Fixed `is_aperiodic()` never returning where one cycle length divided the next of three
+
 # manynet 2.4.1
 
 ## Making

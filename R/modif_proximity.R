@@ -235,10 +235,12 @@ to_proximity.data.frame <- function(.data, similarity = .proj_measures,
   if(is_complex(A)) "complex" else if(is_directed(A)) "reciprocal" else "exclude"
 }
 
-# Walks the pairs, since which cells are compared depends on which pair is
-# being compared and so cannot be done in one matrix operation. Each pair's
-# two vectors are handed back to `.project()` as a two-row matrix, so that
-# every measure is computed by the same code as for the vectorised path.
+# Which cells are compared depends on which pair is being compared. Most
+# measures are functions of sums over the two profiles, though, and those sums
+# are found for every pair at once by `.pairwise_sums()`. The rest walk the
+# pairs, handing each pair's two vectors back to `.project()` as a two-row
+# matrix, so that every measure is computed by the same code as for the
+# vectorised path.
 .pairwise_project <- function(P, similarity, dyad, n){
   if(similarity %in% .proj_binary && any(P != 0 & P != 1, na.rm = TRUE)){
     snet_warn(paste0("The {.val {similarity}} measure is defined for binary ",
@@ -250,6 +252,19 @@ to_proximity.data.frame <- function(.data, similarity = .proj_measures,
   blocks <- seq_len(ncol(P)/n) - 1L
   out <- matrix(0, n, n, dimnames = list(rownames(P), rownames(P)))
   if(n < 2L) return(out)
+  # A missing cell would spread through a whole-row sum to pairs that do not
+  # compare it, and ranks are not sums, so those pairs are walked instead.
+  # Profiles of fewer than two cells are left to the walk too, as degenerate.
+  if(!anyNA(P) && !similarity %in% c("spearman", "kendall", "maxcrossmin") &&
+     .pair_length(P, dyad, n) >= 2){
+    vals <- .pairwise_sums(P, similarity, dyad, n, blocks)
+    # each pair is read with its earlier node first, as the walk reads it
+    vals[lower.tri(vals)] <- t(vals)[lower.tri(vals)]
+    out[] <- vals
+    out[is.na(out)] <- 0
+    diag(out) <- 0
+    return(out)
+  }
   pairs <- utils::combn(n, 2L)
   vals <- apply(pairs, 2, function(ij){
     i <- ij[1]; j <- ij[2]
@@ -272,6 +287,133 @@ to_proximity.data.frame <- function(.data, similarity = .proj_measures,
   out[is.na(out)] <- 0
   diag(out) <- 0
   out
+}
+
+# How many cells each pair's profiles hold: every column but the pair's own
+# two in each block, and then the cells that `dyad` adds back.
+.pair_length <- function(P, dyad, n){
+  k <- ncol(P)/n
+  ncol(P) - 2*k + (dyad != "exclude")*k + (dyad == "complex")*k
+}
+
+# Computes the measure for every pair at once. Each sum over a pair's profiles
+# is the sum over the two whole rows, less the cells of the pair's own columns
+# in each block, plus the cells that `dyad` adds back: i's tie to j against
+# j's tie to i, and for "complex" each node's self-tie against the other's.
+# Every such cell is read off a block, its diagonal, or its transpose, so each
+# correction is one elementwise operation on an n by n matrix. Cell [i, j] of
+# each result holds the pair read with row i first.
+.pairwise_sums <- function(P, similarity, dyad, n, blocks){
+  len <- .pair_length(P, dyad, n)
+  # The cells on each block's diagonal, the self-ties, are only ever taken
+  # away again or, for "complex", added back, so they are kept aside here.
+  on_diag <- lapply(blocks, function(b) cbind(seq_len(n), b*n + seq_len(n)))
+  self <- lapply(on_diag, function(cells) P[cells])
+  # Whole numbers are summed exactly, so their sums are taken as they are.
+  # Other values would leave rounding behind wherever a large cell is taken
+  # away again, so the self-ties are first set to the mean of the row's other
+  # cells. A correlation or covariance, which no shift of a row changes, is
+  # also taken on rows centred on that mean.
+  whole <- all(P == round(P))
+  if(!whole){
+    others <- rowSums(P)
+    for(cells in on_diag) others <- others - P[cells]
+    others <- others/(ncol(P) - length(blocks))
+    shift <- if(similarity %in% c("pearson", "covariance")) others else 0
+    P <- P - shift
+    self <- lapply(self, function(s) s - shift)
+    for(cells in on_diag) P[cells] <- others - shift
+  }
+  # `full` sums f over the whole rows, and f(x, y) gives the cells of row i
+  # and row j as matrices indexed by the pair. A sum of values that are not
+  # whole numbers, that is no more than rounding of the cells it was found
+  # from, is taken to be zero, as the sum over the pair's cells would be.
+  pair_sum <- function(f, full, size = abs(full)){
+    for(k in seq_along(blocks)){
+      B <- P[, blocks[k]*n + seq_len(n), drop = FALSE]
+      tB <- t(B)
+      own_i <- matrix(diag(B), n, n)
+      own_j <- matrix(diag(B), n, n, byrow = TRUE)
+      parts <- list(-f(own_i, tB), -f(B, own_j))
+      if(dyad != "exclude") parts <- c(parts, list(f(B, tB)))
+      if(dyad == "complex")
+        parts <- c(parts, list(f(matrix(self[[k]], n, n),
+                                 matrix(self[[k]], n, n, byrow = TRUE))))
+      for(part in parts){
+        full <- full + part
+        size <- size + abs(part)
+      }
+    }
+    if(!whole) full[abs(full) <= 64*.Machine$double.eps*size] <- 0
+    unname(full)
+  }
+  sx <- pair_sum(function(x, y) x, matrix(rowSums(P), n, n))
+  sy <- t(sx)
+  sxy <- function() pair_sum(`*`, tcrossprod(P))
+  sqx <- function() pair_sum(function(x, y) x^2, matrix(rowSums(P^2), n, n))
+  manhattan <- function()
+    pair_sum(function(x, y) abs(x - y),
+             as.matrix(stats::dist(P, method = "manhattan")))
+  # the whole rows' sum of minima is found from their totals and distance,
+  # and so is as rounded as those are
+  crossmin <- function(){
+    R <- rowSums(abs(P))
+    pair_sum(pmin, .proj_crossmin(P), outer(R, R, "+"))
+  }
+  switch(similarity,
+         "count" = sxy(),
+         "covariance" = (sxy() - sx*sy/len)/(len - 1),
+         "pearson" = {
+           v <- len*sqx() - sx^2
+           # a profile without variance has no correlation, though rounding
+           # may leave a trace of variance where the rows were centred
+           v[v < 1e-12*len*sqx()] <- 0
+           out <- (len*sxy() - sx*sy)/sqrt(v*t(v))
+           out[v == 0 | t(v) == 0] <- NA
+           out
+         },
+         "cosine" = {
+           l <- sqrt(sqx())
+           l[l == 0] <- 1
+           sxy()/(l*t(l))
+         },
+         "sqdiff" = ,
+         "euclidean" = {
+           full <- if(whole){
+             q <- rowSums(P^2)
+             outer(q, q, "+") - 2*tcrossprod(P)
+           } else as.matrix(stats::dist(P))^2
+           d2 <- pmax(pair_sum(function(x, y) (x - y)^2, full), 0)
+           if(similarity == "sqdiff") 1/(1 + d2) else 1/(1 + sqrt(d2))
+         },
+         "manhattan" = ,
+         "hamming" = 1/(1 + manhattan()),
+         "crossmin" = crossmin(),
+         "overlap" = crossmin()/pmin(sx, sy),
+         "ruzicka" = {
+           cm <- crossmin()
+           cm/(sx + sy - cm)
+         },
+         "match" = pair_sum(function(x, y) (x == y)*1, .proj_match(P)),
+         # the remaining measures are all functions of the counts, which for
+         # binary profiles follow from the sums
+         {
+           a <- sxy()
+           b <- sx - a
+           c <- sy - a
+           d <- len - a - b - c
+           switch(similarity,
+                  "jaccard" = a/(a + b + c),
+                  "czekanowski" = 2*a/(2*a + b + c),
+                  "sokalsneath" = a/(a + 2*(b + c)),
+                  "rand" = (a + d)/(a + b + c + d),
+                  "hamann" = (a - (b + c) + d)/(a + b + c + d),
+                  "rogerstanimoto" = (a + d)/(a + 2*(b + c) + d),
+                  "ochiai" = a/sqrt((a + b)*(a + c)),
+                  "ochiai2" = a*d/sqrt((a + b)*(a + c)*(d + b)*(d + c)),
+                  "yule" = (a*d - b*c)/(a*d + b*c),
+                  "bonacich" = sqrt(a*d)/(sqrt(a*d) + sqrt(b*c)))
+         })
 }
 
 #' @rdname modif_proximity
@@ -374,9 +516,56 @@ to_cosine.matrix <- function(.data){
 }
 
 
+.corRecip <- function(M){
+  if(anyNA(M)) .corRecipWalk(M) else .corDyadic(M, complex = FALSE)
+}
+
+.corComplex <- function(M){
+  if(anyNA(M)) .corComplexWalk(M) else .corDyadic(M, complex = TRUE)
+}
+
+# Correlates every pair of columns at once. Pair i and j compare column i and
+# column j without rows i and j, together with i's tie to j against j's tie to
+# i, and for complex networks each node's self-tie against the other's. Each
+# of the sums the correlation needs is therefore the sum over the whole
+# columns corrected by a few cells, read off the matrix, its transpose, and
+# its diagonal. Cell [i, j] of each sum holds the pair read with i first.
+# A missing cell would spread through the whole-column sums, so matrices
+# holding one are walked pair by pair instead.
+.corDyadic <- function(M, complex){
+  # Whole numbers are summed exactly. Otherwise every cell is shifted by the
+  # mean of the ties between nodes, which leaves each correlation as it was,
+  # so that the sums do not cancel. Without "complex" the self-ties are
+  # compared by no pair, and are set to that mean so as to fall away.
+  if(any(M != round(M))){
+    M <- M - mean(M[row(M) != col(M)])
+    if(!complex) diag(M) <- 0
+  }
+  d <- if(complex) 0 else diag(M)
+  tM <- t(M)
+  len <- nrow(M) - !complex
+  sx <- colSums(M) - d - tM + M
+  sqx <- colSums(M^2) - d^2 - tM^2 + M^2
+  dM <- diag(M) * M
+  sxy <- crossprod(M) - dM - t(dM) + M * tM +
+    if(complex) outer(diag(M), diag(M)) else 0
+  v <- len*sqx - sx^2
+  v[v < 1e-12*len*sqx] <- 0
+  corres <- (len*sxy - sx*t(sx))/sqrt(v*t(v))
+  corres[v == 0 | t(v) == 0] <- NA
+  out <- matrix(1, nrow(M), ncol(M))
+  out[lower.tri(out)] <- t(corres)[lower.tri(out)]
+  out <- .makeSymm(out)
+  out[is.na(out)] <- 0
+  diag(out) <- 1
+  rownames(out) <- rownames(M)
+  colnames(out) <- colnames(M)
+  out
+}
+
 # Though warnings need to be suppressed,
 # this is bench::mark()ed at about 2 times faster than corrColsRecipRLB()
-.corRecip <- function(M){
+.corRecipWalk <- function(M){
   all.pairs <- utils::combn(1:ncol(M),2)
   corres <- apply(all.pairs, 2, function(i){
     x <- c(M[-i,i[1]], M[i[1],i[2]])
@@ -395,7 +584,7 @@ to_cosine.matrix <- function(.data){
 
 # Though warnings need to be suppressed,
 # this is bench::mark()ed at about 2.3 times faster than corrColsRecipUCI()
-.corComplex <- function(M){
+.corComplexWalk <- function(M){
   all.pairs <- utils::combn(1:ncol(M),2)
   corres <- apply(all.pairs, 2, function(i){
     x <- c(M[-i,i[1]], M[i[1],i[2]], M[i[1],i[1]])

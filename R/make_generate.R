@@ -526,10 +526,13 @@ generate_scalefree <- function(n, p = 1, directed = FALSE) {
   n <- infer_n(n)
   if(length(n) > 1){
     g <- matrix(0, n[1], n[2])
+    # the degrees of the second mode are kept as they grow, rather than
+    # summed from the matrix again at each step
+    deg <- numeric(n[2])
     for(i in seq_len(nrow(g))){
-      if(i==1) g[i,1] <- 1
-      else g[i, sample.int(ncol(g), size = 1,
-                           prob = (colSums(g)^p + 1))] <- 1
+      k <- if(i==1) 1 else sample.int(ncol(g), size = 1, prob = (deg^p + 1))
+      g[i, k] <- 1
+      deg[k] <- deg[k] + 1
     }
     g <- as_igraph(g, twomode = TRUE)
   } else {

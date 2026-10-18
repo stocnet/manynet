@@ -165,18 +165,12 @@ is_aperiodic.igraph <- function(.data, max_path_length = 4){
   # thisRequires("minMSE") # >80x faster than e.g. cheapr::gcd()
   if(is_twomode(.data)) return(FALSE)
   snet_info("Obtaining paths no greater than {max_path_length}.")
-  out <- suppressMessages(.quiet(unlist(lapply(seq_nodes(.data), function(v1){
-    if(igraph::degree(.data, v1, mode="in") == 0) NULL else {
-      v1_vertex <- igraph::V(.data)[v1]
-      goodNeighbors <- igraph::neighbors(.data, v1_vertex, mode="out")
-      goodNeighbors <- goodNeighbors[goodNeighbors > v1_vertex]
-      unlist(lapply(goodNeighbors, function(v2){
-        vapply(igraph::all_simple_paths(.data, v2, igraph::V(.data)[v1], mode="out", 
-                                        cutoff = max_path_length), length, 
-               FUN.VALUE = numeric(1))
-      }))
-    }
-  }))))
+  # A cycle closes a path of at most `max_path_length` ties with one more, and
+  # a negative length leaves the paths unbounded, so that no simple cycle can
+  # be longer than the network has nodes.
+  longest <- if(max_path_length < 0) igraph::vcount(.data) else
+    max_path_length + 1
+  out <- .closed_walk_lengths(.data, longest)
   snet_info("Finding greatest common divisor of all paths.")
   out <- unique(sort(out))
   if(!length(out)){
@@ -186,12 +180,39 @@ is_aperiodic.igraph <- function(.data, max_path_length = 4){
     snet_info("No cycles found within {max_path_length} steps; treating as aperiodic.")
     return(TRUE)
   }
+  # the first two lengths give way to their divisor, until one is left
   while(out[1]!=1 && length(out)>1){
-    cd <- .gcd(out[1], out[2])
-    if(length(out)==2) out <- cd else
-      out <- c(cd, out[2:length(out)])
+    out <- c(.gcd(out[1], out[2]), out[-(1:2)])
   }
   as.logical(out[1]==1)
+}
+
+# The lengths, from two up to `longest`, of the closed walks in a network.
+# Every closed walk is made of cycles no longer than itself, and every cycle
+# is a closed walk, so the walks up to a length share their greatest common
+# divisor with the simple cycles up to that length. Self-ties close no cycle
+# through another node, and are set aside. The walks are extended one tie at
+# a time, and kept only as the pairs of nodes they start and end at, which
+# are as many as the cells of the matching power of the adjacency matrix.
+.closed_walk_lengths <- function(.data, longest){
+  n <- igraph::vcount(.data)
+  el <- igraph::as_edgelist(.data, names = FALSE)
+  if(!igraph::is_directed(.data)) el <- rbind(el, el[, 2:1, drop = FALSE])
+  el <- unique(el[el[, 1] != el[, 2], , drop = FALSE])
+  onward <- split(el[, 2], factor(el[, 1], levels = seq_len(n)))
+  from <- el[, 1]
+  to <- el[, 2]
+  out <- integer(0)
+  for(k in seq_len(longest)[-1]){
+    from <- rep(from, lengths(onward)[to])
+    to <- unlist(onward[to], use.names = FALSE)
+    keep <- !duplicated((from - 1) * n + to)
+    from <- from[keep]
+    to <- to[keep]
+    if(!length(from)) break
+    if(any(from == to)) out <- c(out, k)
+  }
+  out
 }
 
 .gcd <- function(x, y){

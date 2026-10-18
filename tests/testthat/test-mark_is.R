@@ -238,3 +238,22 @@ test_that("is_spatial marks a network whose nodes have positions", {
   expect_null(.node_coordinates(
     mutate_nodes(ring, x = 1:4, y = 4:1, alt = letters[1:4]))$z)
 })
+
+test_that("is_aperiodic() reads the greatest common divisor of cycle lengths", {
+  ring <- function(...) igraph::make_graph(c(...), directed = TRUE)
+  six <- c(1,2, 2,3, 3,4, 4,5, 5,6, 6,1)
+  expect_false(suppressMessages(is_aperiodic(ring(six), 8)))
+  # no cycle within the paths considered counts as aperiodic
+  expect_true(suppressMessages(is_aperiodic(ring(six))))
+  # cycles of three and six share a divisor of three
+  expect_false(suppressMessages(is_aperiodic(ring(six, 3,1), 8)))
+  # cycles of three and four share none
+  four <- ring(1,2, 2,3, 3,1, 3,4, 4,1)
+  expect_true(suppressMessages(is_aperiodic(four)))
+  expect_false(suppressMessages(is_aperiodic(four, 2)))
+  expect_true(suppressMessages(
+    is_aperiodic(ring(1,2, 2,3, 3,4, 4,5, 5,1, 3,1), -1)))
+  # an undirected tie is a cycle of two, so only an odd cycle makes it aperiodic
+  expect_false(suppressMessages(is_aperiodic(create_explicit(A-B, B-C))))
+  expect_true(suppressMessages(is_aperiodic(create_ring(3))))
+})

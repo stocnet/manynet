@@ -850,16 +850,32 @@ set_network_info <- function(out, info) {
   out
 }
 
+# The id of the one tie of `out` between the nodes of each row of `el`, or NA
+# where there is none or more than one, as `network::get.edgeIDs()` would find
+# it: leading from the first node to the second in a directed network, either
+# way in an undirected one, and passing over ties recorded as missing. Every
+# row is matched at once against the ties' endpoints.
+.network_edge_ids <- function(out, el) {
+  directed <- network::is.directed(out)
+  held <- which(!vapply(out$mel, is.null, logical(1)))
+  ties <- out$mel[held]
+  tail <- vapply(ties, function(e) as.numeric(e$outl[1]), numeric(1))
+  head <- vapply(ties, function(e) as.numeric(e$inl[1]), numeric(1))
+  observed <- !vapply(ties, function(e) isTRUE(e$atl$na), logical(1))
+  key <- function(a, b) if (directed) paste(a, b) else
+    paste(pmin(a, b), pmax(a, b))
+  have <- key(tail, head)[observed]
+  held <- held[observed]
+  ids <- held[match(key(el[, 1], el[, 2]), have)]
+  ids[key(el[, 1], el[, 2]) %in% have[duplicated(have)]] <- NA_integer_
+  as.integer(ids)
+}
+
 set_network_tie_attributes <- function(out, .data) {
   attrs <- setdiff(igraph::edge_attr_names(.data), c("weight", "na"))
   if (length(attrs) == 0) return(out)
   el <- igraph::as_edgelist(.data, names = FALSE)
-  nbhd <- ifelse(network::is.directed(out), "out", "combined")
-  eids <- vapply(seq_len(nrow(el)), function(e) {
-    ids <- network::get.edgeIDs(out, v = el[e,1], alter = el[e,2],
-                                neighborhood = nbhd)
-    if (length(ids) == 1) ids else NA_integer_
-  }, integer(1))
+  eids <- .network_edge_ids(out, el)
   for (a in attrs) {
     vals <- igraph::edge_attr(.data, a)
     keep <- !is.na(eids)
@@ -2022,11 +2038,12 @@ as_stocnet.sienadata <- function(.data, twomode = FALSE, ...) {
     # A dyad recorded as missing is missing to SIENA too, which imputes it,
     # rather than an observed non-tie, which would bias the estimates.
     if ("na" %in% names(sub)) wv[!is.na(sub$na) & sub$na] <- NA
-    for (r in seq_len(nrow(sub))) {
-      w <- if (is.na(tv[r])) 1 else as.integer(tv[r])
-      if (w >= 1 && w <= W)
-        arr[sub$from[r] - off_from, sub$to[r] - off_to, w] <- wv[r]
-    }
+    # all cells are written at once, the later of two rows for the same cell
+    # taking its place as it would have one row at a time
+    w <- ifelse(is.na(tv), 1L, as.integer(tv))
+    keep <- w >= 1 & w <= W
+    arr[cbind(sub$from - off_from, sub$to - off_to, w)[keep, , drop = FALSE]] <-
+      wv[keep]
   }
   if (onemode) for (w in seq_len(W)) diag(arr[, , w]) <- 0
   arr

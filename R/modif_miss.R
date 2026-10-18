@@ -175,12 +175,10 @@ impute_ties.matrix <- function(.data,
     probs <- .impute_probs(todo$rule, .present_flat(.data), miss,
                            .dyads_possible(.data), nrow(.data), directed)
     drawn <- stats::rbinom(nrow(miss), 1, probs)
-    for(r in seq_len(nrow(miss))){
-      i <- miss$from[[r]]; j <- miss$to[[r]]
-      if(twomode) j <- j - nrow(.data)
-      .data[i, j] <- drawn[[r]]
-      if(!directed && !twomode) .data[j, i] <- drawn[[r]]
-    }
+    i <- miss$from
+    j <- if(twomode) miss$to - nrow(.data) else miss$to
+    .data[cbind(i, j)] <- drawn
+    if(!directed && !twomode) .data[cbind(j, i)] <- drawn
   } else .data[is.na(.data)] <- .miss_statistic(.data, todo$rule)
   .data
 }
@@ -740,10 +738,14 @@ to_imputed.default <- function(.data, ties = "zero", nodes = "modal"){
   g <- to_undirected(as_igraph(.data))
   idx <- which(gaps)
   out <- rep(overall, length(idx))
-  for(k in seq_along(idx)){
-    near <- values[as.integer(igraph::neighbors(g, idx[[k]]))]
-    near <- near[!is.na(near)]
-    if(length(near)) out[[k]] <- .attribute_statistic(near, stat)
-  }
+  # every incomplete node's neighbours are fetched at once, in the order that
+  # `igraph::neighbors()` gives each, and only the statistic is taken by node
+  nbhd <- igraph::adjacent_vertices(g, idx)
+  near <- values[as.integer(unlist(nbhd, use.names = FALSE))]
+  node <- rep(seq_along(idx), lengths(nbhd))
+  seen <- !is.na(near)
+  near <- split(near[seen], factor(node[seen], levels = seq_along(idx)))
+  for(k in which(lengths(near) > 0))
+    out[[k]] <- .attribute_statistic(near[[k]], stat)
   out
 }

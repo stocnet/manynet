@@ -230,3 +230,34 @@ test_that("a node with no ties is as dissimilar in every class", {
     expect_equal(unname(as_matrix(out)), unname(ref), label = cl)
   }
 })
+
+test_that("to_proximity compares every pair at once as it would one by one", {
+  set.seed(1)
+  valued <- matrix(rpois(81, 1), 9) * 1.5
+  binary <- (valued > 0) * 1
+  # the measures that are sums over the profiles are found for every pair at
+  # once; walking the pairs, as missing ties do, must agree with them
+  walk <- function(P, similarity, dyad){
+    P[1, 1] <- NA
+    out <- .pairwise_project(P, similarity, dyad, nrow(P))
+    out[1, ] <- out[, 1] <- NA
+    out
+  }
+  for (dyad in c("exclude", "reciprocal", "complex")) {
+    for (similarity in setdiff(.proj_measures,
+                               c("spearman", "kendall", "maxcrossmin"))) {
+      P <- if (similarity %in% .proj_binary) binary else valued
+      at_once <- .pairwise_project(P, similarity, dyad, nrow(P))
+      at_once[1, ] <- at_once[, 1] <- NA
+      expect_equal(at_once, walk(P, similarity, dyad),
+                   info = paste(similarity, dyad))
+    }
+  }
+})
+
+test_that("to_correlation correlates dyadic profiles at once as one by one", {
+  set.seed(2)
+  M <- matrix(runif(64, 1e6, 1e6 + 1), 8)
+  expect_equal(.corRecip(M), .corRecipWalk(M))
+  expect_equal(.corComplex(M), .corComplexWalk(M))
+})
