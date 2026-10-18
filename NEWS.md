@@ -9,6 +9,13 @@
 - Accelerated `generate_scalefree()` for two-mode networks by keeping degrees as they grow
   - ~250x faster for 1000 by 200 nodes, and >1000x faster for 2000 by 500 nodes
 
+## Coercion
+
+- Accelerated `as_siena()` by writing all ties into each array at once
+  - ~5x faster for three waves of 300 nodes
+- Accelerated `as_network.igraph()` and `as_network.tbl_graph()` by matching ties at once
+  - Tie attributes other than weights are now copied ~6x faster for 1000 nodes and 20000 ties
+
 # manynet 2.4.1
 
 ## Making
