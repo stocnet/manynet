@@ -23,6 +23,10 @@
   - ~40-140x faster for a one-mode network of 400 nodes, depending on the measure
   - Ranks ("spearman", "kendall"), "maxcrossmin", and missing ties still go pair by pair
   - Fixed it returning `Inf` for "overlap" with valued ties
+- Accelerated `impute_ties.matrix()` by writing all imputed ties at once
+  - ~25x faster for 1000 nodes with 100000 missing cells
+- Accelerated `impute_nodes()` by finding the neighbours of all incomplete nodes at once
+  - The "neighbourhood" rule is ~40x faster for 5000 nodes
 
 ## Describing
 
