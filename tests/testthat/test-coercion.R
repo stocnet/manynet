@@ -796,6 +796,51 @@ test_that("from_reporters joins reports as the array route reads them", {
   expect_error(from_reporters(list(Z = reports[[1]])), "do not name nodes")
 })
 
+test_that("from_reporters returns a full array with missing reporter slices", {
+  arr <- css_array()
+  reports <- list(A = arr[, , "A"], C = arr[, , "C"])
+  # A node that did not report misses every tie but its loops (#189, #190)
+  expected <- array(NA_real_, dim = dim(arr), dimnames = dimnames(arr))
+  for(k in seq_len(dim(arr)[3])) diag(expected[, , k]) <- 0
+  expected[, , "A"] <- reports$A
+  expected[, , "C"] <- reports$C
+
+  matrices <- from_reporters(reports)
+  expect_identical(dim(matrices), dim(arr))
+  expect_identical(dimnames(matrices)[[3]], dimnames(arr)[[3]])
+  expect_equal(matrices, expected)
+
+  networks <- from_reporters(lapply(reports, as_stocnet))
+  expect_equal(as_matrix(networks), expected)
+  expect_equal(as_matrix(from_reporters(lapply(reports, as_igraph))), expected)
+})
+
+test_that("from_reporters records a node not in the list as not reporting", {
+  arr <- css_array()
+  css <- from_reporters(lapply(list(A = arr[, , "A"], C = arr[, , "C"]),
+                               as_stocnet))
+  # held as the nodes' nonresponse, not as one missing tie per cell
+  expect_identical(css$nodes$na, c(FALSE, TRUE, FALSE, TRUE))
+  expect_null(css$missings)
+  expect_equal(as_matrix(from_reporters(to_reporters(css))), as_matrix(css))
+})
+
+test_that("from_reporters gives unlabelled and two-mode reports a slice per node", {
+  arr <- unname(css_array())
+  reports <- list(`1` = arr[, , 1], `3` = arr[, , 3])
+  matrices <- from_reporters(reports)
+  expect_null(dimnames(matrices))
+  expect_identical(dim(matrices), dim(arr))
+  expect_equal(unname(as_matrix(from_reporters(lapply(reports, as_stocnet)))),
+               matrices)
+  inc <- matrix(c(1, 0, 1, 0, 1, 1), 2, 3, byrow = TRUE,
+                dimnames = list(c("x", "y"), c("p", "q", "r")))
+  twomode <- from_reporters(list(x = inc))
+  expect_identical(dim(twomode), c(2L, 3L, 5L))
+  expect_true(all(is.na(twomode[, , "y"])))
+  expect_equal(as_matrix(from_reporters(list(x = as_stocnet(inc)))), twomode)
+})
+
 # Directed two-mode networks (#157) --------------------------------------------
 
 test_that("ison_southern_women is undirected in every class", {

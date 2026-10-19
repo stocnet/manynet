@@ -1,3 +1,12 @@
+# manynet 2.4.3
+
+## Modifying
+
+- Fixed `from_reporters()` to give one slice per node for a list of matrices (closes #190)
+  - Matrix and network reports now return the same array (thanks @LeonidasZhak, #192)
+- Fixed `from_reporters()` to mark a node not in the list as not reporting (closes #189)
+  - Records the node's nonresponse, so its slice is `NA` except for its loops
+
 # manynet 2.4.2
 
 ## Package
