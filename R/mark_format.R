@@ -647,7 +647,7 @@ is_multiplex.matrix <- function(.data) {
   FALSE
 }
 
-reserved_tie_attr <- c("wave","panel","sign","weight","date","begin","end","by","about",
+reserved_tie_attr <- c("wave","panel","sign","weight","date","begin","end","by","about","fixed",
                        "name","default","increment","time")
 
 #' @export

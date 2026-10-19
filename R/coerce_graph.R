@@ -1737,7 +1737,8 @@ as_siena.stocnet <- function(.data, twomode = FALSE) {
                                    "mark the longitudinal layer(s) via info$focal.")))
         type <- meta$type %||% if (length(ns) > 1 || twomode) "bipartite" else "oneMode"
         arr <- .siena_ties_to_array(sub, W, sz_from, sz_to, off_from, off_to,
-                                    onemode = identical(type, "oneMode"))
+                                    onemode = identical(type, "oneMode"),
+                                    fixed = TRUE)
         if (!all(arr %in% c(0, 1, 10, 11) | is.na(arr)))
           snet_abort(c("A SIENA dependent network must have binary ties,",
                        "x" = "but the '{L}' layer is valued or signed.",
@@ -1844,7 +1845,8 @@ as_stocnet.sienadata <- function(.data, twomode = FALSE, ...) {
     } else {
       directed[nm] <- !isTRUE(attr(dv, "symmetric"))
       ties[[nm]] <- .siena_array_to_ties(dv, nm, ns, offsets, W,
-                                         onemode = identical(type, "oneMode"))
+                                         onemode = identical(type, "oneMode"),
+                                         fixed = TRUE)
     }
   }
   # Constant covariates -> nodal columns ----
@@ -1971,17 +1973,36 @@ as_stocnet.sienadata <- function(.data, twomode = FALSE, ...) {
 }
 
 # A [n, n(/m), W] siena array -> tie tibble (from, to, layer, weight, time).
-.siena_array_to_ties <- function(arr, nm, ns, offsets, W, onemode) {
+# With `fixed`, SIENA's structural codes are read as such rather than as
+# values: 11 as a tie fixed by design, and 10 as no tie.
+.siena_array_to_ties <- function(arr, nm, ns, offsets, W, onemode,
+                                 fixed = FALSE) {
   off_from <- unname(offsets[ns[1]]); off_to <- unname(offsets[ns[length(ns)]])
+  zeros <- 0
   rows <- lapply(seq_len(W), function(w) {
     g <- if (length(dim(arr)) == 3) arr[, , w] else arr
     if (onemode) diag(g) <- 0
+    if (fixed) {
+      zeros <<- zeros + sum(g == 10, na.rm = TRUE)
+      g[!is.na(g) & g == 10] <- 0
+    }
     idx <- which(g != 0 | is.na(g), arr.ind = TRUE)
     if (!nrow(idx)) return(NULL)
-    dplyr::tibble(from = off_from + idx[, 1], to = off_to + idx[, 2],
-                  layer = nm, weight = as.vector(g[idx]), time = w)
+    out <- dplyr::tibble(from = off_from + idx[, 1], to = off_to + idx[, 2],
+                         layer = nm, weight = as.vector(g[idx]), time = w)
+    if (fixed) {
+      out$fixed <- !is.na(out$weight) & out$weight == 11
+      out$weight[out$fixed] <- 1
+    }
+    out
   })
-  dplyr::bind_rows(rows)
+  # Note that a dyad fixed at no tie has nowhere to go among the ties, which
+  # hold only ties, so it is read as an observed non-tie for now (see #195).
+  if (zeros > 0)
+    snet_warn("Reading {zeros} structural zero{?s} in {.val {nm}} as observed non-ties, since a stocnet does not hold structural zeros yet.")
+  out <- dplyr::bind_rows(rows)
+  if (fixed && "fixed" %in% names(out) && !any(out$fixed)) out$fixed <- NULL
+  out
 }
 
 # A constant [n, n] siena matrix -> tie tibble (no time).
@@ -2029,8 +2050,9 @@ as_stocnet.sienadata <- function(.data, twomode = FALSE, ...) {
 }
 
 # Tie rows -> a [sz_from, sz_to, W] array (weights, preserving NA).
+# With `fixed`, a tie fixed by design is written as SIENA's structural one.
 .siena_ties_to_array <- function(sub, W, sz_from, sz_to, off_from, off_to,
-                                 onemode) {
+                                 onemode, fixed = FALSE) {
   arr <- array(0, dim = c(sz_from, sz_to, W))
   if (nrow(sub)) {
     tv <- if ("time" %in% names(sub)) sub$time else rep(1, nrow(sub))
@@ -2038,6 +2060,10 @@ as_stocnet.sienadata <- function(.data, twomode = FALSE, ...) {
     # A dyad recorded as missing is missing to SIENA too, which imputes it,
     # rather than an observed non-tie, which would bias the estimates.
     if ("na" %in% names(sub)) wv[!is.na(sub$na) & sub$na] <- NA
+    # A tie that is present by design is one SIENA must not change, which it
+    # reads from a code of 11. Validation has already ruled out a weight of 0.
+    if (fixed && "fixed" %in% names(sub))
+      wv[!is.na(sub$fixed) & sub$fixed] <- 11
     # all cells are written at once, the later of two rows for the same cell
     # taking its place as it would have one row at a time
     w <- ifelse(is.na(tv), 1L, as.integer(tv))

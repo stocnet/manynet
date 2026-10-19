@@ -97,7 +97,10 @@ bound and deduplicated rather than stamped again.
 \code{from_reporters()} takes the reporter of each network from the names of
 the list, which may be the labels of the nodes or their positions.
 Where the list is not named, the networks are taken to be the reports of
-the first nodes, in order.
+the nodes in order.
+A node that is not in the list did not report, and so is marked as missing.
+A list of matrices is stacked into an array of one slice per node,
+with \code{NA} in the slice for each non-reporting node.
 }
 \examples{
 ison_adolescents |>

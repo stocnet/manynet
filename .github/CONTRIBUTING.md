@@ -283,7 +283,10 @@ Conventions to preserve when writing or editing functions:
   further tie, where a larger weight is a stronger one, so a tie can have both and
   neither stands in for the other: see `tie_lengths()`), `time` (longitudinal), `by` (the node that reported a tie, as in
   a cognitive social structure or an egocentric network), and `about` (the node a tie
-  is about, as in gossip). `by` and `about` are integer indices into `nodes` too, and
+  is about, as in gossip), and `fixed` (a logical marking a tie that is present by design and
+  so not free to vary, which `as_siena()` writes as SIENA's structural one, `11`; a fixed tie
+  is never missing or imputed away, and structural zeros are not held yet, see #195).
+  `by` and `about` are integer indices into `nodes` too, and
   may hold `NA` for a layer that no node reported or that is about no node. Anything
   that renumbers or drops nodes must renumber them as well: use `.tie_node_cols` and
   `.remap_tie_nodes()` (see [R/class_stocnet.R](../R/class_stocnet.R)) rather than

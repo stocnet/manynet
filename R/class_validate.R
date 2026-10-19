@@ -71,6 +71,15 @@ validate_ties <- function(.data){
                 aka = c("wave", "period", "panel", "date"))
   reserved_cols(.data, "ties", "layer", "character",
            aka = c("type", "plex", "tie"))
+  # A fixed tie is present by design, and so not free to vary, as SIENA's
+  # structural one is. A dyad fixed at no tie would need a row that is not a
+  # tie, which the ties do not hold, so a fixed tie cannot weigh nothing.
+  reserved_cols(.data, "ties", "fixed", "logical")
+  ties <- .data$ties
+  if("fixed" %in% names(ties) && "weight" %in% names(ties) &&
+     any(ties$fixed & ties$weight == 0, na.rm = TRUE))
+    snet_abort(c(x = "A fixed tie marks a tie that is present by design, so it cannot have a weight of 0.",
+                 i = "Structural zeros are not held yet (see #195)."))
   invisible(.data)
 }
 

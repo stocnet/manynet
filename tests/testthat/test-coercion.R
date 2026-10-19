@@ -445,6 +445,44 @@ test_that("as_siena routes any coercible object through stocnet", {
   expect_error(as_siena(ison_monks), "binary")
 })
 
+fixed_panel <- function()
+  make_stocnet(nodes = data.frame(label = letters[1:4]),
+               ties = data.frame(from = c("a", "b", "c", "a", "b"),
+                                 to = c("b", "c", "d", "b", "d"),
+                                 time = c(1, 1, 1, 2, 2),
+                                 fixed = c(TRUE, FALSE, FALSE, TRUE, FALSE)),
+               info = list(directed = TRUE))
+
+test_that("a fixed tie is SIENA's structural one, there and back", {
+  skip_if_not_installed("RSiena")
+  d <- as_siena(fixed_panel())
+  arr <- d$depvars[[1]]
+  expect_equal(arr[1, 2, ], c(11, 11))
+  expect_equal(arr[2, 3, 1], 1)
+  back <- as_stocnet(d)$ties
+  expect_equal(back$fixed, c(TRUE, FALSE, FALSE, TRUE, FALSE))
+  expect_true(all(back$weight == 1))
+})
+
+test_that("a structural zero from SIENA is read as no tie, with a warning", {
+  skip_if_not_installed("RSiena")
+  a <- array(0, c(4, 4, 2))
+  a[1, 2, ] <- 1; a[3, 4, ] <- 10
+  d <- RSiena::sienaDataCreate(net = RSiena::sienaDependent(a, allowOnly = FALSE))
+  expect_warning(out <- as_stocnet(d), "structural zeros")
+  expect_false(any(out$ties$from == 3 & out$ties$to == 4))
+  # a layer without structural ones gets no 'fixed' column
+  expect_false("fixed" %in% names(out$ties))
+})
+
+test_that("a fixed tie keeps its mark through the other classes", {
+  x <- fixed_panel()
+  expect_false(is_multiplex(as_igraph(x)))
+  expect_equal(as_stocnet(as_igraph(x))$ties$fixed, x$ties$fixed)
+  expect_equal(as_stocnet(as_tidygraph(x))$ties$fixed, x$ties$fixed)
+  expect_equal(as_stocnet(as_network(x))$ties$fixed, x$ties$fixed)
+})
+
 test_that("conversion of diff_model object works correctly", {
   skip_on_cran()
   skip_on_ci()
@@ -794,6 +832,51 @@ test_that("from_reporters joins reports as the array route reads them", {
   expect_equal(from_reporters(lapply(setNames(seq_len(4), dimnames(arr)[[3]]),
                                      function(o) arr[, , o])), arr)
   expect_error(from_reporters(list(Z = reports[[1]])), "do not name nodes")
+})
+
+test_that("from_reporters returns a full array with missing reporter slices", {
+  arr <- css_array()
+  reports <- list(A = arr[, , "A"], C = arr[, , "C"])
+  # A node that did not report misses every tie but its loops (#189, #190)
+  expected <- array(NA_real_, dim = dim(arr), dimnames = dimnames(arr))
+  for(k in seq_len(dim(arr)[3])) diag(expected[, , k]) <- 0
+  expected[, , "A"] <- reports$A
+  expected[, , "C"] <- reports$C
+
+  matrices <- from_reporters(reports)
+  expect_identical(dim(matrices), dim(arr))
+  expect_identical(dimnames(matrices)[[3]], dimnames(arr)[[3]])
+  expect_equal(matrices, expected)
+
+  networks <- from_reporters(lapply(reports, as_stocnet))
+  expect_equal(as_matrix(networks), expected)
+  expect_equal(as_matrix(from_reporters(lapply(reports, as_igraph))), expected)
+})
+
+test_that("from_reporters records a node not in the list as not reporting", {
+  arr <- css_array()
+  css <- from_reporters(lapply(list(A = arr[, , "A"], C = arr[, , "C"]),
+                               as_stocnet))
+  # held as the nodes' nonresponse, not as one missing tie per cell
+  expect_identical(css$nodes$na, c(FALSE, TRUE, FALSE, TRUE))
+  expect_null(css$missings)
+  expect_equal(as_matrix(from_reporters(to_reporters(css))), as_matrix(css))
+})
+
+test_that("from_reporters gives unlabelled and two-mode reports a slice per node", {
+  arr <- unname(css_array())
+  reports <- list(`1` = arr[, , 1], `3` = arr[, , 3])
+  matrices <- from_reporters(reports)
+  expect_null(dimnames(matrices))
+  expect_identical(dim(matrices), dim(arr))
+  expect_equal(unname(as_matrix(from_reporters(lapply(reports, as_stocnet)))),
+               matrices)
+  inc <- matrix(c(1, 0, 1, 0, 1, 1), 2, 3, byrow = TRUE,
+                dimnames = list(c("x", "y"), c("p", "q", "r")))
+  twomode <- from_reporters(list(x = inc))
+  expect_identical(dim(twomode), c(2L, 3L, 5L))
+  expect_true(all(is.na(twomode[, , "y"])))
+  expect_equal(as_matrix(from_reporters(list(x = as_stocnet(inc)))), twomode)
 })
 
 # Directed two-mode networks (#157) --------------------------------------------

@@ -252,7 +252,10 @@ from_ties <- from_layers
 #'   `from_reporters()` takes the reporter of each network from the names of
 #'   the list, which may be the labels of the nodes or their positions.
 #'   Where the list is not named, the networks are taken to be the reports of
-#'   the first nodes, in order.
+#'   the nodes in order.
+#'   A node that is not in the list did not report, and so is marked as missing.
+#'   A list of matrices is stacked into an array of one slice per node,
+#'   with `NA` in the slice for each non-reporting node.
 #' @examples
 #' reports <- list(A = create_ring(4), B = create_star(4))
 #' from_reporters(lapply(reports, add_node_attribute, "name", LETTERS[1:4]))
@@ -260,8 +263,21 @@ from_ties <- from_layers
 from_reporters <- function(netlist) {
   if(!is.list(netlist) || !length(netlist) || is_manynet(netlist))
     snet_abort("Please declare a list of networks, one for each reporter.")
-  if(.all_matrices(netlist)) return(.stack_matrices(netlist))
-  .as_class_of(.join_third(netlist, "by"), netlist[[1]])
+  if(.all_matrices(netlist)) return(.stack_reporter_matrices(netlist))
+  out <- .join_third(netlist, "by")
+  reporters <- .third_node_index(names(netlist), out$nodes[["label"]],
+                                 length(netlist))
+  # A node not in the list was not asked, and is held as a node that did not
+  # report, as `as_stocnet()` holds the empty slice of a reporter.
+  unreported <- setdiff(seq_len(nrow(out$nodes)), reporters)
+  if(length(unreported)){
+    snet_info("{length(unreported)} node{?s} not in the list {?is/are}",
+              "marked as not reporting.")
+    na <- out$nodes[["na"]]
+    if(is.null(na)) na <- rep(FALSE, nrow(out$nodes))
+    out$nodes$na <- !is.na(na) & na | seq_len(nrow(out$nodes)) %in% unreported
+  }
+  .as_class_of(out, netlist[[1]])
 }
 
 # Helpers for joining ####
@@ -330,6 +346,29 @@ from_reporters <- function(netlist) {
     list(rownames(first), colnames(first), slices)
   array(unlist(mats), dim = c(nrow(first), ncol(first), length(mats)),
         dimnames = dimnames)
+}
+
+# A list of reporter matrices has one slice per node. A node without a report
+# did not report, and so holds NA everywhere but its loops, as `as_matrix()`
+# gives the report of a node that did not report in a network.
+.stack_reporter_matrices <- function(netlist){
+  reports <- .stack_matrices(netlist)
+  rows <- rownames(reports); cols <- colnames(reports)
+  onemode <- nrow(reports) == ncol(reports) && identical(rows, cols)
+  labels <- if(onemode) rows else c(rows, cols)
+  n <- if(onemode) nrow(reports) else nrow(reports) + ncol(reports)
+  reporters <- .third_node_index(names(netlist), labels, length(netlist))
+  unreported <- setdiff(seq_len(n), reporters)
+  if(length(unreported))
+    snet_info("{length(unreported)} node{?s} not in the list {?is/are}",
+              "marked as not reporting.")
+  missing <- matrix(NA, nrow(reports), ncol(reports))
+  if(onemode) diag(missing) <- 0
+  out <- array(missing, dim = c(dim(reports)[1:2], n),
+               dimnames = if(is.null(labels)) NULL else list(rows, cols, labels))
+  storage.mode(out) <- storage.mode(reports)
+  for(i in seq_along(reporters)) out[, , reporters[i]] <- reports[, , i]
+  out
 }
 
 # Joins a list of stocnets over the same nodes into one, recording which of

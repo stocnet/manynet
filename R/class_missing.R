@@ -409,6 +409,9 @@
 .mark_missing_weights <- function(ties){
   if(is.null(ties) || !"weight" %in% names(ties)) return(ties)
   miss <- is.na(ties$weight)
+  # A fixed tie is present by design, so a weight missing from it is a value
+  # that went unrecorded and not a tie that may be absent.
+  if("fixed" %in% names(ties)) miss <- miss & !(!is.na(ties$fixed) & ties$fixed)
   if(!any(miss)) return(ties)
   ties$na <- miss
   # Where the weights recorded nothing but which ties are present, they are
@@ -430,6 +433,8 @@
   if(is.null(ties) || !"na" %in% names(ties))
     return(list(ties = ties, missing = NULL))
   miss <- !is.na(ties$na) & ties$na
+  # A tie fixed by design was not missed, whatever else marks it.
+  if("fixed" %in% names(ties)) miss <- miss & !(!is.na(ties$fixed) & ties$fixed)
   ties$na <- NULL
   list(ties = ties[!miss, , drop = FALSE],
        missing = if(any(miss)) ties[miss, , drop = FALSE] else NULL)
