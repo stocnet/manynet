@@ -207,7 +207,12 @@ impute_ties.stocnet <- function(.data,
   out <- .data
   if(todo$value && !is.null(out$ties[["weight"]])){
     unvalued <- sum(is.na(out$ties$weight))
-    out$ties$weight[is.na(out$ties$weight)] <- .miss_statistic(.data, todo$rule)
+    fill <- rep(.miss_statistic(.data, todo$rule), nrow(out$ties))
+    # A fixed tie is present by design, and where the weights record only
+    # which ties are present, that makes its weight 1.
+    if(!is.null(out$ties$fixed) && .holds_only_binary(out$ties$weight))
+      fill[!is.na(out$ties$fixed) & out$ties$fixed] <- 1
+    out$ties$weight[is.na(out$ties$weight)] <- fill[is.na(out$ties$weight)]
     out <- .record_imputation(out, unvalued, "incomplete tie values", todo$rule)
   }
   if(todo$existence){
@@ -555,7 +560,16 @@ to_imputed.default <- function(.data, ties = "zero", nodes = "modal"){
   if(is.matrix(.data) || is.data.frame(.data)) return(integer(0))
   if(!"weight" %in% igraph::edge_attr_names(.data) || .holds_values(.data))
     return(integer(0))
-  which(is.na(igraph::edge_attr(.data, "weight")))
+  which(is.na(igraph::edge_attr(.data, "weight")) & !.edges_fixed(.data))
+}
+
+# A fixed tie is present by design, so it is never one whose existence is in
+# question, whatever its weight.
+.edges_fixed <- function(.data){
+  if(!"fixed" %in% igraph::edge_attr_names(.data))
+    return(rep(FALSE, igraph::ecount(.data)))
+  fixed <- igraph::edge_attr(.data, "fixed")
+  !is.na(fixed) & fixed
 }
 
 .edgelist_indices <- function(.data){
@@ -592,10 +606,15 @@ to_imputed.default <- function(.data, ties = "zero", nodes = "modal"){
 }
 
 .fill_weights <- function(.data, stat){
-  weight <- NULL
   # an unweighted network has no tie values, and so none that can be missing
   if(!"weight" %in% igraph::edge_attr_names(.data)) return(.data)
-  out <- .data |> mutate_ties(weight = ifelse(is.na(weight), stat, weight))
+  # Where the weights record only which ties are present, a fixed tie is
+  # present and so weighs 1, whatever the statistic says.
+  wts <- igraph::edge_attr(.data, "weight")
+  fill <- rep(stat, length(wts))
+  if(.holds_only_binary(wts)) fill[.edges_fixed(.data)] <- 1
+  wts[is.na(wts)] <- fill[is.na(wts)]
+  out <- igraph::set_edge_attr(.data, "weight", value = wts)
   # A weight column holding nothing but 0 and 1 records which ties are present
   # rather than what they are worth, so a tie left weighing 0 is not a tie at
   # all and its edge goes with it. Were it left in place, `as_matrix()` would

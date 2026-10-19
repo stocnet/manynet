@@ -266,6 +266,11 @@ Missing values, \code{NA}, in the weight vector indicate that the tie value is m
 not the tie itself, which is still present in the network.
 For individual missing ties beyond those implied by inactive or non-responsive nodes,
 please add them to the missings component as an edgelist.
+\item 'fixed' should be a logical vector marking the ties that are present
+by design, and so not free to vary, such as SIENA's structural ones (\code{11}).
+A fixed tie is never missing and is never removed by imputation.
+Structural zeros, dyads fixed at no tie, are not held yet,
+so a fixed tie cannot have a weight of 0.
 \item 'time' should be a numeric, character, or date vector of the moment at
 which each tie was recorded.
 \item 'begin' and 'end' should instead give the interval over which each tie

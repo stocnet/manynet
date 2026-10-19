@@ -309,3 +309,31 @@ test_that("a matrix is returned as a matrix, having nowhere to record", {
   expect_true(is.matrix(out))
   expect_false(anyNA(out))
 })
+
+test_that("a fixed tie is not missing, however it is marked", {
+  x <- make_stocnet(nodes = data.frame(label = letters[1:3]),
+                    ties = data.frame(from = c("a", "b"), to = c("b", "c"),
+                                      na = TRUE, fixed = c(TRUE, FALSE)))
+  expect_equal(nrow(x$ties), 1)
+  expect_true(x$ties$fixed)
+  expect_equal(nrow(as_missinglist(x)), 1)
+  expect_error(make_stocnet(ties = data.frame(from = 1, to = 2, weight = 0,
+                                              fixed = TRUE)),
+               "cannot have a weight of 0")
+})
+
+test_that("imputing as zero keeps a fixed tie", {
+  tg <- tidygraph::tbl_graph(nodes = data.frame(name = letters[1:3]),
+                             edges = data.frame(from = c(1, 2), to = c(2, 3),
+                                                weight = NA_real_,
+                                                fixed = c(TRUE, FALSE)))
+  out <- as_tibble(impute_ties(tg, "zero"), active = "edges")
+  expect_equal(nrow(out), 1)
+  expect_true(out$fixed)
+  st <- make_stocnet(nodes = data.frame(label = letters[1:3]),
+                     ties = data.frame(from = c("a", "b", "a"),
+                                       to = c("b", "c", "c"),
+                                       weight = c(NA, NA, 1),
+                                       fixed = c(TRUE, FALSE, FALSE)))
+  expect_equal(impute_ties(st, "zero")$ties$weight, c(1, 0, 1))
+})

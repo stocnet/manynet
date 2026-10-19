@@ -1,5 +1,17 @@
 # manynet 2.4.3
 
+## Classes
+
+- Added a reserved `fixed` tie column for ties that are present by design (closes #165)
+  - Structural zeros are not held yet, so a fixed tie cannot weigh 0 (see #195)
+
+## Coercion
+
+- Improved `as_siena()` to write a fixed tie as SIENA's structural one, `11` (closes #165)
+  - `as_stocnet()` reads a `11` back as a fixed tie of weight 1
+  - `as_stocnet()` reads a `10` as no tie, with a warning, until #195
+  - `fixed` is kept through `as_igraph()`, `as_tidygraph()`, and `as_network()`
+
 ## Modifying
 
 - Fixed `from_reporters()` to give one slice per node for a list of matrices (closes #190)
