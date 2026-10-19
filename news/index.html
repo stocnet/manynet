@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.3</span>
       </span>
     </div>
 
@@ -88,6 +88,36 @@
       <small>Source: <a href="https://github.com/stocnet/manynet/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.4.3" id="manynet-243">manynet 2.4.3<a class="anchor" aria-label="anchor" href="#manynet-243"></a></h2>
+<div class="section level3">
+<h3 id="classes-2-4-3">Classes<a class="anchor" aria-label="anchor" href="#classes-2-4-3"></a></h3>
+<ul><li>Added a reserved <code>fixed</code> tie column for ties that are present by design (closes <a href="https://github.com/stocnet/manynet/issues/165" class="external-link">#165</a>)
+<ul><li>Structural zeros are not held yet, so a fixed tie cannot weigh 0 (see <a href="https://github.com/stocnet/manynet/issues/195" class="external-link">#195</a>)</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="coercion-2-4-3">Coercion<a class="anchor" aria-label="anchor" href="#coercion-2-4-3"></a></h3>
+<ul><li>Improved <code><a href="../reference/coerce_graph.html">as_siena()</a></code> to write a fixed tie as SIENA’s structural one, <code>11</code> (closes <a href="https://github.com/stocnet/manynet/issues/165" class="external-link">#165</a>)
+<ul><li>
+<code><a href="../reference/coerce_graph.html">as_stocnet()</a></code> reads a <code>11</code> back as a fixed tie of weight 1</li>
+<li>
+<code><a href="../reference/coerce_graph.html">as_stocnet()</a></code> reads a <code>10</code> as no tie, with a warning, until <a href="https://github.com/stocnet/manynet/issues/195" class="external-link">#195</a></li>
+<li>
+<code>fixed</code> is kept through <code><a href="../reference/coerce_graph.html">as_igraph()</a></code>, <code><a href="../reference/coerce_graph.html">as_tidygraph()</a></code>, and <code><a href="../reference/coerce_graph.html">as_network()</a></code>
+</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="modifying-2-4-3">Modifying<a class="anchor" aria-label="anchor" href="#modifying-2-4-3"></a></h3>
+<ul><li>Fixed <code><a href="../reference/modif_from_ternary.html">from_reporters()</a></code> to give one slice per node for a list of matrices (closes <a href="https://github.com/stocnet/manynet/issues/190" class="external-link">#190</a>)
+<ul><li>Matrix and network reports now return the same array (thanks <a href="https://github.com/LeonidasZhak" class="external-link">@LeonidasZhak</a>, <a href="https://github.com/stocnet/manynet/issues/192" class="external-link">#192</a>)</li>
+</ul></li>
+<li>Fixed <code><a href="../reference/modif_from_ternary.html">from_reporters()</a></code> to mark a node not in the list as not reporting (closes <a href="https://github.com/stocnet/manynet/issues/189" class="external-link">#189</a>)
+<ul><li>Records the node’s nonresponse, so its slice is <code>NA</code> except for its loops</li>
+</ul></li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.4.2" id="manynet-242">manynet 2.4.2<a class="anchor" aria-label="anchor" href="#manynet-242"></a></h2>
 <div class="section level3">
