@@ -1,3 +1,9 @@
+# manynet 2.4.4
+
+## Making
+
+- Improved `collect_cran()` to record the minimum R each package declares as `min_r`
+
 # manynet 2.4.3
 
 ## Classes
