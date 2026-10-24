@@ -129,6 +129,13 @@ coercion reciprocates the undirected layers of a network that has any
 directed layer, and coercion back collapses them again.
 This keeps the degree of a node in an undirected layer the same in every
 class, and makes the round trip lossless.
+Where 'directed' is not given, \code{make_stocnet()} reads it from the ties,
+as \code{is_directed()} reads an edgelist:
+the network is directed where some ties are returned and others are not.
+Ties of which none is returned are read as listing each dyad once,
+and so as undirected, with a message to say so.
+Set 'directed' to TRUE for a directed network whose ties are never returned,
+such as a directed cycle.
 \item 'signed' should be a logical indicating whether the network is signed.
 If there are multiple layers, this can be a named logical vector that says
 which layers are signed, where the names correspond to the layer names.

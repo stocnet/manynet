@@ -4,6 +4,9 @@
 
 - Improved `collect_cran()` to record the minimum R each package declares as `min_r`
 
+## Classes
+
+- Improved `make_stocnet()` to record `info$directed` from the ties when it is not given (closes #191)
 
 ## Coercion
 
