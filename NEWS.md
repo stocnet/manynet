@@ -4,6 +4,11 @@
 
 - Improved `collect_cran()` to record the minimum R each package declares as `min_r`
 
+
+## Coercion
+
+- Fixed `as_matrix()` to return incidence matrices even with a tie covariate (closes #196)
+
 # manynet 2.4.3
 
 ## Classes

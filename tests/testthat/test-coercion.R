@@ -113,6 +113,40 @@ test_that("as_matrix converts correctly",{
                as_matrix(ison_southern_women))
 })
 
+test_that("make_stocnet reads directedness from ties that do not declare it", {
+  nodes <- data.frame(label = letters[1:3])
+  mixed <- make_stocnet(ties = data.frame(from = c(1L, 2L, 2L), to = c(2L, 1L, 3L)),
+                        nodes = nodes)
+  expect_true(mixed$info$directed)
+  expect_false(isSymmetric(unname(as_matrix(mixed))))
+  cycle <- data.frame(from = 1:3, to = c(2L, 3L, 1L))
+  op <- options(snet_verbosity = "normal")
+  on.exit(options(op))
+  expect_message(once <- make_stocnet(ties = cycle, nodes = nodes),
+                 "undirected")
+  expect_false(once$info$directed)
+  expect_equal(is_directed(once), is_directed(cycle))
+  expect_true(is_directed(make_stocnet(info = list(directed = TRUE),
+                                       ties = cycle, nodes = nodes)))
+  # A tie returned in another layer is not returned
+  layered <- data.frame(from = c(1L, 2L, 2L), to = c(2L, 1L, 3L),
+                        layer = c("x", "y", "x"))
+  expect_message(make_stocnet(ties = layered, nodes = nodes), "undirected")
+})
+
+test_that("a two-mode network with a tie covariate stays rectangular", {
+  sw <- ison_southern_women
+  expect_equal(dim(as_matrix(mutate_ties(sw, w = 1))), dim(as_matrix(sw)))
+  expect_equal(dim(as_matrix(as_tidygraph(mutate_ties(sw, w = 1)))),
+               dim(as_matrix(sw)))
+  ig <- igraph::set_edge_attr(as_igraph(matrix(c(1, 0, 1, 1, 0, 1), 2, 3)),
+                              "w", value = 1)
+  expect_equal(dim(as_matrix(ig)), c(2L, 3L))
+  # Layers still need the square matrix of every node
+  layered <- igraph::set_edge_attr(ig, "layer", value = c("a", "b", "a", "b"))
+  expect_equal(dim(as_matrix(layered)), c(5L, 5L))
+})
+
 test_that("as_igraph converts correctly",{
   expect_s3_class(as_igraph(mat1), "igraph")
   expect_s3_class(as_igraph(ison_southern_women), "igraph")
