@@ -367,9 +367,11 @@ is_egolist.default <- function(.data) {
 #'   and also where they are weighted and any of those weights are negative.
 #'   - `is_complex()` marks networks TRUE if any ties are loops,
 #'   with the sender and receiver being the same node.
-#'   - `is_multiplex()` marks networks TRUE if it contains multiple types 
+#'   - `is_multiplex()` marks networks TRUE if it contains multiple types
 #'   of ties, such that there can be multiple ties between the same
 #'   sender and receiver.
+#'   This is the case where the ties have a 'layer' (or 'type') attribute.
+#'   Other tie attributes, such as a covariate, do not make a network multiplex.
 #'   - `is_uniplex()` marks networks TRUE if it is neither complex nor multiplex.
 #'   - `is_disaggregated()` marks networks TRUE if any of their ties are
 #'   parallel, as `tie_is_parallel()` marks them, so that
@@ -631,7 +633,6 @@ is_complex.list <- function(.data) {
 }
 
 #' @rdname mark_format_tie 
-#' @importFrom igraph any_multiple
 #' @examples
 #' is_multiplex(create_filled(c(3,3)))
 #' @export
@@ -650,34 +651,36 @@ is_multiplex.matrix <- function(.data) {
 reserved_tie_attr <- c("wave","panel","sign","weight","date","begin","end","by","about","fixed",
                        "name","default","increment","time")
 
+# A network is multiplex where its ties say which layer each belongs to, in
+# 'layer' or the older 'type'. Another tie attribute, such as a covariate, is
+# not a layer, and nor are parallel ties of one layer, which
+# `is_disaggregated()` marks instead.
+.layer_cols <- c("layer", "type")
+
 #' @export
 is_multiplex.tbl_graph <- function(.data) {
-  igraph::any_multiple(.data) & length(setdiff(reserved_tie_attr, net_tie_attributes(.data)))==0 |
-    length(setdiff(net_tie_attributes(.data), reserved_tie_attr)) > 0 |
-    "type" %in% igraph::edge_attr_names(.data)
+  any(.layer_cols %in% igraph::edge_attr_names(.data))
 }
 
 #' @export
 is_multiplex.igraph <- function(.data) {
-  igraph::any_multiple(.data) & length(setdiff(reserved_tie_attr, net_tie_attributes(.data)))==0 |
-    length(setdiff(net_tie_attributes(.data), reserved_tie_attr)) > 0 |
-    "type" %in% igraph::edge_attr_names(.data)
+  any(.layer_cols %in% igraph::edge_attr_names(.data))
 }
 
 #' @export
 is_multiplex.network <- function(.data) {
-  network::is.multiplex(.data)
+  # `network::is.multiplex()` says only whether parallel edges are allowed
+  any(.layer_cols %in% network::list.edge.attributes(.data))
 }
 
 #' @export
 is_multiplex.stocnet <- function(.data) {
-  "type" %in% net_tie_attributes(.data) ||
-    "layer" %in% net_tie_attributes(.data)
+  any(.layer_cols %in% net_tie_attributes(.data))
 }
 
 #' @export
 is_multiplex.data.frame <- function(.data) {
-  ncol(.data) >= 3 & "type" %in% setdiff(colnames(.data), reserved_tie_attr)
+  any(.layer_cols %in% colnames(.data))
 }
 
 #' @rdname mark_format_tie

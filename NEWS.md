@@ -12,6 +12,10 @@
 
 - Fixed `as_matrix()` to return incidence matrices even with a tie covariate (closes #196)
 
+## Marking
+
+- Fixed `is_multiplex()` to give the same answer for every class
+
 # manynet 2.4.3
 
 ## Classes

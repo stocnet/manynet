@@ -1254,8 +1254,7 @@ as_stocnet.igraph <- function(.data, twomode = FALSE, ...) {
       modes[match(nodes$lvl, lvls)] else as.character(nodes$lvl)
     nodes$lvl <- NULL
   }
-  # is_multiplex() is also TRUE for networks with any non-reserved tie
-  # attribute, which have no 'type' column to rename to 'layer'
+  # A multiplex network may name its layers in the older 'type' column
   if(is_multiplex(.data) && "type" %in% names(ties)){
     ties$layer <- ties$type
     ties$type <- NULL

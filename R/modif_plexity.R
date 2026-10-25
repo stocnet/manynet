@@ -343,8 +343,8 @@ to_aggregated.tbl_graph <- function(.data, over = "layer",
   layers <- to_layers(.data)
   if(length(layers) > 1) return(.combine_networks(layers, rule))
   # `join_ties()` marks each network's ties in a column of its own rather than
-  # naming them all in one 'type' column, and `is_multiplex()` counts such a
-  # network as multiplex, so those columns are its layers
+  # naming them all in one 'layer' column, so those columns are its layers
+  # here, though `is_multiplex()` does not count them as layers
   marks <- setdiff(net_tie_attributes(.data), reserved_tie_attr)
   if(length(marks) > 1) return(.combine_marks(.data, marks, rule))
   # a network holding no tie types is already flat; `to_layers()` says so

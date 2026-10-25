@@ -257,3 +257,19 @@ test_that("is_aperiodic() reads the greatest common divisor of cycle lengths", {
   expect_false(suppressMessages(is_aperiodic(create_explicit(A-B, B-C))))
   expect_true(suppressMessages(is_aperiodic(create_ring(3))))
 })
+
+test_that("is_multiplex gives the same answer in every class", {
+  sw <- ison_southern_women
+  classes <- list(as_stocnet, as_igraph, as_tidygraph, as_network, as_edgelist)
+  marks <- function(x) vapply(classes, function(f) is_multiplex(f(x)), logical(1))
+  # only a layer makes a network multiplex
+  expect_true(all(marks(fict_marvel)))
+  expect_true(all(marks(ison_florentine)))
+  expect_false(any(marks(sw)))
+  # a tie covariate is not a layer
+  expect_false(any(marks(mutate_ties(sw, w = 1))))
+  expect_false(any(marks(mutate_ties(ison_adolescents, w = 1))))
+  # nor are parallel ties of one layer
+  expect_false(is_multiplex(as_igraph(data.frame(from = c(1, 1, 2),
+                                                 to = c(2, 2, 3)))))
+})
