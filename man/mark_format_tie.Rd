@@ -66,6 +66,8 @@ with the sender and receiver being the same node.
 \item \code{is_multiplex()} marks networks TRUE if it contains multiple types
 of ties, such that there can be multiple ties between the same
 sender and receiver.
+This is the case where the ties have a 'layer' (or 'type') attribute.
+Other tie attributes, such as a covariate, do not make a network multiplex.
 \item \code{is_uniplex()} marks networks TRUE if it is neither complex nor multiplex.
 \item \code{is_disaggregated()} marks networks TRUE if any of their ties are
 parallel, as \code{tie_is_parallel()} marks them, so that

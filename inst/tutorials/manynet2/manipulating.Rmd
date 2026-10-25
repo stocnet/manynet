@@ -562,12 +562,18 @@ then keep only the pairs who exchanged at least 100 messages.**
 
 ```{r weights-solution}
 summary(tie_weights(ison_networkers))
-to_unweighted(ison_networkers, threshold = 100)
+heavy <- to_unweighted(ison_networkers, threshold = 100)
+heavy
+is_weighted(heavy)
+is_directed(heavy)
 ```
 
 To check your results: the weights range from 2 to 559 messages,
 and thresholding at 100 leaves a much sparser network of 32 ties —
 the backbone of heavy correspondents.
+Note that the result is no longer weighted, but it is still directed.
+Binarising changes what each tie's value is, not which way it points:
+a message sent from one researcher to another is still an arc.
 
 ```{r weights-question, echo = FALSE, purl=FALSE}
 question("Thresholding `ison_networkers` at 100 leaves 32 ties. What else changed?",
@@ -1145,24 +1151,33 @@ without projecting.
 
 <span class="page-toc">On this page:
 <span class="page-toc-link" onclick="document.getElementById('section-waves').scrollIntoView({behavior:'auto',block:'start'});">Waves</span> ·
+<span class="page-toc-link" onclick="document.getElementById('section-events').scrollIntoView({behavior:'auto',block:'start'});">Events</span> ·
 <span class="page-toc-link" onclick="document.getElementById('section-changes').scrollIntoView({behavior:'auto',block:'start'});">Changes</span></span>
 
 Networks are rarely static: friendships form and fade,
 democracy diffuses, characters die.
 `{manynet}` distinguishes three ways time can enter a network:
 
-- a `r gloss("longitudinal")` network is a panel, observed in a few discrete
-  waves, each of which re-states the ties. The moment each tie was observed at
-  is recorded in a `time` tie attribute (`wave` in the older classes) --
-  check with `is_longitudinal()`
-- a `r gloss("dynamic")` network records a stream of events rather than a set
-  of observations. Either each row increments a tie's value, in an `increment`
-  attribute, or each tie states the interval it lasts over, in `begin`/`end`
-  attributes -- check with `is_dynamic()`
-- a `r gloss("changing")` network is where one or more nodal attributes are 
-  changing over time
+- a `r gloss("longitudinal")` network is a panel of snapshots:
+  the ties are observed again at each of a few waves.
+  Example: `fict_potter`, one wave per book.
+  Check with `is_longitudinal()`.
+- a `r gloss("dynamic")` network is a record of events:
+  each tie starts and stops at its own moment.
+  Example: `irps_wwi`, where each alliance or enmity has a start and end year.
+  Check with `is_dynamic()`.
+- a `r gloss("changing")` network is one where the _nodes'_ attributes
+  change over time, such as a character's faction or whether they are present.
+  Example: `fict_starwars`.
+  Check with `is_changing()`.
 
-A network is longitudinal or dynamic, never both.
+The first two describe the ties, and the third describes the nodes,
+so a network can be changing and also longitudinal or dynamic.
+But a network is longitudinal or dynamic, never both.^[A dynamic network
+records its events either as intervals, in `begin`/`end` tie attributes,
+or as increments to a tie's value, in an `increment` tie attribute.
+A longitudinal network records the wave each tie was observed at
+in a `time` tie attribute (`wave` in the older classes).]
 Which one it is decides what "the network at a moment" means, and so what
 `to_time()` returns: the ties observed at that wave, the ties accumulated up
 to that event, or the ties active over that interval.
@@ -1244,6 +1259,59 @@ fewer than the full cast of 64,
 because only characters _active_ in that book are retained —
 and `to_waves()` returns a list of 6 networks.
 
+### Events {#events}
+
+A dynamic network has no waves.
+Each tie has its own start and end,
+so the network can be read at any moment, not only at a few set ones.
+`irps_wwi`, the network of European alliances and enmities from the
+[signs](#signs) page, is dynamic:
+each tie has a `begin` and an `end` year.
+**Check that `irps_wwi` is dynamic,
+count the moments at which it changes with `net_times()`,
+and compare the network in 1875 with the network in 1910.**
+
+```{r wwitime, exercise = TRUE, purl=FALSE}
+
+```
+
+```{r wwitime-hint-1, purl=FALSE}
+# is_dynamic(irps_wwi)
+# net_times(irps_wwi)
+# to_time(irps_wwi, 1875) and to_time(irps_wwi, 1910),
+# with net_ties() and tie_signs() to compare them.
+```
+
+```{r wwitime-solution}
+is_dynamic(irps_wwi)
+net_times(irps_wwi)
+net_ties(to_time(irps_wwi, 1875))
+net_ties(to_time(irps_wwi, 1910))
+table(tie_signs(to_time(irps_wwi, 1910)))
+```
+
+To check your results: the network changes at 7 moments.
+In 1875, 9 ties are active; in 1910, 15 are, 9 of them enmities.
+The same `to_time()` gives the network at a moment for both kinds:
+for a longitudinal network it returns the ties observed at that wave,
+and for a dynamic network the ties active in that year.
+
+```{r events-question, echo = FALSE, purl=FALSE}
+question("Why is `irps_wwi` dynamic rather than longitudinal?",
+  answer("Each tie starts and ends at its own moment",
+         correct = TRUE,
+         message = "Correct: the ties are not observed again at set waves. Each one is recorded with its own `begin` and `end`."),
+  answer("Its nodes change over time",
+         message = "That would make it _changing_. Dynamic and longitudinal both describe the ties."),
+  answer("It has more moments than `fict_potter` has waves",
+         message = "The number of moments does not decide it. What decides it is whether the ties are re-observed at waves, or each start and end on their own."),
+  answer("Its ties are signed",
+         message = "Signs and time are independent. A signed network can be static, longitudinal, or dynamic."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
+
 ### Changes {#changes}
 
 Where do those 'active' switches come from?
@@ -1270,8 +1338,13 @@ and can be manipulated with the `*_changes()` family of verbs
 
 ```{r changes-solution}
 fict_starwars
+is_changing(fict_starwars)
 filter_changes(fict_starwars, node == "Anakin")
 ```
+
+`is_changing()` returns `TRUE` for any network with a changelog.
+This is what makes `fict_starwars` a _changing_ network,
+in addition to being longitudinal.
 
 To make the changes take effect,
 `to_time()` returns the network as it stood at a given time,
@@ -1327,7 +1400,9 @@ in the network, but that changes over time.
 
 ::: {.callout}
 <span class="callout-label">**In brief**:</span> Longitudinal networks store panel observations in a `wave`
-tie attribute and node changes in a changelog.
+tie attribute, dynamic networks store each tie's own `begin` and `end`,
+and changing networks store node changes in a changelog.
+`is_longitudinal()`, `is_dynamic()`, and `is_changing()` check for each.
 `net_waves()` counts the waves and `net_times()` the moments of a network of
 any kind, `to_time()` extracts the network as it stood at one of them,
 `to_times()` returns the network at each of them,
@@ -1448,7 +1523,19 @@ and see what proportion `net_tie_missing()` reports.**
 ```{r missingcount-solution}
 net_ties(ison_classmates)
 net_tie_missing(ison_classmates)
+73 / (26 * 25 * 5)
 ```
+
+To check your results: `net_ties()` counts 546 ties, none of them missing,
+and `net_tie_missing()` reports that about 2.2% of the possible ties are missing.
+That proportion is the 73 missing nominations
+divided by every nomination that could have been observed.
+Each of the 26 pupils could name each of the 25 others,
+which gives 650 possible nominations at a time,
+and the network observes them on five occasions:
+the friendship layer at each of the four waves,
+and the layer of who knew whom from primary school at the first wave.
+So 73 of 3,250 possible ties are missing.
 
 Each class carries this information in whatever way it can.
 An `igraph` object cannot mark an edge as missing,

@@ -8,6 +8,9 @@ test_that("a stocnet completed through the prompt path validates", {
                       to = c("B", "C"),
                       weight = c(1, 2),
                       layer = c("Friendship", "Advice")))
+  # `make_stocnet()` reads directedness from the ties, so it is removed for
+  # the prompt to ask for it.
+  net$info$directed <- NULL
 
   # The menu answers, in the order that .check_info() asks for them.
   answers <- c(1, 2,  # directed: Friendship, Advice

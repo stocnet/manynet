@@ -158,6 +158,17 @@ q_yes <- function(msg = NULL){
 #'   [to_ego()], [to_uniplex()], [to_giant()], [delete_isolates()],
 #'   [to_blockmodel()], or [to_subgraph()].
 #'
+#'   Each node of the network that `collect_cran()` returns has
+#'   the attributes `on_cran`, `version`, `published`, `compiled`,
+#'   `priority`, `license`, and `min_r`.
+#'   `min_r` holds the minimum version of R that the package declares
+#'   in its `Depends` field, or `NA` where it declares none.
+#'   This version is a character string,
+#'   so use `package_version()` to compare versions.
+#'   For example, the highest `min_r` in the network that
+#'   `collect_cran("manynet")` returns is the minimum version of R that
+#'   {manynet} needs, together with all the packages that it depends upon.
+#'
 #'   `collect_cran()` relies on `utils::available.packages()`,
 #'   which caches the repository index for an hour by default.
 #'   Set `options(max.repo.cache.age = )` for a fresher or staler snapshot.
@@ -197,6 +208,9 @@ NULL
 #' collect_cran("manynet")
 #' # The packages that depend directly upon {manynet}:
 #' collect_cran("manynet", direction = "in", max_dist = 1)
+#' # The minimum version of R that {manynet} and its dependencies need:
+#' min_r <- node_attribute(collect_cran("manynet"), "min_r")
+#' max(package_version(min_r[!is.na(min_r)]))
 #' }
 #' @export
 collect_cran <- function(pkg = "all",
@@ -291,7 +305,19 @@ collect_cran <- function(pkg = "all",
              compiled = ifelse(is.na(idx), NA, !is.na(needs) & needs == "yes"),
              priority = cols("Priority"),
              license = cols("License"),
+             min_r = .min_r(cols("Depends")),
              stringsAsFactors = FALSE)
+}
+
+# Returns the minimum version of R that each package declares in its
+# `Depends` field, or NA where it declares none.
+# The versions are kept as character strings, so compare them with
+# `package_version()` and not as text, where "4.10" would sort before "4.9".
+.min_r <- function(depends) {
+  rx <- "(^|,)\\s*R\\s*\\(\\s*>=?\\s*([0-9][0-9.-]*)\\s*\\)"
+  m <- regmatches(depends, regexec(rx, depends, perl = TRUE))
+  vapply(m, function(x) if (length(x) == 3) x[3] else NA_character_,
+         character(1))
 }
 
 # Scopes the network to the neighbourhoods of the seed packages.

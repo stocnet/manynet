@@ -39,6 +39,19 @@ test_that("CRAN nodes record which dependencies are on CRAN", {
   expect_true(all(is.na(out$license)))
 })
 
+test_that("CRAN nodes record the minimum version of R", {
+  db <- data.frame(Package = c("a", "b", "c", "d", "e"),
+                   Depends = c("R (>= 4.1.0), Matrix(>= 1.8-0)",
+                               "methods,\n  R(>=3.5)", "R", NA,
+                               "Rcpp (>= 1.0.0)"),
+                   stringsAsFactors = FALSE)
+  ties <- data.frame(from = "a", to = "elsewhere", stringsAsFactors = FALSE)
+  out <- .cran_nodes(db, ties)
+  expect_equal(out$min_r, c("4.1.0", "3.5", NA, NA, NA, NA))
+  # A package whose name starts with R is not taken for R itself
+  expect_true(is.na(out$min_r[out$name == "e"]))
+})
+
 test_that("collect_cran() collects readable dependency networks", {
   skip_on_cran()
   op <- options(repos = c(CRAN = "https://cloud.r-project.org"))

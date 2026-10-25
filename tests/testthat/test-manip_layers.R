@@ -125,11 +125,12 @@ test_that("to_flat combines more than two layers", {
 
 test_that("to_flat flattens what join_ties() produced", {
   # join_ties() marks each network's ties in a column of its own, rather than
-  # naming the layers in one 'type' column, but both are multiplex networks
+  # naming the layers in one 'layer' column, so is_multiplex() does not see
+  # layers there, but to_flat() still flattens those columns
   friends <- to_uniplex(as_tidygraph(ison_lawfirm), "friends")
   advice <- to_uniplex(as_tidygraph(ison_lawfirm), "advice")
   joined <- join_ties(friends, advice)
-  expect_true(is_multiplex(joined))
+  expect_false(is_multiplex(joined))
   expect_equal(as.numeric(net_ties(to_flat(joined, "min"))), 358)
   # and the two ways of building a multiplex network flatten to the same thing
   expect_equal(as.numeric(net_ties(to_flat(from_layers(friends = friends,

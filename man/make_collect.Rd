@@ -87,6 +87,17 @@ Both return networks that can be scoped further using, for example,
 \code{\link[=to_ego]{to_ego()}}, \code{\link[=to_uniplex]{to_uniplex()}}, \code{\link[=to_giant]{to_giant()}}, \code{\link[=delete_isolates]{delete_isolates()}},
 \code{\link[=to_blockmodel]{to_blockmodel()}}, or \code{\link[=to_subgraph]{to_subgraph()}}.
 
+Each node of the network that \code{collect_cran()} returns has
+the attributes \code{on_cran}, \code{version}, \code{published}, \code{compiled},
+\code{priority}, \code{license}, and \code{min_r}.
+\code{min_r} holds the minimum version of R that the package declares
+in its \code{Depends} field, or \code{NA} where it declares none.
+This version is a character string,
+so use \code{package_version()} to compare versions.
+For example, the highest \code{min_r} in the network that
+\code{collect_cran("manynet")} returns is the minimum version of R that
+{manynet} needs, together with all the packages that it depends upon.
+
 \code{collect_cran()} relies on \code{utils::available.packages()},
 which caches the repository index for an hour by default.
 Set \code{options(max.repo.cache.age = )} for a fresher or staler snapshot.
@@ -102,6 +113,9 @@ by \href{https://github.com/stocnet/manynet/issues}{raising an issue on Github}.
 collect_cran("manynet")
 # The packages that depend directly upon {manynet}:
 collect_cran("manynet", direction = "in", max_dist = 1)
+# The minimum version of R that {manynet} and its dependencies need:
+min_r <- node_attribute(collect_cran("manynet"), "min_r")
+max(package_version(min_r[!is.na(min_r)]))
 }
 \dontrun{
 # The network of calls among the functions in the working directory:

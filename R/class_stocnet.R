@@ -38,6 +38,13 @@
 #'   directed layer, and coercion back collapses them again.
 #'   This keeps the degree of a node in an undirected layer the same in every
 #'   class, and makes the round trip lossless.
+#'   Where 'directed' is not given, `make_stocnet()` reads it from the ties,
+#'   as `is_directed()` reads an edgelist:
+#'   the network is directed where some ties are returned and others are not.
+#'   Ties of which none is returned are read as listing each dyad once,
+#'   and so as undirected, with a message to say so.
+#'   Set 'directed' to TRUE for a directed network whose ties are never returned,
+#'   such as a directed cycle.
 #'   - 'signed' should be a logical indicating whether the network is signed.
 #'   If there are multiple layers, this can be a named logical vector that says
 #'   which layers are signed, where the names correspond to the layer names.
@@ -372,6 +379,8 @@ make_stocnet <- function(info = NULL, nodes = NULL, ties = NULL,
   if(!is.null(out$missings)) out <- index_ties(out, "missings")
   if(!is.null(out$changes)) out <- index_changes(out)
   out <- structure(out, class = c("stocnet", class(out)))
+  if(is.null(out$info$directed) && !is.null(out$ties))
+    out$info$directed <- .infer_stocnet_directed(out)
   # The ties may arrive with an 'na' column marking which of their rows record
   # a missing tie rather than a tie. Those rows are held instead as the nodes
   # that did not report them, which is both smaller and truer to the data.
@@ -380,6 +389,30 @@ make_stocnet <- function(info = NULL, nodes = NULL, ties = NULL,
   given <- dplyr::bind_rows(out$missings, split$missing)
   if(nrow(given)) out <- .compress_missing(out, given)
   validate_stocnet(out)
+}
+
+# Ties that do not say whether they are directed are read as an edgelist is
+# read by `is_directed.data.frame()`: directed where some ties are returned and
+# others are not. Where none is returned, the ties are taken to list each dyad
+# once, as an undirected network does, and where all are, to list it twice.
+# A tie is returned only within its own layer and report, and a two-mode
+# network, whose ties cannot be returned, is undirected.
+.infer_stocnet_directed <- function(.data){
+  ties <- .data$ties
+  ties <- ties[!.hyper_rows(ties) & ties$from != ties$to, , drop = FALSE]
+  if(!nrow(ties) || is_twomode(.data)) return(FALSE)
+  group <- do.call(paste, c(lapply(intersect(c("layer", "by"), names(ties)),
+                                   function(col) as.character(ties[[col]])),
+                            sep = "\r"))
+  if(!length(group)) group <- ""
+  returned <- paste(group, ties$to, ties$from, sep = "\r") %in%
+    paste(group, ties$from, ties$to, sep = "\r")
+  if(!any(returned)){
+    snet_info("Reading the ties as undirected, since none is returned.",
+              "Set {.code info = list(directed = TRUE)} for a directed network.")
+    return(FALSE)
+  }
+  !all(returned)
 }
 
 # The tie columns that name nodes, each held as an index into the nodelist:

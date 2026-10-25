@@ -1,3 +1,21 @@
+# manynet 2.4.4
+
+## Making
+
+- Improved `collect_cran()` to record the minimum R each package declares as `min_r`
+
+## Classes
+
+- Improved `make_stocnet()` to record `info$directed` from the ties when it is not given (closes #191)
+
+## Coercion
+
+- Fixed `as_matrix()` to return incidence matrices even with a tie covariate (closes #196)
+
+## Marking
+
+- Fixed `is_multiplex()` to give the same answer for every class
+
 # manynet 2.4.3
 
 ## Classes
