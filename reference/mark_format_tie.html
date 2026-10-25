@@ -27,6 +27,8 @@ with the sender and receiver being the same node.
 is_multiplex() marks networks TRUE if it contains multiple types
 of ties, such that there can be multiple ties between the same
 sender and receiver.
+This is the case where the ties have a 'layer' (or 'type') attribute.
+Other tie attributes, such as a covariate, do not make a network multiplex.
 is_uniplex() marks networks TRUE if it is neither complex nor multiplex.
 is_disaggregated() marks networks TRUE if any of their ties are
 parallel, as tie_is_parallel() marks them, so that
@@ -52,7 +54,7 @@ it was aggregated.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.4</span>
       </span>
     </div>
 
@@ -151,7 +153,9 @@ and also where they are weighted and any of those weights are negative.</p></li>
 with the sender and receiver being the same node.</p></li>
 <li><p><code>is_multiplex()</code> marks networks TRUE if it contains multiple types
 of ties, such that there can be multiple ties between the same
-sender and receiver.</p></li>
+sender and receiver.
+This is the case where the ties have a 'layer' (or 'type') attribute.
+Other tie attributes, such as a covariate, do not make a network multiplex.</p></li>
 <li><p><code>is_uniplex()</code> marks networks TRUE if it is neither complex nor multiplex.</p></li>
 <li><p><code>is_disaggregated()</code> marks networks TRUE if any of their ties are
 parallel, as <code><a href="measure_attributes_ties.html">tie_is_parallel()</a></code> marks them, so that

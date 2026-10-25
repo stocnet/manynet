@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.4</span>
       </span>
     </div>
 
@@ -557,7 +557,10 @@ default it keeps every tie with weight at least 1, but the
 only the pairs who exchanged at least 100 messages.</strong></p>
 <p>To check your results: the weights range from 2 to 559 messages, and
 thresholding at 100 leaves a much sparser network of 32 ties — the
-backbone of heavy correspondents.</p>
+backbone of heavy correspondents. Note that the result is no longer
+weighted, but it is still directed. Binarising changes what each tie’s
+value is, not which way it points: a message sent from one researcher to
+another is still an arc.</p>
 <div class="callout">
 <p><span class="callout-label"><strong>Try it yourself</strong>:</span>
 This section includes an interactive quiz in the live tutorial — run
@@ -953,6 +956,7 @@ modes without projecting.</p>
 <h2 id="dynamic-networks">Dynamic networks<a class="anchor" aria-label="anchor" href="#dynamic-networks"></a>
 </h2>
 <p><span class="page-toc">On this page: <span class="page-toc-link" onclick="document.getElementById('section-waves').scrollIntoView({behavior:'auto',block:'start'});">Waves</span>
+· <span class="page-toc-link" onclick="document.getElementById('section-events').scrollIntoView({behavior:'auto',block:'start'});">Events</span>
 · <span class="page-toc-link" onclick="document.getElementById('section-changes').scrollIntoView({behavior:'auto',block:'start'});">Changes</span></span></p>
 <p>Networks are rarely static: friendships form and fade, democracy
 diffuses, characters die. <a href="https://stocnet.github.io/manynet/">manynet</a> distinguishes three
@@ -960,26 +964,26 @@ ways time can enter a network:</p>
 <ul>
 <li>a
 <abbr><dfn title="A longitudinal network is one observed in two or more discrete waves or panels over time.">
-longitudinal </dfn></abbr> network is a panel, observed in a few
-discrete waves, each of which re-states the ties. The moment each tie
-was observed at is recorded in a <code>time</code> tie attribute
-(<code>wave</code> in the older classes) – check with
-<code><a href="../reference/mark_format_change.html">is_longitudinal()</a></code>
-</li>
+longitudinal </dfn></abbr> network is a panel of snapshots: the ties are
+observed again at each of a few waves. Example:
+<code>fict_potter</code>, one wave per book. Check with
+<code><a href="../reference/mark_format_change.html">is_longitudinal()</a></code>.</li>
 <li>a
 <abbr><dfn title="A dynamic network is one where ties appear or disappear at recorded points in continuous time.">
-dynamic </dfn></abbr> network records a stream of events rather than a
-set of observations. Either each row increments a tie’s value, in an
-<code>increment</code> attribute, or each tie states the interval it
-lasts over, in <code>begin</code>/<code>end</code> attributes – check
-with <code><a href="../reference/mark_format_change.html">is_dynamic()</a></code>
-</li>
+dynamic </dfn></abbr> network is a record of events: each tie starts and
+stops at its own moment. Example: <code>irps_wwi</code>, where each
+alliance or enmity has a start and end year. Check with
+<code><a href="../reference/mark_format_change.html">is_dynamic()</a></code>.</li>
 <li>a
 <abbr><dfn title="A changing network is one where nodal attributes, including whether the nodes are present or not, can change.">
-changing </dfn></abbr> network is where one or more nodal attributes are
-changing over time</li>
+changing </dfn></abbr> network is one where the <em>nodes’</em>
+attributes change over time, such as a character’s faction or whether
+they are present. Example: <code>fict_starwars</code>. Check with
+<code><a href="../reference/mark_format_change.html">is_changing()</a></code>.</li>
 </ul>
-<p>A network is longitudinal or dynamic, never both. Which one it is
+<p>The first two describe the ties, and the third describes the nodes,
+so a network can be changing and also longitudinal or dynamic. But a
+network is longitudinal or dynamic, never both.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> Which one it is
 decides what “the network at a moment” means, and so what
 <code><a href="../reference/modif_scope.html">to_time()</a></code> returns: the ties observed at that wave, the ties
 accumulated up to that event, or the ties active over that interval.
@@ -1022,6 +1026,28 @@ book are retained — and <code><a href="../reference/modif_split.html">to_waves
 networks.</p>
 </div>
 <div class="section level3">
+<h3 id="events">Events<a class="anchor" aria-label="anchor" href="#events"></a>
+</h3>
+<p>A dynamic network has no waves. Each tie has its own start and end,
+so the network can be read at any moment, not only at a few set ones.
+<code>irps_wwi</code>, the network of European alliances and enmities
+from the <a href="#signs">signs</a> page, is dynamic: each tie has a
+<code>begin</code> and an <code>end</code> year. <strong>Check that
+<code>irps_wwi</code> is dynamic, count the moments at which it changes
+with <code><a href="../reference/measure_dims.html">net_times()</a></code>, and compare the network in 1875 with the
+network in 1910.</strong></p>
+<p>To check your results: the network changes at 7 moments. In 1875, 9
+ties are active; in 1910, 15 are, 9 of them enmities. The same
+<code><a href="../reference/modif_scope.html">to_time()</a></code> gives the network at a moment for both kinds: for
+a longitudinal network it returns the ties observed at that wave, and
+for a dynamic network the ties active in that year.</p>
+<div class="callout">
+<p><span class="callout-label"><strong>Try it yourself</strong>:</span>
+This section includes an interactive quiz in the live tutorial — run
+<code>run_tute()</code> at the R console to try it.</p>
+</div>
+</div>
+<div class="section level3">
 <h3 id="changes">Changes<a class="anchor" aria-label="anchor" href="#changes"></a>
 </h3>
 <p>Where do those ‘active’ switches come from? Longitudinal
@@ -1037,6 +1063,9 @@ family of verbs (<code><a href="../reference/manip_changes.html">filter_changes(
 <code><a href="../reference/manip_changes.html">mutate_changes()</a></code>, <code><a href="../reference/manip_changes.html">select_changes()</a></code>, etc.).
 <strong>Print the network, then filter its changes to see Anakin’s
 trajectory.</strong></p>
+<p><code><a href="../reference/mark_format_change.html">is_changing()</a></code> returns <code>TRUE</code> for any network
+with a changelog. This is what makes <code>fict_starwars</code> a
+<em>changing</em> network, in addition to being longitudinal.</p>
 <p>To make the changes take effect, <code><a href="../reference/modif_scope.html">to_time()</a></code> returns the
 network as it stood at a given time, with all the changes up to then
 applied to the node attributes (<code><a href="../reference/coerce_list.html">as_changelist()</a></code> takes the
@@ -1064,7 +1093,10 @@ nodes/ties in the network, but that changes over time.</p>
 <div class="callout">
 <p><span class="callout-label"><strong>In brief</strong>:</span>
 Longitudinal networks store panel observations in a <code>wave</code>
-tie attribute and node changes in a changelog. <code><a href="../reference/measure_dims.html">net_waves()</a></code>
+tie attribute, dynamic networks store each tie’s own <code>begin</code>
+and <code>end</code>, and changing networks store node changes in a
+changelog. <code><a href="../reference/mark_format_change.html">is_longitudinal()</a></code>, <code><a href="../reference/mark_format_change.html">is_dynamic()</a></code>,
+and <code><a href="../reference/mark_format_change.html">is_changing()</a></code> check for each. <code><a href="../reference/measure_dims.html">net_waves()</a></code>
 counts the waves and <code><a href="../reference/measure_dims.html">net_times()</a></code> the moments of a network
 of any kind, <code><a href="../reference/modif_scope.html">to_time()</a></code> extracts the network as it stood at
 one of them, <code><a href="../reference/modif_split.html">to_times()</a></code> returns the network at each of
@@ -1136,6 +1168,15 @@ pupil who left the class is not there to nominate.</p>
 <p>None of this makes them ties. <strong>Check that
 <code><a href="../reference/measure_dims.html">net_ties()</a></code> does not count them, and see what proportion
 <code><a href="../reference/measure_missingness.html">net_tie_missing()</a></code> reports.</strong></p>
+<p>To check your results: <code><a href="../reference/measure_dims.html">net_ties()</a></code> counts 546 ties, none
+of them missing, and <code><a href="../reference/measure_missingness.html">net_tie_missing()</a></code> reports that about
+2.2% of the possible ties are missing. That proportion is the 73 missing
+nominations divided by every nomination that could have been observed.
+Each of the 26 pupils could name each of the 25 others, which gives 650
+possible nominations at a time, and the network observes them on five
+occasions: the friendship layer at each of the four waves, and the layer
+of who knew whom from primary school at the first wave. So 73 of 3,250
+possible ties are missing.</p>
 <p>Each class carries this information in whatever way it can. An
 <code>igraph</code> object cannot mark an edge as missing, so the list
 travels beside the edges; a <code>network</code> object marks them among
@@ -1713,6 +1754,12 @@ A weighted network is where the ties have been assigned weights.
 internal list elements are not named, the autocomplete necessarily
 braces the attribute names in backticks. This is not the case for
 stocnet objects, which are named lists.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>A dynamic network records its events either as
+intervals, in <code>begin</code>/<code>end</code> tie attributes, or as
+increments to a tie’s value, in an <code>increment</code> tie attribute.
+A longitudinal network records the wave each tie was observed at in a
+<code>time</code> tie attribute (<code>wave</code> in the older
+classes).<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
   </div>

@@ -32,7 +32,7 @@ and the ties are calls.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.4</span>
       </span>
     </div>
 
@@ -200,6 +200,16 @@ defined in the directory by default.</p>
 <p>Both return networks that can be scoped further using, for example,
 <code><a href="modif_scope.html">to_ego()</a></code>, <code><a href="modif_plexity.html">to_uniplex()</a></code>, <code><a href="modif_scope.html">to_giant()</a></code>, <code><a href="manip_nodes_num.html">delete_isolates()</a></code>,
 <code><a href="modif_scope.html">to_blockmodel()</a></code>, or <code><a href="modif_scope.html">to_subgraph()</a></code>.</p>
+<p>Each node of the network that <code>collect_cran()</code> returns has
+the attributes <code>on_cran</code>, <code>version</code>, <code>published</code>, <code>compiled</code>,
+<code>priority</code>, <code>license</code>, and <code>min_r</code>.
+<code>min_r</code> holds the minimum version of R that the package declares
+in its <code>Depends</code> field, or <code>NA</code> where it declares none.
+This version is a character string,
+so use <code><a href="https://rdrr.io/r/base/numeric_version.html" class="external-link">package_version()</a></code> to compare versions.
+For example, the highest <code>min_r</code> in the network that
+<code>collect_cran("manynet")</code> returns is the minimum version of R that
+manynet needs, together with all the packages that it depends upon.</p>
 <p><code>collect_cran()</code> relies on <code><a href="https://rdrr.io/r/utils/available.packages.html" class="external-link">utils::available.packages()</a></code>,
 which caches the repository index for an hour by default.
 Set <code>options(max.repo.cache.age = )</code> for a fresher or staler snapshot.</p>
@@ -232,6 +242,9 @@ by <a href="https://github.com/stocnet/manynet/issues" class="external-link">rai
 <span class="r-in"><span><span class="fu">collect_cran</span><span class="op">(</span><span class="st">"manynet"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># The packages that depend directly upon {manynet}:</span></span></span>
 <span class="r-in"><span><span class="fu">collect_cran</span><span class="op">(</span><span class="st">"manynet"</span>, direction <span class="op">=</span> <span class="st">"in"</span>, max_dist <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># The minimum version of R that {manynet} and its dependencies need:</span></span></span>
+<span class="r-in"><span><span class="va">min_r</span> <span class="op">&lt;-</span> <span class="fu"><a href="measure_attributes_nodes.html">node_attribute</a></span><span class="op">(</span><span class="fu">collect_cran</span><span class="op">(</span><span class="st">"manynet"</span><span class="op">)</span>, <span class="st">"min_r"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric_version.html" class="external-link">package_version</a></span><span class="op">(</span><span class="va">min_r</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">min_r</span><span class="op">)</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="co"># The network of calls among the functions in the working directory:</span></span></span>
