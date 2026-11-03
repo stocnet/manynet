@@ -1,3 +1,9 @@
+# manynet 2.4.5
+
+## Measuring
+
+- Fixed `net_name.network()`, which used igraph's accessors
+
 # manynet 2.4.4
 
 ## Making

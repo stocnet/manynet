@@ -411,12 +411,15 @@ net_name.igraph <- function(.data, prefix = NULL){
 
 #' @export
 net_name.network <- function(.data, prefix = NULL){
+  # A 'network' keeps its attributes in its own list, which the igraph
+  # accessors cannot read.
   existname <- ""
-  if(!is.null(igraph::graph_attr(.data, "name"))) {
-    existname <- igraph::graph_attr(.data, 'name')
-  } else if(is_grand(.data) && 
-            !is.null(igraph::graph_attr(.data, "grand")$name)){
-    existname <- igraph::graph_attr(.data, 'grand')$name
+  name <- network::get.network.attribute(.data, "name")
+  grand <- network::get.network.attribute(.data, "grand")
+  if(!is.null(name)) {
+    existname <- name
+  } else if(!is.null(grand$name)){
+    existname <- grand$name
   }
   if(existname != "" && !is.null(prefix)) existname <- paste(prefix, existname)
   existname
