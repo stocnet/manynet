@@ -4,6 +4,10 @@
 
 - Fixed `net_name.network()`, which used igraph's accessors
 
+## Glossary
+
+- Added glossary entries for 'cognitive social structure', 'fixed effect', 'random intercept', 'reference category', and 'reporter'
+
 # manynet 2.4.4
 
 ## Making
