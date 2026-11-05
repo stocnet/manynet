@@ -1095,3 +1095,521 @@ collect_emails <- function(file = file.choose(), ego = NULL,
   info$receiver <- "messages"
   make_stocnet(info = info, nodes = nodes, ties = ties, changes = changes)
 }
+
+# Text ####
+
+#' Making networks from text
+#'
+#' @description
+#' `collect_text()` creates a network from free text,
+#' such as speeches, articles, posts, novels, or the lines of a play.
+#' It splits the text into units, such as documents or sentences,
+#' and ties each unit to the terms it uses, or to the names it mentions.
+#' The result is a two-mode network of units and terms,
+#' from which a network of terms that co-occur, or of units that share terms,
+#' is a projection: see [to_mode()].
+#'
+#' Where the text records who speaks (and to whom),
+#' the result is instead a one-mode network of speakers and what they mention.
+#' @details
+#'   Only base R is used, so no text-mining package is needed.
+#'   Words are lowercased, and a word is a run of letters and digits,
+#'   possibly joined by an apostrophe, as in "let's".
+#'   So punctuation and hyphens separate words.
+#'   For finer control, such as lemmas or only the nouns,
+#'   tokenise the text elsewhere and pass the tokens as a data frame
+#'   (see `text` and `token`).
+#'
+#'   Paragraphs are separated by a blank line,
+#'   and sentences end with a full stop, a question mark, or an
+#'   exclamation mark that is followed by a space.
+#'   Abbreviations such as "e.g." therefore end a sentence too.
+#'
+#'   Where the units are paragraphs, sentences, or windows,
+#'   and there are two or more of them,
+#'   each unit is stamped with its position in the text,
+#'   in a `time` column of the ties, so that [to_time()] and similar can
+#'   scope the network to a part of the text.
+#'   Documents are not stamped, since a corpus need not be in any order.
+#'   Units are positions and not waves or events,
+#'   so the network does not say how one record of a tie updates another.
+#' @section Terms:
+#'   By default, every word is a term.
+#'   Terms are then ordered alphabetically.
+#'   A dictionary in `terms` keeps only the terms it lists,
+#'   in the order it lists them.
+#'   It can be a character vector of terms,
+#'   or a named list, each element of which gives the aliases of one name,
+#'   such as `list(Harry = c("harry", "potter", "the boy who lived"))`.
+#'   A term of several words matches where its words follow one another,
+#'   and the longest match is taken where matches overlap,
+#'   so "harry potter" is one mention of Harry and not two.
+#'   The second mode is called "terms",
+#'   or "characters" where the dictionary is a named list.
+#'
+#'   Stopwords are dropped from the terms and are not scored for sentiment,
+#'   but a term of several words is still matched across them,
+#'   so "bank of england" is found where "of" is a stopword.
+#' @section Speakers:
+#'   A text with speakers, such as a transcript or a play,
+#'   gives a one-mode, directed network.
+#'   With `from` only, each tie runs from the speaker to a term they mention.
+#'   With both `from` and `to`, each tie runs from the speaker to the
+#'   addressee, and the term mentioned is recorded in the 'about' column,
+#'   as in gossip (see [is_gossip()]).
+#'   A unit without a speaker (or an addressee) gives no ties.
+#'   Speakers, addressees, and terms with the same label are one node,
+#'   so name the dictionary entries as the speakers are named,
+#'   since words are lowercased.
+#' @section Sentiment:
+#'   A `lexicon` scores each unit by the sum of the values of its words.
+#'   Where units are nodes, they hold this score as a 'sentiment' attribute.
+#'   Where the text has speakers, the ties from a unit of negative score
+#'   are negative, so that the network is signed (positive and negative
+#'   mentions, or gossip).
+#'   `tidytext::get_sentiments("afinn")` and
+#'   `tidytext::get_sentiments("bing")` are suitable lexicons.
+#' @param text The text, as one or more documents.
+#'   This can be:
+#'   - a character vector, each element of which is one document,
+#'   named by its names if it has any;
+#'   - a data frame with a 'text' column, each row of which is one document,
+#'   named by its 'doc_id', 'document', or 'id' column if it has one;
+#'   further columns become attributes of the units;
+#'   - a data frame with one token in each row,
+#'   such as from `tidytext::unnest_tokens()` or `udpipe::udpipe()`,
+#'   with a 'doc_id', 'document', or 'id' column naming the document of each.
+#'   Paragraph and sentence units need 'paragraph_id' and 'sentence_id'
+#'   columns, as `{udpipe}` gives.
+#' @param unit The unit that ties to terms.
+#'   One of "document" (the default), "paragraph", "sentence",
+#'   or an integer for a moving window of that many words.
+#'   The first mode is named after it, e.g. "sentences".
+#' @param terms The terms to collect.
+#'   By default `NULL`, every word.
+#'   Otherwise a character vector or a named list of aliases (see Terms).
+#' @param stopwords Words to drop.
+#'   A character vector, or a data frame with a 'word' column,
+#'   such as `tidytext::stop_words`.
+#'   By default `NULL`, none.
+#' @param from The speaker of each document.
+#'   The name of a column of `text`,
+#'   or a vector with one value for each document.
+#'   The speaker is the 'from' of the ties of each unit in the document.
+#'   By default `NULL`, no speakers, which gives a two-mode network.
+#' @param to The addressee of each document, given in the same way as `from`.
+#'   The addressee is the 'to' of the ties of each unit in the document.
+#'   Needs `from`.
+#' @param ties How ties are recorded.
+#'   Either "counts" (the default), one tie for each unit and term,
+#'   with the number of times the term is used in the unit as its weight,
+#'   or "tokens", one tie for each use of the term.
+#' @param token The column of a token data frame that holds the term,
+#'   such as "lemma" for `{udpipe}` output.
+#'   By default `NULL`, the 'word' or else the 'token' column.
+#'   Filter the rows first to keep only some parts of speech,
+#'   e.g. `dplyr::filter(tokens, upos == "NOUN")`.
+#' @param lexicon A sentiment dictionary (see Sentiment).
+#'   A named numeric vector of values for words,
+#'   or a data frame with a 'word' column and either a numeric 'value' column
+#'   or a 'sentiment' column of "positive" (+1) and "negative" (-1).
+#'   By default `NULL`, no sentiment.
+#' @return A `stocnet` object.
+#'   A two-mode network of units and terms,
+#'   or, with `from`, a one-mode directed network of speakers and terms.
+#' @family makes
+#' @seealso [to_mode()], [to_normalised()], [to_time()], [as_stocnet()]
+#' @examples
+#' speeches <- c(first = "Trade builds peace. Peace builds trade.",
+#'               second = "War ends trade.\n\nPeace needs work.")
+#' collect_text(speeches)
+#' collect_text(speeches, unit = "sentence", stopwords = c("needs"))
+#' collect_text(speeches, terms = c("peace", "war", "trade")) |>
+#'   to_mode("terms")
+#' play <- data.frame(speaker = c("Ann", "Bob", "Ann"),
+#'                    addressee = c("Bob", "Ann", "Cy"),
+#'                    text = c("Have you seen Cy?", "Cy left with Dee.",
+#'                             "Dee is lovely, Cy is awful."))
+#' cast <- list(Ann = "ann", Bob = "bob", Cy = "cy", Dee = "dee")
+#' collect_text(play, terms = cast, from = "speaker")
+#' collect_text(play, terms = cast, from = "speaker", to = "addressee",
+#'              lexicon = c(lovely = 1, awful = -2))
+#' @name make_text
+#' @export
+collect_text <- function(text, unit = "document", terms = NULL,
+                         stopwords = NULL, from = NULL, to = NULL,
+                         ties = c("counts", "tokens"), token = NULL,
+                         lexicon = NULL) {
+  ties <- match.arg(ties)
+  if (!is.null(to) && is.null(from))
+    snet_abort("{.arg to} needs {.arg from}: name the speaker as well as",
+               "the addressee.")
+  unit <- .text_unit(unit)
+  snet_progress_step("Reading the text")
+  docs <- .text_documents(text, token, from, to)
+  snet_progress_step("Splitting the text into units")
+  split <- .text_units(docs, unit)
+  units <- split$units
+  words <- split$words
+  if (length(words$word) == 0)
+    snet_warn("No words were found in {.arg text}.")
+  stopwords <- .text_stopwords(stopwords)
+  dict <- .text_dictionary(terms)
+  snet_progress_step("Matching terms")
+  found <- .text_match(words, dict, stopwords)
+  lexicon <- .text_lexicon(lexicon)
+  if (!is.null(lexicon))
+    units$sentiment <- .text_sentiment(words, lexicon, stopwords,
+                                       nrow(units))
+  info <- list(name = "Text network", source = "Empirical",
+               method = "Archival")
+  if (is.null(docs$from)) {
+    term_mode <- if (is.list(terms)) "characters" else "terms"
+    .text_twomode(info, units, found, dict, term_mode, ties)
+  } else .text_onemode(info, units, found, dict, ties, signed = !is.null(lexicon))
+}
+
+# Returns "document", "paragraph", "sentence", or a window size.
+.text_unit <- function(unit) {
+  if (is.numeric(unit)) {
+    if (length(unit) != 1 || is.na(unit) || unit < 1 || unit != round(unit))
+      snet_abort("A window {.arg unit} must be a single positive integer,",
+                 "the number of words in each window.")
+    return(as.integer(unit))
+  }
+  if (!is.character(unit) || length(unit) != 1)
+    snet_abort("{.arg unit} must be {.val document}, {.val paragraph},",
+               "{.val sentence}, or a window size.")
+  unit <- sub("s$", "", tolower(unit))
+  if (!unit %in% c("document", "paragraph", "sentence"))
+    snet_abort("{.arg unit} must be {.val document}, {.val paragraph},",
+               "{.val sentence}, or a window size, not {.val {unit}}.")
+  unit
+}
+
+.text_doc_cols <- c("doc_id", "document", "id")
+
+# Returns a list of the documents: their labels, attributes, speakers and
+# addressees, and either their texts or, for a token data frame, their tokens.
+.text_documents <- function(text, token, from, to) {
+  if (is.character(text)) {
+    labels <- names(text)
+    if (is.null(labels) || anyNA(labels) || !all(nzchar(labels)))
+      labels <- paste0("text", seq_along(text))
+    out <- list(label = make.unique(labels), text = unname(text),
+                attrs = NULL)
+    out$from <- .text_party(from, NULL, length(text), "from")
+    out$to <- .text_party(to, NULL, length(text), "to")
+    return(out)
+  }
+  if (!is.data.frame(text))
+    snet_abort("{.arg text} must be a character vector or a data frame,",
+               "not {.cls {class(text)}}.")
+  text <- as.data.frame(text, stringsAsFactors = FALSE)
+  id <- intersect(.text_doc_cols, names(text))[1]
+  if (is.null(token) && "text" %in% names(text)) {
+    labels <- if (is.na(id)) paste0("text", seq_len(nrow(text))) else
+      as.character(text[[id]])
+    keep <- setdiff(names(text), c("text", id, from, to))
+    return(list(label = make.unique(labels),
+                text = as.character(text$text),
+                attrs = text[keep],
+                from = .text_party(from, text, nrow(text), "from"),
+                to = .text_party(to, text, nrow(text), "to")))
+  }
+  if (is.null(token)) {
+    token <- intersect(c("word", "token"), names(text))[1]
+    if (is.na(token))
+      snet_abort("{.arg text} has no {.val text}, {.val word},",
+                 "or {.val token} column.",
+                 "i" = "Name the column of terms with {.arg token}.")
+  } else if (!token %in% names(text))
+    snet_abort("{.val {token}} is not a column of {.arg text}.")
+  if (is.na(id))
+    snet_abort("A data frame of tokens needs a column naming the document",
+               "of each token: {.val {(.text_doc_cols)}}.")
+  doc <- as.character(text[[id]])
+  label <- unique(doc)
+  first <- match(label, doc)
+  list(label = label,
+       tokens = data.frame(doc = match(doc, label),
+                           word = tolower(as.character(text[[token]])),
+                           paragraph = text$paragraph_id %||% NA,
+                           sentence = text$sentence_id %||% NA,
+                           stringsAsFactors = FALSE),
+       attrs = NULL,
+       from = .text_party(from, text, nrow(text), "from")[first],
+       to = .text_party(to, text, nrow(text), "to")[first])
+}
+
+# Returns the speakers (or addressees) as a character vector, from a column
+# name or a vector as long as the text.
+.text_party <- function(x, text, n, arg) {
+  if (is.null(x)) return(NULL)
+  if (!is.null(text) && is.character(x) && length(x) == 1 &&
+      x %in% names(text)) return(as.character(text[[x]]))
+  if (!is.null(text) && is.character(x) && length(x) == 1 && n != 1)
+    snet_abort("{.val {x}} is not a column of {.arg text}.")
+  if (length(x) != n)
+    snet_abort("{.arg {arg}} must be a column of {.arg text} or a vector",
+               "of {n} value{?s}, one for each document.")
+  as.character(x)
+}
+
+# Words are lowercased runs of letters and digits, joined by apostrophes.
+.text_words <- function(x) {
+  x <- tolower(enc2utf8(as.character(x)))
+  x[is.na(x)] <- ""
+  regmatches(x, gregexpr("[\\p{L}\\p{N}]+(?:['’][\\p{L}\\p{N}]+)*", x,
+                         perl = TRUE))
+}
+
+.text_split <- function(x, unit) {
+  x <- enc2utf8(as.character(x))
+  x[is.na(x)] <- ""
+  parts <- strsplit(x, "\n[[:blank:]]*\n", perl = TRUE)
+  if (unit == "sentence")
+    parts <- lapply(parts, function(p)
+      unlist(strsplit(p, "(?<=[.!?]|[.!?][\"'’”)])\\s+", perl = TRUE)))
+  lapply(parts, function(p) p[grepl("\\S", p)])
+}
+
+# Returns the units, one row each with its label, document, position, and
+# speakers, and the words, one row each with the unit it belongs to.
+.text_units <- function(docs, unit) {
+  n <- length(docs$label)
+  if (!is.null(docs$tokens)) {
+    tok <- docs$tokens
+    if (identical(unit, "document") || is.integer(unit)) {
+      piece <- tok$doc
+    } else {
+      col <- tok[[unit]]
+      if (all(is.na(col)))
+        snet_abort("A data frame of tokens needs a {.val {paste0(unit, '_id')}}",
+                   "column for {.val {unit}} units.")
+      piece <- match(paste(tok$doc, col), unique(paste(tok$doc, col)))
+    }
+    pdoc <- tok$doc[!duplicated(piece)]
+    words <- split(tok$word, factor(piece, levels = unique(piece)))
+  } else if (identical(unit, "document") || is.integer(unit)) {
+    pdoc <- seq_len(n)
+    words <- .text_words(docs$text)
+  } else {
+    parts <- .text_split(docs$text, unit)
+    pdoc <- rep(seq_len(n), lengths(parts))
+    words <- .text_words(unlist(parts))
+  }
+  words <- unname(words)
+  if (is.integer(unit)) {
+    # every run of `unit` consecutive words of a document is a window
+    starts <- lapply(lengths(words), function(k)
+      seq_len(max(1L, k - unit + 1L)))
+    pdoc <- rep(pdoc, lengths(starts))
+    words <- unlist(Map(function(w, s)
+      lapply(s, function(i) w[i:min(length(w), i + unit - 1L)])[seq_along(s)],
+      words, starts), recursive = FALSE)
+    words <- lapply(words, function(w) w[!is.na(w)])
+  }
+  within <- stats::ave(pdoc, pdoc, FUN = seq_along)
+  label <- if (identical(unit, "document")) docs$label[pdoc] else
+    paste(docs$label[pdoc], within, sep = ".")
+  units <- data.frame(label = label, stringsAsFactors = FALSE)
+  if (!identical(unit, "document")) units$document <- docs$label[pdoc]
+  if (!is.null(docs$attrs) && ncol(docs$attrs) > 0)
+    units <- cbind(units, docs$attrs[pdoc, , drop = FALSE])
+  # documents need not be in any order, but the parts of a document are
+  if (!identical(unit, "document")) units$time <- seq_along(pdoc)
+  units$from <- docs$from[pdoc]
+  units$to <- docs$to[pdoc]
+  units$mode <- if (is.integer(unit)) "windows" else paste0(unit, "s")
+  rownames(units) <- NULL
+  list(units = units,
+       words = data.frame(unit = rep(seq_along(words), lengths(words)),
+                          word = unlist(words) %||% character(0),
+                          stringsAsFactors = FALSE))
+}
+
+.text_stopwords <- function(stopwords) {
+  if (is.null(stopwords)) return(character(0))
+  if (is.data.frame(stopwords)) {
+    if (!"word" %in% names(stopwords))
+      snet_abort("A data frame of {.arg stopwords} needs a {.val word} column.")
+    stopwords <- stopwords$word
+  }
+  if (!is.character(stopwords))
+    snet_abort("{.arg stopwords} must be a character vector or a data frame",
+               "with a {.val word} column.")
+  unique(tolower(stopwords))
+}
+
+# Returns the dictionary as a data frame of aliases, each with the label of
+# its term and its words, or NULL where every word is a term.
+.text_dictionary <- function(terms) {
+  if (is.null(terms)) return(NULL)
+  if (is.list(terms)) {
+    if (is.null(names(terms)) || any(!nzchar(names(terms))))
+      snet_abort("A list of {.arg terms} must name each of its elements,",
+                 "e.g. {.code list(Harry = c(\"harry\", \"potter\"))}.")
+    label <- rep(names(terms), lengths(terms))
+    alias <- unlist(terms, use.names = FALSE)
+  } else if (is.character(terms)) {
+    label <- alias <- terms
+  } else snet_abort("{.arg terms} must be NULL, a character vector,",
+                    "or a named list of aliases.")
+  dict <- data.frame(label = as.character(label), stringsAsFactors = FALSE)
+  dict$words <- .text_words(alias)
+  dict <- dict[lengths(dict$words) > 0, ]
+  dict[!duplicated(vapply(dict$words, paste, character(1), collapse = " ")), ]
+}
+
+# Returns the terms found, one row for each use, with its unit and label.
+.text_match <- function(words, dict, stopwords) {
+  if (is.null(dict)) {
+    out <- words[!words$word %in% stopwords, ]
+    return(data.frame(unit = out$unit, term = out$word,
+                      stringsAsFactors = FALSE))
+  }
+  w <- words$word
+  u <- words$unit
+  n <- length(w)
+  hits <- lapply(seq_len(nrow(dict)), function(d) {
+    a <- dict$words[[d]]
+    m <- length(a)
+    if (n < m) return(NULL)
+    s <- seq_len(n - m + 1L)
+    ok <- rep(TRUE, length(s))
+    for (k in seq_len(m))
+      ok <- ok & w[s + k - 1L] == a[k] & u[s + k - 1L] == u[s]
+    s <- s[ok]
+    if (length(s) == 0) return(NULL)
+    data.frame(start = s, end = s + m - 1L, entry = d)
+  })
+  hits <- do.call(rbind, hits)
+  if (is.null(hits)) return(data.frame(unit = integer(0), term = character(0)))
+  # where matches overlap, the one that starts first, and then the longest,
+  # is taken, so that "harry potter" is not also a mention of "potter"
+  hits <- hits[order(hits$start, -(hits$end - hits$start), hits$entry), ]
+  if (any(hits$end > hits$start) || anyDuplicated(hits$start)) {
+    keep <- logical(nrow(hits))
+    last <- 0L
+    for (i in seq_len(nrow(hits))) {
+      if (hits$start[i] > last) {
+        keep[i] <- TRUE
+        last <- hits$end[i]
+      }
+    }
+    hits <- hits[keep, ]
+  }
+  out <- data.frame(unit = u[hits$start], term = dict$label[hits$entry],
+                    stringsAsFactors = FALSE)
+  out[!tolower(out$term) %in% stopwords, ]
+}
+
+# Returns a named numeric vector of the value of each word.
+.text_lexicon <- function(lexicon) {
+  if (is.null(lexicon)) return(NULL)
+  if (is.data.frame(lexicon)) {
+    if (!"word" %in% names(lexicon))
+      snet_abort("A data frame {.arg lexicon} needs a {.val word} column.")
+    if ("value" %in% names(lexicon) && is.numeric(lexicon$value)) {
+      value <- lexicon$value
+    } else if ("sentiment" %in% names(lexicon)) {
+      value <- c(positive = 1, negative = -1)[as.character(lexicon$sentiment)]
+    } else snet_abort("A data frame {.arg lexicon} needs a numeric",
+                      "{.val value} column or a {.val sentiment} column",
+                      "of {.val positive} and {.val negative}.")
+    lexicon <- stats::setNames(unname(value), lexicon$word)
+  }
+  if (!is.numeric(lexicon) || is.null(names(lexicon)))
+    snet_abort("{.arg lexicon} must be a named numeric vector or a data frame",
+               "with a {.val word} column.")
+  lexicon <- lexicon[!is.na(lexicon)]
+  names(lexicon) <- tolower(names(lexicon))
+  lexicon[!duplicated(names(lexicon))]
+}
+
+# Returns the score of each unit: the sum of the values of its words.
+.text_sentiment <- function(words, lexicon, stopwords, n) {
+  value <- unname(lexicon[words$word])
+  value[is.na(value) | words$word %in% stopwords] <- 0
+  out <- vapply(split(value, factor(words$unit, levels = seq_len(n))), sum,
+                numeric(1))
+  unname(out)
+}
+
+# Counts uses by the columns given, keeping the first row of each group.
+.text_count <- function(df, by) {
+  key <- do.call(paste, c(df[by], sep = "\r"))
+  first <- !duplicated(key)
+  out <- df[first, , drop = FALSE]
+  out$weight <- as.integer(table(factor(key, levels = key[first])))
+  out
+}
+
+# A two-mode network ties each unit to the terms it uses.
+.text_twomode <- function(info, units, found, dict, term_mode, ties) {
+  terms <- if (is.null(dict)) sort(unique(found$term), method = "radix") else
+    unique(dict$label)
+  unit_mode <- units$mode[1] %||% "documents"
+  nu <- nrow(units)
+  out <- data.frame(from = found$unit, to = nu + match(found$term, terms))
+  if (!is.null(units$time)) out$time <- units$time[found$unit]
+  out <- out[order(out$from, out$to), , drop = FALSE]
+  if (ties == "counts") out <- .text_count(out, c("from", "to"))
+  rownames(out) <- NULL
+  if (nu < 2) out$time <- NULL
+  units$from <- units$to <- NULL
+  nodes <- dplyr::bind_rows(units[c("label", "mode", setdiff(names(units),
+                                                             c("label", "mode", "time")))],
+                            data.frame(label = terms, mode = rep(term_mode,
+                                                                 length(terms)),
+                                       stringsAsFactors = FALSE))
+  info$directed <- FALSE
+  info$modes <- c(unit_mode, term_mode)
+  info$sender <- unit_mode
+  info$receiver <- term_mode
+  snet_info("Collected {length(terms)} term{?s} from {nu} unit{?s}.")
+  make_stocnet(info = info, nodes = nodes, ties = out)
+}
+
+# A one-mode network ties each speaker to what they mention, or to whom they
+# address, with what they mention recorded as 'about'.
+.text_onemode <- function(info, units, found, dict, ties, signed) {
+  gossip <- !is.null(units$to)
+  spoken <- !is.na(units$from)
+  if (gossip) spoken <- spoken & !is.na(units$to)
+  if (!all(spoken))
+    snet_info("Dropping {sum(!spoken)} unit{?s} without a speaker",
+              if (gossip) "or an addressee." else ".")
+  found <- found[spoken[found$unit], , drop = FALSE]
+  terms <- if (is.null(dict)) sort(unique(found$term), method = "radix") else
+    unique(dict$label)
+  labels <- unique(c(units$from[spoken], if (gossip) units$to[spoken],
+                     terms[terms %in% found$term]))
+  out <- data.frame(from = match(units$from[found$unit], labels))
+  if (gossip) {
+    out$to <- match(units$to[found$unit], labels)
+    out$about <- match(found$term, labels)
+  } else out$to <- match(found$term, labels)
+  if (!is.null(units$time)) out$time <- units$time[found$unit]
+  if (signed) out$sign <- ifelse(units$sentiment[found$unit] < 0, -1L, 1L)
+  out <- out[do.call(order, out[intersect(c("time", "from", "to", "about"),
+                                          names(out))]), , drop = FALSE]
+  if (ties == "counts") {
+    by <- setdiff(names(out), "sign")
+    out <- .text_count(out, c(by, if (signed) "sign"))
+    if (signed) out$weight <- out$weight * out$sign
+    out$sign <- NULL
+  } else if (signed) {
+    out$weight <- out$sign
+    out$sign <- NULL
+  }
+  rownames(out) <- NULL
+  if (nrow(units) < 2) out$time <- NULL
+  info$directed <- TRUE
+  if (signed) info$signed <- TRUE
+  snet_info("Collected {length(labels)} node{?s} from {nrow(units)} unit{?s}.")
+  make_stocnet(info = info, nodes = data.frame(label = labels,
+                                               stringsAsFactors = FALSE),
+               ties = out)
+}

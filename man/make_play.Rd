@@ -199,6 +199,7 @@ Other makes:
 \code{\link{make_learning}},
 \code{\link{make_random}},
 \code{\link{make_read}},
+\code{\link{make_text}},
 \code{\link{make_write}}
 
 Other models:

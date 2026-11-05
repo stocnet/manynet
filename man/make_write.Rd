@@ -137,6 +137,7 @@ Other makes:
 \code{\link{make_learning}},
 \code{\link{make_play}},
 \code{\link{make_random}},
-\code{\link{make_read}}
+\code{\link{make_read}},
+\code{\link{make_text}}
 }
 \concept{makes}

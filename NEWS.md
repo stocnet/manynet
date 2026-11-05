@@ -5,30 +5,37 @@
 - Improved the last five making functions to return a named 'stocnet'
   - `create_ring()` and `create_lattice()`
   - `generate_random()`, `generate_smallworld()`, and `generate_scalefree()`
-  - Needs releases of 'netrics', 'autograph', and 'migraph' that take a 'stocnet'
 - Improved `generate_degree()` to keep repeated ties, tie attributes, and layers
   - Fixed draws with repeated ties, which failed, to keep every node's degree
     - A configuration test on a network of tokens is then against shuffled texts
-  - Retained tie attributes, such as weights and signs
+  - Tie attributes, such as weights and signs, are kept
     - With `p = 1`, the attributes are shuffled over the ties drawn
     - With `p < 1`, each tie keeps its attributes as its ends switch
   - Added a draw for each layer, so every node keeps its degree in every layer
+- Added `collect_text()` for networks from text (closes #15, @henriquesposito)
+  - Units are documents, paragraphs, sentences, or moving windows of words
+  - Terms are all words, or a dictionary of terms or of names and aliases
+  - `from` (and `to`) give mentions (or gossip) among speakers
+  - `token` takes lemmas or parts of speech from a data frame of tokens
+  - `lexicon` scores the sentiment of units, and signs the mentions of speakers
+
 
 ## Modifying
 
-- Improved `to_mode()`, `to_mode1()`, and `to_mode2()`
-  - Added `"agreement"`, `"disagreement"`, and `"signed"` measures for signed ties
+- Improved `to_mode()` with new measures and with `through`
+  - Added `"agreement"`, `"disagreement"`, and `"signed"` for signed ties
   - Added `"activity"`, the count over the pair's mean number of ties
   - Added `"association"`, the association strength of van Eck and Waltman
   - Added `"fractional"`, the fractional counting of co-authorship
-  - Added `through` to `to_mode()` for networks of three or more modes
+    - The new measures are in `to_mode1()` and `to_mode2()` too
+  - Added `through` for networks of three or more modes
     - By default, all the other modes
 - Improved `to_twomode()`
   - Added `through` to project three or more modes onto two
     - E.g. `to_twomode(.data, through = "works")` ties authors to keywords
   - Fixed a two-mode network, which failed, to be returned as it is
-- Improved `to_proximity()` with the new measures for two-mode networks
-- Added `"tfidf"` to `to_normalised()` for two-mode networks of documents and terms
+- Improved `to_proximity()` with the new two-mode measures of `to_mode()`
+- Added `"tfidf"` to `to_normalised()` for networks of documents and terms
 
 # manynet 2.4.5
 

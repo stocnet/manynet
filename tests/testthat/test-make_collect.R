@@ -403,3 +403,160 @@ test_that("collect_emails() errors informatively where there is nothing to find"
   alone <- fixture_mbox(fixture_emails()[4])
   expect_error(collect_emails(alone), "both a sender and a recipient")
 })
+
+# collect_text() ####
+
+fixture_speeches <- c(first = "Trade builds peace. Peace builds trade!",
+                      second = "War ends trade.\n\nPeace needs work.")
+
+fixture_play <- data.frame(speaker = c("Ann", "Bob", "Ann", NA),
+                           addressee = c("Bob", "Ann", "Cy", "Ann"),
+                           text = c("Have you seen Cy?", "Cy left with Dee.",
+                                    "Dee is lovely, Cy is awful.",
+                                    "Dee called."),
+                           stringsAsFactors = FALSE)
+
+fixture_cast <- list(Ann = "ann", Bob = "bob", Cy = "cy", Dee = "dee")
+
+test_that("collect_text() collects a two-mode network of documents and terms", {
+  out <- collect_text(fixture_speeches)
+  expect_s3_class(out, "stocnet")
+  expect_true(is_twomode(out))
+  expect_equal(out$info$modes, c("documents", "terms"))
+  expect_equal(out$nodes$label[1:2], c("first", "second"))
+  terms <- out$nodes$label[out$nodes$mode == "terms"]
+  expect_equal(terms, sort(terms, method = "radix"))
+  # counts are weights, and each tie is stamped with its unit's position
+  el <- as_edgelist(out)
+  expect_equal(el$weight[el$from == "first" & el$to == "trade"], 2)
+  expect_equal(sum(el$weight), 12)
+  # documents need not be in order, so are not stamped with a time
+  expect_false("time" %in% names(out$ties))
+  expect_null(out$info$update)
+  # projections take the mode names
+  expect_equal(sort(node_labels(to_mode(out, "terms"))), sort(terms))
+  expect_equal(node_labels(to_mode(out, "documents")), c("first", "second"))
+})
+
+test_that("collect_text() stamps no time on a text of one unit", {
+  one <- "I think there is something in this thing. Why don't we find out."
+  out <- collect_text(one)
+  expect_false("time" %in% names(out$ties))
+  expect_false(is_longitudinal(out))
+  expect_true(is_longitudinal(collect_text(one, unit = "sentence")))
+  speech <- collect_text(one, terms = "thing", from = "Ann")
+  expect_false("time" %in% names(speech$ties))
+})
+
+test_that("collect_text() splits the text into units", {
+  sent <- collect_text(fixture_speeches, unit = "sentences")
+  expect_equal(sent$ties$time, sent$ties$from)
+  expect_equal(sent$info$modes[1], "sentences")
+  expect_equal(sent$nodes$label[sent$nodes$mode == "sentences"],
+               c("first.1", "first.2", "second.1", "second.2"))
+  expect_equal(sent$nodes$document[1:4], rep(c("first", "second"), each = 2))
+  para <- collect_text(fixture_speeches, unit = "paragraph")
+  expect_equal(sum(para$nodes$mode == "paragraphs"), 3)
+  # a window of three words moves along each document
+  win <- collect_text(fixture_speeches, unit = 3, ties = "tokens")
+  expect_equal(sum(win$nodes$mode == "windows"), 4 + 4)
+  expect_equal(nrow(win$ties), 8 * 3)
+  expect_error(collect_text(fixture_speeches, unit = "chapter"), "unit")
+  expect_error(collect_text(fixture_speeches, unit = 0), "positive integer")
+})
+
+test_that("collect_text() records tokens or counts", {
+  tok <- collect_text(fixture_speeches, ties = "tokens")
+  expect_false("weight" %in% names(tok$ties))
+  expect_equal(nrow(tok$ties), 12)
+  expect_equal(nrow(collect_text(fixture_speeches)$ties), 9)
+})
+
+test_that("collect_text() keeps the terms of a dictionary and drops stopwords", {
+  out <- collect_text(fixture_speeches, terms = c("peace", "war", "Trade"))
+  expect_equal(out$nodes$label[out$nodes$mode == "terms"],
+               c("peace", "war", "Trade"))
+  stop <- collect_text(fixture_speeches, stopwords = data.frame(word = "Peace"))
+  expect_false("peace" %in% stop$nodes$label)
+  expect_error(collect_text(fixture_speeches, stopwords = 1), "stopwords")
+  # aliases of a name, with the longest match taken
+  story <- c(one = "Harry Potter met Ron. Potter smiled at the Bank of England.")
+  names <- list(Harry = c("harry", "potter", "harry potter"), Ron = "ron",
+                Bank = "bank of england")
+  out <- collect_text(story, terms = names, stopwords = "of")
+  expect_equal(out$info$modes, c("documents", "characters"))
+  el <- as_edgelist(out)
+  expect_equal(el$weight, c(2, 1, 1))
+  expect_error(collect_text(story, terms = list("harry")), "name each")
+})
+
+test_that("collect_text() reads data frames of texts and of tokens", {
+  df <- data.frame(doc_id = c("a", "b"), year = c(2001, 2002),
+                   text = unname(fixture_speeches))
+  out <- collect_text(df)
+  expect_equal(out$nodes$label[1:2], c("a", "b"))
+  expect_equal(out$nodes$year[1:2], c(2001, 2002))
+  # one token in each row, as tidytext or udpipe give
+  tidy <- data.frame(document = rep(c("a", "b"), c(3, 2)),
+                     word = c("trade", "builds", "peace", "war", "ends"))
+  expect_equal(nrow(collect_text(tidy)$ties), 5)
+  ud <- data.frame(doc_id = rep("a", 5), sentence_id = c(1, 1, 2, 2, 2),
+                   token = c("Wars", "end", "Peace", "builds", "peace"),
+                   lemma = c("war", "end", "peace", "build", "peace"),
+                   upos = c("NOUN", "VERB", "NOUN", "VERB", "NOUN"))
+  out <- collect_text(ud[ud$upos == "NOUN", ], unit = "sentence",
+                      token = "lemma")
+  expect_equal(out$nodes$label, c("a.1", "a.2", "peace", "war"))
+  expect_equal(as_edgelist(out)$weight, c(1, 2))
+  expect_error(collect_text(ud, token = "stem"), "not a column")
+  expect_error(collect_text(ud[c("token", "upos")]), "document")
+  expect_error(collect_text(ud[, -2], unit = "sentence"), "sentence_id")
+  expect_error(collect_text(list("a")), "character vector or a data frame")
+})
+
+test_that("collect_text() collects mentions and gossip among speakers", {
+  ment <- collect_text(fixture_play, terms = fixture_cast, from = "speaker")
+  expect_false(is_twomode(ment))
+  expect_true(is_directed(ment))
+  el <- as_edgelist(ment)
+  expect_equal(el$from, c("Ann", "Ann", "Bob", "Bob"))
+  expect_equal(el$to, c("Cy", "Dee", "Cy", "Dee"))
+  expect_equal(el$weight, c(2, 1, 1, 1))
+  goss <- collect_text(fixture_play, terms = fixture_cast,
+                       from = "speaker", to = "addressee")
+  expect_true(is_gossip(goss))
+  lab <- goss$nodes$label
+  expect_equal(lab[goss$ties$from], c("Ann", "Ann", "Ann", "Bob", "Bob"))
+  expect_equal(lab[goss$ties$to], c("Bob", "Cy", "Cy", "Ann", "Ann"))
+  expect_equal(lab[goss$ties$about], c("Cy", "Cy", "Dee", "Cy", "Dee"))
+  # sentences are stamped with their position
+  lines <- collect_text(fixture_play, terms = fixture_cast, from = "speaker",
+                        unit = "sentence")
+  expect_equal(lines$ties$time, c(1, 2, 2, 3, 3))
+  # speakers can be given as a vector as long as the text
+  vec <- collect_text(fixture_play$text, terms = fixture_cast,
+                      from = fixture_play$speaker)
+  expect_equal(as_edgelist(vec)$to, el$to)
+  expect_error(collect_text(fixture_play, to = "addressee"), "needs")
+  expect_error(collect_text(fixture_play, from = c("Ann", "Bob")), "4 values")
+})
+
+test_that("collect_text() scores sentiment from a lexicon", {
+  bing <- data.frame(word = c("lovely", "awful"),
+                     sentiment = c("positive", "negative"))
+  afinn <- data.frame(word = c("lovely", "awful"), value = c(3, -1))
+  out <- collect_text(fixture_play, lexicon = afinn)
+  expect_equal(out$nodes$sentiment[1:4], c(0, 0, 2, 0))
+  out <- collect_text(fixture_play, lexicon = bing)
+  expect_equal(out$nodes$sentiment[1:4], c(0, 0, 0, 0))
+  goss <- collect_text(fixture_play, terms = fixture_cast, from = "speaker",
+                       to = "addressee", lexicon = c(lovely = 1, awful = -2))
+  expect_true(is_signed(goss))
+  expect_equal(goss$ties$weight, c(1, -1, -1, 1, 1))
+  tok <- collect_text(fixture_play, terms = fixture_cast, from = "speaker",
+                      ties = "tokens", lexicon = c(awful = -2))
+  expect_equal(tok$ties$weight, c(1, -1, -1, 1, 1))
+  expect_error(collect_text(fixture_play, lexicon = data.frame(word = "a")),
+               "value")
+  expect_error(collect_text(fixture_play, lexicon = 1), "named numeric")
+})

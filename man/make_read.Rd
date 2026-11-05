@@ -236,6 +236,7 @@ Other makes:
 \code{\link{make_learning}},
 \code{\link{make_play}},
 \code{\link{make_random}},
+\code{\link{make_text}},
 \code{\link{make_write}}
 }
 \concept{makes}
