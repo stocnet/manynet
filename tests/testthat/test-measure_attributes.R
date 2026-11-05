@@ -63,7 +63,7 @@ test_that("tie_nodes() counts the nodes that each tie joins", {
   expect_true(all(tie_nodes(ison_southern_women) == 2))
   expect_length(tie_nodes(ison_southern_women), net_ties(ison_southern_women))
   # A loop joins only the one node, in any class.
-  loops <- igraph::add_edges(create_ring(4), c(1, 1))
+  loops <- igraph::add_edges(as_igraph(create_ring(4)), c(1, 1))
   expect_equal(as.numeric(tie_nodes(loops)), c(2, 2, 2, 2, 1))
   expect_equal(as.numeric(tie_nodes(as_stocnet(loops))), c(2, 2, 2, 2, 1))
   # A hyperedge joins its members, and is named by its label.

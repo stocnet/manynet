@@ -2,6 +2,10 @@
 
 ## Making
 
+- Improved the last five making functions to return a named 'stocnet'
+  - `create_ring()` and `create_lattice()`
+  - `generate_random()`, `generate_smallworld()`, and `generate_scalefree()`
+  - Needs releases of 'netrics', 'autograph', and 'migraph' that take a 'stocnet'
 - Improved `generate_degree()` to keep repeated ties, tie attributes, and layers
   - Fixed draws with repeated ties, which failed, to keep every node's degree
     - A configuration test on a network of tokens is then against shuffled texts

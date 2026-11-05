@@ -100,14 +100,7 @@ test_that("generate_degree() reproduces a degree sequence", {
                as.numeric(net_nodes(ison_adolescents)))
 })
 
-# The functions that the released versions of the packages built on this one
-# can take a stocnet from. The others return one once those packages can.
-make_stocnet_later <- c("create_lattice", "create_ring",
-                        "generate_random", "generate_scalefree",
-                        "generate_smallworld")
-
-for (fn in setdiff(c(create_funs, generate_funs),
-                   c(make_stocnet_later, make_data_first))) {
+for (fn in setdiff(c(create_funs, generate_funs), make_data_first)) {
   test_that(paste0(fn, "() returns a named stocnet"), {
     f <- get(fn, envir = asNamespace("manynet"))
     set.seed(1234)

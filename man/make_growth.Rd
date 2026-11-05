@@ -74,11 +74,6 @@ A \code{stocnet} object is returned,
 which can be coerced into other types of objects
 using \code{as_edgelist()}, \code{as_matrix()},
 \code{as_tidygraph()}, \code{as_igraph()}, or \code{as_network()}.
-\code{create_ring()}, \code{create_lattice()},
-\code{generate_random()}, \code{generate_smallworld()}, and
-\code{generate_scalefree()} return a \code{tbl_graph} or \code{igraph} object for now,
-since the released versions of the packages built on this one expect
-one from them.
 
 By default, most networks are created as undirected.
 This can be overruled with the argument \code{directed = TRUE}.
