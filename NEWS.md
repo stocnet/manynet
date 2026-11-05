@@ -19,6 +19,10 @@
   - Added `"fractional"`, the fractional counting of co-authorship
   - Added `through` to `to_mode()` for networks of three or more modes
     - By default, all the other modes
+- Improved `to_twomode()`
+  - Added `through` to project three or more modes onto two
+    - E.g. `to_twomode(.data, through = "works")` ties authors to keywords
+  - Fixed a two-mode network, which failed, to be returned as it is
 
 # manynet 2.4.5
 
