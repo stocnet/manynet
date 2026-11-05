@@ -19,6 +19,11 @@
   - `token` takes lemmas or parts of speech from a data frame of tokens
   - `lexicon` scores the sentiment of units, and signs the mentions of speakers
 
+## Coercion
+
+- Added `as_stocnet()` methods for 'quanteda' and 'tm' matrices of documents
+  - `as_stocnet.dfm()` for a document-feature matrix of 'quanteda'
+  - `as_stocnet.DocumentTermMatrix()` and `as_stocnet.TermDocumentMatrix()`
 
 ## Modifying
 

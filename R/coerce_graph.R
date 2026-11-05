@@ -1134,6 +1134,15 @@ as_network.networkDynamic <- function(.data, twomode = FALSE) {
 # stocnet ####
 
 #' @rdname coerce_graph
+#' @section Text:
+#'   `as_stocnet()` reads a document-feature matrix of `{quanteda}` ('dfm')
+#'   and a term-document or document-term matrix of `{tm}`
+#'   ('TermDocumentMatrix', 'DocumentTermMatrix').
+#'   Each gives a two-mode network of "documents" and "terms",
+#'   with the count (or other weighting) of each term in each document as the
+#'   weight of its tie, as [collect_text()] gives.
+#'   The document variables of a 'dfm' become attributes of the documents.
+#'   Neither `{quanteda}` nor `{tm}` needs to be installed.
 #' @export
 as_stocnet <- function(.data,
                     twomode = FALSE, ...) UseMethod("as_stocnet")
@@ -1485,6 +1494,67 @@ as_hypergraph.default <- function(.data) {
 
 #' @export
 as_hypergraph.hypergraph <- function(.data) .data
+
+#' @export
+as_stocnet.dfm <- function(.data, twomode = FALSE, ...) {
+  # A 'dfm' is a column-compressed sparse matrix (an S4 'dgCMatrix'), so its
+  # slots are read directly, with no call to `{quanteda}` or `{Matrix}`.
+  dims <- .data@Dim
+  names <- .data@Dimnames
+  docvars <- tryCatch(as.data.frame(.data@docvars), error = function(e) NULL)
+  if (!is.null(docvars))
+    docvars <- docvars[setdiff(names(docvars),
+                               c("docname_", "docid_", "segid_"))]
+  .text_incidence(docs = names[[1]] %||% paste0("text", seq_len(dims[1])),
+                  terms = names[[2]] %||% paste0("feat", seq_len(dims[2])),
+                  doc = .data@i + 1L,
+                  term = rep(seq_len(dims[2]), diff(.data@p)),
+                  weight = .data@x, attrs = docvars)
+}
+
+#' @export
+as_stocnet.TermDocumentMatrix <- function(.data, twomode = FALSE, ...) {
+  # A `{tm}` matrix is a 'simple_triplet_matrix' of `{slam}`, a list of the
+  # row, column, and value of each cell that is not zero.
+  .text_incidence(docs = .data$dimnames$Docs %||%
+                    as.character(seq_len(.data$ncol)),
+                  terms = .data$dimnames$Terms %||%
+                    as.character(seq_len(.data$nrow)),
+                  doc = .data$j, term = .data$i, weight = .data$v)
+}
+
+#' @export
+as_stocnet.DocumentTermMatrix <- function(.data, twomode = FALSE, ...) {
+  .text_incidence(docs = .data$dimnames$Docs %||%
+                    as.character(seq_len(.data$nrow)),
+                  terms = .data$dimnames$Terms %||%
+                    as.character(seq_len(.data$ncol)),
+                  doc = .data$i, term = .data$j, weight = .data$v)
+}
+
+# Assembles a two-mode network of documents and terms from the cells of a
+# sparse matrix, in the form `collect_text()` returns.
+.text_incidence <- function(docs, terms, doc, term, weight, attrs = NULL) {
+  keep <- weight != 0
+  ties <- data.frame(from = as.integer(doc[keep]),
+                     to = length(docs) + as.integer(term[keep]),
+                     weight = weight[keep])
+  if (all(ties$weight == round(ties$weight)))
+    ties$weight <- as.integer(ties$weight)
+  ties <- ties[order(ties$from, ties$to), , drop = FALSE]
+  rownames(ties) <- NULL
+  units <- data.frame(label = as.character(docs), mode = "documents",
+                      stringsAsFactors = FALSE)
+  if (!is.null(attrs) && ncol(attrs) > 0 && nrow(attrs) == length(docs))
+    units <- cbind(units, attrs)
+  nodes <- dplyr::bind_rows(units,
+                            data.frame(label = as.character(terms),
+                                       mode = rep("terms", length(terms)),
+                                       stringsAsFactors = FALSE))
+  make_stocnet(info = list(directed = FALSE, modes = c("documents", "terms"),
+                           sender = "documents", receiver = "terms"),
+               nodes = nodes, ties = ties)
+}
 
 #' @export
 as_stocnet.matrix <- function(.data,

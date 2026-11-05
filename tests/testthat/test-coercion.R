@@ -1058,3 +1058,59 @@ test_that("as_matrix() squares a two-mode 'stocnet' where asked", {
   expect_equal(dim(as_matrix(ison_adolescents, twomode = FALSE)),
                dim(as_matrix(ison_adolescents)))
 })
+
+# Text matrices -------------------------------------------------------------------
+
+text_corpus <- c(a = "Trade builds peace. Peace builds trade!",
+                 b = "War ends trade.", c = "Peace needs work and trade")
+
+text_canon <- function(x) {
+  el <- as.data.frame(as_edgelist(x))
+  el <- el[order(el$from, el$to), ]
+  rownames(el) <- NULL
+  el
+}
+
+test_that("as_stocnet() reads a tm matrix without tm", {
+  # a 'simple_triplet_matrix' is a list, so it can be built by hand
+  dtm <- structure(list(i = c(1L, 1L, 2L), j = c(1L, 2L, 2L), v = c(2, 1, 3),
+                        nrow = 2L, ncol = 2L,
+                        dimnames = list(Docs = c("d1", "d2"),
+                                        Terms = c("peace", "war"))),
+                   class = c("DocumentTermMatrix", "simple_triplet_matrix"))
+  out <- as_stocnet(dtm)
+  expect_true(is_twomode(out))
+  expect_equal(out$info$modes, c("documents", "terms"))
+  expect_equal(as_edgelist(out)$weight, c(2, 1, 3))
+  expect_false("time" %in% names(out$ties))
+  tdm <- dtm
+  tdm[c("i", "j")] <- dtm[c("j", "i")]
+  tdm[c("nrow", "ncol")] <- dtm[c("ncol", "nrow")]
+  tdm$dimnames <- rev(dtm$dimnames)
+  class(tdm) <- c("TermDocumentMatrix", "simple_triplet_matrix")
+  expect_equal(as_stocnet(tdm), out)
+  expect_equal(node_labels(to_mode(out, "terms")), c("peace", "war"))
+})
+
+test_that("a tm matrix gives the network that collect_text() gives", {
+  skip_if_not_installed("tm")
+  corp <- tm::VCorpus(tm::VectorSource(unname(text_corpus)))
+  names(corp) <- names(text_corpus)
+  ctrl <- list(removePunctuation = TRUE, wordLengths = c(1, Inf))
+  ours <- collect_text(text_corpus)
+  dtm <- as_stocnet(tm::DocumentTermMatrix(corp, control = ctrl))
+  tdm <- as_stocnet(tm::TermDocumentMatrix(corp, control = ctrl))
+  expect_equal(text_canon(dtm), text_canon(ours))
+  expect_equal(text_canon(tdm), text_canon(ours))
+})
+
+test_that("a quanteda dfm gives the network that collect_text() gives", {
+  skip_if_not_installed("quanteda")
+  toks <- quanteda::tokens(quanteda::corpus(text_corpus,
+                                            docvars = data.frame(year = 1:3)),
+                           remove_punct = TRUE)
+  out <- as_stocnet(quanteda::dfm(toks))
+  expect_equal(text_canon(out), text_canon(collect_text(text_corpus)))
+  expect_equal(out$nodes$year[1:3], 1:3)
+  expect_equal(out$info$modes, c("documents", "terms"))
+})

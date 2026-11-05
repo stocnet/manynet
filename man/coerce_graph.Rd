@@ -96,36 +96,46 @@ and \code{event}, which can take on the values "I" for an infection event,
 \value{
 The currently implemented coercions or translations are:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{              array data.frame default diff_model diffnet hypergraph igraph
-as_diffnet                                      *                          
-as_diffusion                                    *       *                 *
-as_graphAM                           *                                     
-as_hypergraph                        *                             *       
-as_igraph                    *                  *       *                 *
-as_network                   *                          *                 *
-as_siena                             *                                     
-as_stocnet        *          *                                     *      *
-as_tidygraph                 *                  *       *                 *
-              list matrix mnet network network.goldfish networkDynamic
-as_diffnet                                                            
-as_diffusion                 *                                        
-as_graphAM              *                                             
-as_hypergraph                                                         
-as_igraph               *            *                *              *
-as_network              *            *                *              *
-as_siena                                                              
-as_stocnet              *            *                                
-as_tidygraph     *      *            *                *              *
-              node_measure node_member siena sienadata stocnet tbl_graph
-as_diffnet                                                              
-as_diffusion                                                 *          
-as_graphAM                                                              
-as_hypergraph                                                           
-as_igraph                                  *         *       *         *
-as_network                                 *         *       *         *
-as_siena                                                     *          
-as_stocnet               *           *               *       *          
-as_tidygraph                               *         *       *         *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{              DocumentTermMatrix TermDocumentMatrix array data.frame default
+as_diffnet                                                                  
+as_diffusion                                                                
+as_graphAM                                                                 *
+as_hypergraph                                                              *
+as_igraph                                                          *        
+as_network                                                         *        
+as_siena                                                                   *
+as_stocnet                     *                  *     *          *        
+as_tidygraph                                                       *        
+              dfm diff_model diffnet hypergraph igraph list matrix mnet network
+as_diffnet                 *                                                   
+as_diffusion               *       *                 *                *        
+as_graphAM                                                       *             
+as_hypergraph                                 *                                
+as_igraph                  *       *                 *           *            *
+as_network                         *                 *           *            *
+as_siena                                                                       
+as_stocnet      *                             *      *           *            *
+as_tidygraph               *       *                 *    *      *            *
+              network.goldfish networkDynamic node_measure node_member siena
+as_diffnet                                                                  
+as_diffusion                                                                
+as_graphAM                                                                  
+as_hypergraph                                                               
+as_igraph                    *              *                              *
+as_network                   *              *                              *
+as_siena                                                                    
+as_stocnet                                               *           *      
+as_tidygraph                 *              *                              *
+              sienadata stocnet tbl_graph
+as_diffnet                               
+as_diffusion                  *          
+as_graphAM                               
+as_hypergraph                            
+as_igraph             *       *         *
+as_network            *       *         *
+as_siena                      *          
+as_stocnet            *       *          
+as_tidygraph          *       *         *
 }\if{html}{\out{</div>}}
 
 \code{as_diffusion()} and \code{play_diffusion()} return a 'diff_model' object
@@ -157,6 +167,18 @@ kinds of information than others.
 Note also that there are some reserved column names in one or more
 object classes, which could otherwise lead to some unexpected results.
 }
+\section{Text}{
+
+\code{as_stocnet()} reads a document-feature matrix of \code{{quanteda}} ('dfm')
+and a term-document or document-term matrix of \code{{tm}}
+('TermDocumentMatrix', 'DocumentTermMatrix').
+Each gives a two-mode network of "documents" and "terms",
+with the count (or other weighting) of each term in each document as the
+weight of its tie, as \code{\link[=collect_text]{collect_text()}} gives.
+The document variables of a 'dfm' become attributes of the documents.
+Neither \code{{quanteda}} nor \code{{tm}} needs to be installed.
+}
+
 \section{Hypergraphs}{
 
 \code{as_hypergraph()} returns a 'hypergraph' object of the \code{{HyperG}} package,
