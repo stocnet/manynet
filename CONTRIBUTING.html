@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.5</span>
       </span>
     </div>
 
@@ -381,6 +381,16 @@
 <ul><li>
 <code>vignettes/articles/*.Rmd</code>, the static pkgdown versions of the <a href="https://rstudio.github.io/learnr/" class="external-link">learnr</a> tutorials, are built from <code>inst/tutorials/*/*.Rmd</code> by <a href="../data-raw/build_tutorial_articles.R">data-raw/build_tutorial_articles.R</a>. After editing a tutorial, re-run that script and commit the regenerated articles; CI checks that the two are in sync. New tutorials also need an entry under <code>articles:</code> and in the navbar’s <code>tutorials</code> menu in <code>_pkgdown.yml</code>.</li>
 <li>The cheatsheet is built from <a href="../data-raw/cheatsheet">data-raw/cheatsheet/</a> into <code>man/figures/cheatsheet.png</code> and <code>inst/figures/cheatsheet.pdf</code>. It might not cover all functionality as the package develops, but should at least not use deprecated or renamed function names.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="notation">Notation<a class="anchor" aria-label="anchor" href="#notation"></a></h3>
+<p>Use one notation for code in issues, reviews, documentation, and NEWS items:</p>
+<ul><li>Give a function or generic backticks and parentheses, e.g. <code>verb_function()</code>.</li>
+<li>Give a method its full name, e.g. <code>verb_function.stocnet()</code>.</li>
+<li>Give an argument an equals sign, e.g. <code>argument=</code>.</li>
+<li>Put a value that an argument takes, or a variable, in double quotation marks, e.g. “value”.</li>
+<li>Give a class a leading period where it names the class that a method is for, e.g. <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> for a <code>.stocnet</code>. A leading period on a name with parentheses is an internal helper instead, e.g. <code>.helper_function()</code>.</li>
+<li>Name a new class in camelCase, after the package plus a noun, e.g. <code>infernetConfusion</code>, so that a class does not look like a snake_case function. See “Class names across the stocnet ecosystem” in the <a href="https://stocnet.github.io/autograph/" class="external-link">autograph</a> contributing guide. Older names, such as <code>network_test</code>, stay until they can be renamed with an alias.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="newsmd-conventions">

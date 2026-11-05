@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.5</span>
       </span>
     </div>
 
@@ -88,6 +88,30 @@
       <small>Source: <a href="https://github.com/stocnet/manynet/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.4.5" id="manynet-245">manynet 2.4.5<a class="anchor" aria-label="anchor" href="#manynet-245"></a></h2>
+<div class="section level3">
+<h3 id="coercion-2-4-5">Coercion<a class="anchor" aria-label="anchor" href="#coercion-2-4-5"></a></h3>
+<ul><li>Improved the speed of every method that coerces its input by finding the method directly</li>
+</ul></div>
+<div class="section level3">
+<h3 id="modifying-2-4-5">Modifying<a class="anchor" aria-label="anchor" href="#modifying-2-4-5"></a></h3>
+<ul><li>Fixed <code><a href="../reference/modif_scope.html">to_time()</a></code> and <code><a href="../reference/modif_split.html">to_waves()</a></code> on networks whose nodes report or leave in some waves
+<ul><li>
+<code><a href="../reference/modif_scope.html">to_time()</a></code> keeps every node that a change of ‘active’ says nothing about (closes <a href="https://github.com/stocnet/manynet/issues/198" class="external-link">#198</a>)</li>
+<li>Both scope the missing ties to each wave, also in an <code>igraph</code> or <code>tidygraph</code> (closes <a href="https://github.com/stocnet/manynet/issues/200" class="external-link">#200</a>)</li>
+</ul></li>
+<li>Added <code>to_permuted.stocnet()</code> to accelerate permutation of <code>.stocnet</code> by ~10x (closes <a href="https://github.com/stocnet/manynet/issues/199" class="external-link">#199</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="measuring-2-4-5">Measuring<a class="anchor" aria-label="anchor" href="#measuring-2-4-5"></a></h3>
+<ul><li>Fixed <code>net_name.network()</code>, which used igraph’s accessors</li>
+</ul></div>
+<div class="section level3">
+<h3 id="glossary-2-4-5">Glossary<a class="anchor" aria-label="anchor" href="#glossary-2-4-5"></a></h3>
+<ul><li>Added glossary entries for ‘cognitive social structure’, ‘fixed effect’, ‘random intercept’, ‘reference category’, and ‘reporter’</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.4.4" id="manynet-244">manynet 2.4.4<a class="anchor" aria-label="anchor" href="#manynet-244"></a></h2>
 <div class="section level3">
