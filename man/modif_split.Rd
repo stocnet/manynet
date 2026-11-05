@@ -24,7 +24,7 @@ to_components(.data, connectivity = c("weak", "strong"))
 
 to_waves(.data, attribute = "wave", panels = NULL, cumulative = FALSE)
 
-to_times(.data, times = NULL)
+to_times(.data, times = NULL, window = NULL, kernel = "uniform")
 
 to_slices(.data, attribute = "time", slice = NULL)
 }
@@ -72,6 +72,23 @@ FALSE by default. That is, each wave is treated isolated.}
 \item{times}{The moments to return the network at.
 By default \code{NULL}, in which case every moment the network records is
 returned, as \code{net_times()} counts them.}
+
+\item{window}{The width of a window of the moments up to \code{time}, or
+\code{NULL} (the default) for no window.
+Two widths, \code{c(before, after)}, give a window that also reaches past
+\code{time}, so that \code{c(15, 15)} gives a window centred on \code{time}.
+A width is in the units of the moments the network records:
+waves, years, or days where the moments are dates
+(or seconds where they are date-times).
+A \code{difftime}, such as \code{as.difftime(30, units = "days")}, is also accepted.}
+
+\item{kernel}{How each tie in a \code{window} is weighted by its distance
+from \code{time}.
+\code{"uniform"} (the default) weights every tie in the window the same,
+and so leaves the ties as they are.
+\code{"triangular"}, \code{"epanechnikov"}, and \code{"gaussian"} give a tie less weight
+the further it is from \code{time}.
+Only used with a \code{window}.}
 
 \item{slice}{Character string or character list indicating the date(s)
 or integer(s) range used to slice data (e.g slice = c(1:2, 3:4)).}
@@ -139,6 +156,13 @@ an event network up to each of its moments.
 Unlike them, \code{to_times()} always returns a list, named by the moments and
 ordered by them, even where the network records only one, so that
 \code{net_times(.data)} and \code{length(to_times(.data))} always agree.
+
+With a \code{window}, \code{to_times()} returns a moving window:
+the ties recorded in the window up to each of the \code{times}
+(or around each, with two widths),
+weighted by the \code{kernel}, as \code{\link[=to_time]{to_time()}} describes.
+Where the \code{times} are closer together than the window is wide,
+the windows overlap, and a tie can be in more than one of them.
 }
 \section{\code{to_layers()}}{
 
@@ -189,6 +213,9 @@ ison_adolescents |>
   to_waves(attribute = "wave")
   length(to_times(irps_wwi))
   to_times(ison_tailorshop)
+  # A window of 30 days moved along in steps of a week:
+  weeks <- seq(as.Date("2011-03-15"), as.Date("2011-06-30"), by = "week")
+  to_times(irps_nuclear, weeks, window = 30)
 ison_adolescents |>
   mutate_ties(time = 1:10, increment = 1) |> 
   add_ties(c(1,2), list(time = 3, increment = -1)) |> 

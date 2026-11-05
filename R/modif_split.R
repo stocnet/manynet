@@ -651,24 +651,38 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL,
 #'   Unlike them, `to_times()` always returns a list, named by the moments and
 #'   ordered by them, even where the network records only one, so that
 #'   `net_times(.data)` and `length(to_times(.data))` always agree.
+#'
+#'   With a `window`, `to_times()` returns a moving window:
+#'   the ties recorded in the window up to each of the `times`
+#'   (or around each, with two widths),
+#'   weighted by the `kernel`, as [to_time()] describes.
+#'   Where the `times` are closer together than the window is wide,
+#'   the windows overlap, and a tie can be in more than one of them.
+#' @inheritParams modif_scope
 #' @examples
 #'   length(to_times(irps_wwi))
 #'   to_times(ison_tailorshop)
+#'   # A window of 30 days moved along in steps of a week:
+#'   weeks <- seq(as.Date("2011-03-15"), as.Date("2011-06-30"), by = "week")
+#'   to_times(irps_nuclear, weeks, window = 30)
 #' @export
-to_times <- function(.data, times = NULL) UseMethod("to_times")
+to_times <- function(.data, times = NULL, window = NULL,
+                     kernel = "uniform") UseMethod("to_times")
 
 #' @export
-to_times.default <- function(.data, times = NULL){
-  as_input(.data, to_times, times = times)
+to_times.default <- function(.data, times = NULL, window = NULL,
+                             kernel = "uniform"){
+  as_input(.data, to_times, times = times, window = window, kernel = kernel)
 }
 
-.to_times <- function(.data, times = NULL){
+.to_times <- function(.data, times = NULL, window = NULL, kernel = "uniform"){
   moments <- if(is.null(times)) .time_moments(.data) else times
   # A network that records no moment records itself at one, and is returned
   # as a list of that one, since the length of what this returns is what
   # `net_times()` counts.
   if(is.null(moments)) return(stats::setNames(list(.data), "1"))
-  out <- lapply(moments, function(t) to_time(.data, t))
+  out <- lapply(moments, function(t)
+    to_time(.data, t, window = window, kernel = kernel))
   names(out) <- as.character(moments)
   out
 }
@@ -680,8 +694,9 @@ to_times.tbl_graph <- .to_times
 to_times.stocnet <- .to_times
 
 #' @export
-to_times.igraph <- function(.data, times = NULL){
-  lapply(.to_times(as_tidygraph(.data), times), as_igraph)
+to_times.igraph <- function(.data, times = NULL, window = NULL,
+                            kernel = "uniform"){
+  lapply(.to_times(as_tidygraph(.data), times, window, kernel), as_igraph)
 }
 
 #' @rdname modif_split

@@ -41,6 +41,13 @@
   - Fixed a two-mode network, which failed, to be returned as it is
 - Improved `to_proximity()` with the new two-mode measures of `to_mode()`
 - Added `"tfidf"` to `to_normalised()` for networks of documents and terms
+- Improved `to_time()` with moving time windows
+  - Added `window` for the ties recorded in a window up to `time`
+    - E.g. `to_time(irps_nuclear, as.Date("2011-04-01"), window = 30)`
+    - `window = c(15, 15)` centres the window on `time`
+  - Added `kernel` to weight the ties in a window by their distance from `time`
+    - `"uniform"`, `"triangular"`, `"epanechnikov"`, or `"gaussian"`
+- Improved `to_times()` with `window` and `kernel` for moving windows
 
 # manynet 2.4.5
 

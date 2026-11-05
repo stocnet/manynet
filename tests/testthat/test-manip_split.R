@@ -469,3 +469,27 @@ test_that("the reporter functions read an array's third dimension as reporters",
   expect_equal(to_reporter(css_array(), "D"), css_array()[, , "D"])
   expect_equal(to_aggregated(css_array(), "by", "sum")["A", "B"], 4)
 })
+
+test_that("to_times with a window gives moving, overlapping windows", {
+  weeks <- seq(as.Date("2011-03-15"), as.Date("2011-06-30"), by = "week")
+  out <- to_times(irps_nuclear, weeks, window = 30)
+  expect_length(out, length(weeks))
+  expect_equal(names(out), as.character(weeks))
+  expect_equal(out[[3]], to_time(irps_nuclear, weeks[3], window = 30))
+  # a week is shorter than the window, so a statement is in several windows
+  expect_gt(sum(vapply(out, function(x) as.numeric(net_ties(x)), numeric(1))),
+            as.numeric(net_ties(irps_nuclear)))
+  tri <- to_times(irps_nuclear, weeks, window = 30, kernel = "triangular")
+  expect_lt(max(abs(tie_attribute(tri[[3]], "weight"))), 1 + 1e-9)
+  expect_true(all(vapply(to_times(as_igraph(irps_nuclear), weeks[1:2],
+                                  window = 30), is_igraph, logical(1))))
+  # without times, the windows end at the moments the network records
+  expect_length(to_times(ison_monks, window = 1), net_times(ison_monks))
+  # an infinite window gives the cumulative waves of a panel
+  cumulated <- to_times(ison_monks, window = Inf)
+  expect_equal(vapply(cumulated, function(x) as.numeric(net_ties(x)),
+                      numeric(1)),
+               c(`1` = 0, `2` = 0, `3` = 0) +
+                 cumsum(table(tie_attribute(ison_monks, "time"))[c("1", "2", "3")]),
+               ignore_attr = TRUE)
+})

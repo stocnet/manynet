@@ -150,6 +150,63 @@ to_ego.stocnet <- function(.data, node, max_dist = 1, min_dist = 0,
 #'   rather than an observation of that moment. A layer holds throughout where
 #'   the network declares it "cross-sectional", or where it records that layer
 #'   at a single moment while another layer spans several.
+#' @param window The width of a window of the moments up to `time`, or
+#'   `NULL` (the default) for no window.
+#'   Two widths, `c(before, after)`, give a window that also reaches past
+#'   `time`, so that `c(15, 15)` gives a window centred on `time`.
+#'   A width is in the units of the moments the network records:
+#'   waves, years, or days where the moments are dates
+#'   (or seconds where they are date-times).
+#'   A `difftime`, such as `as.difftime(30, units = "days")`, is also accepted.
+#' @param kernel How each tie in a `window` is weighted by its distance
+#'   from `time`.
+#'   `"uniform"` (the default) weights every tie in the window the same,
+#'   and so leaves the ties as they are.
+#'   `"triangular"`, `"epanechnikov"`, and `"gaussian"` give a tie less weight
+#'   the further it is from `time`.
+#'   Only used with a `window`.
+#' @section Windows:
+#'   A `window` asks for a third thing: not the state of the network at a
+#'   moment, but the ties recorded in a period that ends at it.
+#'   A `window` of width \eqn{w} holds the ties recorded after
+#'   `time - w` and up to and including `time`, so it looks back only,
+#'   and never holds a tie recorded after `time`.
+#'   In a panel, `window = 1` holds the wave at `time`,
+#'   and `window = 2` that wave and the one before it.
+#'   An infinite window, `window = Inf`, holds every tie recorded up to `time`.
+#'
+#'   Two widths, `window = c(before, after)`, also hold the ties recorded
+#'   after `time` and up to and including `time + after`.
+#'   With equal widths the window is centred on `time`, a smoother that
+#'   describes the network around a moment without a lag.
+#'   But a network so made holds ties that were recorded after `time`,
+#'   so do not use it where the network at `time` must only know its past,
+#'   as a predictor in a model does.
+#'
+#'   A window holds its ties whatever `info$update` declares:
+#'   the ties are neither accumulated nor carried forward,
+#'   and each row in the window stays a tie of its own,
+#'   so a pair recorded twice in the window is tied twice.
+#'   As without a window, the 'time' stamp is dropped from the result,
+#'   since the network that is returned no longer varies in time,
+#'   and `time` is not reverted to the last moment the network records.
+#'
+#'   An interval tie is in the window where its interval overlaps the window,
+#'   and its distance from `time` is the distance from `time` to the nearest
+#'   moment of its interval, so a tie active at `time` is at no distance.
+#'
+#'   A `kernel` other than "uniform" multiplies the tie's 'weight'
+#'   by the kernel value, or gives an unweighted tie the kernel value as its
+#'   'weight'. Where \eqn{u} is the distance of the tie from `time` over the
+#'   width of the window on that side of `time`, the kernel values are
+#'   \eqn{1 - u} ("triangular"), \eqn{1 - u^2} ("epanechnikov"), and
+#'   \eqn{\exp(-2u^2)} ("gaussian", which puts the far edge of the window at
+#'   two standard deviations).
+#'   Each kernel is 1 at `time`, so a tie at `time` keeps its weight,
+#'   and in an infinite window every tie keeps its weight.
+#'   A tie that the kernel weights at zero, at the far edge of a triangular or
+#'   epanechnikov window, is dropped.
+#'   A layer that holds throughout is carried in with its weight unchanged.
 #' @seealso [to_times()] for one network per moment, and [net_times()] for how
 #'   many moments there are to ask for.
 #' @examples
@@ -159,30 +216,41 @@ to_ego.stocnet <- function(.data, node, max_dist = 1, min_dist = 0,
 #'   to_time(irps_wwi, 1901)
 #'   # The state an event network had accumulated to by a given day:
 #'   to_time(irps_nuclear, as.Date("2011-04-01"))
+#'   # The statements made in the 30 days up to that day,
+#'   # weighted down the longer ago they were made:
+#'   to_time(irps_nuclear, as.Date("2011-04-01"), window = 30,
+#'           kernel = "triangular")
+#'   # The statements made in the 15 days either side of that day:
+#'   to_time(irps_nuclear, as.Date("2011-04-01"), window = c(15, 15))
 #' @export
-to_time <- function(.data, time = NULL) UseMethod("to_time")
+to_time <- function(.data, time = NULL, window = NULL,
+                    kernel = "uniform") UseMethod("to_time")
 
 #' @export
-to_time.default <- function(.data, time = NULL){
-  as_input(.data, to_time, time = time)
+to_time.default <- function(.data, time = NULL, window = NULL,
+                            kernel = "uniform"){
+  as_input(.data, to_time, time = time, window = window, kernel = kernel)
 }
 
 #' @export
-to_time.igraph <- function(.data, time = NULL){
-  as_igraph(.to_time(as_tidygraph(.data), time))
+to_time.igraph <- function(.data, time = NULL, window = NULL,
+                           kernel = "uniform"){
+  as_igraph(.to_time(as_tidygraph(.data), time, window, kernel))
 }
 
 #' @export
-to_time.tbl_graph <- function(.data, time = NULL){
-  .to_time(.data, time)
+to_time.tbl_graph <- function(.data, time = NULL, window = NULL,
+                              kernel = "uniform"){
+  .to_time(.data, time, window, kernel)
 }
 
 #' @export
-to_time.stocnet <- function(.data, time = NULL){
+to_time.stocnet <- function(.data, time = NULL, window = NULL,
+                            kernel = "uniform"){
   # A stocnet holds what it knows about itself alongside its ties, so it is
   # scoped in place rather than routed through another class and back, which
   # is what would otherwise drop its info, its changes, and its missings.
-  .to_time(.data, time)
+  .to_time(.data, time, window, kernel)
 }
 
 #' @rdname modif_scope
@@ -228,27 +296,156 @@ to_reporter.stocnet <- function(.data, reporter){
 # The network as it stood at a moment, whichever way it records time.
 # The representation is tested first, since an interval tie carries its own
 # lifespan and so says nothing about how it relates to the moment before it.
-.to_time <- function(.data, time = NULL){
+.to_time <- function(.data, time = NULL, window = NULL, kernel = "uniform"){
   if(is.null(time))
     snet_abort(paste("Please supply a {.arg time} to scope to,",
                      "or use {.fn to_times} for one network per moment."))
+  kernel <- .check_kernel(kernel, window)
   rule <- .time_rule(.data)
   # The globals are scoped whatever the ties do, since a global variable
   # records its own moments and does not read them off the ties.
   if(rule == "none") return(.scope_globals(.data, time))
   out <- .apply_changes_at(.data, time)
-  at <- .clamp_time(.data, time, rule)
-  out <- switch(rule,
-                interval = .active_at(out, at),
-                increment = .slice_at(out, .stamp_of(out), at),
-                replace = .stamped_at(out, at))
+  if(is.null(window)){
+    at <- .clamp_time(.data, time, rule)
+    out <- switch(rule,
+                  interval = .active_at(out, at),
+                  increment = .slice_at(out, .stamp_of(out), at),
+                  replace = .stamped_at(out, at))
+    tied <- paste("not tied at time", time)
+  } else {
+    out <- .windowed_at(out, time, window, kernel, rule)
+    tied <- .window_label(window, time)
+  }
   # the nodes and the ties are dropped by two different criteria, so each
   # is recorded on its own rather than summed into one figure
   out <- .scope_globals(out, time)
   out <- .scope_missings(out, time)
   out |>
     .record_exclusion(.data, paste("not present at time", time), "nodes") |>
-    .record_exclusion(.data, paste("not tied at time", time), "ties")
+    .record_exclusion(.data, tied, "ties")
+}
+
+# The kernels a window can weight its ties by. Each is 1 at `time`, so that a
+# tie recorded at the moment asked for keeps its weight.
+.kernels <- c("uniform", "triangular", "epanechnikov", "gaussian")
+
+.check_kernel <- function(kernel, window){
+  if(!is.character(kernel) || length(kernel) != 1 || !kernel %in% .kernels)
+    snet_abort(c("{.arg kernel} must be one of {.or {.val {(.kernels)}}}.",
+                 "x" = "It is {.val {kernel}}."))
+  if(!is.null(window)){
+    widths <- as.numeric(window)
+    ok <- length(widths) %in% 1:2 &&
+      (is.numeric(window) || inherits(window, "difftime")) &&
+      !anyNA(widths) && widths[1] > 0 && all(widths >= 0)
+    if(!ok)
+      snet_abort(c(paste("{.arg window} must be a positive width,",
+                         "or two widths: before and after {.arg time}."),
+                   "i" = "For example, {.code window = c(15, 15)}."))
+  } else if(kernel != "uniform")
+    snet_warn(c("A {.arg kernel} weights only the ties in a {.arg window}.",
+                "i" = "Without a {.arg window}, the ties are not weighted."))
+  kernel
+}
+
+# The criterion a window excludes ties by, for the record of transformations.
+.window_label <- function(window, time){
+  widths <- if(inherits(window, "difftime"))
+    paste(as.numeric(window), units(window)) else as.character(window)
+  if(length(widths) == 1)
+    paste("not tied in the", widths[1], "up to time", time) else
+      paste("not tied from", widths[1], "before to", widths[2],
+            "after time", time)
+}
+
+# A moment on the numeric scale its network counts time on: days for dates,
+# seconds for date-times, and the numbers themselves for waves and years.
+# A moment given as text is read on the scale of the network's own moments.
+.time_number <- function(x, like){
+  if(inherits(like, "Date") && !inherits(x, "Date")) x <- as.Date(x)
+  if(inherits(like, "POSIXt") && !inherits(x, "POSIXt")) x <- as.POSIXct(x)
+  as.numeric(x)
+}
+
+# A window's widths before and after `time`, on the scale of the moments it is
+# placed among. A single width looks back only.
+.window_widths <- function(window, like){
+  if(inherits(window, "difftime"))
+    window <- as.numeric(window,
+                         units = if(inherits(like, "POSIXt")) "secs" else "days")
+  window <- as.numeric(window)
+  if(length(window) == 1) c(window, 0) else window
+}
+
+# The ties recorded within a window around a moment, weighted by their
+# distance from it. The window reaches back after `time - before` and forward
+# up to and including `time + after`, so a single width of w holds w moments
+# of a panel. Each row stays a tie, whether the network re-states or
+# increments its ties, since a window asks for what was recorded in a period
+# rather than for the state the network had reached by then.
+.windowed_at <- function(.data, time, window, kernel, rule){
+  atts <- net_tie_attributes(.data)
+  if(rule == "interval"){
+    begin <- .bare_time(tie_attribute(.data,
+                                      intersect(c("begin", "beg", "start"),
+                                                atts)[1]))
+    end <- if("end" %in% atts) .bare_time(tie_attribute(.data, "end")) else
+      rep(NA, length(begin))
+    at <- .time_number(time, begin)
+    widths <- .window_widths(window, begin)
+    begin <- as.numeric(begin)
+    end <- as.numeric(end)
+    end[is.na(end)] <- Inf
+    # A tie that lasts over [begin, end) overlaps the window where it begins
+    # by its far end and ends after its near one. The distance is to the
+    # nearest moment of the interval, which is zero for a tie active at `time`.
+    keep <- begin <= at + widths[2] & end > at - widths[1]
+    ahead <- begin > at
+    dist <- ifelse(ahead, begin - at, pmax(0, at - end))
+    stamp <- NA
+  } else {
+    stamp <- .stamp_of(.data)
+    if(is.na(stamp)) return(.data)
+    moments <- .bare_time(tie_attribute(.data, stamp))
+    widths <- .window_widths(window, moments)
+    offset <- as.numeric(moments) - .time_number(time, moments)
+    keep <- offset > -widths[1] & offset <= widths[2]
+    ahead <- offset > 0
+    dist <- abs(offset)
+  }
+  # The distance is read against the width of the window on its side of `time`.
+  side <- ifelse(ahead, widths[2], widths[1])
+  weights <- .kernel_weights(ifelse(side > 0, dist / side, 1), kernel)
+  # A layer that holds throughout is in every window, at its full weight.
+  invariant <- .invariant_layers(.data)
+  layer <- intersect(c("layer", "type"), atts)[1]
+  if(length(invariant) && !is.na(layer)){
+    always <- as.character(tie_attribute(.data, layer)) %in% invariant
+    keep <- keep | always
+    weights[always] <- 1
+  }
+  keep <- which(keep & weights > 0)
+  out <- .keep_ties_of(.data, keep)
+  if(kernel != "uniform"){
+    weights <- weights[keep]
+    if("weight" %in% atts)
+      weights <- as.numeric(tie_attribute(out, "weight")) * weights
+    out <- mutate_ties(out, weight = !!weights)
+  }
+  if(!is.na(stamp)) out <- select_ties(out, -dplyr::all_of(stamp))
+  out
+}
+
+# The weight a kernel gives a tie at a distance from `time`, where the distance
+# is in widths of the window, so that the window's far edges are at 1.
+.kernel_weights <- function(u, kernel){
+  u <- pmin(u, 1)
+  switch(kernel,
+         uniform = rep(1, length(u)),
+         triangular = 1 - u,
+         epanechnikov = 1 - u^2,
+         gaussian = exp(-2 * u^2))
 }
 
 # The globals may record a value for each moment, the same way the ties record
