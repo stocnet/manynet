@@ -10,6 +10,16 @@
     - With `p < 1`, each tie keeps its attributes as its ends switch
   - Added a draw for each layer, so every node keeps its degree in every layer
 
+## Modifying
+
+- Improved `to_mode()`, `to_mode1()`, and `to_mode2()`
+  - Added `"agreement"`, `"disagreement"`, and `"signed"` measures for signed ties
+  - Added `"activity"`, the count over the pair's mean number of ties
+  - Added `"association"`, the association strength of van Eck and Waltman
+  - Added `"fractional"`, the fractional counting of co-authorship
+  - Added `through` to `to_mode()` for networks of three or more modes
+    - By default, all the other modes
+
 # manynet 2.4.5
 
 ## Coercion

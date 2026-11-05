@@ -3,20 +3,23 @@
 #' Modifying networks projection
 #' @name modif_project
 #' @description
-#'   These functions offer tools for projecting manynet-consistent data:
-#' 
-#'   - `to_mode()` projects a two-mode network to a one-mode network
-#'   of the node set given by the `mode` argument, which accepts either the
-#'   index of the mode or its name.
-#'   - `to_mode1()` projects a two-mode network to a one-mode network
-#'   of the first node set's (e.g. rows) joint affiliations to nodes in the second node set (columns). 
-#'   - `to_mode2()` projects a two-mode network to a one-mode network
-#'   of the second node set's (e.g. columns) joint affiliations to nodes in the first node set (rows).
-#'   - `to_linegraph()` projects a network to its line graph,
-#'   where the ties become nodes and incident nodes become their ties.
-#'   - `to_hypergraph()` reformats one-mode or two-mode network data as hypergraph data,
-#'   where ties can connect more than two nodes.
-#'   - `to_simplicial()` projects network data into a simplicial complex,
+#'   These functions project network data:
+#'
+#'   - `to_mode()` projects a network onto one of its modes.
+#'   Two nodes of that mode get a tie when they have ties to the same nodes
+#'   of another mode.
+#'   Give the mode as an index or as a name.
+#'   It also projects a network of three or more modes.
+#'   - `to_mode1()` projects a two-mode network onto its first mode,
+#'   for example the rows.
+#'   - `to_mode2()` projects a two-mode network onto its second mode,
+#'   for example the columns.
+#'   - `to_linegraph()` makes the line graph of a network.
+#'   Each tie becomes a node.
+#'   Two of these nodes get a tie when their ties share a node.
+#'   - `to_hypergraph()` makes a hypergraph,
+#'   where one tie can connect more than two nodes.
+#'   - `to_simplicial()` makes a simplicial complex,
 #'   such as the maximal cliques of a one-mode network.
 #' @details
 #'   Not all functions have methods available for all object classes.
@@ -39,7 +42,7 @@
 #' | | Binary (unweighted) output | yes | yes (`multiplicity = FALSE`) | threshold manually |
 #' | | Jaccard normalisation | yes | no | code manually |
 #' | | Cosine normalisation | yes | no | code manually |
-#' | | Other similarity measures | 25 in all, see `similarity` | no | code manually |
+#' | | Other similarity measures | 31 in all, see `similarity` | no | code manually |
 #' | **Attributes** | Retains node attributes | yes | yes | no — lost in matrix round-trip |
 #' | | Retains edge attributes | weight only | weight only | no |
 #' | | Removes self-loops automatically | yes | yes | `diag(P) <- 0` manually |
@@ -54,112 +57,168 @@
 NULL
 
 #' @rdname modif_project
-#' @param similarity Method for establishing ties in the projection,
-#'   "count" by default.
+#' @param similarity How to measure how alike two nodes are.
+#'   The default is "count".
+#'   Each measure compares the ties of two nodes to the other mode.
 #'
-#'   The measures are grouped below by what they are sensitive to.
-#'   Within a group they are monotone transformations of one another,
-#'   and so rank dyads identically, differing only in their scale.
-#'   Choosing between the groups therefore matters rather more than
-#'   choosing within one.
+#'   The measures are in groups below.
+#'   The measures in one group put the pairs of nodes in the same order,
+#'   and differ only in their scale.
+#'   So the choice of group is more important than the choice in a group.
 #'
-#'   Measures defined for valued as well as binary data:
+#'   Measures for valued and binary data:
 #'
-#'   - "count" counts the coinciding ties, the cross-product \eqn{XX'}.
-#'   For valued data it sums the products of tie strengths.
-#'   Interpret it as the degree of opportunity between two nodes.
-#'   This is the default, and the quickest, since it can use
-#'   `igraph::bipartite_projection()` directly.
-#'   - "match" counts the cells in which two nodes hold exactly the same
-#'   value, joint absences included. For binary data this is "rand" multiplied
-#'   by the number of nodes in the other mode, but for valued data it is the
-#'   more general measure, since it registers agreement at any tie strength.
-#'   Use it where the level of involvement is meaningful in itself.
-#'   - "crossmin" sums the smaller of each pair of tie strengths.
-#'   Interpret it as the capacity two nodes could jointly bring to bear.
-#'   For binary data it reduces to "count".
-#'   - "overlap" divides "crossmin" by the smaller of the two nodes' total tie
-#'   strength, the Szymkiewicz-Simpson or overlap coefficient, and so lies in
-#'   \eqn{[0,1]} for non-negative data. Use it where one node is much more
-#'   active than the other, and the less active node's rarity should not
-#'   depress the score. For binary data it is the count over the smaller
-#'   degree. xUCINET keeps that count for valued data too, where it can
-#'   exceed 1 and is no longer the coefficient.
-#'   - "ruzicka" divides "crossmin" by the two nodes' combined tie strength
-#'   less than shared, Ruzicka's weighted Jaccard coefficient, and so also
-#'   lies in \eqn{[0,1]}. For binary data it is "jaccard", so use it where
-#'   "jaccard" is wanted but the tie strengths should be kept.
-#'   - "maxcrossmin" takes the largest such minimum rather than their sum,
-#'   so that a single strong shared affiliation stands for the pair.
-#'   For binary data it collapses to an indicator of any shared affiliation,
-#'   and so is of little use there.
-#'   - "sqdiff" inverts the sum of squared differences in tie strength,
-#'   as \eqn{1/(1+d)}, so that identical rows give 1 and larger values mean
-#'   more alike, as for every other measure here.
-#'   Recover the raw sum of squared differences as \eqn{1/x - 1}.
-#'   - "pearson" gives Pearson's product-moment correlation and "covariance"
-#'   its unstandardised counterpart. Use "covariance" where the variance in
-#'   involvement is itself of interest, and "pearson" where it is not.
-#'   - "spearman" and "kendall" are the rank counterparts of "pearson".
-#'   Use them where tie strengths order the affiliations reliably but their
-#'   spacing does not, as with ordinal ratings.
-#'   - "cosine" gives the cosine of the angle between two nodes' rows.
-#'   It differs from "pearson" in not centring them first, so that it reads
-#'   two nodes as alike where their involvements are proportional rather than
-#'   where they depart from the average in the same direction.
-#'   For binary data it agrees with "ochiai", except that a node with no ties
-#'   at all is reported as no more similar to another than any other node,
-#'   where "ochiai" would divide by zero.
-#'   - "euclidean" and "manhattan" invert the straight-line and the
-#'   city-block distance between two rows, again as \eqn{1/(1+d)}.
-#'   "manhattan" sums the absolute differences in tie strength, so that a
-#'   large discrepancy on one affiliation counts no more than the same total
-#'   spread over several; "euclidean" penalises the concentrated discrepancy
-#'   more heavily, as "sqdiff" does. Recover either raw distance as
-#'   \eqn{1/x - 1}.
+#'   - "count" counts the shared ties, as \eqn{XX'}.
+#'   For valued data, it adds the products of the tie weights.
+#'   It is the default, and the fastest.
+#'   - "match" counts the nodes of the other mode where the two nodes
+#'   have the same value.
+#'   This includes the nodes that neither of them has a tie to.
+#'   For binary data, it is "rand" times the number of nodes
+#'   in the other mode.
+#'   Use it when the level of each tie is important.
+#'   - "crossmin" adds the smaller of the two weights for each shared node.
+#'   It shows what two nodes can give together.
+#'   For binary data, it is the same as "count".
+#'   - "overlap" divides "crossmin" by the smaller of the two nodes' totals.
+#'   This is the Szymkiewicz-Simpson coefficient.
+#'   For data with no negative values, it is from 0 to 1.
+#'   Use it when one node is much more active than the other.
+#'   For valued data, xUCINET divides the count and not "crossmin",
+#'   so its values can be more than 1.
+#'   - "ruzicka" divides "crossmin" by the sum of the two nodes' totals
+#'   minus "crossmin".
+#'   This is Ruzicka's weighted Jaccard coefficient, from 0 to 1.
+#'   For binary data, it is the same as "jaccard".
+#'   Use it when you want "jaccard" but must keep the tie weights.
+#'   - "maxcrossmin" takes the largest of these smaller weights,
+#'   not their sum.
+#'   So one strong shared tie is enough.
+#'   For binary data, it only shows if two nodes share any tie.
+#'   - "sqdiff" adds the squared differences of the weights, as \eqn{d}.
+#'   It gives \eqn{1/(1+d)}, so that a larger value means more alike.
+#'   Two nodes with the same ties get 1.
+#'   To get \eqn{d} back, calculate \eqn{1/x - 1}.
+#'   - "pearson" is the correlation of the two nodes' ties.
+#'   "covariance" is the same, but not standardised.
+#'   Use "covariance" when the variance of the ties is important.
+#'   - "spearman" and "kendall" are rank correlations.
+#'   Use them when the order of the weights is reliable,
+#'   but the spacing is not.
+#'   An example is ordinal ratings.
+#'   - "cosine" is the cosine of the angle between the two nodes' ties.
+#'   It is like "pearson", but it does not centre the ties first.
+#'   So two nodes are alike when their ties are proportional.
+#'   For binary data, it is the same as "ochiai".
+#'   For a node with no ties, "cosine" gives 0,
+#'   but "ochiai" divides by zero.
+#'   - "euclidean" and "manhattan" use the distance \eqn{d} between
+#'   the two nodes' ties, and give \eqn{1/(1+d)}, as "sqdiff" does.
+#'   "manhattan" adds the absolute differences.
+#'   "euclidean" gives more weight to one large difference
+#'   than to many small differences.
+#'   To get \eqn{d} back, calculate \eqn{1/x - 1}.
 #'
-#'   Measures defined for binary data only, where a valued network is
-#'   dichotomised at zero with a warning. Writing \eqn{a} for the cells in
-#'   which both nodes are present, \eqn{b} and \eqn{c} for those in which just
-#'   one is, and \eqn{d} for those in which neither is:
+#'   Measures for binary data only.
+#'   These measures change valued data to binary data first,
+#'   and give a warning.
+#'   For two nodes, \eqn{a} is the number of nodes in the other mode
+#'   that both have a tie to.
+#'   \eqn{b} and \eqn{c} are the numbers that only one of them has a tie to.
+#'   \eqn{d} is the number that neither has a tie to.
 #'
-#'   - Sensitive to co-presence, ignoring joint absence: "jaccard" is
-#'   \eqn{a/(a+b+c)}, opportunity weighted by participation; "czekanowski"
-#'   (the Dice or Sorensen coefficient) is \eqn{2a/(2a+b+c)}, which
-#'   double-weights co-presence; and "sokalsneath" is \eqn{a/(a+2(b+c))},
-#'   which instead double-weights mismatch. Use these where joint
-#'   non-participation says nothing, as in a sparse affiliation network with
-#'   many events. For valued data, "ruzicka" is the counterpart of "jaccard"
-#'   that keeps the tie strengths.
-#'   - Sensitive to matching, counting joint absence as evidence: "rand",
-#'   the Simple Matching Coefficient, is \eqn{(a+d)/(a+b+c+d)}; "hamann" is
-#'   \eqn{((a+d)-(b+c))/(a+b+c+d)}, the same quantity rescaled onto
-#'   \eqn{[-1,1]} so that its sign reports whether matches outnumber
-#'   mismatches; and "rogerstanimoto" is \eqn{(a+d)/(a+2(b+c)+d)}, which
-#'   double-weights mismatch. Interpret these as the degree of behavioural
-#'   mirroring between two nodes, and use them where not attending is as
-#'   informative as attending.
-#'   - Sensitive to association, through the odds ratio \eqn{ad/bc}: "yule"
-#'   is Yule's Q, \eqn{(ad-bc)/(ad+bc)}, which has a straightforward reading
-#'   as a rescaled odds ratio; and "bonacich" is
-#'   \eqn{\sqrt{ad}/(\sqrt{ad}+\sqrt{bc})}, which is Yule's Y rescaled onto
-#'   \eqn{[0,1]}. Both saturate at 1 wherever \eqn{b} or \eqn{c} is zero.
-#'   - Geometric: "ochiai" is \eqn{a/\sqrt{(a+b)(a+c)}}, the cosine of the
-#'   angle between two nodes' affiliation vectors, and "ochiai2" (also known
-#'   as Sokal and Sneath's fifth measure) is
-#'   \eqn{ad/\sqrt{(a+b)(a+c)(d+b)(d+c)}}, its counterpart including joint
-#'   absence. Neither is monotone in any of the above, so both are worth
-#'   trying alongside them.
-#'   - "hamming" inverts the Hamming distance, the number of cells in which
-#'   the two nodes differ, as \eqn{1/(1+d)}. It is a monotone transformation
-#'   of "rand", and so ranks dyads identically, but states the disagreement
-#'   as a count rather than as a proportion of agreement.
-#' @seealso [to_proximity()], which applies these same measures to a one-mode
-#'   network, comparing nodes on their ties to one another rather than on
-#'   their affiliations to a second mode.
+#'   - Measures that do not use \eqn{d}.
+#'   Use them when two missing ties tell you nothing,
+#'   for example in a sparse network with many events.
+#'   "jaccard" is \eqn{a/(a+b+c)}.
+#'   "czekanowski" (also Dice or Sorensen) is \eqn{2a/(2a+b+c)},
+#'   which gives more weight to \eqn{a}.
+#'   "sokalsneath" is \eqn{a/(a+2(b+c))},
+#'   which gives more weight to \eqn{b} and \eqn{c}.
+#'   For valued data, use "ruzicka" in place of "jaccard".
+#'   - Measures that count \eqn{d} as a match.
+#'   Use them when a missing tie tells you as much as a tie.
+#'   "rand" (simple matching) is \eqn{(a+d)/(a+b+c+d)}.
+#'   "hamann" is \eqn{((a+d)-(b+c))/(a+b+c+d)}, from -1 to 1.
+#'   It is positive when there are more matches than differences.
+#'   "rogerstanimoto" is \eqn{(a+d)/(a+2(b+c)+d)}.
+#'   - Measures from the odds ratio \eqn{ad/bc}.
+#'   "yule" is Yule's Q, \eqn{(ad-bc)/(ad+bc)}.
+#'   "bonacich" is \eqn{\sqrt{ad}/(\sqrt{ad}+\sqrt{bc})},
+#'   which is Yule's Y from 0 to 1.
+#'   Both give 1 when \eqn{b} or \eqn{c} is 0.
+#'   - Geometric measures.
+#'   "ochiai" is \eqn{a/\sqrt{(a+b)(a+c)}}, the cosine for binary data.
+#'   "ochiai2" (Sokal and Sneath's fifth measure) is
+#'   \eqn{ad/\sqrt{(a+b)(a+c)(d+b)(d+c)}}, which also uses \eqn{d}.
+#'   These two do not put pairs in the same order as any other group,
+#'   so try them too.
+#'   - "hamming" counts the differences, \eqn{b+c}, as the Hamming distance.
+#'   It gives \eqn{1/(1+b+c)}.
+#'   It puts pairs in the same order as "rand".
 #'
-#'   [to_cosine()], which takes the cosine over the columns of a
-#'   matrix without projecting it.
+#'   Measures that change "count" for how active each node is:
+#'
+#'   - "activity" divides "count" by the average number of ties of the
+#'   two nodes.
+#'   For binary data, it is the same as "czekanowski".
+#'   - "association" divides "count" by the count that chance would give.
+#'   A value above 1 means that two nodes share more than chance would give.
+#'   This is the association strength of van Eck and Waltman (2009).
+#'   - "fractional" shares each node of the other mode among its members.
+#'   For example, a work with \eqn{n} authors adds \eqn{1/(n-1)}
+#'   to each pair of its authors.
+#'   Each author then gets a total of 1 from each work.
+#'   A work with one author adds nothing.
+#'   This is the fractional counting of Perianes-Rodriguez et al. (2016).
+#'
+#'   Measures that read the sign of each tie:
+#'   "agreement", "disagreement", and "signed".
+#'   See the section on weighted and signed networks below.
+#'
+#'   These six measures count every tie,
+#'   also when a node has more than one tie to the same node.
+#' @section Weighted and signed networks:
+#'   Most measures read the weight of a tie as how strong the tie is.
+#'   The measures for binary data change each weight to 1 first,
+#'   and give a warning.
+#'
+#'   Three measures read the sign of a tie instead.
+#'   The sign shows if a node is for (1) or against (-1)
+#'   a node of the other mode.
+#'   For example, in `irps_nuclear`,
+#'   each speaker supports or opposes each concept.
+#'
+#'   - "agreement" counts the pairs of ties with the same sign.
+#'   Two speakers who both support a concept agree.
+#'   Two speakers who both oppose a concept also agree.
+#'   - "disagreement" counts the pairs of ties with opposite signs.
+#'   - "signed" is "agreement" minus "disagreement".
+#'   The result is a signed network.
+#'   A negative tie means that two nodes disagree more often than they agree.
+#'
+#'   If a speaker makes two statements about the same concept,
+#'   both statements count.
+#'   To keep agreement and disagreement in one network,
+#'   join the two networks with `from_layers()`.
+#'
+#'   The weights can also be on a scale, for example from -2 to 2.
+#'   Then each pair of ties adds a part of 1 to "agreement",
+#'   and the rest to "disagreement".
+#'   Two ties with the same value add 1 to "agreement".
+#'   Two ties at the two ends of the scale add 1 to "disagreement".
+#'   In general, "disagreement" adds \eqn{|s_1 - s_2|/r},
+#'   where \eqn{r} is the range of the scale.
+#'
+#'   To weight a two-mode network of documents and terms
+#'   before the projection, use `to_normalised(rule = "tfidf")`.
+#' @seealso [to_proximity()], which uses the same measures on a one-mode
+#'   network.
+#'   It compares nodes by their ties to each other,
+#'   not by their ties to another mode.
+#'
+#'   [to_cosine()], which gives the cosine over the columns of a matrix
+#'   without a projection.
 #' @references
 #' ## On two-mode projection
 #'   Borgatti, Stephen P., and Daniel S. Halgin. 2011.
@@ -170,6 +229,19 @@ NULL
 #'   "Technique for analyzing overlapping memberships".
 #'   _Sociological Methodology_ 4: 176-185.
 #'   \doi{10.2307/270732}
+#'
+#'   van Eck, Nees Jan, and Ludo Waltman. 2009.
+#'   "How to normalize cooccurrence data? An analysis of some well-known
+#'   similarity measures".
+#'   _Journal of the American Society for Information Science and Technology_
+#'   60(8): 1635-1651.
+#'   \doi{10.1002/asi.21075}
+#'
+#'   Perianes-Rodriguez, Antonio, Ludo Waltman, and Nees Jan van Eck. 2016.
+#'   "Constructing bibliometric networks: A comparison between full and
+#'   fractional counting".
+#'   _Journal of Informetrics_ 10(4): 1178-1195.
+#'   \doi{10.1016/j.joi.2016.10.006}
 #' @importFrom igraph bipartite_projection
 #' @importFrom stats cor cov dist
 #' @examples
@@ -181,7 +253,9 @@ to_mode1 <- function(.data, similarity = c("count", "jaccard", "rand", "pearson"
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")) {
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka",
+                                 "agreement", "disagreement", "signed",
+                                 "activity", "association", "fractional")) {
   # a hypergraph is projected through its hyperedges, as a two-mode network
   # is through the nodes of its other mode
   if(inherits(.data, "stocnet") && is_hypergraph(.data))
@@ -212,7 +286,9 @@ to_mode1.default <- function(.data,
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")){
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka",
+                                 "agreement", "disagreement", "signed",
+                                 "activity", "association", "fractional")){
   as_input(.data, to_mode1, similarity = similarity)
 }
 
@@ -223,7 +299,9 @@ to_mode1.stocnet <- function(.data,
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")){
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka",
+                                 "agreement", "disagreement", "signed",
+                                 "activity", "association", "fractional")){
   similarity <- match.arg(similarity)
   # The tidygraph method is called directly rather than through `as_input()`,
   # which would pick this method again and recurse.
@@ -238,7 +316,9 @@ to_mode1.matrix <- function(.data, similarity = c("count", "jaccard", "rand", "p
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")) {
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka",
+                                 "agreement", "disagreement", "signed",
+                                 "activity", "association", "fractional")) {
   # the rows are already the mode being projected
   .project(.data, match.arg(similarity))
 }
@@ -249,17 +329,19 @@ to_mode1.igraph <- function(.data, similarity = c("count", "jaccard", "rand", "p
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")) {
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka",
+                                 "agreement", "disagreement", "signed",
+                                 "activity", "association", "fractional")) {
   similarity <- match.arg(similarity)
   if(similarity == "count") igraph::bipartite_projection(.data)$proj1 else {
     if(!is_labelled(.data)){
       nind <- seq_len(net_nodes(.data))
       temp <- .data |> mutate_nodes(name = paste0("x", nind))
-      out <- temp |> as_matrix() |> to_mode1(similarity) |> as_igraph() |> 
+      out <- temp |> .project_graph(1L, similarity) |> as_igraph() |> 
         join_nodes(object2 = temp, join_type = "left",
                    .by = dplyr::join_by(name)) |> 
         mutate_nodes(name = NULL)
-    } else out <- as_igraph(to_mode1(as_matrix(.data), similarity)) |> 
+    } else out <- as_igraph(.project_graph(.data, 1L, similarity)) |> 
         join_nodes(object2 = .data, join_type = "left",
                                      .by = dplyr::join_by(name))
     out |> mutate_nodes(type = NULL) |>
@@ -273,7 +355,9 @@ to_mode1.tbl_graph <- function(.data, similarity = c("count", "jaccard", "rand",
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")) {
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka",
+                                 "agreement", "disagreement", "signed",
+                                 "activity", "association", "fractional")) {
   similarity <- match.arg(similarity)
   out <- as_tidygraph(to_mode1(as_igraph(.data), similarity = similarity))
   if(similarity %in% .proj_signed){
@@ -298,7 +382,9 @@ to_mode1.network <- function(.data, similarity = c("count", "jaccard", "rand", "
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")) {
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka",
+                                 "agreement", "disagreement", "signed",
+                                 "activity", "association", "fractional")) {
  as_network(to_mode1(as_tidygraph(.data), similarity)) 
 }
 
@@ -308,7 +394,9 @@ to_mode1.data.frame <- function(.data, similarity = c("count", "jaccard", "rand"
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")) {
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka",
+                                 "agreement", "disagreement", "signed",
+                                 "activity", "association", "fractional")) {
   as_edgelist(to_mode1(as_tidygraph(.data), similarity)) 
 }
 
@@ -319,7 +407,9 @@ to_mode2 <- function(.data, similarity = c("count", "jaccard", "rand", "pearson"
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")) {
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka",
+                                 "agreement", "disagreement", "signed",
+                                 "activity", "association", "fractional")) {
   # a hypergraph is projected through its hyperedges, as a two-mode network
   # is through the nodes of its other mode
   if(inherits(.data, "stocnet") && is_hypergraph(.data))
@@ -336,7 +426,9 @@ to_mode2.default <- function(.data,
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")){
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka",
+                                 "agreement", "disagreement", "signed",
+                                 "activity", "association", "fractional")){
   as_input(.data, to_mode2, similarity = similarity)
 }
 
@@ -347,7 +439,9 @@ to_mode2.stocnet <- function(.data,
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")){
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka",
+                                 "agreement", "disagreement", "signed",
+                                 "activity", "association", "fractional")){
   similarity <- match.arg(similarity)
   # The tidygraph method is called directly rather than through `as_input()`,
   # which would pick this method again and recurse.
@@ -362,7 +456,9 @@ to_mode2.matrix <- function(.data, similarity = c("count", "jaccard", "rand", "p
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")) {
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka",
+                                 "agreement", "disagreement", "signed",
+                                 "activity", "association", "fractional")) {
   # transposed so that the columns become the rows being projected
   .project(t(.data), match.arg(similarity))
 }
@@ -373,17 +469,19 @@ to_mode2.igraph <- function(.data, similarity = c("count", "jaccard", "rand", "p
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")) {
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka",
+                                 "agreement", "disagreement", "signed",
+                                 "activity", "association", "fractional")) {
   similarity <- match.arg(similarity)
   if(similarity == "count") igraph::bipartite_projection(.data)$proj2 else {
     if(!is_labelled(.data)){
       nind <- seq_len(net_nodes(.data))
       temp <- .data |> mutate_nodes(name = paste0("x", nind))
-      out <- temp |> as_matrix() |> to_mode2(similarity) |> as_igraph() |> 
+      out <- temp |> .project_graph(2L, similarity) |> as_igraph() |> 
         join_nodes(object2 = temp, join_type = "left",
                    .by = dplyr::join_by(name)) |> 
         mutate_nodes(name = NULL)
-    } else out <- as_igraph(to_mode2(as_matrix(.data), similarity)) |> 
+    } else out <- as_igraph(.project_graph(.data, 2L, similarity)) |> 
         join_nodes(object2 = .data, join_type = "left",
                    .by = dplyr::join_by(name))
     out |> mutate_nodes(type = NULL) |>
@@ -397,7 +495,9 @@ to_mode2.tbl_graph <- function(.data, similarity = c("count", "jaccard", "rand",
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")) {
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka",
+                                 "agreement", "disagreement", "signed",
+                                 "activity", "association", "fractional")) {
   similarity <- match.arg(similarity)
   out <- as_tidygraph(to_mode2(as_igraph(.data), similarity = similarity))
   if(similarity %in% .proj_signed){
@@ -422,7 +522,9 @@ to_mode2.network <- function(.data, similarity = c("count", "jaccard", "rand", "
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")) {
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka",
+                                 "agreement", "disagreement", "signed",
+                                 "activity", "association", "fractional")) {
   as_network(to_mode2(as_tidygraph(.data), similarity)) 
 }
 
@@ -432,33 +534,44 @@ to_mode2.data.frame <- function(.data, similarity = c("count", "jaccard", "rand"
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")) {
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka",
+                                 "agreement", "disagreement", "signed",
+                                 "activity", "association", "fractional")) {
   as_edgelist(to_mode2(as_tidygraph(.data), similarity))
 }
 
 #' @rdname modif_project
-#' @param mode Which mode to project the network to,
-#'   as an index, 1 or 2, as `FALSE` or `TRUE`, or as the name of the mode.
-#'   Mode 1 is the first node set, e.g. the rows, and is the default.
-#'   `FALSE` is the first mode and `TRUE` the second,
-#'   as the modes of an unnamed two-mode network are marked.
+#' @param mode The mode to project the network onto.
+#'   Give an index, such as 1 or 2, or the name of the mode.
+#'   For a two-mode network, `FALSE` is the first mode and `TRUE` the second.
+#'   The default is 1, the first mode, for example the rows.
 #'
-#'   A name is matched against the names of the modes,
-#'   which `mode_names()` returns and `add_info()` sets.
-#'   The match ignores case, plurals, and any other words in the name,
-#'   so that a network whose modes are named "women" and "social events"
-#'   can be projected with either "social events", "events", or "event".
-#'   Where a name matches both modes, as "events" would where they are named
-#'   "social events" and "work events", the function reports the ambiguity
-#'   and asks for a name that tells them apart, or an index.
+#'   A name is compared with the names of the modes from `mode_names()`.
+#'   Set these names with `add_info()`.
+#'   The comparison ignores case, plurals, and other words in the name.
+#'   For example, if the modes are "women" and "social events",
+#'   then "social events", "events", and "event" all give the second mode.
+#'   If a name matches more than one mode, the function stops.
+#'   Then give a name that tells the modes apart, or give an index.
 #'
-#'   The network must have two modes.
-#'   Projecting one mode of a network of three or more would need a second
-#'   mode to project through, which this function does not yet accept,
-#'   so it reports the modes it found instead.
+#' @param through The modes to project `mode` through,
+#'   as indices or names, as for `mode`.
+#'   The default is all the other modes.
+#'   This makes a difference only for a network of three or more modes.
+#'   The nodes of all the modes in `through` then count as one mode.
+#'   Ties within one mode, and ties to other modes, are not used.
+#'
+#'   For example, take a network of authors, works, and keywords.
+#'   `to_mode(.data, "authors", through = "works")` ties two authors
+#'   who wrote a work together.
+#'   `to_mode(.data, "works")` ties two works that share an author
+#'   or a keyword.
+#'   To keep two modes, for example to tie authors to keywords,
+#'   use `to_twomode(.data, through = "works")`.
 #' @examples
 #' to_mode(ison_southern_women, 2)
 #' to_mode(ison_southern_women, "events")
+#' to_mode(irps_nuclear, "speakers", "signed")
 #' @export
 to_mode <- function(.data, mode = 1,
                     similarity = c("count", "jaccard", "rand", "pearson", "yule",
@@ -466,7 +579,11 @@ to_mode <- function(.data, mode = 1,
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")) {
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka",
+                                 "agreement", "disagreement", "signed",
+                                 "activity", "association", "fractional"),
+                    through = NULL) {
+  similarity <- match.arg(similarity)
   # a hypergraph is projected through its hyperedges, which are its second
   # mode here, so that either can be named or numbered as a mode can
   if(inherits(.data, "stocnet") && is_hypergraph(.data))
@@ -474,14 +591,13 @@ to_mode <- function(.data, mode = 1,
   # a network of three or more modes would otherwise fall through the one-mode
   # no-op below and be returned unchanged, since it is not two-mode either
   if(net_modes(.data) > 2)
-    snet_abort("{.fun to_mode} projects a two-mode network,",
-               "but this network has {net_modes(.data)} modes:",
-               "{phrase(mode_names(.data))}.",
-               "Projecting one of them would need a second mode to project",
-               "through, which {.fun to_mode} does not yet accept.")
+    return(.project_through(.data, mode, through, similarity))
   # projecting a network that is already one-mode is a no-op
   if(!is_twomode(.data)) return(.data)
-  similarity <- match.arg(similarity)
+  if(!is.null(through) &&
+     any(vapply(through, function(m) .infer_mode(.data, m), integer(1)) ==
+         .infer_mode(.data, mode)))
+    snet_abort("{.arg through} must name modes other than {.arg mode}.")
   if(.infer_mode(.data, mode) == 1L) to_mode1(.data, similarity) else
     to_mode2(.data, similarity)
 }
@@ -524,33 +640,35 @@ to_linegraph.igraph <- function(.data){
 
 #' @rdname modif_project
 #' @section Hypergraphs: 
-#'   A hypergraph is a network in which a tie, a hyperedge, can connect any
-#'   number of nodes, such as the people at a meeting or the authors of a paper.
-#'   `to_hypergraph()` reformats one-mode or two-mode network data as
-#'   hypergraph data and returns the class it was given.
-#'   Nothing is lost either way.
-#'   
-#'   For two-mode networks, each node of the second mode becomes a hyperedge
-#'   that connects the nodes of the first mode tied to it.
-#'   The attributes of the second-mode nodes become attributes of the
-#'   hyperedges, and the attributes of the ties,
-#'   such as their weights, become attributes of each node's membership.
-#'   `to_twomode()` returns the two-mode network.
-#'   
-#'   For one-mode networks, each tie becomes a hyperedge of its two nodes,
-#'   and keeps its attributes.
-#'   Where the ties are directed, the hyperedges are too:
-#'   the sender is on the 'from' side and the receiver on the 'to' side.
-#'   `to_mode()` returns the one-mode network.
-#'   
-#'   A 'stocnet' object holds each hyperedge as one row of its ties,
-#'   which lists the hyperedge's members in a `with` column
+#'   In a hypergraph, one tie can connect any number of nodes.
+#'   This tie is a hyperedge.
+#'   Examples are the people at a meeting, or the authors of a paper.
+#'   `to_hypergraph()` returns the class it was given.
+#'   Nothing is lost.
+#'
+#'   For a two-mode network, each node of the second mode becomes
+#'   a hyperedge.
+#'   The hyperedge connects the nodes of the first mode
+#'   that have ties to that node.
+#'   The attributes of the second-mode nodes become attributes
+#'   of the hyperedges.
+#'   The attributes of the ties, such as weights, stay with each member.
+#'   `to_twomode()` gives the two-mode network back.
+#'
+#'   For a one-mode network, each tie becomes a hyperedge of its two nodes,
+#'   with its attributes.
+#'   If the ties are directed, the hyperedges are directed too.
+#'   The sender is on the 'from' side, and the receiver on the 'to' side.
+#'   `to_mode()` gives the one-mode network back.
+#'
+#'   A 'stocnet' object keeps each hyperedge as one row of its ties.
+#'   The `with` column of that row lists the members of the hyperedge
 #'   (see the Hypergraphs section of [make_stocnet()]).
-#'   Other classes have no hyperedges of their own,
-#'   so they hold each hyperedge as a node of a second mode,
-#'   and mark that they do so, so that [is_hypergraph()] recognises them and
-#'   coercion back to a 'stocnet' object returns the hyperedges.
-#'   A 'network' object is the exception, since `{network}` has hyperedges.
+#'   Other classes have no hyperedges.
+#'   They keep each hyperedge as a node of a second mode, with a mark.
+#'   With this mark, [is_hypergraph()] finds the hypergraph,
+#'   and coercion back to a 'stocnet' object gives the hyperedges back.
+#'   A 'network' object is different, because `{network}` has hyperedges.
 #' @examples
 #' to_hypergraph(ison_southern_women)
 #' @export
@@ -621,19 +739,19 @@ to_hypergraph.stocnet <- function(.data) {
 
 #' @rdname modif_project
 #' @section Simplicial complexes:
-#'   A simplicial complex is a hypergraph in which every subset of a hyperedge
-#'   is a hyperedge too, so that it is described in full by its largest
-#'   hyperedges, or faces.
-#'   `to_simplicial()` projects network data into the largest faces of a
-#'   simplicial complex, and marks the result as one.
+#'   A simplicial complex is a hypergraph where each subset of a hyperedge
+#'   is also a hyperedge.
+#'   So its largest hyperedges, the faces, describe all of it.
+#'   `to_simplicial()` finds these faces,
+#'   and marks the result as a simplicial complex.
 #'
-#'   For one-mode networks, the faces are the maximal cliques of the network,
-#'   since every subset of a clique is a clique.
-#'   The direction, weights, and other attributes of the ties are not carried.
-#'   `to_mode()` returns the one-mode network that the cliques cover.
+#'   For a one-mode network, the faces are the maximal cliques,
+#'   because each subset of a clique is also a clique.
+#'   The direction, weights, and other attributes of the ties are lost.
+#'   `to_mode()` gives the one-mode network that the cliques cover.
 #'
-#'   For two-mode networks and hypergraphs, the faces are the hyperedges that
-#'   are not a subset of another hyperedge.
+#'   For a two-mode network or a hypergraph, the faces are the hyperedges
+#'   that are not a subset of another hyperedge.
 #' @examples
 #' to_simplicial(ison_adolescents)
 #' @export
@@ -930,11 +1048,12 @@ to_simplicial.stocnet <- function(.data) {
 #' @description
 #'   `to_concepts()` projects a network into its concept lattice,
 #'   also known as its Galois lattice.
-#'   Each node of the lattice is a concept:
-#'   a set of nodes together with the set of affiliations they all share,
-#'   where neither set can grow without the other shrinking.
-#'   Each tie points from a concept to a concept directly beneath it,
-#'   one that holds fewer nodes but more shared affiliations.
+#'   Each node of the lattice is a concept.
+#'   A concept is a set of nodes and the set of affiliations
+#'   that all these nodes share.
+#'   One set cannot get larger unless the other set gets smaller.
+#'   Each tie goes from a concept to a concept directly below it.
+#'   The lower concept has fewer nodes, but more shared affiliations.
 #' @details
 #'   Not all functions have methods available for all object classes.
 #'   Below are the currently implemented S3 methods:
@@ -943,53 +1062,55 @@ to_simplicial.stocnet <- function(.data) {
 #'   available_methods("to_concepts")
 #'   ```
 #'
-#'   In a two-mode network, the first node set (e.g. the rows) supplies the
-#'   concepts' members, their _extent_,
-#'   and the second node set (e.g. the columns) their shared affiliations,
-#'   their _intent_.
-#'   The lattice is read from top to bottom.
-#'   The concept at the top holds every node of the first set,
-#'   and those affiliations, if any, that all of them share.
-#'   The concept at the bottom holds every affiliation,
-#'   and those nodes, if any, that have all of them.
-#'   Moving down the lattice, each concept holds fewer nodes,
-#'   who share more affiliations.
-#'   Two nodes are in a concept together exactly where they share every one of
-#'   its affiliations, and so the lattice records every membership of the
-#'   original network.
+#'   In a two-mode network, the nodes of the first mode (for example the rows)
+#'   are the members of the concepts.
+#'   This set is the _extent_.
+#'   The nodes of the second mode (for example the columns)
+#'   are the shared affiliations.
+#'   This set is the _intent_.
 #'
-#'   A one-mode network is treated as the incidence of its nodes on their
-#'   out-neighbours.
-#'   Each concept is then a set of nodes together with every node
-#'   that all of them send ties to,
-#'   a maximal biclique of senders and receivers.
+#'   Read the lattice from top to bottom.
+#'   The top concept has all the nodes of the first mode,
+#'   and the affiliations that all of them share, if there are any.
+#'   The bottom concept has all the affiliations,
+#'   and the nodes that have all of them, if there are any.
+#'   Lower concepts have fewer nodes, which share more affiliations.
+#'   Two nodes are in a concept together only when they share
+#'   all its affiliations.
+#'   So the lattice keeps all the ties of the original network.
 #'
-#'   A valued or signed network is dichotomised first,
-#'   so that every positive value counts as a tie,
+#'   For a one-mode network, each node is affiliated to the nodes
+#'   that it sends ties to.
+#'   Each concept is then a set of nodes,
+#'   and all the nodes that each of them sends ties to.
+#'   This is a maximal biclique of senders and receivers.
+#'
+#'   A valued or signed network is changed to binary data first,
 #'   with a warning.
+#'   Each positive value is then a tie.
 #' @section Labels:
-#'   Each concept is named with a "reduced" label,
-#'   listing only those nodes and affiliations that first appear at it.
-#'   A node of the first set is named at the lowest concept whose extent
-#'   holds it, and it is in the extent of every concept above that one too.
-#'   An affiliation, written in braces, is named at the highest concept whose
-#'   intent holds it, and it is in the intent of every concept below that one.
-#'   A concept at which nothing first appears is named "C" and its position,
-#'   counting from the top.
-#'   Each label thus appears exactly once,
-#'   and the full sets are kept in the `extent` and `intent` node attributes,
-#'   with their sizes in `extent_size` and `intent_size`.
+#'   Each concept has a "reduced" label.
+#'   The label shows only the nodes and affiliations
+#'   that first appear at that concept.
+#'   A node of the first mode is named at the lowest concept that has it.
+#'   It is also in all the concepts above that concept.
+#'   An affiliation, in braces, is named at the highest concept that has it.
+#'   It is also in all the concepts below that concept.
+#'   A concept where nothing first appears is named "C"
+#'   and its position from the top.
+#'   So each label appears only once.
+#'   The full sets are in the `extent` and `intent` node attributes,
+#'   and their sizes are in `extent_size` and `intent_size`.
 #' @section Projection without loss:
-#'   Projecting a two-mode network with `to_mode1()` or `to_mode2()` records
-#'   how much two nodes share,
-#'   but not what they share or with whom else they share it.
+#'   `to_mode1()` and `to_mode2()` record how much two nodes share.
+#'   They do not record what the two nodes share,
+#'   or who else shares it.
 #'   The concept lattice keeps both.
-#'   Freeman and White (1993) propose it for this reason,
+#'   For this reason, Freeman and White (1993) propose the lattice,
 #'   and Freeman (2003) uses it to find the groups among the Southern Women.
-#'   It grows quickly with the density of the network, however,
-#'   and a lattice of more than a few dozen concepts is hard to read.
-#'   Where a network has more than 1000 concepts,
-#'   the function warns about this.
+#'   But the lattice gets large quickly in a dense network,
+#'   and a lattice of more than some dozens of concepts is hard to read.
+#'   When a network has more than 1000 concepts, the function gives a warning.
 #' @template param_data
 #' @template fam_modif
 #' @family projections
@@ -1076,12 +1197,62 @@ to_concepts.matrix <- function(.data){
 
 # Helper functions ------------------
 
-# Resolves the `mode` argument of `to_mode()` to the index 1 or 2.
+# Projects a network of three or more modes. The nodes of `through` count as
+# one mode, so that with the nodes of `mode` and the ties between the two they
+# make a two-mode network, which is then projected. `through` is all the other
+# modes where it is NULL.
+# The network is made a stocnet for this, as only it holds more than two
+# modes, and returned in the class it was given.
+.project_through <- function(.data, mode, through, similarity){
+  if(!inherits(.data, "stocnet")){
+    out <- .project_through(as_stocnet(.data), mode, through, similarity)
+    if(inherits(.data, "tbl_graph")) return(as_tidygraph(out))
+    if(inherits(.data, "igraph")) return(as_igraph(out))
+    if(inherits(.data, "network")) return(as_network(out))
+    return(out)
+  }
+  nms <- mode_names(.data)
+  projected <- nms[.infer_mode(.data, mode)]
+  if(is.null(through)) shared <- setdiff(nms, projected) else
+    shared <- unique(nms[vapply(through, function(m) .infer_mode(.data, m),
+                                integer(1))])
+  if(projected %in% shared)
+    snet_abort("{.arg through} must name modes other than {.arg mode}.")
+  # the modes are named as they will be once the other modes' nodes are gone
+  # and the modes of `through` are one, which is named for the modes that
+  # `mode` has ties to
+  ends <- .data$nodes$mode
+  from <- ends[.data$ties$from]
+  to <- ends[.data$ties$to]
+  used <- shared[shared %in% c(to[from %in% projected], from[to %in% projected])]
+  joined <- paste(if(length(used)) used else shared, collapse = " and ")
+  kept <- which(.data$nodes$mode %in% c(projected, shared))
+  .data$nodes$mode[.data$nodes$mode %in% shared] <- joined
+  .data$info$modes <- unique(.data$nodes$mode[kept])
+  .data$info$sender <- .data$info$receiver <- NULL
+  out <- keep_nodes(.data, kept)
+  # a tie within one mode is not a tie to the other mode, and a hyperedge
+  # has no two ends to tell this from
+  ends <- out$nodes$mode
+  across <- !is.na(out$ties$from) & !is.na(out$ties$to) &
+    ends[out$ties$from] != ends[out$ties$to]
+  if(any(!across)){
+    out$ties <- out$ties[across, , drop = FALSE]
+    if("layer" %in% names(out$ties))
+      out$info <- .prune_layer_info(out$info,
+                                    intersect(out$info$layers,
+                                              unique(out$ties$layer)))
+  }
+  out <- validate_stocnet(out)
+  to_mode(out, projected, similarity)
+}
+
+# Resolves the `mode` argument of `to_mode()` to the index of a mode.
 # A name is matched loosely, since the point of naming a mode is that the
 # user need not recall how it was written when the network was collected.
 .infer_mode <- function(.data, mode){
-  # stated in terms of the network rather than as a literal 1 or 2, so that a
-  # third mode needs no change here once `to_mode()` can project one
+  # stated in terms of the network rather than as a literal 1 or 2, so that
+  # it resolves a mode of a network of three or more modes too
   nmodes <- net_modes(.data)
   # A logical picks out a mode as the 'type' of an igraph does, FALSE for the
   # first and TRUE for the second, and so only where there are two.
@@ -1135,10 +1306,21 @@ to_concepts.matrix <- function(.data){
                     "euclidean","manhattan","hamming","cosine",
                     "spearman","kendall","ruzicka")
 
+# The rules that read every tie of a two-mode network, rather than one value
+# for each cell of its matrix, since a node can be tied to the same node of the
+# other mode more than once, as a speaker can make several statements about one
+# concept. They are rules of a projection only, and so `to_proximity()` takes
+# them for a two-mode network and not for a one-mode network.
+.proj_rules <- c("agreement","disagreement","signed",
+                 "activity","association","fractional")
+
+# The rules that read the value of each tie as a stance.
+.proj_stance <- c("agreement","disagreement","signed")
+
 # Those that can return a negative value, and so need the projection's ties
 # labelled with a sign as well as a weight.
 .proj_signed <- c("pearson","yule","covariance","hamann",
-                  "spearman","kendall","cosine")
+                  "spearman","kendall","cosine","signed")
 
 # Those defined for binary data only, since they count cells in which both,
 # one, or neither node is present. A valued network is dichotomised for these.
@@ -1189,9 +1371,126 @@ to_concepts.matrix <- function(.data){
   out
 }
 
+# The ties of a two-mode network by their value. Each distinct value is a level,
+# and `counts` holds, for each level, how many ties of that value each node of
+# the projected mode (the rows) has to each node of the other mode (the
+# columns). `X` sums the absolute values of the ties in each cell, which for
+# ties of 1 or -1 is the number of ties. A matrix holds one value in each cell,
+# so each cell of it that is not zero is one tie.
+.proj_levels_matrix <- function(X){
+  X[is.na(X)] <- 0
+  values <- sort(unique(X[X != 0]))
+  list(values = values,
+       counts = lapply(values, function(v) (X == v) * 1),
+       X = abs(X))
+}
+
+# The same from the ties of an igraph, so that repeated ties count each time.
+# `which` is the mode projected: 1 for the nodes whose type is FALSE.
+.proj_levels_ties <- function(.data, which){
+  type <- igraph::V(.data)$type
+  rows <- which(if(which == 1L) !type else type)
+  cols <- which(if(which == 1L) type else !type)
+  el <- igraph::as_edgelist(.data, names = FALSE)
+  value <- igraph::edge_attr(.data, "weight")
+  if(is.null(value)) value <- rep(1, nrow(el))
+  if(anyNA(value)){
+    snet_warn("{sum(is.na(value))} tie{?s} with a missing value {?was/were}",
+              "left out of the projection, since the rule reads every value.")
+    el <- el[!is.na(value), , drop = FALSE]
+    value <- value[!is.na(value)]
+  }
+  # each tie runs between the two modes, in either order
+  row_end <- ifelse(el[,1] %in% rows, el[,1], el[,2])
+  col_end <- ifelse(el[,1] %in% rows, el[,2], el[,1])
+  r <- match(row_end, rows)
+  k <- match(col_end, cols)
+  cell <- (k - 1L) * length(rows) + r
+  tally <- function(w){
+    out <- matrix(0, length(rows), length(cols))
+    if(length(w)){
+      sums <- rowsum(as.numeric(w), cell)
+      out[as.integer(rownames(sums))] <- sums[, 1]
+    }
+    out
+  }
+  values <- sort(unique(value))
+  nms <- igraph::V(.data)$name[rows]
+  out <- list(values = values,
+              counts = lapply(values, function(v) tally((value == v) * 1)),
+              X = tally(abs(value)))
+  out$counts <- lapply(out$counts, function(m){ rownames(m) <- nms; m })
+  rownames(out$X) <- nms
+  out
+}
+
+# Projects the levels of a two-mode network by one of `.proj_rules`.
+.project_levels <- function(lv, similarity){
+  X <- lv$X
+  out <- switch(similarity,
+                # each pair of statements about the
+                # same concept adds the proximity, or for "disagreement" the
+                # distance, of their two stances, on a scale from the lowest
+                # stance to the highest. For stances of 1 and -1 this counts
+                # the pairs that agree, or that disagree.
+                "agreement" = , "disagreement" = , "signed" = {
+                  v <- lv$values
+                  span <- if(length(v) > 1) max(v) - min(v) else 1
+                  agree <- disagree <- matrix(0, nrow(X), nrow(X))
+                  for(a in seq_along(v)) for(b in seq_along(v)){
+                    joint <- lv$counts[[a]] %*% t(lv$counts[[b]])
+                    distance <- abs(v[a] - v[b])/span
+                    agree <- agree + joint * (1 - distance)
+                    disagree <- disagree + joint * distance
+                  }
+                  switch(similarity, "agreement" = agree,
+                         "disagreement" = disagree, "signed" = agree - disagree)
+                },
+                # the count over the average number of ties of the two nodes
+                "activity" = {
+                  s <- rowSums(X)
+                  (X %*% t(X)) / (outer(s, s, "+")/2)
+                },
+                # van Eck and Waltman's association strength: the count over the
+                # count expected where the two nodes were tied independently,
+                # so that 1 is what independence would give
+                "association" = {
+                  s <- rowSums(X)
+                  ncol(X) * (X %*% t(X)) / outer(s, s)
+                },
+                # fractional counting: each node of the other mode, such as a
+                # work, adds 1/(n - 1) to each pair of its n members, so that
+                # each work gives each of its members a total of 1
+                "fractional" = {
+                  B <- (X > 0) * 1
+                  n <- colSums(B)
+                  share <- ifelse(n > 1, 1/(n - 1), 0)
+                  B %*% (t(B) * share)
+                })
+  out[!is.finite(out)] <- 0
+  dimnames(out) <- list(rownames(X), rownames(X))
+  diag(out) <- 0
+  out
+}
+
+# Projects an igraph two-mode network to the matrix of the mode `which`.
+# The rules that read every tie are found from its ties, and the rest from its
+# matrix, which holds one value for each cell.
+.project_graph <- function(.data, which, similarity){
+  if(similarity %in% .proj_rules)
+    return(.project_levels(.proj_levels_ties(.data, which), similarity))
+  if(which == 1L) to_mode1(as_matrix(.data), similarity) else
+    to_mode2(as_matrix(.data), similarity)
+}
+
 # Projects the matrix `X`, whose rows are the mode being projected, so that
 # `to_mode2()` can share this by passing the transpose.
 .project <- function(X, similarity){
+  if(similarity %in% .proj_rules){
+    out <- .project_levels(.proj_levels_matrix(X), similarity)
+    dimnames(out) <- list(rownames(X), rownames(X))
+    return(out)
+  }
   if(similarity %in% .proj_binary && any(X != 0 & X != 1, na.rm = TRUE)){
     snet_warn(paste0("The {.val {similarity}} measure is defined for binary ",
                      "data only, so tie values have been dichotomised at 0. ",
