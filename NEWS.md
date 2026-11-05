@@ -24,6 +24,7 @@
     - E.g. `to_twomode(.data, through = "works")` ties authors to keywords
   - Fixed a two-mode network, which failed, to be returned as it is
 - Improved `to_proximity()` with the new measures for two-mode networks
+- Added `"tfidf"` to `to_normalised()` for two-mode networks of documents and terms
 
 # manynet 2.4.5
 
