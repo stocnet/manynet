@@ -182,15 +182,7 @@ to_time.stocnet <- function(.data, time = NULL){
   # A stocnet holds what it knows about itself alongside its ties, so it is
   # scoped in place rather than routed through another class and back, which
   # is what would otherwise drop its info, its changes, and its missings.
-  out <- .to_time(.data, time)
-  if(is.null(out$missings) || !"time" %in% names(out$missings)) return(out)
-  # The missings list the moments they were missing from the same way the ties
-  # list the moments they were observed at, so they are scoped the same way.
-  out$missings <- out$missings[out$missings$time == time, , drop = FALSE]
-  # A component that holds nothing is NULL rather than an empty table, as it
-  # is everywhere else a stocnet is built.
-  if(!nrow(out$missings)) out$missings <- NULL else out$missings$time <- NULL
-  out
+  .to_time(.data, time)
 }
 
 #' @rdname modif_scope
@@ -253,6 +245,7 @@ to_reporter.stocnet <- function(.data, reporter){
   # the nodes and the ties are dropped by two different criteria, so each
   # is recorded on its own rather than summed into one figure
   out <- .scope_globals(out, time)
+  out <- .scope_missings(out, time)
   out |>
     .record_exclusion(.data, paste("not present at time", time), "nodes") |>
     .record_exclusion(.data, paste("not tied at time", time), "ties")
@@ -274,6 +267,29 @@ to_reporter.stocnet <- function(.data, reporter){
   }
   if(inherits(out, "stocnet")) out$globals <- globals else
     igraph::graph_attr(out, "globals") <- globals
+  out
+}
+
+# The missing ties list the moments they were missing from the same way the
+# ties list the moments they were observed at, so they are scoped the same way.
+# A stocnet holds them in its missings component, and the other classes in a
+# 'missings' graph attribute, which carries every moment until it is scoped.
+.scope_missings <- function(out, time){
+  stocnet <- inherits(out, "stocnet")
+  missings <- if(stocnet) out$missings else
+    if(inherits(out, "igraph") &&
+       "missings" %in% igraph::graph_attr_names(out))
+      igraph::graph_attr(out, "missings") else NULL
+  if(is.null(missings) || !"time" %in% names(missings)) return(out)
+  missings <- missings[.bare_time(missings$time) == time, , drop = FALSE]
+  # A component that holds nothing is NULL rather than an empty table, as it
+  # is everywhere else a network's components are built.
+  if(nrow(missings)) missings$time <- NULL
+  if(stocnet){
+    out$missings <- if(nrow(missings)) missings else NULL
+  } else if(nrow(missings)){
+    igraph::graph_attr(out, "missings") <- missings
+  } else out <- igraph::delete_graph_attr(out, "missings")
   out
 }
 

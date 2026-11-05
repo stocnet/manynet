@@ -101,6 +101,35 @@ test_that("to_waves splits changing longitudinal networks by their ties", {
   expect_s3_class(to_waves(as_igraph(fict_starwars))[[1]], "igraph")
 })
 
+test_that("each wave holds the ties and nonresponse of that wave alone (#198, #200)", {
+  # In ison_classmates, a02 does not report in wave 2, and a16 and a19 do not
+  # report in wave 3. a21 leaves the network in wave 3.
+  friends <- function(x){
+    m <- as_matrix(to_uniplex(x, "friends"))
+    diag(m) <- 0
+    m
+  }
+  rows_missing <- function(m) unname(which(rowSums(is.na(m)) > 0))
+  expected <- list(integer(0), 2L, c(16L, 19L), integer(0))
+  ties <- c(91, 117, 133, 119)
+  waves <- to_waves(ison_classmates)
+  for(t in 1:4){
+    expect_equal(rows_missing(friends(waves[[t]])), expected[[t]])
+    expect_equal(sum(friends(waves[[t]]), na.rm = TRUE), ties[t])
+    # Scoping to the wave gives the same ties and the same missing rows,
+    # with the node that has left taken out.
+    one <- to_wave(ison_classmates, t)
+    expect_equal(sum(friends(one), na.rm = TRUE), ties[t])
+    expect_equal(as.numeric(net_nodes(one)), if(t < 3) 26 else 25)
+    expect_equal(node_labels(one)[rows_missing(friends(one))],
+                 node_labels(ison_classmates)[expected[[t]]])
+  }
+  # A class that holds the missing ties as a graph attribute scopes them too.
+  tg <- as_tidygraph(ison_classmates)
+  expect_equal(rows_missing(friends(to_wave(tg, 1))), integer(0))
+  expect_equal(rows_missing(friends(to_waves(tg)[[4]])), integer(0))
+})
+
 test_that("to_waves splits a changing network with no wave attribute", {
   # A diffusion result is both changing and longitudinal, but carries no tie
   # attributes at all, so its waves come from its changelist.

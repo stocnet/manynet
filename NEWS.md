@@ -1,12 +1,19 @@
 # manynet 2.4.5
 
+## Modifying
+
+- Fixed `to_time()` and `to_waves()` on networks whose nodes report or leave in some waves
+  - `to_time()` keeps every node that a change of 'active' says nothing about (closes #198)
+  - Both scope the missing ties to each wave, also in an `igraph` or `tidygraph` (closes #200)
+
 ## Measuring
 
 - Fixed `net_name.network()`, which used igraph's accessors
 
 ## Glossary
 
-- Added glossary entries for 'cognitive social structure', 'fixed effect', 'random intercept', 'reference category', and 'reporter'
+- Added glossary entries for 'cognitive social structure', 'fixed effect', 
+  'random intercept', 'reference category', and 'reporter'
 
 # manynet 2.4.4
 
