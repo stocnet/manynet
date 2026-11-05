@@ -1,10 +1,15 @@
 # manynet 2.4.5
 
+## Coercion
+
+- Improved the speed of every method that coerces its input by finding the method directly
+
 ## Modifying
 
 - Fixed `to_time()` and `to_waves()` on networks whose nodes report or leave in some waves
   - `to_time()` keeps every node that a change of 'active' says nothing about (closes #198)
   - Both scope the missing ties to each wave, also in an `igraph` or `tidygraph` (closes #200)
+- Added `to_permuted.stocnet()` to accelerate permutation of `.stocnet` by ~10x (closes #199)
 
 ## Measuring
 
