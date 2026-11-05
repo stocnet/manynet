@@ -238,12 +238,12 @@ test_that("to_mode reports a name matching both modes",{
                as_matrix(to_mode2(ison_southern_women)))
 })
 
-test_that("to_mode refuses a network of three or more modes",{
+test_that("to_mode projects a network of three or more modes",{
   # the only three-mode object the package can hold, built as in test-mark_is.R
   three <- as_stocnet(fict_marvel)
   three$nodes$mode[1:5] <- "third"
   expect_equal(net_modes(three), 3)
-  expect_error(to_mode(three, 1), "3 modes")
+  expect_equal(net_modes(to_mode(three, 1)), 1)
   # two-mode and one-mode networks are unaffected by that check
   expect_equal(net_modes(ison_southern_women), 2)
   expect_equal(net_modes(create_ring(5)), 1)

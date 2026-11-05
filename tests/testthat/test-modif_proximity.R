@@ -278,3 +278,9 @@ test_that("to_correlation correlates dyadic profiles at once as one by one", {
   expect_equal(.corRecip(M), .corRecipWalk(M))
   expect_equal(.corComplex(M), .corComplexWalk(M))
 })
+
+test_that("to_proximity takes the rules of a projection for a two-mode network only", {
+  expect_equal(to_proximity(ison_southern_women, "fractional"),
+               to_mode1(ison_southern_women, "fractional"))
+  expect_error(to_proximity(ison_adolescents, "agreement"), "two-mode")
+})
