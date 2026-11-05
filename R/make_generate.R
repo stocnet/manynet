@@ -44,6 +44,17 @@
 #'   With `p = 1`, the default, a network is drawn anew from those degrees.
 #'   With a lower `p` only that share of the ties are switched,
 #'   so that the result is in part the network it started from.
+#'   Repeated ties, such as the tokens of a term in a text, are kept and
+#'   counted in the degree.
+#'   Ties keep their attributes, such as weights and signs.
+#'   With `p = 1`, these are shuffled over the ties drawn,
+#'   so that the weights are those of the network given, but not
+#'   the strength of each node.
+#'   With a lower `p`, each tie keeps its own attributes as its ends switch.
+#'   Each layer of a multiplex network is drawn from its own degrees,
+#'   so that every node keeps its degree in every layer,
+#'   and the attributes of the ties are shuffled within their layer.
+#'   To draw a network without them, use `to_unweighted()` and the like first.
 #'   
 #'   For `generate_man()`, counts such as `p = c(10, 0, 20)` are read as
 #'   relative weights and normalised,
@@ -164,26 +175,53 @@ generate_degree <- function(n, p = 1, directed = FALSE,
     degs <- default_degree(n, outdegree, indegree, TRUE)
     .data <- create_degree(n, degs$outdegree, degs$indegree)
   } else .data <- create_degree(n, outdegree, indegree)
+  # Each layer of a multiplex network is drawn from its own degrees,
+  # so that every node keeps its degree in every layer.
+  if (is_multiplex(.data)) return(.generate_layers(.data, p))
+  # Ties keep their attributes, such as weights and signs. With `p < 1`,
+  # each tie keeps its own as its ends switch; a network drawn anew gets
+  # them shuffled over its ties.
+  attrs <- igraph::edge_attr(as_igraph(.data))
+  repeats <- is_disaggregated(.data)
   if (p < 1) {
     # each switch moves two ties, and keeps the degree of every node
     switches <- round(p * net_ties(.data) / 2)
     if (switches == 0) {
       out <- .data
-    } else if (is_twomode(.data)) {
-      mat <- as_matrix(to_unweighted(.data))
+    } else if (is_twomode(.data) && length(attrs) == 0 && !repeats) {
+      mat <- as_matrix(.data)
       ties <- .switch_ties(which(mat != 0, arr.ind = TRUE), switches)
       mat[] <- 0
       mat[ties] <- 1
       out <- as_igraph(mat, twomode = TRUE)
-    } else {
+    } else if (!is_twomode(.data) && length(attrs) == 0) {
       out <- igraph::rewire(as_igraph(.data), 
                             igraph::keeping_degseq(niter = switches))
+    } else {
+      # `igraph::rewire()` drops the attributes of ties it moves, and a
+      # matrix holds each pair only once, so ties are switched as rows of
+      # an edgelist and keep their attributes by row.
+      g <- as_igraph(.data)
+      ties <- igraph::as_edgelist(g, names = FALSE)
+      if (is_twomode(.data)) {
+        # every tie runs from the first mode to the second
+        flip <- node_is_mode(.data)[ties[, 1]]
+        ties[flip, ] <- ties[flip, 2:1]
+      }
+      ties <- .switch_ties(ties, switches, 
+                           directed = is_twomode(.data) || is_directed(g),
+                           loops = is_complex(.data), repeats = repeats)
+      out <- igraph::delete_edges(g, igraph::E(g)) |> 
+        igraph::add_edges(c(t(ties)), attr = attrs)
     }
     return(as_stocnet(out) |> 
              add_info(name = "Configuration network"))
   }
   method1 <- "configuration"
   method2 <- "fast.heur.simple"
+  # Repeated ties, as where a text uses a term more than once, are drawn
+  # with the configuration model, which can repeat them, so that every node
+  # keeps its count of ties.
   if(is_twomode(.data)){
     # 'type' is how an igraph marks the modes; a stocnet marks them in 'mode',
     # so the mark is asked for rather than the attribute that holds it.
@@ -191,22 +229,18 @@ generate_degree <- function(n, p = 1, directed = FALSE,
     degs <- .node_deg(.data)
     outs <- ifelse(!modes,c(degs),rep(0,length(degs)))
     ins <- ifelse(modes,c(degs),rep(0,length(degs)))
-    out <- igraph::sample_degseq(outs, ins, method = method2)
+    out <- igraph::sample_degseq(outs, ins, 
+                                 method = if (repeats) method1 else method2)
+    out <- .shuffle_tie_attrs(out, attrs)
     out <- as_tidygraph(out) |> add_node_attribute("type", modes)
   } else {
-    if(is_complex(.data) || is_multiplex(.data) && is_directed(.data)) 
+    method <- if (is_complex(.data) || repeats) method1 else method2
+    if (is_directed(.data)) 
       out <- igraph::sample_degseq(.node_deg(.data, direction = "out"), 
                                    .node_deg(.data, direction = "in"),
-                                   method = method1)
-    if(is_complex(.data) || is_multiplex(.data) && !is_directed(.data)) 
-      out <- igraph::sample_degseq(.node_deg(.data), method = method1)
-    if(!(is_complex(.data) || is_multiplex(.data)) && is_directed(.data)) 
-      out <- igraph::sample_degseq(.node_deg(.data, direction = "out"), 
-                                   .node_deg(.data, direction = "in"), 
-                                   method = method2)
-    if(!(is_complex(.data) || is_multiplex(.data)) && !is_directed(.data)) 
-      out <- igraph::sample_degseq(.node_deg(.data), 
-                                   method = method2)
+                                   method = method)
+    else out <- igraph::sample_degseq(.node_deg(.data), method = method)
+    out <- .shuffle_tie_attrs(out, attrs)
   }
   as_stocnet(out) |> 
     add_info(name = "Configuration network")
@@ -223,20 +257,67 @@ generate_configuration <- function(n, p = 1, directed = FALSE,
                   outdegree = outdegree, indegree = indegree)
 }
 
-# Switches the second nodes of pairs of two-mode ties, so that every node 
-# keeps its degree and every tie still joins the two modes. A switch that
-# would repeat a tie there already is not made.
-.switch_ties <- function(ties, switches) {
-  width <- max(ties[, 1]) + 1
-  keys <- ties[, 2] * width + ties[, 1]
+# Switches the second ends of pairs of ties, so that every node keeps its
+# degree, and in a two-mode network every tie still joins the two modes.
+# Each tie stays in its row, and so keeps its attributes.
+# A switch that would repeat a tie there already is not made, unless
+# `repeats` is TRUE, as for a network whose ties repeat already, 
+# and nor is one that would tie a node to itself, unless `loops` is TRUE.
+# An undirected tie may be switched at either end.
+.switch_ties <- function(ties, switches, directed = TRUE, 
+                         loops = TRUE, repeats = FALSE) {
+  width <- max(ties) + 1
+  key <- function(t) {
+    if (directed) t[, 2] * width + t[, 1]
+    else pmax(t[, 1], t[, 2]) * width + pmin(t[, 1], t[, 2])
+  }
+  keys <- key(ties)
   for (s in seq_len(switches)) {
     pair <- sample.int(nrow(ties), 2)
-    new <- ties[rev(pair), 2] * width + ties[pair, 1]
-    if (any(new %in% keys)) next
-    ties[pair, 2] <- ties[rev(pair), 2]
-    keys[pair] <- new
+    new <- ties[pair, , drop = FALSE]
+    if (!directed && stats::runif(1) < 0.5) new[1, ] <- new[1, 2:1]
+    new[, 2] <- new[2:1, 2]
+    if (!loops && any(new[, 1] == new[, 2])) next
+    newkeys <- key(new)
+    if (!repeats && (any(newkeys %in% keys) || newkeys[1] == newkeys[2])) next
+    ties[pair, ] <- new
+    keys[pair] <- newkeys
   }
   ties
+}
+
+# Draws each layer of a multiplex network with `generate_degree()`, and
+# binds the layers again, with the other attributes of their ties.
+.generate_layers <- function(.data, p) {
+  g <- as_igraph(.data)
+  col <- intersect(.layer_cols, igraph::edge_attr_names(g))[1]
+  layers <- igraph::edge_attr(g, col)
+  drawn <- lapply(unique(layers), function(l) {
+    layer <- igraph::subgraph_from_edges(g, which(layers == l), 
+                                         delete.vertices = FALSE)
+    layer <- igraph::delete_edge_attr(layer, col)
+    out <- as_igraph(generate_degree(layer, p = p))
+    ties <- igraph::as_edgelist(out, names = FALSE)
+    attrs <- igraph::edge_attr(out)
+    attrs[[col]] <- rep(l, nrow(ties))
+    list(ties = ties, attrs = attrs)
+  })
+  ties <- do.call(rbind, lapply(drawn, `[[`, "ties"))
+  attrs <- lapply(stats::setNames(nm = names(drawn[[1]]$attrs)), function(a)
+    do.call(c, lapply(drawn, function(d) d$attrs[[a]])))
+  out <- igraph::delete_edges(g, igraph::E(g)) |> 
+    igraph::add_edges(c(t(ties)), attr = attrs)
+  as_stocnet(out) |> add_info(name = "Configuration network")
+}
+
+# Gives the ties of a network drawn anew the attributes of the ties it was
+# drawn from, such as weights, in an order shuffled at random.
+.shuffle_tie_attrs <- function(out, attrs) {
+  if (length(attrs) == 0) return(out)
+  order <- sample.int(igraph::ecount(out))
+  for (a in names(attrs))
+    out <- igraph::set_edge_attr(out, a, value = attrs[[a]][order])
+  out
 }
 
 .node_deg <- function(.data, direction = "all"){

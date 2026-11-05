@@ -28,3 +28,4 @@ cache/*
 CLAUDE.md
 .claude/launch.json
 revdep/
+development/

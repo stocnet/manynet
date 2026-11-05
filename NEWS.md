@@ -1,3 +1,15 @@
+# manynet 2.5.0
+
+## Making
+
+- Improved `generate_degree()` to keep repeated ties, tie attributes, and layers
+  - Fixed draws with repeated ties, which failed, to keep every node's degree
+    - A configuration test on a network of tokens is then against shuffled texts
+  - Retained tie attributes, such as weights and signs
+    - With `p = 1`, the attributes are shuffled over the ties drawn
+    - With `p < 1`, each tie keeps its attributes as its ends switch
+  - Added a draw for each layer, so every node keeps its degree in every layer
+
 # manynet 2.4.5
 
 ## Coercion

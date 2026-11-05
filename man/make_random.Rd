@@ -168,6 +168,17 @@ whom but not how many ties anyone has.
 With \code{p = 1}, the default, a network is drawn anew from those degrees.
 With a lower \code{p} only that share of the ties are switched,
 so that the result is in part the network it started from.
+Repeated ties, such as the tokens of a term in a text, are kept and
+counted in the degree.
+Ties keep their attributes, such as weights and signs.
+With \code{p = 1}, these are shuffled over the ties drawn,
+so that the weights are those of the network given, but not
+the strength of each node.
+With a lower \code{p}, each tie keeps its own attributes as its ends switch.
+Each layer of a multiplex network is drawn from its own degrees,
+so that every node keeps its degree in every layer,
+and the attributes of the ties are shuffled within their layer.
+To draw a network without them, use \code{to_unweighted()} and the like first.
 
 For \code{generate_man()}, counts such as \code{p = c(10, 0, 20)} are read as
 relative weights and normalised,
