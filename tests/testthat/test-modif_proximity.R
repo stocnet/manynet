@@ -47,6 +47,23 @@ test_that("to_correlation is unchanged by delegating to to_proximity", {
   expect_true(all(diag(to_correlation(und)) == 1))
 })
 
+test_that("to_permuted permutes a stocnet in place (#199)", {
+  route <- function(x) as_matrix(as_stocnet(to_permuted(as_tidygraph(x))))
+  for(x in list(as_stocnet(ison_adolescents), as_stocnet(ison_networkers),
+                as_stocnet(ison_southern_women))){
+    out <- {set.seed(4); to_permuted(x)}
+    expect_s3_class(out, "stocnet")
+    # The same seed gives the same permutation as the route through a tbl_graph
+    expect_equal(as_matrix(out), {set.seed(4); route(x)})
+    expect_equal(net_ties(out), net_ties(x))
+    expect_identical(out$nodes, x$nodes)
+  }
+  # The layers are kept apart, where a matrix would merge them
+  out <- {set.seed(4); to_permuted(as_stocnet(ison_algebra))}
+  expect_equal(net_ties(out), net_ties(as_stocnet(ison_algebra)))
+  expect_equal(layer_names(out), layer_names(ison_algebra))
+})
+
 test_that("to_permuted works on matrices", {
   onemode <- matrix(c(0,1,1,0, 1,0,0,1, 0,0,0,1, 1,1,0,0), 4, 4)
   twomode <- matrix(c(1,0,0, 0,1,0, 1,1,0, 0,0,1), 4, 3)

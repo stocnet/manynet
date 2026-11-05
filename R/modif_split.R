@@ -446,9 +446,12 @@ to_waves.tbl_graph <- function(.data, attribute = "wave", panels = NULL,
     times <- sort(unique(tie_attribute(.data, attribute)))
     if(!is.null(panels))
       times <- intersect(panels, times)
+    # The ties recorded as missing are scoped to the wave as the ties are,
+    # so a node that did not report in one wave is not missing in another.
     waves <- lapply(times, function(t) {
       out <- .apply_changes_upto(.data, cl, t)
-      filter_ties(out, !!as.name(attribute) == t)
+      out <- filter_ties(out, !!as.name(attribute) == t)
+      .scope_missings(out, t)
     })
     names(waves) <- paste("Wave", times)
     out <- .record_exclusions(waves, .data,
@@ -570,8 +573,10 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL,
       # A change may name a nodal variable the network does not yet carry,
       # such as the reserved 'na' that marks a node as not having reported.
       # A node the changelist says nothing about did report, so 'na' starts
-      # FALSE where every other new variable starts missing.
-      new <- if(is.null(old)) rep(if(v == "na") FALSE else NA, net_nodes(out))
+      # FALSE, and it is in the network, so 'active' starts TRUE. Every other
+      # new variable starts missing.
+      new <- if(is.null(old))
+        rep(switch(v, na = FALSE, active = TRUE, NA), net_nodes(out))
         else if(is.factor(old)) old else as.vector(old)
       new[upd$node] <- .match_attribute_type(upd$value, old)
       out <- add_node_attribute(out, v, new)

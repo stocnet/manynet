@@ -9,8 +9,24 @@ test_that("to_giant works",{
   expect_equal(c(net_nodes(to_giant(fm))), 50)
   expect_equal(c(net_nodes(to_giant(as_igraph(fm)))), 50)
   # expect_equal(c(net_nodes(to_giant(as_matrix(fict_marvel)))), 50)
-  # expect_equal(c(net_nodes(to_giant(as_network(fict_marvel)))), 50)
+  # As a 'network', this is a multigraph, which `as_igraph()` cannot convert.
+  # expect_equal(c(net_nodes(to_giant(as_network(fm)))), 50)
   expect_equal(c(net_nodes(to_giant(as_edgelist(fm)))), 50)
+})
+
+# net_name() read a 'network' with igraph's accessors, so to_giant() stopped
+# on every 'network' with "Must provide a graph object".
+test_that("net_name() and to_giant() work on a network", {
+  net <- network::network(matrix(c(0, 1, 0, 1, 0, 0, 0, 0, 0), 3, 3),
+                          directed = FALSE)
+  expect_equal(net_name(net), "")
+  network::set.network.attribute(net, "name", "Pair")
+  expect_equal(net_name(net), "Pair")
+  expect_equal(net_name(net, prefix = "Giant component of"),
+               "Giant component of Pair")
+  giant <- to_giant(net)
+  expect_s3_class(giant, "network")
+  expect_equal(c(net_nodes(giant)), 2)
 })
 
 test_that("to_giant is a wrapper for the first component",{
