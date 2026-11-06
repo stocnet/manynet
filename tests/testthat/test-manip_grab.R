@@ -65,6 +65,13 @@ test_that("layer_ties works", {
   # the layers of a network are counted from its ties
   expect_length(layer_ties(fict_thrones), 2)
   expect_equal(sum(layer_ties(fict_thrones)), c(net_ties(fict_thrones)))
+  # a layer without ties, as at a moment before its first, holds none
+  sn <- make_stocnet(ties = tibble::tibble(from = 1:4, to = c(2L, 3L, 1L, 4L),
+                                           layer = c("a", "a", "c", "b"),
+                                           time = c(1, 1, 1, 2)),
+                     info = list(layers = c("a", "b", "c"),
+                                 update = "increment"))
+  expect_equal(layer_ties(to_time(sn, 1)), c(2L, 0L, 1L))
 })
 
 test_that("net_layers and layer_ties agree across network forms", {

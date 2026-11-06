@@ -279,6 +279,23 @@ test_that("to_correlation correlates dyadic profiles at once as one by one", {
   expect_equal(.corComplex(M), .corComplexWalk(M))
 })
 
+test_that("to_proximity keeps the names of three or more modes", {
+  sn <- make_stocnet(
+    nodes = tibble::tibble(label = c("w1", "w2", "w3", "a1", "k1"),
+                           mode = c("works", "works", "works", "authors",
+                                    "keywords")),
+    ties = tibble::tibble(from = c(1L, 1L, 2L, 4L, 1L), to = c(2L, 3L, 3L, 1L, 5L),
+                          layer = c("cites", "cites", "cites", "authored",
+                                    "tagged")),
+    info = list(modes = c("works", "authors", "keywords"),
+                directed = c(cites = TRUE, authored = FALSE, tagged = FALSE)))
+  out <- to_proximity(to_uniplex(sn, "cites"), across = "columns")
+  expect_equal(out$nodes$mode, sn$nodes$mode)
+  expect_equal(out$info$modes, sn$info$modes)
+  # w2 and w3 are both cited by w1
+  expect_equal(as_matrix(out)["w2", "w3"], 1)
+})
+
 test_that("to_proximity takes the rules of a projection for a two-mode network only", {
   expect_equal(to_proximity(ison_southern_women, "fractional"),
                to_mode1(ison_southern_women, "fractional"))

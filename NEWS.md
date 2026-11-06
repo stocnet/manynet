@@ -25,6 +25,11 @@
   - `as_stocnet.dfm()` for a document-feature matrix of 'quanteda'
   - `as_stocnet.DocumentTermMatrix()` and `as_stocnet.TermDocumentMatrix()`
 
+## Manipulating
+
+- Fixed `filter_nodes()` on a 'stocnet' where it drops every node of a mode
+- Fixed `bind_node_attributes()` to keep the names of the modes
+
 ## Modifying
 
 - Improved `to_mode()` with new measures and with `through`
@@ -48,6 +53,10 @@
   - Added `kernel` to weight the ties in a window by their distance from `time`
     - `"uniform"`, `"triangular"`, `"epanechnikov"`, or `"gaussian"`
 - Improved `to_times()` with `window` and `kernel` for moving windows
+
+## Describing
+
+- Fixed `layer_ties()` to count a layer without ties as none
 
 # manynet 2.4.5
 
