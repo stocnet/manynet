@@ -1143,6 +1143,18 @@ as_network.networkDynamic <- function(.data, twomode = FALSE) {
 #'   weight of its tie, as [collect_text()] gives.
 #'   The document variables of a 'dfm' become attributes of the documents.
 #'   Neither `{quanteda}` nor `{tm}` needs to be installed.
+#' @section Records:
+#'   `as_stocnet()` reads the bibliographic records of `{bibliometrix}`
+#'   ('bibliometrixDB', as `bibliometrix::convert2df()` gives)
+#'   as [collect_bibliography()] does,
+#'   into a multimodal network of works, authors, keywords, and sources.
+#'   The other coercions, such as `as_igraph()` and `as_tidygraph()`,
+#'   read the records through `as_stocnet()`,
+#'   so the functions of the stocnet packages take the records directly.
+#'   The records cannot be rebuilt from a network,
+#'   so a function that would return the class it was given
+#'   returns a 'stocnet' for them.
+#'   `{bibliometrix}` does not need to be installed.
 #' @export
 as_stocnet <- function(.data,
                     twomode = FALSE, ...) UseMethod("as_stocnet")
@@ -1530,6 +1542,70 @@ as_stocnet.DocumentTermMatrix <- function(.data, twomode = FALSE, ...) {
                   terms = .data$dimnames$Terms %||%
                     as.character(seq_len(.data$ncol)),
                   doc = .data$i, term = .data$j, weight = .data$v)
+}
+
+# Records ####
+
+# Bibliographic records are not a network, but give one, so every coercion
+# reads them through `collect_bibliography()`.
+
+#' @export
+as_stocnet.bibliometrixDB <- function(.data, twomode = FALSE, ...) {
+  collect_bibliography(.data)
+}
+
+#' @export
+as_igraph.bibliometrixDB <- function(.data, twomode = FALSE) {
+  as_igraph(as_stocnet(.data))
+}
+
+#' @export
+as_tidygraph.bibliometrixDB <- function(.data, twomode = FALSE) {
+  as_tidygraph(as_stocnet(.data))
+}
+
+#' @export
+as_network.bibliometrixDB <- function(.data, twomode = FALSE) {
+  as_network(as_stocnet(.data))
+}
+
+#' @export
+as_matrix.bibliometrixDB <- function(.data, twomode = NULL, ...) {
+  as_matrix(as_stocnet(.data), twomode = twomode, ...)
+}
+
+#' @export
+as_edgelist.bibliometrixDB <- function(.data, twomode = FALSE) {
+  as_edgelist(as_stocnet(.data))
+}
+
+#' @export
+as_nodelist.bibliometrixDB <- function(.data) {
+  as_nodelist(as_stocnet(.data))
+}
+
+#' @export
+is_manynet.bibliometrixDB <- function(.data) TRUE
+
+# The records are also a data frame, so every function with a method for a
+# data frame, which reads an edgelist, would take them as one. Each such
+# function gets a method for the records, registered when the package loads,
+# that reads them as a network first, so that no function is left out as
+# more are added. Methods written above are kept.
+.register_record_methods <- function(ns) {
+  methods <- grep("\\.data\\.frame$", ls(ns), value = TRUE)
+  for (method in methods) {
+    generic <- sub("\\.data\\.frame$", "", method)
+    if (exists(paste0(generic, ".bibliometrixDB"), envir = ns,
+               inherits = FALSE) ||
+        !exists(generic, envir = ns, mode = "function", inherits = FALSE))
+      next
+    registerS3method(generic, "bibliometrixDB", local({
+      fun <- get(generic, envir = ns)
+      function(.data, ...) fun(as_stocnet(.data), ...)
+    }), envir = ns)
+  }
+  invisible(NULL)
 }
 
 # Assembles a two-mode network of documents and terms from the cells of a

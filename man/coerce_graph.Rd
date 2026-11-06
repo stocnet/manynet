@@ -179,6 +179,21 @@ The document variables of a 'dfm' become attributes of the documents.
 Neither \code{{quanteda}} nor \code{{tm}} needs to be installed.
 }
 
+\section{Records}{
+
+\code{as_stocnet()} reads the bibliographic records of \code{{bibliometrix}}
+('bibliometrixDB', as \code{bibliometrix::convert2df()} gives)
+as \code{\link[=collect_bibliography]{collect_bibliography()}} does,
+into a multimodal network of works, authors, keywords, and sources.
+The other coercions, such as \code{as_igraph()} and \code{as_tidygraph()},
+read the records through \code{as_stocnet()},
+so the functions of the stocnet packages take the records directly.
+The records cannot be rebuilt from a network,
+so a function that would return the class it was given
+returns a 'stocnet' for them.
+\code{{bibliometrix}} does not need to be installed.
+}
+
 \section{Hypergraphs}{
 
 \code{as_hypergraph()} returns a 'hypergraph' object of the \code{{HyperG}} package,

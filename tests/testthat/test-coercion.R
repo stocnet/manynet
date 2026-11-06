@@ -1114,3 +1114,28 @@ test_that("a quanteda dfm gives the network that collect_text() gives", {
   expect_equal(out$nodes$year[1:3], 1:3)
   expect_equal(out$info$modes, c("documents", "terms"))
 })
+
+test_that("bibliometrix records are read as a network by every function", {
+  records <- data.frame(
+    SR = c("SMITH J, 2001, SCIENTOMETRICS", "JONES K, 2003, SCIENTOMETRICS"),
+    AU = c("SMITH J;JONES K", "JONES K"), PY = c(2001, 2003),
+    SO = "SCIENTOMETRICS", DE = c("NETWORK", "NETWORK; CITATION"),
+    TC = c(12, 3),
+    CR = c("PRICE DJD, 1965, SCIENCE", "SMITH J, 2001, SCIENTOMETRICS, V50, P1"))
+  class(records) <- c("bibliometrixDB", "data.frame")
+  out <- as_stocnet(records)
+  expect_equal(out, collect_bibliography(records))
+  expect_equal(out$nodes$citations[1:3], c(12L, 3L, NA))
+  expect_s3_class(as_igraph(records), "igraph")
+  expect_s3_class(as_tidygraph(records), "tbl_graph")
+  expect_equal(as_edgelist(records), as_edgelist(out))
+  # functions with a method for data frames read the records as a network
+  expect_equal(net_nodes(records), net_nodes(out))
+  expect_true(is_multiplex(records))
+  expect_false(is_twomode(records))
+  # and give back a stocnet, since the records cannot be rebuilt
+  expect_s3_class(to_uniplex(records, "cites"), "stocnet")
+  expect_s3_class(to_undirected(records), "stocnet")
+  expect_equal(as_matrix(to_mode(records, "authors", through = "works"))[
+    "SMITH J", "JONES K"], 1)
+})

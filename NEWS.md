@@ -24,6 +24,7 @@
 - Added `as_stocnet()` methods for 'quanteda' and 'tm' matrices of documents
   - `as_stocnet.dfm()` for a document-feature matrix of 'quanteda'
   - `as_stocnet.DocumentTermMatrix()` and `as_stocnet.TermDocumentMatrix()`
+- Added `as_stocnet.bibliometrixDB()` for the records of 'bibliometrix'
 
 ## Manipulating
 
