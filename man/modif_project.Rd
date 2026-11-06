@@ -68,7 +68,10 @@ So the choice of group is more important than the choice in a group.
 Measures for valued and binary data:
 \itemize{
 \item "count" counts the shared ties, as \eqn{XX'}.
-For valued data, it adds the products of the tie weights.
+For valued data, it adds the products of the tie weights,
+and a repeated tie counts as many times as it is repeated.
+For signed data, it adds the products of their absolute values,
+since the signed rules below read the signs.
 It is the default, and the fastest.
 \item "match" counts the nodes of the other mode where the two nodes
 have the same value.

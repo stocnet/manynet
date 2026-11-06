@@ -40,6 +40,7 @@
     - The new measures are in `to_mode1()` and `to_mode2()` too
   - Added `through` for networks of three or more modes
     - By default, all the other modes
+  - Fixed `"count"`, which ignored weights and repeated ties, to add them
 - Improved `to_twomode()`
   - Added `through` to project three or more modes onto two
     - E.g. `to_twomode(.data, through = "works")` ties authors to keywords

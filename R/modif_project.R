@@ -69,7 +69,10 @@ NULL
 #'   Measures for valued and binary data:
 #'
 #'   - "count" counts the shared ties, as \eqn{XX'}.
-#'   For valued data, it adds the products of the tie weights.
+#'   For valued data, it adds the products of the tie weights,
+#'   and a repeated tie counts as many times as it is repeated.
+#'   For signed data, it adds the products of their absolute values,
+#'   since the signed rules below read the signs.
 #'   It is the default, and the fastest.
 #'   - "match" counts the nodes of the other mode where the two nodes
 #'   have the same value.
@@ -324,6 +327,22 @@ to_mode1.matrix <- function(.data, similarity = c("count", "jaccard", "rand", "p
 }
 
 #' @export
+# `igraph::bipartite_projection()` is faster, but it counts the shared nodes
+# and so ignores the weights of ties and repeated ties, which "count" adds as
+# the products of their weights. It is used only where these are the same.
+.simple_count <- function(.data){
+  !is_weighted(.data) && !igraph::any_multiple(.data)
+}
+
+# "count" reads the size of a weight and not its sign, which is what the
+# signed rules ("agreement", "disagreement", "signed") are for, so that it
+# counts the shared ties of a signed network whatever their stance.
+.unsigned_count <- function(.data){
+  weight <- igraph::edge_attr(.data, "weight")
+  if(is.null(weight) || !any(weight < 0, na.rm = TRUE)) return(.data)
+  igraph::set_edge_attr(.data, "weight", value = abs(weight))
+}
+
 to_mode1.igraph <- function(.data, similarity = c("count", "jaccard", "rand", "pearson", "yule",
                                  "match", "overlap", "crossmin", "maxcrossmin",
                                  "sqdiff", "covariance", "bonacich", "ochiai",
@@ -333,7 +352,9 @@ to_mode1.igraph <- function(.data, similarity = c("count", "jaccard", "rand", "p
                                  "agreement", "disagreement", "signed",
                                  "activity", "association", "fractional")) {
   similarity <- match.arg(similarity)
-  if(similarity == "count") igraph::bipartite_projection(.data)$proj1 else {
+  if(similarity == "count") .data <- .unsigned_count(.data)
+  if(similarity == "count" && .simple_count(.data))
+    igraph::bipartite_projection(.data)$proj1 else {
     if(!is_labelled(.data)){
       nind <- seq_len(net_nodes(.data))
       temp <- .data |> mutate_nodes(name = paste0("x", nind))
@@ -473,7 +494,9 @@ to_mode2.igraph <- function(.data, similarity = c("count", "jaccard", "rand", "p
                                  "agreement", "disagreement", "signed",
                                  "activity", "association", "fractional")) {
   similarity <- match.arg(similarity)
-  if(similarity == "count") igraph::bipartite_projection(.data)$proj2 else {
+  if(similarity == "count") .data <- .unsigned_count(.data)
+  if(similarity == "count" && .simple_count(.data))
+    igraph::bipartite_projection(.data)$proj2 else {
     if(!is_labelled(.data)){
       nind <- seq_len(net_nodes(.data))
       temp <- .data |> mutate_nodes(name = paste0("x", nind))

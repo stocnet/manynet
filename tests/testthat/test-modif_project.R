@@ -230,3 +230,23 @@ test_that("to_mode takes through for a two-mode network where it names the other
                to_mode(ison_southern_women, "women"))
   expect_error(to_mode(ison_southern_women, 1, through = 1), "other than")
 })
+
+test_that("count adds the products of weights and of repeated ties", {
+  weighted <- make_stocnet(
+    nodes = data.frame(label = c("a", "b", "w", "v"),
+                       mode = c("authors", "authors", "works", "works")),
+    ties = data.frame(from = c(1L, 2L, 1L, 2L), to = c(3L, 3L, 4L, 4L),
+                      weight = c(0.6, 0.4, 1, 1)),
+    info = list(modes = c("authors", "works")))
+  expect_equal(as_matrix(to_mode(weighted, "authors"))["a", "b"], 1.24)
+  expect_equal(as_matrix(to_mode(weighted, "works"))["w", "v"], 1)
+  expect_equal(as_matrix(to_mode1(as_igraph(weighted)))["a", "b"], 1.24)
+  repeated <- make_stocnet(
+    nodes = data.frame(label = c("a", "b", "w"),
+                       mode = c("authors", "authors", "works")),
+    ties = data.frame(from = c(1L, 1L, 2L), to = c(3L, 3L, 3L)),
+    info = list(modes = c("authors", "works")))
+  expect_equal(as_matrix(to_mode(repeated, "authors"))["a", "b"], 2)
+  # a simple network still gives the shared nodes
+  expect_equal(as_matrix(to_mode(ison_southern_women, 1))["Evelyn", "Laura"], 6)
+})
