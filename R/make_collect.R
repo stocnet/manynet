@@ -2189,3 +2189,563 @@ collect_bibliography <- function(records,
             "cited work{?s}.")
   make_stocnet(info = info, nodes = nodes, ties = ties)
 }
+
+# Statements ####
+
+#' Making networks by coding texts
+#'
+#' @description
+#' `collect_statements()` creates a network by coding a text interactively.
+#' It shows each sentence (or paragraph, or document) of the text in turn,
+#' and asks which concepts it is about,
+#' who says so, and whether they agree or disagree.
+#' A unit can hold several statements, or none.
+#'
+#' Where the coder names who speaks, the result is a discourse network:
+#' a two-mode, signed network of speakers and concepts,
+#' in the form of `irps_nuclear`.
+#' Each statement is one tie from a speaker to a concept,
+#' with its sign, +1 (agreement) or -1 (disagreement), as its weight.
+#'
+#' Where the coder names no speaker, the tie is from the document itself,
+#' as in the qualitative coding of a literature review,
+#' where each abstract is coded for the topics it is about.
+#' Where the coder gives no sign, the tie has none.
+#' The result is then a two-mode network of documents and concepts,
+#' and `to_mode(.data, "concepts")` gives the concepts that the same
+#' documents are about.
+#'
+#' Coding can stop at any unit and continue later:
+#' pass the network that was coded so far as `.data`,
+#' and coding starts again after the last unit that holds a statement.
+#' A coder who is unsure can enter "?" to come back to a unit or a sign later.
+#' A unit skipped in this way is shown again at the end of the pass.
+#' Where it is still skipped, or coding stops first,
+#' the network records it in `info$uncoded`,
+#' and shows it again first where the network is given as `.data`.
+#' `info$uncoded` is removed once every unit is coded.
+#' @details
+#'   Paragraphs and sentences are found as in [collect_text()]:
+#'   paragraphs are separated by a blank line,
+#'   and sentences end with a full stop, a question mark, or an
+#'   exclamation mark that is followed by a space.
+#'
+#'   For each statement, enter:
+#'   1. the concept, as a name, or the number of a name in the roster
+#'   that is shown, or nothing (press \[Enter\]) to go to the next unit;
+#'   2. who says so, in the same way, or nothing for the document itself;
+#'   or "?" at either, to skip the rest of the unit and come back to it;
+#'   3. "+" (or "agree", "yes", "1") or "-" (or "disagree", "no", "-1")
+#'   for the sign, nothing for no sign, or "?" where the sign is unclear.
+#'
+#'   Where a name is part of names that are already known,
+#'   these names are shown, so that one of them can be chosen by its number.
+#'   Enter the same name again to add it as a new name.
+#'   Enter "q" at any prompt to stop coding and return the network
+#'   coded so far.
+#'
+#'   The roster holds the speakers and concepts given in `roster`,
+#'   those of `.data`, and those coded so far.
+#'   The names of a roster are numbered where it holds 20 names or fewer.
+#'
+#'   Each tie records the 'document' of its statement,
+#'   and the number of its 'sentence' or 'paragraph' in the document.
+#'   The 'date' (or 'time') of a document is the 'time' of its ties,
+#'   where `text` gives one.
+#'   Statements are events that add to the discourse,
+#'   so `to_time(.data, as.Date("2011-06-01"))` gives the discourse up to
+#'   that date.
+#'
+#'   Where some ties are signed and others not, the ties without a sign
+#'   have a missing weight, as do the ties of an unknown sign.
+#'   A tie of missing weight is present, but of unknown value.
+#'   So in a signed network given as `.data`,
+#'   every tie of missing weight is shown again to be coded,
+#'   with its unit where `text` holds it.
+#'   Enter "?" or nothing to leave the sign unknown.
+#'
+#'   A network given as `.data` is coded in this order:
+#'   first the units in `info$uncoded`, with the statements coded in them
+#'   already, then the ties of unknown sign,
+#'   then the units after the last one that holds a statement or is
+#'   still to code, and last, once more, the units skipped in this pass.
+#'   A unit still to code that is not in `text` is dropped, with a warning,
+#'   so give the same `text` each time.
+#'   Where both speakers and documents make statements,
+#'   the network has three modes: documents, speakers, and concepts.
+#' @section Coding after collecting text:
+#'   Coding by hand is slow, but the coder reads what a text means,
+#'   and not only the words it uses.
+#'   [collect_text()] is fast, and finds the words that a text uses.
+#'   The two can be used in sequence:
+#'   collect the terms of a text first,
+#'   and offer them to the coder as the roster of concepts,
+#'   so that the coder picks from the same names throughout.
+#'   A network in `roster` gives the nodes of its last mode as the concepts.
+#'
+#'   ```
+#'   terms <- collect_text(abstracts, terms = dictionary)
+#'   coded <- collect_statements(abstracts, unit = "document", roster = terms)
+#'   to_mode(coded, "concepts")
+#'   ```
+#' @section Recipes:
+#'   The ties of speakers who make the same statements
+#'   form a network of discourse coalitions.
+#'   [to_mode()] projects the statements onto the speakers,
+#'   with `similarity = "agreement"` counting the pairs of statements
+#'   in which two speakers agree about a concept,
+#'   `"disagreement"` the pairs in which they disagree,
+#'   and `"signed"` the difference.
+#'   A projection does not keep the time of the statements,
+#'   so take moving windows of the statements with [to_times()] first,
+#'   and project each window:
+#'
+#'   ```
+#'   dates <- seq(as.Date("2011-03-15"), as.Date("2011-06-15"), by = "month")
+#'   windows <- to_times(irps_nuclear, dates, window = 30)
+#'   coalitions <- lapply(windows, to_mode, "speakers", similarity = "agreement")
+#'   ```
+#'
+#'   Each window holds the statements of the 30 days up to its date.
+#' @param text The text to code, as one or more documents.
+#'   A character vector, each element of which is one document,
+#'   named by its names if it has any,
+#'   or a data frame with a 'text' column, each row of which is one document,
+#'   named by its 'doc_id', 'document', or 'id' column if it has one,
+#'   and dated by its 'date' or 'time' column if it has one.
+#' @param unit The unit of text to show at each step.
+#'   One of "sentence" (the default), "paragraph", or "document".
+#' @param roster The names of nodes to offer for each mode.
+#'   A list of two character vectors, the speakers and the concepts,
+#'   named by their modes or in that order.
+#'   One character vector, or a network such as from [collect_text()],
+#'   gives only the concepts.
+#'   By default `NULL`, only the nodes of `.data` and those coded so far.
+#' @param .data A network that is coded in part,
+#'   such as an earlier result of `collect_statements()`.
+#'   By default `NULL`, a new network.
+#' @return A `stocnet` object.
+#'   A two-mode network of speakers (or documents) and concepts,
+#'   signed where the coder gives signs.
+#' @family makes
+#' @seealso [collect_text()], [to_mode()], [to_times()]
+#' @examples
+#' dates <- seq(as.Date("2011-03-15"), as.Date("2011-06-15"), by = "month")
+#' windows <- to_times(irps_nuclear, dates, window = 30)
+#' lapply(windows, to_mode, "speakers", similarity = "agreement")
+#' \dontrun{
+#' speeches <- data.frame(doc_id = c("a", "b"),
+#'                        date = as.Date(c("2011-03-14", "2011-03-15")),
+#'                        text = c("Merkel wants a moratorium. Greens agree.",
+#'                                 "Industry rejects any exit."))
+#' coded <- collect_statements(speeches, roster = "nuclear exit")
+#' # stop with "q", then continue later
+#' coded <- collect_statements(speeches, .data = coded)
+#' }
+#' @name make_statements
+#' @export
+collect_statements <- function(text, unit = "sentence", roster = NULL,
+                               .data = NULL) {
+  # nocov start
+  snet_minor_info("Make sure you assign this function, e.g.",
+                  "{.code obj <- collect_statements(text)}")
+  unit <- .statement_unit(unit)
+  units <- .statement_units(text, unit)
+  coded <- .statement_coded(.data)
+  roster <- .statement_roster(roster, coded)
+  session <- .statement_session(units, coded, roster, unit, answer = readline)
+  .statement_network(session$found, session$coded, session$uncoded)
+  # nocov end
+}
+
+# Returns "sentence", "paragraph", or "document".
+.statement_unit <- function(unit) {
+  if (is.numeric(unit))
+    snet_abort("{.arg unit} must be {.val sentence}, {.val paragraph},",
+               "or {.val document}: windows of words are not coded by hand.")
+  .text_unit(unit)
+}
+
+# Returns the units of the text, one row each with its document,
+# its number in the document, its text, and the time of its document.
+.statement_units <- function(text, unit) {
+  docs <- .text_documents(text, NULL, NULL, NULL)
+  if (!is.null(docs$tokens))
+    snet_abort("{.arg text} must hold the texts in a {.val text} column,",
+               "not one token in each row.")
+  parts <- if (unit == "document")
+    lapply(docs$text, function(x) x[!is.na(x) & grepl("\\S", x)]) else
+      .text_split(docs$text, unit)
+  doc <- rep(seq_along(docs$label), lengths(parts))
+  if (length(doc) == 0)
+    snet_abort("No text was found in {.arg text}.")
+  out <- data.frame(document = docs$label[doc], stringsAsFactors = FALSE)
+  if (unit != "document") out[[unit]] <- stats::ave(doc, doc, FUN = seq_along)
+  out$text <- unlist(parts)
+  stamp <- c(intersect(c("date", "time"), names(docs$attrs)), NA)[1]
+  if (!is.na(stamp)) out$time <- docs$attrs[[stamp]][doc]
+  out
+}
+
+# Returns the statements of a network coded in part, as labels,
+# with its modes, nodes, and info.
+# A statement of a document has no speaker.
+.statement_coded <- function(.data) {
+  if (is.null(.data))
+    return(list(modes = c("speakers", "concepts"),
+                statements = NULL, nodes = NULL, info = NULL))
+  .data <- as_stocnet(.data)
+  nodes <- as.data.frame(.data$nodes, stringsAsFactors = FALSE)
+  all_modes <- .data$info$modes
+  if (is.null(nodes$mode) || length(all_modes) < 2)
+    snet_abort("{.arg .data} must be a two-mode network of speakers (or",
+               "documents) and concepts, such as {.code irps_nuclear}.")
+  concepts <- .data$info$receiver %||% all_modes[length(all_modes)]
+  senders <- setdiff(.data$info$sender %||% all_modes, concepts)
+  speakers <- c(setdiff(senders, "documents"), "speakers")[1]
+  modes <- c(speakers, concepts)
+  ties <- as.data.frame(.data$ties, stringsAsFactors = FALSE)
+  by_document <- nodes$mode[ties$from] == "documents"
+  ties$speaker <- ifelse(by_document, NA_character_, nodes$label[ties$from])
+  ties$concept <- nodes$label[ties$to]
+  if (is.null(ties$document) && any(by_document))
+    ties$document <- ifelse(by_document, nodes$label[ties$from], NA)
+  ties$from <- ties$to <- NULL
+  # in a signed network, a tie of missing weight has a sign still to code
+  ties$unknown <- if (is.null(ties$weight)) rep(FALSE, nrow(ties)) else
+    is.na(ties$weight)
+  list(modes = modes, statements = ties, nodes = nodes, info = .data$info,
+       uncoded = .data$info$uncoded,
+       speakers = nodes$label[nodes$mode == modes[1]],
+       concepts = nodes$label[nodes$mode == modes[2]])
+}
+
+# Returns the names to offer for each mode: those given and those of .data.
+.statement_roster <- function(roster, coded) {
+  if (is.null(roster)) roster <- list(NULL, NULL)
+  if (is_manynet(roster)) {
+    net <- as_stocnet(roster)
+    modes <- net$info$modes
+    roster <- list(NULL, if (length(modes) > 1)
+      net$nodes$label[net$nodes$mode == modes[length(modes)]] else
+        net$nodes$label)
+  }
+  if (is.character(roster)) roster <- list(NULL, roster)
+  if (!is.list(roster) || length(roster) != 2)
+    snet_abort("{.arg roster} must be a list of two character vectors,",
+               "the names of the speakers and of the concepts,",
+               "or a network of concepts.")
+  if (!is.null(names(roster)) && all(coded$modes %in% names(roster)))
+    roster <- roster[coded$modes]
+  list(speakers = unique(as.character(c(roster[[1]], coded$speakers))),
+       concepts = unique(as.character(c(roster[[2]], coded$concepts))))
+}
+
+# Returns the first unit that follows the last one with a statement,
+# or the last one still to code.
+.statement_start <- function(units, coded, unit) {
+  keys <- .statement_key(units, units)
+  done <- c(match(.statement_key(coded$statements, units), keys),
+            match(.statement_key(coded$uncoded, units), keys))
+  if (all(is.na(done))) 1L else max(done, na.rm = TRUE) + 1L
+}
+
+# Asks for the statements of the units in `which`, reading each answer with
+# `answer()`. Returns the statements, the units skipped with "?", the units not
+# reached where coding was stopped, and the roster with the names coded.
+# `known` holds statements coded before, which are shown with their unit.
+.statement_code <- function(units, which, roster, unit = "sentence",
+                            answer = readline, known = NULL) {
+  rows <- list()
+  stopped <- FALSE
+  skipped <- integer(0)
+  n <- nrow(units)
+  of_document <- if (unit == "document") "the document" else
+    paste("the document of this", unit)
+  keys <- .statement_key(units, units)
+  known_keys <- if (!is.null(known)) .statement_key(known, units)
+  done <- 0L
+  for (i in which) {
+    passage <- units$text[i]
+    document <- units$document[i]
+    snet_prompt("{tools::toTitleCase(unit)} {i} of {n} ({.val {document}}):")
+    snet_prompt("{.strong {passage}}")
+    before <- if (!is.null(known)) known[known_keys %in% keys[i], , drop = FALSE]
+    if (!is.null(before) && nrow(before) > 0) {
+      coded_before <- paste0(ifelse(is.na(before$speaker), "the document",
+                                    before$speaker), " - ", before$concept,
+                             ifelse(is.na(before$weight), "",
+                                    paste0(" (", sprintf("%+d", before$weight),
+                                           ")")), collapse = "; ")
+      snet_prompt("Coded already: {coded_before}")
+    }
+    repeat {
+      concept <- .statement_ask(paste("Which concept is this about?",
+                                      "[Enter] for the next", unit,
+                                      "or {.val ?} to come back to it,"),
+                                roster$concepts, answer)
+      if (concept == "q") stopped <- TRUE
+      if (concept == "?") skipped <- c(skipped, i)
+      if (concept %in% c("", "q", "?")) break
+      speaker <- .statement_ask(paste("Who says so? [Enter] for",
+                                      of_document,
+                                      "or {.val ?} to come back to it,"),
+                                roster$speakers, answer)
+      if (speaker == "q") stopped <- TRUE
+      if (speaker == "?") skipped <- c(skipped, i)
+      if (speaker %in% c("q", "?")) break
+      if (speaker == "") speaker <- NA_character_
+      who <- if (is.na(speaker)) "the document" else speaker
+      sign <- .statement_ask_sign(who, concept, answer)
+      if (identical(sign, "q")) {
+        stopped <- TRUE
+        break
+      }
+      row <- data.frame(speaker = speaker, concept = concept,
+                        weight = if (is.character(sign)) NA_integer_ else sign,
+                        unknown = identical(sign, "?"),
+                        document = document, stringsAsFactors = FALSE)
+      if (unit != "document") row[[unit]] <- units[[unit]][i]
+      if (!is.null(units$time)) row$time <- units$time[i]
+      rows[[length(rows) + 1]] <- row
+      if (!is.na(speaker))
+        roster$speakers <- unique(c(roster$speakers, speaker))
+      roster$concepts <- unique(c(roster$concepts, concept))
+    }
+    if (stopped) break
+    done <- done + 1L
+  }
+  if (stopped) snet_info("Stopped coding at {unit} {i} of {n}.")
+  # a unit where coding stopped is not coded to its end
+  unreached <- if (stopped) which[seq_along(which) > done] else integer(0)
+  list(statements = if (length(rows) > 0) do.call(rbind, rows),
+       skipped = unique(skipped), unreached = unreached,
+       stopped = stopped, roster = roster)
+}
+
+# Returns a key for each row of `df` that names its unit of `units`.
+.statement_key <- function(df, units) {
+  at <- intersect(c("document", "sentence", "paragraph"), names(units))
+  if (is.null(df) || !all(at %in% names(df))) return(rep(NA_character_, NROW(df)))
+  do.call(paste, c(unname(as.list(as.data.frame(df)[at])), sep = "\r"))
+}
+
+# Codes the units still to code first, then the unknown signs, then the units
+# after the last one coded, and then once more the units skipped in that pass.
+# Returns the statements found, those coded before, and the units still to code.
+.statement_session <- function(units, coded, roster, unit,
+                               answer = readline) {
+  keys <- .statement_key(units, units)
+  start <- .statement_start(units, coded, unit)
+  pending <- match(.statement_key(coded$uncoded, units), keys)
+  if (anyNA(pending))
+    snet_warn("{sum(is.na(pending))} unit{?s} still to code {?is/are} not in",
+              "{.arg text}, and {?is/are} dropped.")
+  pending <- sort(unique(pending[!is.na(pending)]))
+  found <- NULL
+  left <- integer(0)
+  stopped <- FALSE
+  code <- function(which, known) {
+    res <- .statement_code(units, which, roster, unit, answer, known = known)
+    roster <<- res$roster
+    found <<- rbind(found, res$statements)
+    stopped <<- res$stopped
+    res
+  }
+  if (length(pending) > 0) {
+    snet_info("Coding the {length(pending)} {unit}{?s} left to code before.")
+    res <- code(pending, coded$statements)
+    left <- c(left, res$skipped, res$unreached)
+  }
+  if (!stopped) {
+    again <- .statement_revisit(units, coded, unit, answer)
+    coded <- again$coded
+    stopped <- again$stopped
+  }
+  if (!stopped) {
+    if (start > 1)
+      snet_info("Continuing after {unit} {start - 1} of {nrow(units)}.")
+    res <- code(setdiff(seq_len(nrow(units))[seq_len(nrow(units)) >= start],
+                        pending), NULL)
+    skipped <- res$skipped
+    if (!stopped && length(skipped) > 0) {
+      snet_info("Coming back to the {length(skipped)} {unit}{?s} skipped.")
+      res <- code(skipped, found)
+      skipped <- c(res$skipped, res$unreached)
+    }
+    left <- c(left, skipped)
+  }
+  left <- sort(unique(left))
+  uncoded <- units[left, intersect(c("document", unit), names(units)),
+                   drop = FALSE]
+  rownames(uncoded) <- NULL
+  list(found = list(statements = found), coded = coded, uncoded = uncoded,
+       stopped = stopped)
+}
+
+# Asks for the sign of a statement, and returns +1, -1, NA for no sign,
+# "?" for an unknown sign, or "q" to stop.
+.statement_ask_sign <- function(who, concept, answer, again = FALSE) {
+  hint <- if (again) "[Enter] or {.val ?} to leave it unknown," else
+    "[Enter] for no sign, {.val ?} if unsure,"
+  repeat {
+    snet_prompt("Does {.val {who}} agree (+) or disagree (-)",
+                "with {.val {concept}}?", hint, "or {.val q} to stop.")
+    got <- trimws(answer())
+    if (is.na(got) || got == "q") return("q")
+    if (got == "?" || (again && got == "")) return("?")
+    if (got == "") return(NA_integer_)
+    sign <- .statement_sign(got)
+    if (!is.na(sign)) return(sign)
+  }
+}
+
+# Asks again for the signs that are unknown in a network coded in part,
+# and returns its statements with whether coding was stopped.
+.statement_revisit <- function(units, coded, unit, answer = readline) {
+  st <- coded$statements
+  todo <- which(st$unknown %in% TRUE)
+  stopped <- FALSE
+  if (length(todo) == 0) return(list(coded = coded, stopped = FALSE))
+  at <- intersect(c("document", unit), names(units))
+  key <- function(df) do.call(paste, unname(as.list(df[at])))
+  where <- if (all(at %in% names(st))) match(key(st), key(units)) else
+    rep(NA_integer_, nrow(st))
+  for (k in seq_along(todo)) {
+    j <- todo[k]
+    snet_prompt("Statement {k} of {length(todo)} with an unknown sign",
+                "({.val {st$document[j]}}):")
+    if (!is.na(where[j])) {
+      passage <- units$text[where[j]]
+      snet_prompt("{.strong {passage}}")
+    }
+    who <- if (is.na(st$speaker[j])) "the document" else st$speaker[j]
+    sign <- .statement_ask_sign(who, st$concept[j], answer, again = TRUE)
+    if (identical(sign, "q")) {
+      stopped <- TRUE
+      break
+    }
+    if (!identical(sign, "?")) {
+      st$weight[j] <- sign
+      st$unknown[j] <- FALSE
+    }
+  }
+  left <- sum(st$unknown %in% TRUE)
+  snet_info("{left} sign{?s} {?is/are} still unknown.")
+  coded$statements <- st
+  list(coded = coded, stopped = stopped)
+}
+
+# Asks for a name from a roster, and returns it, "" for none, or "q" to stop.
+.statement_ask <- function(question, roster, answer) {
+  numbered <- length(roster) > 0 && length(roster) <= 20
+  snet_prompt(question, "or {.val q} to stop.")
+  if (numbered) {
+    listed <- paste0(seq_along(roster), ": ", roster, collapse = "; ")
+    snet_prompt("{listed}")
+  }
+  last <- NULL
+  repeat {
+    got <- trimws(answer())
+    if (is.na(got) || got %in% c("", "q", "?"))
+      return(if (is.na(got)) "q" else got)
+    pick <- .statement_pick(got, roster, again = identical(got, last))
+    if (!is.null(pick$label)) return(pick$label)
+    last <- got
+    similar <- roster[pick$matches]
+    snet_prompt("Do you mean {.or {.val {similar}}}?",
+                "Enter its number, or {.val {got}} again to add it as new.")
+    listed <- paste0(pick$matches, ": ", similar, collapse = "; ")
+    snet_prompt("{listed}")
+  }
+}
+
+# Returns the name an answer picks from a roster: by its number, by its name
+# in any case, or as a new name where no name in the roster contains it
+# (or the answer is repeated). Otherwise returns the names that contain it.
+.statement_pick <- function(got, roster, again = FALSE) {
+  if (grepl("^[0-9]+$", got)) {
+    k <- as.integer(got)
+    if (k >= 1 && k <= length(roster)) return(list(label = roster[k]))
+  }
+  exact <- match(tolower(got), tolower(roster))
+  if (!is.na(exact)) return(list(label = roster[exact]))
+  similar <- which(grepl(tolower(got), tolower(roster), fixed = TRUE))
+  if (again || length(similar) == 0) return(list(label = got))
+  list(matches = similar)
+}
+
+# Returns +1 for agreement, -1 for disagreement, or NA.
+.statement_sign <- function(got) {
+  got <- tolower(trimws(got))
+  if (got %in% c("+", "+1", "1", "agree", "a", "yes", "y")) return(1L)
+  if (got %in% c("-", "-1", "disagree", "d", "no", "n")) return(-1L)
+  NA_integer_
+}
+
+# Returns the stocnet of the statements found and those coded before.
+# A statement without a speaker is a tie from its document.
+.statement_network <- function(found, coded, uncoded = NULL) {
+  modes <- coded$modes
+  statements <- dplyr::bind_rows(coded$statements, found$statements)
+  if (is.null(statements) || nrow(statements) == 0)
+    snet_abort("No statements were coded, so there is no network to return.")
+  old <- coded$nodes
+  by_document <- is.na(statements$speaker)
+  sender <- ifelse(by_document, statements$document, statements$speaker)
+  sender_mode <- ifelse(by_document, "documents", modes[1])
+  all_modes <- c(intersect(c("documents", modes[1]),
+                           c(sender_mode, old$mode)), modes[2])
+  labels <- lapply(all_modes, function(m)
+    unique(c(old$label[old$mode %in% m],
+             if (m == modes[2]) statements$concept else
+               sender[sender_mode == m])))
+  nodes <- data.frame(label = unlist(labels),
+                      mode = rep(all_modes, lengths(labels)),
+                      stringsAsFactors = FALSE)
+  if (!is.null(old)) {
+    extra <- old[match(paste(nodes$mode, nodes$label),
+                       paste(old$mode, old$label)),
+                 setdiff(names(old), c("label", "mode")), drop = FALSE]
+    nodes <- cbind(nodes, extra)
+    rownames(nodes) <- NULL
+  }
+  key <- paste(nodes$mode, nodes$label)
+  ties <- data.frame(from = match(paste(sender_mode, sender), key),
+                     to = match(paste(modes[2], statements$concept), key))
+  ties$time <- statements$time
+  unknown <- statements$unknown %in% TRUE
+  signed <- !all(is.na(statements$weight)) || any(unknown)
+  if (signed) {
+    ties$weight <- as.integer(statements$weight)
+    unsigned <- sum(is.na(ties$weight) & !unknown)
+    if (unsigned > 0)
+      snet_warn("{unsigned} tie{?s} {?has/have} no sign,",
+                "so {?its/their} weight is missing.")
+    if (any(unknown))
+      snet_info("{sum(unknown)} tie{?s} {?has/have} an unknown sign.",
+                "Give the network as {.arg .data} to code {?it/them} again.")
+  }
+  others <- setdiff(names(statements),
+                    c("speaker", "concept", "time", "weight", "unknown"))
+  ties <- cbind(ties, statements[others])
+  info <- coded$info %||%
+    list(name = if (all(by_document)) "Network of coded texts" else
+      "Discourse network", source = "Empirical", method = "Archival",
+      observation = "event")
+  info$directed <- FALSE
+  info$signed <- if (signed) TRUE
+  info$modes <- all_modes
+  info$sender <- setdiff(all_modes, modes[2])
+  info$receiver <- modes[2]
+  if (!is.null(ties$time)) info$update <- "increment"
+  # the units still to code are recorded until none is left
+  info$uncoded <- if (!is.null(uncoded) && nrow(uncoded) > 0)
+    dplyr::as_tibble(uncoded)
+  if (!is.null(info$uncoded))
+    snet_info("{nrow(info$uncoded)} unit{?s} {?is/are} still to code.",
+              "Give the network as {.arg .data} to code {?it/them}.")
+  snet_info("Collected {nrow(ties)} statement{?s} about",
+            "{length(labels[[length(labels)]])} concept{?s}.")
+  make_stocnet(info = info, nodes = nodes, ties = ties)
+}

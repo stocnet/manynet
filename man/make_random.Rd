@@ -273,6 +273,7 @@ Other makes:
 \code{\link{make_learning}},
 \code{\link{make_play}},
 \code{\link{make_read}},
+\code{\link{make_statements}},
 \code{\link{make_text}},
 \code{\link{make_write}}
 }

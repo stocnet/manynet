@@ -851,3 +851,271 @@ test_that("collect_bibliography() counts as bibliometrix does", {
   keywords <- tolower(rownames(theirs))
   expect_equal(unname(ours[keywords, keywords]), unname(theirs))
 })
+
+# collect_statements() ####
+
+# Returns a function that gives the answers one at a time, then NA.
+feed_answers <- function(x) {
+  i <- 0
+  function() {
+    i <<- i + 1
+    if (i > length(x)) NA_character_ else x[i]
+  }
+}
+
+speeches <- data.frame(doc_id = c("a", "b"),
+                       date = as.Date(c("2011-03-14", "2011-03-15")),
+                       text = c("Merkel wants a moratorium. Greens agree.",
+                                "Industry rejects any exit."))
+
+# Answers are given as: concept, speaker, sign; "" at the concept moves on.
+code_speeches <- function(answers, unit = "sentence", start = 1,
+                          roster = NULL, .data = NULL) {
+  units <- .statement_units(speeches, unit)
+  coded <- .statement_coded(.data)
+  roster <- .statement_roster(roster, coded)
+  suppressMessages(.statement_code(units, seq(start, nrow(units)), roster,
+                                   unit, feed_answers(answers)))
+}
+
+test_that("collect_statements() splits the text into dated units", {
+  units <- .statement_units(speeches, "sentence")
+  expect_equal(units$document, c("a", "a", "b"))
+  expect_equal(units$sentence, c(1, 2, 1))
+  expect_equal(units$time, as.Date(c("2011-03-14", "2011-03-14",
+                                     "2011-03-15")))
+  units <- .statement_units(speeches, "document")
+  expect_equal(units$document, c("a", "b"))
+  expect_null(units$sentence)
+  expect_equal(nrow(.statement_units(c(x = "One. Two.\n\nThree."),
+                                     "paragraph")), 2)
+  expect_null(.statement_units(c(x = "One. Two."), "sentence")$time)
+  expect_error(.statement_units("", "sentence"), "No text")
+  expect_equal(.statement_unit("sentences"), "sentence")
+  expect_error(.statement_unit(5), "windows")
+})
+
+test_that("collect_statements() reads the signs", {
+  expect_equal(vapply(c("+", "agree", "Yes", "1", "-", "disagree", "n", "-1"),
+                      .statement_sign, integer(1), USE.NAMES = FALSE),
+               c(1L, 1L, 1L, 1L, -1L, -1L, -1L, -1L))
+  expect_true(is.na(.statement_sign("maybe")))
+})
+
+test_that("collect_statements() offers a roster of each mode", {
+  coded <- .statement_coded(NULL)
+  expect_equal(.statement_roster("exit", coded)$concepts, "exit")
+  expect_equal(.statement_roster(list(concepts = "exit", speakers = "SPD"),
+                                 coded)$speakers, "SPD")
+  expect_equal(.statement_roster(list("SPD", "exit"), coded)$concepts, "exit")
+  expect_true("Angela Merkel" %in%
+                .statement_roster(NULL, .statement_coded(irps_nuclear))$speakers)
+  expect_error(.statement_roster(list("SPD"), coded), "two character")
+  # the terms of collect_text() are offered as concepts
+  terms <- suppressMessages(collect_text(speeches,
+                                         terms = c("moratorium", "exit")))
+  roster <- .statement_roster(terms, coded)
+  expect_equal(roster$concepts, c("moratorium", "exit"))
+  expect_length(roster$speakers, 0)
+})
+
+test_that("collect_statements() picks names from the roster", {
+  roster <- c("Angela Merkel", "SPD", "Greens")
+  expect_equal(.statement_pick("2", roster)$label, "SPD")
+  expect_equal(.statement_pick("spd", roster)$label, "SPD")
+  expect_equal(.statement_pick("RWE", roster)$label, "RWE")
+  expect_equal(.statement_pick("merk", roster)$matches, 1)
+  expect_equal(.statement_pick("merk", roster, again = TRUE)$label, "merk")
+  expect_equal(.statement_pick("9", roster)$label, "9")
+})
+
+test_that("collect_statements() codes statements from the answers", {
+  found <- code_speeches(c("nuclear exit", "Merkel", "+",
+                           "1", "Greens", "maybe", "yes", "",
+                           "", "nuc", "1", "Industry", "-", "q"))
+  expect_true(found$stopped)
+  st <- found$statements
+  expect_equal(st$speaker, c("Merkel", "Greens", "Industry"))
+  expect_equal(st$concept, rep("nuclear exit", 3))
+  expect_equal(st$weight, c(1L, 1L, -1L))
+  expect_equal(st$document, c("a", "a", "b"))
+  expect_equal(st$sentence, c(1, 1, 1))
+  # "q" stops at any prompt, and the statement is not kept
+  found <- code_speeches(c("exit", "Greens", "q"))
+  expect_true(found$stopped)
+  expect_null(found$statements)
+})
+
+test_that("collect_statements() returns a network in the irps_nuclear form", {
+  found <- code_speeches(c("nuclear exit", "Merkel", "+", "", "",
+                           "1", "Industry", "-", ""))
+  net <- suppressMessages(.statement_network(found, .statement_coded(NULL)))
+  expect_s3_class(net, "stocnet")
+  expect_true(is_twomode(net))
+  expect_true(is_signed(net))
+  expect_false(is_directed(net))
+  expect_equal(net$info$modes, irps_nuclear$info$modes)
+  expect_equal(net$info$update, "increment")
+  expect_equal(node_labels(net), c("Merkel", "Industry", "nuclear exit"))
+  expect_equal(net$ties$weight, c(1L, -1L))
+  expect_s3_class(net$ties$time, "Date")
+  expect_equal(net$ties$document, c("a", "b"))
+  expect_error(.statement_network(list(statements = NULL),
+                                  .statement_coded(NULL)), "No statements")
+})
+
+test_that("collect_statements() codes documents for their concepts", {
+  found <- code_speeches(c("moratorium", "", "", "exit", "", "", "",
+                           "exit", "", "", ""), unit = "document")
+  expect_false(found$stopped)
+  expect_true(all(is.na(found$statements$speaker)))
+  net <- suppressMessages(.statement_network(found, .statement_coded(NULL)))
+  expect_equal(net$info$modes, c("documents", "concepts"))
+  expect_equal(node_labels(net), c("a", "b", "moratorium", "exit"))
+  expect_false("weight" %in% names(net$ties))
+  expect_false(is_signed(net))
+  expect_equal(net$info$name, "Network of coded texts")
+  cooc <- to_mode(net, "concepts")
+  expect_equal(net_ties(cooc), 1)
+  # documents and speakers both make statements: three modes
+  found <- code_speeches(c("exit", "", "", "exit", "Merkel", "+", ""),
+                         unit = "document")
+  expect_warning(net <- suppressMessages(
+    .statement_network(found, .statement_coded(NULL))), "no sign")
+  expect_equal(net$info$modes, c("documents", "speakers", "concepts"))
+  expect_equal(net$ties$weight, c(NA, 1L))
+})
+
+test_that("collect_statements() continues a network coded in part", {
+  first <- code_speeches(c("nuclear exit", "Merkel", "+", "q"))
+  net <- suppressMessages(.statement_network(first, .statement_coded(NULL)))
+  units <- .statement_units(speeches, "sentence")
+  coded <- .statement_coded(net)
+  expect_equal(.statement_start(units, coded, "sentence"), 2)
+  more <- code_speeches(c("", "nuclear", "1", "Industry", "-", ""),
+                        start = 2, .data = net)
+  net <- suppressMessages(.statement_network(more, coded))
+  expect_equal(net_ties(net), 2)
+  expect_equal(node_labels(net), c("Merkel", "Industry", "nuclear exit"))
+  expect_equal(.statement_start(units, .statement_coded(net),
+                                "sentence"), 4)
+  # a network of documents continues by document
+  docs <- suppressMessages(.statement_network(
+    code_speeches(c("exit", "", "", "q"), unit = "document"),
+    .statement_coded(NULL)))
+  coded <- .statement_coded(docs)
+  expect_true(all(is.na(coded$statements$speaker)))
+  expect_equal(.statement_start(.statement_units(speeches, "document"),
+                                coded, "document"), 2)
+  # irps_nuclear keeps its nodes and their attributes
+  coded <- .statement_coded(irps_nuclear)
+  expect_equal(.statement_start(units, coded, "sentence"), 1)
+  more <- code_speeches(c("atomausstieg", "Angela Merkel", "+", "q"),
+                        .data = irps_nuclear)
+  net <- suppressMessages(.statement_network(more, coded))
+  expect_equal(net_ties(net), net_ties(irps_nuclear) + 1)
+  expect_equal(net_nodes(net), net_nodes(irps_nuclear) + 1)
+  expect_equal(net$info$modes, irps_nuclear$info$modes)
+  expect_equal(net$nodes$party[1:5], irps_nuclear$nodes$party[1:5])
+  expect_equal(tail(net$ties$weight, 1), 1L)
+  expect_error(.statement_coded(ison_adolescents), "two-mode")
+})
+
+test_that("collect_statements() shows unknown signs again", {
+  found <- code_speeches(c("exit", "Merkel", "?", "", "",
+                           "exit", "Industry", "-", ""))
+  expect_equal(found$statements$unknown, c(TRUE, FALSE))
+  net <- suppressMessages(.statement_network(found, .statement_coded(NULL)))
+  expect_true(is_signed(net))
+  expect_equal(net$ties$weight, c(NA, -1L))
+  expect_false("unknown" %in% names(net$ties))
+  coded <- .statement_coded(net)
+  expect_equal(coded$statements$unknown, c(TRUE, FALSE))
+  units <- .statement_units(speeches, "sentence")
+  # [Enter] leaves the sign unknown, as "?" does
+  again <- suppressMessages(.statement_revisit(units, coded, "sentence",
+                                               feed_answers("")))
+  expect_false(again$stopped)
+  expect_equal(again$coded$statements$unknown, c(TRUE, FALSE))
+  again <- suppressMessages(.statement_revisit(units, coded, "sentence",
+                                               feed_answers("+")))
+  expect_equal(again$coded$statements$weight, c(1L, -1L))
+  net <- suppressMessages(.statement_network(list(statements = NULL),
+                                             again$coded))
+  expect_equal(net$ties$weight, c(1L, -1L))
+  expect_equal(.statement_revisit(units, again$coded, "sentence",
+                                  feed_answers(character(0)))$coded,
+               again$coded)
+  # "q" stops the second pass
+  expect_true(suppressMessages(.statement_revisit(units, coded, "sentence",
+                                                  feed_answers("q")))$stopped)
+})
+
+code_session <- function(answers, unit = "sentence", .data = NULL) {
+  units <- .statement_units(speeches, unit)
+  coded <- .statement_coded(.data)
+  roster <- .statement_roster(NULL, coded)
+  suppressMessages(.statement_session(units, coded, roster, unit,
+                                      feed_answers(answers)))
+}
+
+test_that("collect_statements() comes back to units skipped with '?'", {
+  session <- code_session(c("moratorium", "Merkel", "+", "?",
+                            "?",
+                            "exit", "Industry", "-", "",
+                            # the skipped units are shown again
+                            "", "?"))
+  expect_false(session$stopped)
+  expect_equal(session$found$statements$concept, c("moratorium", "exit"))
+  expect_equal(session$uncoded, data.frame(document = "a", sentence = 2))
+  net <- suppressMessages(.statement_network(session$found, session$coded,
+                                             session$uncoded))
+  expect_equal(net$info$uncoded$sentence, 2)
+  printed <- utils::capture.output(invisible(utils::capture.output(print(net))),
+                                   type = "message")
+  expect_true(any(grepl("1 unit of text still to code", printed)))
+  # the next session starts with the unit still to code, and then clears it
+  coded <- .statement_coded(net)
+  expect_equal(.statement_start(.statement_units(speeches, "sentence"),
+                                coded, "sentence"), 4)
+  session <- code_session(c("moratorium", "Greens", "+", ""), .data = net)
+  expect_equal(nrow(session$uncoded), 0)
+  net <- suppressMessages(.statement_network(session$found, session$coded,
+                                             session$uncoded))
+  expect_null(net$info$uncoded)
+  expect_equal(net_ties(net), 3)
+  expect_equal(node_labels(net),
+               c("Merkel", "Industry", "Greens", "moratorium", "exit"))
+})
+
+test_that("collect_statements() keeps the units skipped where coding stops", {
+  # "?" at the speaker skips the unit too
+  session <- code_session(c("exit", "?", "q"))
+  expect_true(session$stopped)
+  expect_null(session$found$statements)
+  expect_equal(session$uncoded, data.frame(document = "a", sentence = 1))
+  # units still to code but not reached stay to code
+  net <- suppressMessages(.statement_network(
+    code_session(c("", "", "exit", "Industry", "-", ""))$found,
+    .statement_coded(NULL),
+    data.frame(document = c("a", "a"), sentence = c(1, 2))))
+  session <- code_session(c("exit", "Merkel", "+", "q"), .data = net)
+  expect_equal(session$uncoded, data.frame(document = "a", sentence = 1:2))
+  session <- code_session(c("exit", "Merkel", "+", "", "q"), .data = net)
+  expect_equal(session$uncoded, data.frame(document = "a", sentence = 2L))
+  expect_equal(session$found$statements$speaker, "Merkel")
+  # units still to code that are not in the text are dropped
+  net$info$uncoded <- dplyr::tibble(document = "z", sentence = 1)
+  expect_warning(code_session("", .data = net), "not in")
+  expect_error(make_stocnet(info = list(uncoded = "a"),
+                            nodes = data.frame(label = "a")), "uncoded")
+})
+
+test_that("statements project onto coalitions in moving windows", {
+  dates <- seq(as.Date("2011-03-15"), as.Date("2011-06-15"), by = "month")
+  windows <- to_times(irps_nuclear, dates, window = 30)
+  coalitions <- lapply(windows, to_mode, "speakers", similarity = "agreement")
+  expect_length(coalitions, length(dates))
+  expect_true(all(vapply(coalitions, is_weighted, logical(1))))
+  expect_false(any(vapply(coalitions, is_twomode, logical(1))))
+})

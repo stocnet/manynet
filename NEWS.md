@@ -24,6 +24,11 @@
   - Layers of "cites", "authored", "tagged", and "published" ties
   - Cited works are named by first author, year, and source
   - Works hold their global `citations`, and authors their `position`
+- Added `collect_statements()` for networks from texts coded interactively
+  - Units are sentences, paragraphs, or documents, 
+  - Each unit coded by concepts, speakers, and sign, can be skipped with "?"
+  - `roster` offers known speakers and concepts, or the terms of `collect_text()`
+  - `.data` continues a network that is coded in part, with skips shown again first
 
 ## Classes
 
