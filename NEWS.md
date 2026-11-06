@@ -25,6 +25,10 @@
   - Cited works are named by first author, year, and source
   - Works hold their global `citations`, and authors their `position`
 
+## Classes
+
+- Added `.stocnet$info$uncoded` for units of text still to code
+
 ## Coercion
 
 - Added `as_stocnet()` methods for 'quanteda' and 'tm' matrices of documents

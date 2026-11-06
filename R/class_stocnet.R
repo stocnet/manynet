@@ -608,6 +608,14 @@ print.stocnet <- function(x, ..., n = 12) {
     cli::cli_text("{.emph {trans_header}{trans_desc}}")
     cli::cli_end()
   }
+  # coding that is not finished is shown, so that it is not forgotten
+  if(!is.null(x$info$uncoded) && nrow(x$info$uncoded) > 0){
+    k <- nrow(x$info$uncoded)
+    cli::cli_par()
+    cli_div(theme = list(.emph = list(color = "#4576B5")))
+    cli::cli_text("{.emph # {k} unit{?s} of text still to code}")
+    cli::cli_end()
+  }
   top <- x$nodes
   bottom <- x$ties
   if(!is.null(x$changes) && ncol(x$changes) >0) n <- ceiling(n/3) else 

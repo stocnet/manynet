@@ -38,6 +38,10 @@
 #'   was collected or generated. See the Transformations section.
 #'   Note that this records what has been done to the network,
 #'   where "method" records how the network was collected or modelled.
+#'   - "uncoded" is a data frame of the units of text still to code,
+#'   one row each with its 'document' and, where the unit is a part of a
+#'   document, its 'sentence' or 'paragraph'.
+#'   `collect_statements()` sets it, and removes it when all are coded.
 #'
 #'   If no arguments are used,
 #'   the function will check for missing information and prompt the user to add it.
@@ -204,7 +208,7 @@ add_info.stocnet <- function(.data, ...){
                           "update", "sender", "receiver", "focal", "centered",
                           "source", "method", "location", "date", "boundary",
                           "doi", "system", "max_degree", "min_degree",
-                          "transformations")
+                          "transformations", "uncoded")
 
 .warn_unrecognised_info <- function(given){
   unrecog <- setdiff(given, .stocnet_info_fields)

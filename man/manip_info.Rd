@@ -48,6 +48,10 @@ which \code{to_signed()} sets and \code{to_unsigned()} removes
 was collected or generated. See the Transformations section.
 Note that this records what has been done to the network,
 where "method" records how the network was collected or modelled.
+\item "uncoded" is a data frame of the units of text still to code,
+one row each with its 'document' and, where the unit is a part of a
+document, its 'sentence' or 'paragraph'.
+\code{collect_statements()} sets it, and removes it when all are coded.
 }
 
 If no arguments are used,

@@ -181,6 +181,11 @@ validate_info <- function(.data){
   reserved_cols(.data, "info", "focal", "character",
                 pool = focal_pool, aka = c("dependent","dv"))
   reserved_cols(.data, "info", "centered", "logical")
+  uncoded <- .data$info$uncoded
+  if(!is.null(uncoded) && (!is.data.frame(uncoded) ||
+                           !"document" %in% names(uncoded)))
+    snet_abort("{.code info$uncoded} must be a data frame of the units still",
+               "to code, with a {.val document} column.")
   invisible(.data)
 }
 
