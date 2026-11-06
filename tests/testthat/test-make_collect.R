@@ -560,3 +560,294 @@ test_that("collect_text() scores sentiment from a lexicon", {
                "value")
   expect_error(collect_text(fixture_play, lexicon = 1), "named numeric")
 })
+
+# collect_bibliography() ####
+
+fixture_records <- data.frame(
+  SR = c("SMITH J, 2001, SCIENTOMETRICS", "JONES K, 2003, SCIENTOMETRICS",
+         "LI X, 2005, J INFORMETR"),
+  AU = c("SMITH J;JONES K", "JONES K", "LI X;SMITH J;JONES K"),
+  TI = c("Citations", "Coupling", "Co-words"),
+  PY = c(2001, 2003, 2005),
+  SO = c("SCIENTOMETRICS", "SCIENTOMETRICS", "J INFORMETR"),
+  DE = c("CITATION; NETWORK", "COUPLING; NETWORK", "NETWORK"),
+  ID = c("SCIENCE", NA, "SCIENCE; BIBLIOMETRICS"),
+  DI = c("10.1000/R1", NA, NA),
+  CR = c(paste("PRICE DJD, 1965, SCIENCE, V149, P510,",
+               "DOI 10.1126/SCIENCE.149.3683.510"),
+         # the last is another paper of the same key as the record citing it
+         paste("SMITH J, 2001, SCIENTOMETRICS, V50, P1;",
+               "PRICE DJD, 1965, SCIENCE;",
+               "JONES K, 2003, SCIENTOMETRICS, V60, P5"),
+         # the first matches a record by DOI, and the last holds a semicolon
+         paste("ANON, 2001, SOMEWHERE, DOI 10.1000/R1;",
+               "JONES K, 2003, SCIENTOMETRICS;",
+               "PRICE DJD, 1965, SCIENCE, V149, P510;",
+               "GARFIELD E, 1955, SCIENCE, V122, P108, DOI",
+               "10.1002/(SICI)1097-4571(199401)45:1<12::AID-ASI2>3.0.CO;2-9")),
+  stringsAsFactors = FALSE)
+
+bib_weight <- function(x, a, b) as_matrix(x)[a, b]
+
+test_that("collect_bibliography() collects a multimodal network of records", {
+  out <- collect_bibliography(fixture_records)
+  expect_s3_class(out, "stocnet")
+  expect_equal(out$info$modes, c("works", "authors", "keywords", "sources"))
+  expect_equal(out$info$layers, c("cites", "authored", "tagged", "published"))
+  expect_equal(unname(out$info$directed), c(TRUE, FALSE, FALSE, FALSE))
+  expect_equal(unname(out$info$sender), c("works", "authors", "works", "works"))
+  expect_equal(unname(out$info$receiver),
+               c("works", "works", "keywords", "sources"))
+  expect_equal(out$info$update, "increment")
+  expect_true(is_dynamic(out))
+  works <- out$nodes[out$nodes$mode == "works", ]
+  expect_equal(works$recorded, rep(c(TRUE, FALSE), each = 3))
+  expect_equal(works$year, c(2001, 2003, 2005, 1965, 2003, 1955))
+  expect_equal(works$title[1:3], fixture_records$TI)
+  # keywords are lowercased and one for each spelling
+  expect_setequal(out$nodes$label[out$nodes$mode == "keywords"],
+                  c("citation", "network", "coupling"))
+  # every tie has the year of its work, and a citation that of the citing work
+  cites <- out$ties[out$ties$layer == "cites", ]
+  expect_equal(cites$time, fixture_records$PY[cites$from])
+  expect_equal(sum(out$ties$layer == "authored"), 6)
+  expect_equal(sum(out$ties$layer == "published"), 3)
+  # to_time() gives the literature up to a year
+  expect_equal(sum(to_time(out, 2003)$ties$layer == "cites"), 4)
+})
+
+test_that("collect_bibliography() matches cited references to works", {
+  out <- collect_bibliography(fixture_records)
+  el <- as_edgelist(to_uniplex(out, "cites"))
+  expect_equal(paste(el$from, el$to, sep = " > "),
+               c("SMITH J, 2001, SCIENTOMETRICS > PRICE DJD, 1965, SCIENCE",
+                 "JONES K, 2003, SCIENTOMETRICS > SMITH J, 2001, SCIENTOMETRICS",
+                 "JONES K, 2003, SCIENTOMETRICS > PRICE DJD, 1965, SCIENCE",
+                 paste("JONES K, 2003, SCIENTOMETRICS >",
+                       "JONES K, 2003, SCIENTOMETRICS 1"),
+                 "LI X, 2005, J INFORMETR > SMITH J, 2001, SCIENTOMETRICS",
+                 "LI X, 2005, J INFORMETR > JONES K, 2003, SCIENTOMETRICS",
+                 "LI X, 2005, J INFORMETR > PRICE DJD, 1965, SCIENCE",
+                 "LI X, 2005, J INFORMETR > GARFIELD E, 1955, SCIENCE"))
+  works <- out$nodes[out$nodes$mode == "works", ]
+  # references without a DOI join the one DOI of their key
+  expect_equal(works$doi[4], "10.1126/science.149.3683.510")
+  # a DOI that holds a semicolon is kept whole
+  expect_equal(works$doi[6],
+               "10.1002/(sici)1097-4571(199401)45:1<12::aid-asi2>3.0.co;2-9")
+  expect_equal(works$reference[5], "JONES K, 2003, SCIENTOMETRICS, V60, P5")
+  # works of the same author, year, and source are one, whatever their DOIs
+  two <- data.frame(SR = "LI X, 2005, J INFORMETR", AU = "LI X", PY = 2005,
+                    CR = paste("PRICE DJD, 1965, SCIENCE, V149, P510, DOI 10.1126/A;",
+                               "PRICE DJD, 1965, SCIENCE, V150, P1, DOI 10.1126/B"))
+  out <- collect_bibliography(two)
+  expect_equal(sum(out$nodes$mode == "works"), 2)
+  expect_equal(out$nodes$doi[2], "10.1126/a")
+})
+
+test_that("collect_bibliography() records the position of each author", {
+  out <- collect_bibliography(fixture_records)
+  authored <- out$ties[out$ties$layer == "authored", ]
+  expect_equal(authored$position, c(1, 2, 1, 1, 2, 3))
+  expect_true(all(is.na(out$ties$position[out$ties$layer != "authored"])))
+})
+
+test_that("collect_bibliography() gives the classic networks by recipe", {
+  out <- collect_bibliography(fixture_records)
+  cites <- to_uniplex(out, "cites")
+  cocit <- to_proximity(cites, across = "columns")
+  expect_equal(bib_weight(cocit, "SMITH J, 2001, SCIENTOMETRICS",
+                          "PRICE DJD, 1965, SCIENCE"), 2)
+  expect_equal(bib_weight(cocit, "SMITH J, 2001, SCIENTOMETRICS",
+                          "JONES K, 2003, SCIENTOMETRICS"), 1)
+  expect_equal(bib_weight(cocit, "JONES K, 2003, SCIENTOMETRICS",
+                          "JONES K, 2003, SCIENTOMETRICS 1"), 0)
+  coup <- to_proximity(cites, across = "rows")
+  expect_equal(bib_weight(coup, "JONES K, 2003, SCIENTOMETRICS",
+                          "LI X, 2005, J INFORMETR"), 2)
+  expect_equal(bib_weight(coup, "SMITH J, 2001, SCIENTOMETRICS",
+                          "LI X, 2005, J INFORMETR"), 1)
+  coauth <- to_mode(out, "authors", through = "works",
+                    similarity = "fractional")
+  expect_equal(bib_weight(coauth, "SMITH J", "JONES K"), 1.5)
+  expect_equal(bib_weight(coauth, "LI X", "SMITH J"), 0.5)
+  coword <- to_mode(out, "keywords", through = "works")
+  expect_equal(bib_weight(coword, "network", "citation"), 1)
+  expect_equal(bib_weight(coword, "citation", "coupling"), 0)
+  topics <- to_twomode(out, through = c("works", "sources"))
+  expect_equal(topics$info$modes, c("authors", "keywords"))
+  expect_equal(bib_weight(topics, "JONES K", "network"), 3)
+})
+
+test_that("collect_bibliography() collects the keywords asked for", {
+  indexed <- collect_bibliography(fixture_records, keywords = "indexed")
+  expect_setequal(indexed$nodes$label[indexed$nodes$mode == "keywords"],
+                  c("science", "bibliometrics"))
+  both <- collect_bibliography(fixture_records, keywords = "both")
+  expect_equal(sum(both$nodes$mode == "keywords"), 5)
+  # a mode without nodes is left out
+  none <- collect_bibliography(fixture_records[c("AU", "PY", "CR")])
+  expect_equal(none$info$modes, c("works", "authors"))
+  expect_equal(none$info$layers, c("cites", "authored"))
+})
+
+test_that("collect_bibliography() reads OpenAlex records", {
+  oa <- data.frame(id = c("https://openalex.org/W1", "https://openalex.org/W2"),
+                   display_name = c("First", "Second"),
+                   publication_year = c(2010L, 2012L),
+                   doi = c("https://doi.org/10.1000/A", NA),
+                   source_display_name = c("J One", "J Two"))
+  oa$authorships <- list(data.frame(display_name = c("Ann Lee", "Bo Chen")),
+                         data.frame(display_name = "Ann Lee"))
+  oa$referenced_works <- list("https://openalex.org/W9",
+                              c("https://openalex.org/W1",
+                                "https://openalex.org/W9"))
+  oa$keywords <- list(data.frame(display_name = c("Networks", "Text")),
+                      data.frame(display_name = "networks"))
+  oa$concepts <- list(data.frame(display_name = "Sociology"), NULL)
+  oa$cited_by_count <- c(5L, 0L)
+  out <- collect_bibliography(oa)
+  works <- out$nodes[out$nodes$mode == "works", ]
+  expect_equal(works$openalex, c("W1", "W2", "W9"))
+  # the global citation counts, which cited works that are not records lack
+  expect_equal(works$citations, c(5L, 0L, NA))
+  # where no record gives a count, there is no column of counts
+  expect_false("citations" %in% names(collect_bibliography(fixture_records)$nodes))
+  expect_equal(works$recorded, c(TRUE, TRUE, FALSE))
+  expect_equal(works$doi[1], "10.1000/a")
+  el <- as_edgelist(to_uniplex(out, "cites"))
+  expect_equal(el$to, c("W9", "Ann Lee, 2010, J One", "W9"))
+  expect_equal(sum(out$nodes$mode == "keywords"), 2)
+  indexed <- collect_bibliography(oa, keywords = "indexed")
+  expect_equal(indexed$nodes$label[indexed$nodes$mode == "keywords"],
+               "sociology")
+})
+
+test_that("collect_bibliography() reads BibTeX files", {
+  file <- tempfile(fileext = ".bib")
+  on.exit(unlink(file))
+  writeLines(c(
+    "@comment{Exported from the Web of Science}",
+    "@article{lee2010,",
+    "  author = {Lee, Ann and Chen, Bo},",
+    "  title = {First {N}etworks},",
+    "  journal = \"J One\",",
+    "  year = 2010,",
+    "  doi = {10.1000/A},",
+    "  keywords = {networks; text},",
+    "  keywords-plus = {SOCIOLOGY},",
+    "  cited-references = {PRICE DJD, 1965, SCIENCE, V149, P510",
+    "   SMALL H, 1973, J AM SOC INFORM SCI, V24, P265}",
+    "}",
+    "@incollection{lee2012, author = {Lee, Ann}, title = {Second},",
+    "  booktitle = {Book Two}, year = {2012},",
+    "  cited-references = {LEE A, 2010, J ONE",
+    "   PRICE DJD, 1965, SCIENCE}}"), file)
+  out <- collect_bibliography(file)
+  works <- out$nodes[out$nodes$mode == "works", ]
+  expect_equal(works$label[1:2], c("lee2010", "lee2012"))
+  expect_equal(works$title[1], "First Networks")
+  expect_equal(works$recorded, c(TRUE, TRUE, FALSE, FALSE))
+  expect_equal(out$nodes$label[out$nodes$mode == "sources"],
+               c("J One", "Book Two"))
+  el <- as_edgelist(to_uniplex(out, "cites"))
+  # the second record cites the first by its author, year, and source
+  expect_equal(el$to, c("PRICE DJD, 1965, SCIENCE",
+                        "SMALL H, 1973, J AM SOC INFORM SCI",
+                        "lee2010", "PRICE DJD, 1965, SCIENCE"))
+  expect_equal(collect_bibliography(file, keywords = "indexed")$nodes$label[7],
+               "sociology")
+})
+
+test_that("collect_bibliography() reads BibLaTeX files from Zotero", {
+  file <- tempfile(fileext = ".bib")
+  on.exit(unlink(file))
+  writeLines(c(
+    "@article{kellyDebunking2026,",
+    "\ttitle = {Debunking {When} {Prophecy} {Fails}},",
+    "\tabstract = {In 1954, a group,",
+    "            predicted a flood.},",
+    "\tjournaltitle = {Journal of the History of the Behavioral Sciences},",
+    "\tauthor = {Kelly, Thomas},",
+    "\tdate = {2026-01},",
+    "}",
+    "@book{heupelRule2016,",
+    "\ttitle = {The {Rule} of {Law} in {Global} {Governance}},",
+    "\tpublisher = {Palgrave Macmillan UK},",
+    "\teditor = {Heupel, Monika and Reinold, Theresa},",
+    "\tyear = {2016},",
+    "}"), file)
+  out <- collect_bibliography(file)
+  expect_equal(out$info$layers, c("authored", "published"))
+  expect_equal(out$nodes$year[1:2], c(2026, 2016))
+  expect_equal(out$nodes$label[out$nodes$mode == "authors"],
+               c("Kelly, Thomas", "Heupel, Monika", "Reinold, Theresa"))
+  expect_equal(out$nodes$label[out$nodes$mode == "sources"],
+               c("Journal of the History of the Behavioral Sciences",
+                 "Palgrave Macmillan UK"))
+})
+
+test_that("collect_bibliography() errors informatively", {
+  expect_error(collect_bibliography(1), "data frame or the path")
+  expect_error(collect_bibliography(tempfile(fileext = ".bib")),
+               "does not exist")
+  expect_error(collect_bibliography(data.frame(x = 1)),
+               "not a data frame of bibliographic records")
+  expect_error(collect_bibliography(fixture_records[0, ]), "No records")
+})
+
+test_that("collect_bibliography() counts as bibliometrix does", {
+  skip_if_not_installed("bibliometrix")
+  skip_if_not_installed("bibliometrixData")
+  records <- get(utils::data("scientometrics", package = "bibliometrixData",
+                             envir = environment()))
+  out <- collect_bibliography(records)
+  cites <- to_uniplex(out, "cites")
+  cocit <- as_matrix(to_proximity(cites, across = "columns"))
+  coup <- as_matrix(to_proximity(cites, across = "rows"))
+  theirs_cocit <- as.matrix(suppressWarnings(bibliometrix::biblioNetwork(
+    records, "co-citation", "references", shortlabel = FALSE)))
+  theirs_coup <- as.matrix(suppressWarnings(bibliometrix::biblioNetwork(
+    records, "coupling", "references", shortlabel = FALSE)))
+  # bibliometrix names a cited work by its reference up to its volume or DOI,
+  # where manynet keeps works of different DOIs apart, so the counts are
+  # compared for the references that both name in the same way
+  recs <- .bib_records(records, "author")
+  refs <- .bib_match(recs)$references
+  string <- gsub("[,;]", " ", gsub("\\).*", ")", unlist(recs$refs)))
+  cut <- regexpr("V[0-9]|DOI ", string)
+  string[cut > 0] <- substr(string[cut > 0], 1, cut[cut > 0] - 1)
+  string <- gsub("\\s+", " ", string)
+  map <- unique(data.frame(string = string, work = refs$cited))
+  same <- !map$string %in% map$string[duplicated(map$string)] &
+    !map$work %in% map$work[duplicated(map$work)] &
+    map$string %in% colnames(theirs_cocit)
+  map <- map[same, ]
+  expect_gt(nrow(map), 4000)
+  labels <- out$nodes$label[map$work]
+  ours <- cocit[labels, labels]
+  theirs <- theirs_cocit[map$string, map$string]
+  diag(ours) <- diag(theirs) <- 0
+  expect_equal(unname(ours), unname(theirs))
+  # coupling, for the records whose references are all named in the same way
+  whole <- which(tapply(refs$cited %in% map$work, refs$citing,
+                        all))
+  expect_gt(length(whole), 20)
+  ours <- coup[out$nodes$label[whole], out$nodes$label[whole]]
+  theirs <- theirs_coup[whole, whole]
+  diag(ours) <- diag(theirs) <- 0
+  expect_equal(unname(ours), unname(theirs))
+  # co-authorship and co-word counts are the same throughout
+  theirs <- as.matrix(bibliometrix::biblioNetwork(records, "collaboration",
+                                                   "authors"))
+  ours <- as_matrix(to_mode(out, "authors", through = "works"))
+  diag(theirs) <- 0
+  expect_equal(unname(ours[rownames(theirs), colnames(theirs)]),
+               unname(theirs))
+  theirs <- as.matrix(bibliometrix::biblioNetwork(records, "co-occurrences",
+                                                   "author_keywords"))
+  ours <- as_matrix(to_mode(out, "keywords", through = "works"))
+  diag(theirs) <- 0
+  keywords <- tolower(rownames(theirs))
+  expect_equal(unname(ours[keywords, keywords]), unname(theirs))
+})

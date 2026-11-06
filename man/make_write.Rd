@@ -127,6 +127,7 @@ The direction of a tie is not written.
 \link{as}
 
 Other makes:
+\code{\link{make_bibliography}},
 \code{\link{make_collect}},
 \code{\link{make_create}},
 \code{\link{make_ego}},

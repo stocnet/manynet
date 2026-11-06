@@ -1613,3 +1613,579 @@ collect_text <- function(text, unit = "document", terms = NULL,
                                                stringsAsFactors = FALSE),
                ties = out)
 }
+
+# Bibliography ####
+
+#' Making networks from bibliographic records
+#'
+#' @description
+#' `collect_bibliography()` creates a network from bibliographic records,
+#' such as an export from the Web of Science, Scopus, or OpenAlex.
+#' The result is one multimodal network of the works,
+#' their authors, their keywords, and their sources,
+#' in which the works also cite one another.
+#' The classic bibliometric networks, such as co-citation,
+#' bibliographic coupling, co-authorship, and co-word networks,
+#' are then projections or proximities of this network
+#' (see Recipes).
+#' @details
+#'   Only base R is used, so no bibliometric package is needed.
+#'   The records can come from:
+#'   - `bibliometrix::convert2df()`, a data frame with one record in each row
+#'   and the fields of the Web of Science as its columns:
+#'   'AU' (authors), 'CR' (cited references), 'DE' (author keywords),
+#'   'ID' (indexed keywords), 'SO' (source), 'PY' (year), 'DI' (DOI),
+#'   'TI' (title), and 'SR' (a short label);
+#'   - `openalexR::oa_fetch()`, a data frame of works with the columns
+#'   'id', 'display_name', 'authorships' (or 'author'), 'publication_year',
+#'   'doi', 'source_display_name' (or 'so'), 'referenced_works',
+#'   'keywords', and 'concepts' or 'topics';
+#'   - a BibTeX or BibLaTeX file, such as the BibTeX export of the
+#'   Web of Science, which holds the cited references of each record in its
+#'   'cited-references' field.
+#'   A file that Zotero exports holds no cited references,
+#'   so it gives works, authors, keywords, and sources, but no citations.
+#'   The editors of a work are its authors where it has no authors.
+#'   Records in other forms can be given as a data frame with the
+#'   columns of `{bibliometrix}`.
+#'
+#'   The network has four modes and four layers:
+#'
+#'   | Layer | From | To | Directed |
+#'   |:------|:-----|:---|:---------|
+#'   | "cites" | works | works | yes |
+#'   | "authored" | authors | works | no |
+#'   | "tagged" | works | keywords | no |
+#'   | "published" | works | sources | no |
+#'
+#'   A mode or layer with no nodes or ties is left out.
+#'   The works have a 'citations' column with the number of times
+#'   the database counts them as cited, in all the works it holds
+#'   ('TC' in `{bibliometrix}`, 'cited_by_count' in OpenAlex,
+#'   or 'times-cited' in BibTeX), where it gives one.
+#'   This is the global citation count.
+#'   The local citation count, how often the records cite a work,
+#'   is the indegree of the work in the "cites" layer.
+#'   Each "authored" tie has the position of its author among the authors
+#'   of the work in a 'position' column, 1 for the first author,
+#'   since some counts weight the first or last authors more.
+#'   Each tie has the publication year of its work as its 'time',
+#'   and for "cites" this is the year of the citing work.
+#'   Since a work that is published stays published, and a citation stays
+#'   made, the ties are events that increment the network,
+#'   so `to_time(.data, 2010)` gives the literature up to 2010.
+#' @section Cited works:
+#'   A cited reference becomes a tie to a work.
+#'   The reference is matched to a work in the records where possible:
+#'
+#'   1. by a normalised string of its first author, year, and source,
+#'   as the Web of Science writes references
+#'   (e.g. "GLANZEL W, 1996, SCIENTOMETRICS"),
+#'   where this string identifies one record
+#'   (the 'SR' column of `{bibliometrix}`, or else the same string made
+#'   from the first author, year, and source of the record);
+#'   2. else by its DOI, where both the reference and the record have one;
+#'   3. else by its OpenAlex identifier, for OpenAlex records.
+#'
+#'   A reference that matches no record is a work too,
+#'   since co-citation is about the works cited, most of which are not
+#'   in the records.
+#'   These works have `FALSE` in the 'recorded' column of the nodes,
+#'   so `filter_nodes(.data, recorded | is.na(recorded))` keeps only
+#'   the works in the records (and the other modes).
+#'   They are not inactive, since they hold ties.
+#'   References that are not matched to a record are one work
+#'   where they have the same normalised string of first author, year,
+#'   and source, as in `{bibliometrix}`, whether or not they give a DOI.
+#'   The 'doi' of such a work is the first DOI that its references give.
+#'   Two works of an author in the same year and source are therefore
+#'   one work, even where their DOIs differ,
+#'   and a work that is written differently in two references,
+#'   such as with another spelling of its author, is two works.
+#'   A reference that matches the record that cites it is another work,
+#'   since a work does not cite itself.
+#'   Scopus writes references in another order,
+#'   so its references are matched to records only by DOI.
+#' @section Recipes:
+#'   The classic networks come from the existing functions:
+#'
+#'   | Network | Recipe |
+#'   |:--------|:-------|
+#'   | citation | `to_uniplex(.data, "cites")` |
+#'   | co-citation | `to_proximity(to_uniplex(.data, "cites"), across = "columns")` |
+#'   | bibliographic coupling | `to_proximity(to_uniplex(.data, "cites"), across = "rows")` |
+#'   | co-authorship | `to_mode(.data, "authors", through = "works", similarity = "fractional")` |
+#'   | co-word | `to_mode(.data, "keywords", through = "works")` |
+#'   | authors and keywords | `to_twomode(.data, through = c("works", "sources"))` |
+#'
+#'   Co-citation ties two works that are cited by the same work,
+#'   and coupling ties two works that cite the same work,
+#'   in both cases weighted by the number of such works.
+#'   "fractional" counting shares each work among its authors,
+#'   so that a work of many authors does not dominate
+#'   (Perianes-Rodriguez, Waltman, and van Eck 2016);
+#'   use "count" for full counting.
+#'   See [to_mode()] for other similarities,
+#'   such as "association" strength.
+#' @param records The bibliographic records.
+#'   A data frame from `{bibliometrix}` or `{openalexR}`,
+#'   or the path to a BibTeX or BibLaTeX file (see Details).
+#' @param keywords Which keywords to collect.
+#'   One of "author" (the default), the keywords that the authors give
+#'   ('DE', or 'keywords' in BibTeX and OpenAlex),
+#'   "indexed", the keywords that the database adds
+#'   ('ID', 'keywords-plus' in BibTeX, or the concepts or topics of OpenAlex),
+#'   or "both".
+#'   Keywords are lowercased.
+#' @return A `stocnet` object.
+#'   A multimodal, multiplex network of works, authors, keywords,
+#'   and sources.
+#' @family makes
+#' @seealso [to_uniplex()], [to_proximity()], [to_mode()], [to_time()]
+#' @references
+#' Perianes-Rodriguez, Antonio, Ludo Waltman, and Nees Jan van Eck. 2016.
+#' "Constructing bibliometric networks: A comparison between full and
+#' fractional counting".
+#' _Journal of Informetrics_, 10(4): 1178-1195.
+#' \doi{10.1016/j.joi.2016.10.006}
+#' @examples
+#' records <- data.frame(
+#'   SR = c("SMITH J, 2001, SCIENTOMETRICS", "JONES K, 2003, SCIENTOMETRICS",
+#'          "LI X, 2005, J INFORMETR"),
+#'   AU = c("SMITH J;JONES K", "JONES K", "LI X;SMITH J"),
+#'   TI = c("Citations", "Coupling", "Co-words"),
+#'   PY = c(2001, 2003, 2005),
+#'   SO = c("SCIENTOMETRICS", "SCIENTOMETRICS", "J INFORMETR"),
+#'   DE = c("citation; network", "coupling; network", "network"),
+#'   CR = c("PRICE DJD, 1965, SCIENCE, V149, P510",
+#'          "SMITH J, 2001, SCIENTOMETRICS, V50, P1; PRICE DJD, 1965, SCIENCE",
+#'          "SMITH J, 2001, SCIENTOMETRICS; JONES K, 2003, SCIENTOMETRICS"))
+#' (bib <- collect_bibliography(records))
+#' to_uniplex(bib, "cites") |> to_proximity(across = "columns")
+#' to_mode(bib, "authors", through = "works", similarity = "fractional")
+#' @name make_bibliography
+#' @export
+collect_bibliography <- function(records,
+                                 keywords = c("author", "indexed", "both")) {
+  keywords <- match.arg(keywords)
+  snet_progress_step("Reading the records")
+  recs <- .bib_records(records, keywords)
+  if (length(recs$label) == 0)
+    snet_abort("No records were found in {.arg records}.")
+  snet_progress_step("Matching cited references to works")
+  works <- .bib_match(recs)
+  .bib_network(recs, works)
+}
+
+# Returns the records in one form: a list with, for each record, its label,
+# title, year, DOI, OpenAlex identifier, and source, and lists of its
+# authors, keywords, and references, and whether references are identifiers.
+.bib_records <- function(records, keywords) {
+  if (is.character(records) && length(records) == 1) {
+    if (!file.exists(records))
+      snet_abort("The file {.file {records}} does not exist.")
+    return(.bib_from_bibtex(.bib_parse(records), keywords))
+  }
+  if (!is.data.frame(records))
+    snet_abort("{.arg records} must be a data frame or the path to a",
+               "BibTeX file, not {.cls {class(records)}}.")
+  records <- as.data.frame(records, stringsAsFactors = FALSE)
+  if ("referenced_works" %in% names(records) ||
+      any(c("authorships", "publication_year") %in% names(records)))
+    return(.bib_from_openalex(records, keywords))
+  if ("AU" %in% names(records))
+    return(.bib_from_fields(records, keywords))
+  snet_abort("{.arg records} is not a data frame of bibliographic records.",
+             "i" = "Give the columns of {.pkg bibliometrix}, such as",
+             " " = "{.val AU}, {.val CR}, {.val PY}, and {.val SO},",
+             "i" = "or the columns of {.pkg openalexR}, such as",
+             " " = "{.val id} and {.val referenced_works}.")
+}
+
+# Returns a column as a character vector, or NAs where it is absent.
+.bib_col <- function(df, col, n = nrow(df)) {
+  if (!col %in% names(df)) return(rep(NA_character_, n))
+  x <- as.character(df[[col]])
+  x[!is.na(x) & !nzchar(trimws(x))] <- NA
+  x
+}
+
+# Splits each of a vector of fields into trimmed, non-empty items.
+.bib_split <- function(x, sep = ";") {
+  x <- as.character(x)
+  x[is.na(x)] <- ""
+  lapply(strsplit(x, sep, perl = TRUE), function(i) {
+    i <- trimws(gsub("\\s+", " ", i))
+    i[nzchar(i) & i != "NA"]
+  })
+}
+
+.bib_keywords <- function(author, indexed, keywords) {
+  out <- switch(keywords, author = author, indexed = indexed,
+                both = Map(c, author, indexed))
+  lapply(out, function(k) unique(tolower(k)))
+}
+
+# A label in the form the Web of Science gives cited references,
+# "AUTHOR, YEAR, SOURCE", for records that have no label of their own.
+.bib_label <- function(authors, year, source) {
+  first <- vapply(authors, function(a) if (length(a)) a[1] else NA_character_,
+                  character(1))
+  parts <- cbind(first, as.character(year), source)
+  out <- apply(parts, 1, function(p) paste(p[!is.na(p)], collapse = ", "))
+  out[!nzchar(out)] <- "work"
+  out
+}
+
+.bib_from_fields <- function(df, keywords) {
+  n <- nrow(df)
+  authors <- .bib_split(.bib_col(df, "AU"))
+  year <- suppressWarnings(as.integer(.bib_col(df, "PY")))
+  source <- trimws(.bib_col(df, "SO"))
+  label <- .bib_col(df, "SR")
+  label[is.na(label)] <- .bib_label(authors, year, source)[is.na(label)]
+  # bibliometrix reads "DOI;" for "DOI " in some exports
+  refs <- .bib_split(gsub("DOI;", "DOI ", .bib_col(df, "CR"), fixed = TRUE))
+  # some DOIs hold a semicolon, as in "...<1:AID-ASI1>3.0.CO;2-9", and the
+  # pieces they are split into are joined again, since every reference
+  # of the Web of Science separates its author and year with a comma
+  refs <- lapply(refs, function(r) {
+    if (length(r) < 2) return(r)
+    tail <- !grepl(",", r) & c(FALSE, rep(TRUE, length(r) - 1))
+    if (!any(tail)) return(r)
+    group <- cumsum(!tail)
+    unname(vapply(split(r, group), paste, character(1), collapse = ";"))
+  })
+  list(label = label, key = label, title = .bib_col(df, "TI"), year = year,
+       citations = .bib_count(.bib_col(df, "TC")),
+       doi = .bib_doi(.bib_col(df, "DI")), id = rep(NA_character_, n),
+       source = source, authors = authors,
+       keywords = .bib_keywords(.bib_split(.bib_col(df, "DE")),
+                                .bib_split(.bib_col(df, "ID")), keywords),
+       refs = refs, ids = FALSE)
+}
+
+# Returns the values of a column of a list column of data frames
+# (or vectors), one character vector for each record.
+.bib_nested <- function(x, cols) {
+  if (is.null(x)) return(NULL)
+  lapply(x, function(i) {
+    if (is.null(i) || (length(i) == 1 && is.atomic(i) && is.na(i)))
+      return(character(0))
+    if (is.data.frame(i)) {
+      col <- intersect(cols, names(i))[1]
+      if (is.na(col)) return(character(0))
+      if ("type" %in% names(i) && "topic" %in% i$type) i <- i[i$type == "topic", ]
+      return(as.character(i[[col]][!is.na(i[[col]])]))
+    }
+    as.character(unlist(i))
+  })
+}
+
+.bib_from_openalex <- function(df, keywords) {
+  n <- nrow(df)
+  none <- rep(list(character(0)), n)
+  authors <- .bib_nested(df$authorships, c("display_name", "au_display_name")) %||%
+    .bib_nested(df$author, c("au_display_name", "display_name")) %||% none
+  year <- suppressWarnings(as.integer(.bib_col(df, "publication_year")))
+  source <- .bib_col(df, "source_display_name")
+  if (all(is.na(source))) source <- .bib_col(df, "so")
+  title <- .bib_col(df, "display_name")
+  if (all(is.na(title))) title <- .bib_col(df, "title")
+  author_kw <- .bib_nested(df$keywords, c("display_name", "keyword")) %||% none
+  indexed_kw <- .bib_nested(df$concepts, "display_name") %||%
+    .bib_nested(df$topics, "display_name") %||% none
+  refs <- .bib_nested(df$referenced_works, "id") %||% none
+  list(label = .bib_label(authors, year, source),
+       key = rep(NA_character_, n), title = title, year = year,
+       citations = .bib_count(.bib_col(df, "cited_by_count")),
+       doi = .bib_doi(.bib_col(df, "doi")),
+       id = .bib_openalex_id(.bib_col(df, "id")), source = source,
+       authors = authors,
+       keywords = .bib_keywords(author_kw, indexed_kw, keywords),
+       refs = lapply(refs, .bib_openalex_id), ids = TRUE)
+}
+
+# Writes names as the Web of Science does in references, "LEE A" for
+# "Lee, Ann" or "Ann Lee".
+.bib_short_name <- function(x) {
+  if (length(x) == 0) return(x)
+  comma <- grepl(",", x, fixed = TRUE)
+  surname <- ifelse(comma, sub(",.*", "", x), sub(".*\\s", "", x))
+  given <- ifelse(comma, sub("^[^,]*,", "", x),
+                  ifelse(grepl("\\s", x), sub("\\s+\\S+$", "", x), ""))
+  initials <- vapply(strsplit(trimws(given), "[[:space:].-]+"), function(g)
+    paste(substr(g[nzchar(g)], 1, 1), collapse = ""), character(1))
+  trimws(toupper(paste(surname, initials)))
+}
+
+# Reads a count of citations, which some exports write as "12 times".
+.bib_count <- function(x) {
+  suppressWarnings(as.integer(sub("^\\D*(\\d+).*$", "\\1", x)))
+}
+
+.bib_openalex_id <- function(x) toupper(sub("^https?://openalex\\.org/", "", x))
+
+.bib_from_bibtex <- function(entries, keywords) {
+  field <- function(f) vapply(entries, function(e) {
+    v <- e[[f]]
+    if (is.null(v)) NA_character_ else v
+  }, character(1))
+  # an edited book has editors and no authors
+  people <- field("author")
+  people[is.na(people)] <- field("editor")[is.na(people)]
+  authors <- .bib_split(people, "\\s+and\\s+")
+  # BibLaTeX, as Zotero can export, gives a date and a journal title
+  year <- field("year")
+  year[is.na(year)] <- field("date")[is.na(year)]
+  year <- suppressWarnings(as.integer(sub(".*?(\\d{4}).*", "\\1", year)))
+  source <- field("journal")
+  for (f in c("journaltitle", "booktitle", "publisher", "school", "institution"))
+    source[is.na(source)] <- field(f)[is.na(source)]
+  refs <- field("cited-references")
+  refs[is.na(refs)] <- field("references")[is.na(refs)]
+  label <- vapply(entries, function(e) e$.key %||% NA_character_, character(1))
+  label[is.na(label)] <- .bib_label(authors, year, source)[is.na(label)]
+  list(label = label,
+       key = .bib_label(lapply(authors, .bib_short_name), year, source),
+       title = field("title"), year = year,
+       citations = .bib_count(field("times-cited")),
+       doi = .bib_doi(field("doi")), id = rep(NA_character_, length(entries)),
+       source = source, authors = authors,
+       keywords = .bib_keywords(.bib_split(field("keywords"), "[;,]"),
+                                .bib_split(field("keywords-plus"), "[;,]"),
+                                keywords),
+       refs = .bib_split(refs, "\n|;"), ids = FALSE)
+}
+
+# Reads a BibTeX file into a list of entries, each a named list of fields,
+# with the citation key as '.key'. Field names are lowercased, braces are
+# dropped, and white space is collapsed except for newlines.
+.bib_parse <- function(file) {
+  txt <- paste(readLines(file, warn = FALSE, encoding = "UTF-8"),
+               collapse = "\n")
+  ch <- strsplit(txt, "", fixed = TRUE)[[1]]
+  if (length(ch) == 0) return(list())
+  depth <- cumsum((ch == "{") - (ch == "}"))
+  at <- gregexpr("@[A-Za-z]+[[:space:]]*\\{", txt)[[1]]
+  if (at[1] == -1) return(list())
+  ends <- at + attr(at, "match.length") - 1L
+  types <- tolower(gsub("[@{[:space:]]", "", regmatches(txt, list(at))[[1]]))
+  entries <- list()
+  for (i in seq_along(at)) {
+    if (types[i] %in% c("comment", "string", "preamble")) next
+    open <- ends[i]
+    close <- which(depth[(open + 1L):length(ch)] == depth[open] - 1L)[1]
+    if (is.na(close)) next
+    body <- paste(ch[(open + 1L):(open + close - 1L)], collapse = "")
+    entries[[length(entries) + 1L]] <- .bib_parse_entry(body)
+  }
+  entries
+}
+
+.bib_parse_entry <- function(body) {
+  comma <- regexpr(",", body, fixed = TRUE)
+  if (comma == -1) return(list(.key = trimws(body)))
+  out <- list(.key = trimws(substr(body, 1, comma - 1)))
+  rest <- substr(body, comma + 1, nchar(body))
+  repeat {
+    m <- regexpr("^[[:space:],]*([A-Za-z][A-Za-z0-9_:.+-]*)[[:space:]]*=[[:space:]]*",
+                 rest, perl = TRUE)
+    if (m == -1) break
+    name <- tolower(gsub("[[:space:],=]", "", regmatches(rest, m)))
+    rest <- substr(rest, attr(m, "match.length") + 1, nchar(rest))
+    first <- substr(rest, 1, 1)
+    if (first %in% c("{", "\"")) {
+      ch <- strsplit(rest, "", fixed = TRUE)[[1]]
+      depth <- cumsum((ch == "{") - (ch == "}"))
+      end <- if (first == "{") which(depth == 0)[1] else
+        which(ch == "\"" & depth == 0 & seq_along(ch) > 1)[1]
+      if (is.na(end)) end <- length(ch)
+      value <- paste(ch[2:max(2, end - 1)], collapse = "")
+      if (end < 2) value <- ""
+      rest <- substr(rest, end + 1, nchar(rest))
+    } else {
+      end <- regexpr(",", rest, fixed = TRUE)
+      if (end == -1) end <- nchar(rest) + 1
+      value <- substr(rest, 1, end - 1)
+      rest <- substr(rest, end, nchar(rest))
+    }
+    value <- gsub("[{}]", "", value)
+    value <- gsub("[ \t\r]+", " ", value)
+    value <- trimws(gsub(" ?\n ?", "\n", value))
+    if (name != "cited-references" && name != "references")
+      value <- gsub("\n", " ", value)
+    out[[name]] <- value
+  }
+  out
+}
+
+# Returns DOIs in one form: lowercased, without a resolver, and without
+# trailing punctuation.
+.bib_doi <- function(x) {
+  x <- tolower(trimws(x))
+  x <- sub("^(https?://)?(dx\\.)?doi\\.org/", "", x)
+  x <- sub("^doi:?\\s*", "", x)
+  x <- sub("[.,;)]+$", "", x)
+  x[!grepl("^10\\.", x)] <- NA
+  x
+}
+
+# Returns the DOI that a cited reference names, if any.
+.bib_ref_doi <- function(refs) {
+  # a semicolon that is not followed by a space is part of the DOI
+  m <- regmatches(refs, regexpr("10\\.[0-9]{4,9}/(?:[^\\s,;]|;(?=[^\\s;]))+",
+                                refs, perl = TRUE), invert = NA)
+  .bib_doi(vapply(m, function(p) if (length(p) == 3) p[2] else NA_character_,
+                  character(1)))
+}
+
+# Normalises a reference or a label for matching: uppercase letters and
+# digits only, separated by single spaces.
+.bib_normalise <- function(x) {
+  x <- toupper(x)
+  x <- gsub("[^[:alnum:]]+", " ", x)
+  trimws(x)
+}
+
+# The "AUTHOR, YEAR, SOURCE" key of a Web of Science reference.
+.bib_ref_key <- function(refs) {
+  parts <- strsplit(refs, ",", fixed = TRUE)
+  out <- vapply(parts, function(p) paste(p[seq_len(min(3, length(p)))],
+                                         collapse = " "), character(1))
+  .bib_normalise(out)
+}
+
+# Returns the works: the records, then each cited work that matches no
+# record, with the work that each reference of each record cites.
+.bib_match <- function(recs) {
+  n <- length(recs$label)
+  ref <- unlist(recs$refs) %||% character(0)
+  citing <- rep(seq_len(n), lengths(recs$refs))
+  target <- rep(NA_integer_, length(ref))
+  if (isTRUE(recs$ids)) {
+    target <- match(ref, recs$id)
+    identity <- ref
+    doi <- rep(NA_character_, length(ref))
+  } else {
+    doi <- .bib_ref_doi(ref)
+    ref_key <- .bib_ref_key(ref)
+    # a cited work is named by its first author, year, and source, as in
+    # bibliometrix, whether or not a reference to it gives a DOI
+    key <- .bib_normalise(recs$key)
+    key[duplicated(key) | duplicated(key, fromLast = TRUE)] <- NA
+    target <- match(ref_key, key, incomparables = NA)
+    # the DOI matches only where the key does not, as for Scopus references
+    by_doi <- match(doi, recs$doi, incomparables = NA)
+    target[is.na(target)] <- by_doi[is.na(target)]
+    # a work does not cite itself, so a reference that matches the record
+    # that cites it is another work, such as another paper of the same
+    # author, year, and source
+    target[!is.na(target) & target == citing] <- NA
+    identity <- ref_key
+  }
+  # references to no record are works of their own, one for each identity
+  other <- is.na(target)
+  ids <- unique(identity[other])
+  target[other] <- n + match(identity[other], ids)
+  # the first reference with a DOI names a work, where it has one
+  first <- match(ids, identity[order(is.na(doi))])
+  first <- order(is.na(doi))[first]
+  cited <- ref[first]
+  if (isTRUE(recs$ids)) {
+    label <- cited
+    year <- rep(NA_integer_, length(ids))
+  } else {
+    parts <- strsplit(cited, ",", fixed = TRUE)
+    label <- vapply(parts, function(p)
+      paste(trimws(p[seq_len(min(3, length(p)))]), collapse = ", "),
+      character(1))
+    year <- vapply(parts, function(p) {
+      y <- if (length(p) > 1) trimws(p[2]) else NA_character_
+      if (!is.na(y) && grepl("^[0-9]{4}$", y)) as.integer(y) else NA_integer_
+    }, integer(1))
+  }
+  works <- data.frame(label = c(recs$label, label),
+                      title = c(recs$title, rep(NA_character_, length(ids))),
+                      year = c(recs$year, year),
+                      citations = c(recs$citations,
+                                    rep(NA_integer_, length(ids))),
+                      doi = c(recs$doi, doi[first]),
+                      reference = c(rep(NA_character_, n),
+                                    if (isTRUE(recs$ids)) rep(NA_character_,
+                                                              length(ids)) else cited),
+                      recorded = rep(c(TRUE, FALSE), c(n, length(ids))),
+                      stringsAsFactors = FALSE)
+  if (all(is.na(works$citations))) works$citations <- NULL
+  if (isTRUE(recs$ids)) works$openalex <- c(recs$id, ids)
+  # a work does not cite itself, and cites another work once
+  cites <- data.frame(from = citing, to = target)
+  cites <- cites[cites$from != cites$to & !duplicated(cites), , drop = FALSE]
+  matched <- sum(target[!other] <= n)
+  snet_info("Matched {matched} of {length(ref)} reference{?s} to records,",
+            "and {length(ids)} other cited work{?s}.")
+  list(works = works, cites = cites,
+       references = data.frame(citing = citing, cited = target))
+}
+
+# Builds the network of works, authors, keywords, and sources.
+.bib_network <- function(recs, works) {
+  n <- length(recs$label)
+  nodes <- works$works
+  nodes$label <- make.unique(nodes$label, sep = " ")
+  nodes$mode <- "works"
+  nw <- nrow(nodes)
+  incidence <- function(items, mode, layer, from_works) {
+    rec <- rep(seq_len(n), lengths(items))
+    item <- unlist(items) %||% character(0)
+    position <- unlist(lapply(lengths(items), seq_len)) %||% integer(0)
+    keep <- !duplicated(paste(rec, item, sep = "\r"))
+    rec <- rec[keep]
+    item <- item[keep]
+    labels <- unique(item)
+    list(nodes = data.frame(label = labels, mode = rep(mode, length(labels)),
+                            stringsAsFactors = FALSE),
+         rec = rec, item = match(item, labels), layer = layer,
+         from_works = from_works, position = position[keep])
+  }
+  parts <- list(incidence(recs$authors, "authors", "authored", FALSE),
+                incidence(recs$keywords, "keywords", "tagged", TRUE),
+                incidence(lapply(recs$source, function(s) s[!is.na(s)]),
+                          "sources", "published", TRUE))
+  parts <- parts[vapply(parts, function(p) nrow(p$nodes) > 0, logical(1))]
+  ties <- data.frame(from = works$cites$from, to = works$cites$to,
+                     layer = rep("cites", nrow(works$cites)),
+                     time = recs$year[works$cites$from],
+                     position = rep(NA_integer_, nrow(works$cites)))
+  offset <- nw
+  for (p in parts) {
+    other <- offset + p$item
+    ties <- rbind(ties, data.frame(
+      from = if (p$from_works) p$rec else other,
+      to = if (p$from_works) other else p$rec,
+      layer = rep(p$layer, length(p$rec)), time = recs$year[p$rec],
+      # the order of the authors of a work matters to some counts
+      position = if (p$layer == "authored") p$position else
+        rep(NA_integer_, length(p$rec))))
+    p$nodes$label <- make.unique(p$nodes$label, sep = " ")
+    nodes <- dplyr::bind_rows(nodes, p$nodes)
+    offset <- offset + nrow(p$nodes)
+  }
+  if (all(is.na(ties$time))) ties$time <- NULL
+  if (all(is.na(ties$position))) ties$position <- NULL
+  nodes <- nodes[c("label", "mode", setdiff(names(nodes), c("label", "mode")))]
+  layers <- unique(ties$layer)
+  modes <- unique(nodes$mode)
+  ends <- list(cites = c("works", "works"), authored = c("authors", "works"),
+               tagged = c("works", "keywords"), published = c("works", "sources"))[layers]
+  info <- list(name = "Bibliographic network", source = "Empirical",
+               method = "Archival", observation = "event",
+               modes = modes, layers = layers,
+               directed = stats::setNames(layers == "cites", layers),
+               sender = vapply(ends, `[`, character(1), 1),
+               receiver = vapply(ends, `[`, character(1), 2))
+  if (!is.null(ties$time)) info$update <- "increment"
+  snet_info("Collected {n} record{?s} and {nrow(works$works) - n} other",
+            "cited work{?s}.")
+  make_stocnet(info = info, nodes = nodes, ties = ties)
+}

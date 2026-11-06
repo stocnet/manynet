@@ -179,6 +179,7 @@ collect_text(play, terms = cast, from = "speaker", to = "addressee",
 \code{\link[=to_mode]{to_mode()}}, \code{\link[=to_normalised]{to_normalised()}}, \code{\link[=to_time]{to_time()}}, \code{\link[=as_stocnet]{as_stocnet()}}
 
 Other makes:
+\code{\link{make_bibliography}},
 \code{\link{make_collect}},
 \code{\link{make_create}},
 \code{\link{make_ego}},

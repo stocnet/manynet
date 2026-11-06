@@ -50,6 +50,7 @@ or about how ego considers their alters to be related.
 }
 \seealso{
 Other makes:
+\code{\link{make_bibliography}},
 \code{\link{make_collect}},
 \code{\link{make_create}},
 \code{\link{make_emails}},

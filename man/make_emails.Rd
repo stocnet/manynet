@@ -109,6 +109,7 @@ collect_emails(mbox, twomode = TRUE)
 \code{\link[=collect_ego]{collect_ego()}}, \code{\link[=to_time]{to_time()}}, \code{\link[=to_aggregated]{to_aggregated()}}, \code{\link[=to_unlabelled]{to_unlabelled()}}
 
 Other makes:
+\code{\link{make_bibliography}},
 \code{\link{make_collect}},
 \code{\link{make_create}},
 \code{\link{make_ego}},

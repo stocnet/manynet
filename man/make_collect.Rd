@@ -128,6 +128,7 @@ collect_pkg()
 \code{\link[=to_ego]{to_ego()}}, \code{\link[=to_uniplex]{to_uniplex()}}, \code{\link[=delete_isolates]{delete_isolates()}}
 
 Other makes:
+\code{\link{make_bibliography}},
 \code{\link{make_create}},
 \code{\link{make_ego}},
 \code{\link{make_emails}},

@@ -209,6 +209,7 @@ create_core(6)
 \link{as}
 
 Other makes:
+\code{\link{make_bibliography}},
 \code{\link{make_collect}},
 \code{\link{make_ego}},
 \code{\link{make_emails}},

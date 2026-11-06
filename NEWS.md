@@ -18,6 +18,12 @@
   - `from` (and `to`) give mentions (or gossip) among speakers
   - `token` takes lemmas or parts of speech from a data frame of tokens
   - `lexicon` scores the sentiment of units, and signs the mentions of speakers
+- Added `collect_bibliography()` for networks from bibliographic records
+  - Records from 'bibliometrix', 'openalexR', or a BibTeX or BibLaTeX file
+  - Modes of works, authors, keywords, and sources, and the year as `time`
+  - Layers of "cites", "authored", "tagged", and "published" ties
+  - Cited works are named by first author, year, and source
+  - Works hold their global `citations`, and authors their `position`
 
 ## Coercion
 

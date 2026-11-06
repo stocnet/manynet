@@ -226,6 +226,7 @@ Audun Myers, Joshua Pickard, Brenda Praggastis, and Przemysław Szufel. 2025.
 \link{as}
 
 Other makes:
+\code{\link{make_bibliography}},
 \code{\link{make_collect}},
 \code{\link{make_create}},
 \code{\link{make_ego}},
