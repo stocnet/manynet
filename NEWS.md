@@ -75,6 +75,11 @@
 
 - Fixed `layer_ties()` to count a layer without ties as none
 
+## Data
+
+- Converted `ison_lawfirm` and `irps_usgeo` to 'stocnet' objects
+- Updated `ison_lawfirm` documentation to describe all 71 attorneys
+
 # manynet 2.4.5
 
 ## Coercion

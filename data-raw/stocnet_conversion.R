@@ -307,3 +307,38 @@ usethis::use_data(ison_dolphins, overwrite = TRUE, compress = "bzip2")
 usethis::use_data(ison_emotions, overwrite = TRUE, compress = "bzip2")
 usethis::use_data(ison_judo_moves, overwrite = TRUE, compress = "bzip2")
 usethis::use_data(ison_karateka, overwrite = TRUE, compress = "bzip2")
+
+# The two networks below waited only on a diffusion on a stocnet failing to
+# draw. CRAN 'autograph' 1.2.8 draws `plot()`, `graphs()`, and `grapht()` of a
+# diffusion on either one (checked on 5 November 2026).
+
+# Lazega interviewed all 71 lawyers of the firm, partners and associates in
+# its offices in three New England cities (Pattison and Robins 2002, sec.
+# 5.2). Each lawyer had the list of all the firm's members, and named those
+# they went to for advice, those they counted as friends, and those they
+# worked with (Snijders and Steglich 2015). Each tie is one lawyer's answer,
+# so every layer is directed. Yu et al. (2019, sec. 5) date the collection
+# to 1991.
+ison_lawfirm <- as_stocnet(manynet::ison_lawfirm) |> conform_names()
+ison_lawfirm <- add_info(ison_lawfirm,
+           observation = "cross-sectional",
+           directed = stats::setNames(rep(TRUE, 3), layer_names(ison_lawfirm)),
+           source = "Empirical", method = "Survey", boundary = "roster",
+           location = "New England, United States",
+           date = 1991,
+           doi = "10.1093/acprof:oso/9780199242726.001.0001")
+
+# Meghanathan (2017) ties two of the 48 contiguous states and the District of
+# Columbia when they share a border. This network has the 50 states and not
+# the District, so Alaska and Hawaii are isolates. A border is a fact rather
+# than a sample, so the boundary is a roster. The paper does not date the
+# borders or the populations, so no date is recorded.
+irps_usgeo <- as_stocnet(manynet::irps_usgeo) |> conform_grand() |>
+  add_info(observation = "cross-sectional",
+           directed = FALSE,
+           source = "Empirical", method = "Archival", boundary = "roster",
+           location = "United States",
+           doi = "10.5539/cis.v10n1p54")
+
+usethis::use_data(ison_lawfirm, overwrite = TRUE, compress = "bzip2")
+usethis::use_data(irps_usgeo, overwrite = TRUE, compress = "bzip2")

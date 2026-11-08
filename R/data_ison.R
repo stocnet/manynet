@@ -615,18 +615,30 @@
 
 ## Lawfirm ####
 
-#' One-mode lawfirm (Lazega 2001)
+#' Multiplex, directed network of advice, friendship, and coworking in a law firm (Lazega 2001)
 #'
 #' @description
-#' One-mode network dataset collected by Lazega (2001)
-#' on the relations between partners in a corporate law firm called SG&R in New England 1988-1991.
-#' This particular subset includes the 36 partners among the 71 attorneys of this firm.
-#' Nodal attributes include seniority, formal status, office in which they work, gender, lawschool they attended,
-#' their age, and how many years they had been at the firm.
+#'   These data contain the advice, friendship, and coworker ties among
+#'   the 71 attorneys of a corporate law firm in New England:
+#'   36 partners and 35 associates in the firm's offices in
+#'   Boston, Hartford, and Providence.
+#'   Lazega interviewed every attorney in the firm, and collected the data in 1991.
+#'   Each attorney was given the list of all the firm's members,
+#'   and named those they went to for basic professional advice,
+#'   those they counted as friends, and those they worked with.
+#'   A tie runs from the attorney who named another to the attorney named,
+#'   so each of the three layers is directed.
+#'
+#'   Nodal attributes include the attorney's formal status (partner or associate),
+#'   gender, office, seniority (years with the firm), age,
+#'   type of practice (litigation or corporate), and the law school they attended.
 #' @details
-#' The larger data from which this subset comes includes also individual performance measurements (hours worked, fees brought in)
-#' and attitudes concerning various management policy options (see also `{sand}`),
-#' their strong-coworker network, advice network, friendship network, and indirect control network.
+#'   The larger study from which these data come also measured individual
+#'   performance (hours worked, fees brought in)
+#'   and attitudes to various management policy options (see also `{sand}`),
+#'   and an indirect control network.
+#'   Many examples use only the 36 partners,
+#'   which `to_subgraph(ison_lawfirm, status == "partner")` gives.
 #' @docType data
 #' @keywords datasets
 #' @name ison_lawfirm
@@ -636,6 +648,7 @@
 #'   Lazega, Emmanuel. 2001.
 #'   \emph{The Collegial Phenomenon: The Social Mechanisms of Cooperation Among Peers in a Corporate Law Partnership}.
 #'   Oxford: Oxford University Press.
+#'   \doi{10.1093/acprof:oso/9780199242726.001.0001}
 #' @format
 #'   ```{r, echo = FALSE}
 #'   ison_lawfirm

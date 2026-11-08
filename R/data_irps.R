@@ -357,7 +357,8 @@
 #'   The data is a network of 107 ties among 50 US states (nodes).
 #'   States are named by their two-letter ISO-3166 code.
 #'   This data includes also the names of the capitol cities of each state,
-#'   which are listed in the node attribute 'capitol'.
+#'   which are listed in the node attribute 'capitol',
+#'   and their populations, in the node attribute 'population'.
 #' @docType data
 #' @keywords datasets
 #' @name irps_usgeo

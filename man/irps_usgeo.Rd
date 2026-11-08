@@ -10,7 +10,7 @@
 #> 
 #> -- Nodes
 #> # A tibble: 50 x 3
-#>   name  capitol     population
+#>   label capitol     population
 #>   <chr> <chr>            <int>
 #> 1 AK    Juneau              NA
 #> 2 AL    Montgomery     4780127
@@ -43,7 +43,12 @@ States that share a border are connected by a tie in the network.
 The data is a network of 107 ties among 50 US states (nodes).
 States are named by their two-letter ISO-3166 code.
 This data includes also the names of the capitol cities of each state,
-which are listed in the node attribute 'capitol'.
+which are listed in the node attribute 'capitol',
+and their populations, in the node attribute 'population'.
+
+Meghanathan (2017) models the 48 contiguous states and the
+District of Columbia. This network holds the 50 states and not
+the District, so Alaska and Hawaii are isolates.
 }
 \references{
 Meghanathan, Natarajan. 2017.

@@ -85,3 +85,26 @@ test_that("layers are levels only where each layer holds one position", {
                   c("characters", "between"))
   expect_null(.tie_positions(ison_adolescents))
 })
+
+test_that("a diffusion on ison_lawfirm and irps_usgeo does not depend on class", {
+  # These two were 'mnet' objects until a diffusion on a stocnet could be
+  # drawn (#186). The diffusion must give the same record on the stocnet as on
+  # the mnet that `as_tidygraph()` makes of it. Seed 2 is connected in both;
+  # seed 1 of irps_usgeo is Alaska, an isolate.
+  for(nm in c("ison_lawfirm", "irps_usgeo")){
+    x <- get(nm)
+    expect_s3_class(x, "stocnet")
+    expect_no_error(validate_stocnet(x))
+    old <- as_tidygraph(x)
+    expect_s3_class(old, "mnet")
+    set.seed(186)
+    on_mnet <- play_diffusion(old, seeds = 2, transmissibility = 0.5, steps = 5)
+    set.seed(186)
+    on_stocnet <- play_diffusion(x, seeds = 2, transmissibility = 0.5, steps = 5)
+    expect_s3_class(on_stocnet, "stocnet")
+    expect_gt(nrow(as_changelist(on_stocnet)), 1)
+    expect_equal(as_changelist(on_stocnet), as_changelist(on_mnet))
+  }
+  expect_equal(as_infolist(ison_lawfirm)$layers, c("friends", "advice", "cowork"))
+  expect_equal(as_infolist(irps_usgeo)$doi, "10.5539/cis.v10n1p54")
+})
