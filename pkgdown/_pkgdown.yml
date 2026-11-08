@@ -93,7 +93,7 @@ reference:
       - starts_with("collect_")
   - subtitle: "Playing"
     desc: |
-      Functions for simulating diffusion or learning processes,
+      Functions for simulating diffusion, opinion, or mobility processes,
       i.e. nodal change, upon networks.
     contents:
       - starts_with("play_")
