@@ -468,6 +468,10 @@ index_ties <- function(.data, component = "ties"){
   out
 }
 
+is_grand <- function(.data){
+  !is.null(igraph::graph_attr(.data, "grand"))
+}
+
 # Hyperedges ####
 
 # A hyperedge is a tie among any number of nodes, held as one row of the ties
@@ -580,6 +584,8 @@ index_changes <- function(.data){
   }
   x
 }
+
+# Printing ####
 
 #' @rdname make_stocnet
 #' @param x A network object.
@@ -734,4 +740,10 @@ pillar_shaft.value <- function(x, ...) {
     paste0(value_text, type_label),
     align = "right"
   )
+}
+
+#' @rdname make_stocnet
+#' @export
+print_all <- function(x, ...) {
+  print(x, n = Inf)
 }

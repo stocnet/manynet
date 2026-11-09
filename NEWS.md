@@ -32,13 +32,14 @@
 
 ## Classes
 
-- Added `.stocnet$info$uncoded` for units of text still to code
 - Removed the 'mnet' class, now that no dataset uses it
   - `as_tidygraph()` returns a plain 'tbl_graph', which prints as in 'tidygraph'
   - Deprecated `print.mnet()`, which still prints a network saved with the class
   - Removed the `$` accessors of 'mnet' objects
-  - `as_diffusion()` reports a 'tbl_graph' as before, with `time` and `S_new`
-  - `print_all()` is now documented with 'stocnet' objects
+- Added the 'diffusionModel' class, with 'diff_model' second for one release
+- Added the 'opinionModel' class, with 'learn_model' second for one release
+- Added `.stocnet$info$uncoded` for units of text still to code
+- Added `.stocnet$info$compartments` for the roles of the values of a diffusion
 
 ## Coercion
 

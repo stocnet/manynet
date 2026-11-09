@@ -135,13 +135,55 @@ test_that("play_diffusion() variants run (latency, recovery, immunity)", {
   }
 })
 
-test_that("play_learning() returns a learn_model", {
+test_that("play_learning() warns and returns an opinionModel", {
   set.seed(1234)
   net <- create_ring(8)
-  out <- run_or_skip(play_learning(net, beliefs = stats::runif(8), steps = 5),
-                     "play_learning", "basic")
+  expect_warning(out <- play_learning(net, beliefs = stats::runif(8),
+                                      steps = 5), "deprecated")
+  expect_s3_class(out, "opinionModel")
   expect_s3_class(out, "learn_model")
 })
+
+# The arguments that each run of play_opinion() is given, besides the network
+# and its opinions. Each is a function of the network, as some need its size.
+opinion_argmakers <- list(
+  degroot      = function(net) list(),
+  stubborn     = function(net) list(stubbornness = 0.5),
+  stubborn_vec = function(net) list(stubbornness = rep(c(0, 1),
+                                                       length.out = net_nodes(net))),
+  stubborn_att = function(net) list(stubbornness = "stub"),
+  krause       = function(net) list(rule = "hegselmann_krause",
+                                    confidence = 0.3),
+  deffuant     = function(net) list(rule = "deffuant", confidence = 0.3,
+                                    steps = 50),
+  weights_tie  = function(net) list(weights = "trust"),
+  weights_mat  = function(net) list(weights = as_matrix(to_influence(net))),
+  tolerance    = function(net) list(tolerance = 0.05),
+  attribute    = function(net) list(opinions = "view"),
+  issues       = function(net) list(opinions = cbind(a = stats::runif(net_nodes(net)),
+                                                     b = stats::runif(net_nodes(net))))
+)
+
+for (case in names(opinion_argmakers)) {
+  test_that(paste0("play_opinion() records the opinions (", case, ")"), {
+    set.seed(1234)
+    net <- create_ring(8) |>
+      add_node_attribute("view", stats::runif(8)) |>
+      add_node_attribute("stub", rep(c(0, 0.5), 4)) |>
+      add_tie_attribute("trust", rep(c(1, 2), 4))
+    args <- opinion_argmakers[[case]](net)
+    if (is.null(args$opinions)) args$opinions <- stats::runif(8)
+    out <- run_or_skip(do.call(play_opinion, c(list(net), args)),
+                       "play_opinion", case)
+    expect_s3_class(out, "stocnet")
+    vars <- if (is.character(args$opinions)) args$opinions else
+      if (is.matrix(args$opinions)) colnames(args$opinions) else "opinions"
+    for (v in vars) {
+      expect_true(v %in% net_node_attributes(out))
+      expect_s3_class(as_opinion(out, v), "opinionModel")
+    }
+  })
+}
 
 test_that("play_segregation() returns a network", {
   set.seed(1234)

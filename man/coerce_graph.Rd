@@ -12,7 +12,6 @@
 \alias{as_stocnet.array}
 \alias{as_siena}
 \alias{as_graphAM}
-\alias{as_diffusion}
 \alias{as_diffnet}
 \title{Coercing into graph objects}
 \usage{
@@ -45,8 +44,6 @@ as_hypergraph(.data)
 as_siena(.data, twomode = FALSE)
 
 as_graphAM(.data, twomode = NULL)
-
-as_diffusion(.data, twomode = FALSE, events)
 
 as_diffnet(.data, twomode = FALSE)
 }
@@ -86,12 +83,6 @@ An array cannot say which of these it holds.
 Where its third dimension is as long as the network has nodes,
 it could hold any of them, so this must be given.
 Otherwise it cannot hold reporters or targets, and "time" is assumed.}
-
-\item{events}{A table (data frame or tibble) of diffusion events
-with columns \code{t} indicating the time (typically an integer) of the event,
-\code{nodes} indicating the number or name of the node involved in the event,
-and \code{event}, which can take on the values "I" for an infection event,
-"E" for an exposure event, or "R" for a recovery event.}
 }
 \value{
 The currently implemented coercions or translations are:
@@ -137,15 +128,6 @@ as_siena                      *
 as_stocnet            *       *          
 as_tidygraph          *       *         *
 }\if{html}{\out{</div>}}
-
-\code{as_diffusion()} and \code{play_diffusion()} return a 'diff_model' object
-that contains two different tibbles (tables) --
-a table of diffusion events and
-a table of the number of nodes in each relevant component (S, E, I, or R) --
-as well as a copy of the network upon which the diffusion ran.
-By default, a compact version of the component table is printed
-(to print all the changes at each time point, use \code{print(..., verbose = T)}).
-To retrieve the diffusion events table, use \code{summary(...)}.
 }
 \description{
 The \code{as_} functions in \code{{manynet}} coerce objects of any of the following common classes
@@ -156,9 +138,8 @@ of social network objects in R into the declared class:
 \item \code{as_network()} coerces the object into a \code{{network}} \code{network} object.
 \item \code{as_siena()} coerces the (igraph/tidygraph) object into a SIENA dependent variable.
 \item \code{as_graphAM()} coerces the object into a graph adjacency matrix.
-\item \code{as_diffusion()} coerces a table of diffusion events into
-a \code{diff_model} object similar to the output of \code{play_diffusion()}.
-\item \code{as_diffnet()} coerces a \code{diff_model} object into a \code{{netdiffuseR}} \code{diffnet} object.
+\item \code{as_diffnet()} coerces a \code{diffusionModel} (see \code{\link[=as_diffusion]{as_diffusion()}})
+into a \code{{netdiffuseR}} \code{diffnet} object.
 }
 
 An effort is made for all of these coercion routines to be as lossless
@@ -219,12 +200,6 @@ as_igraph(test)
 as_tidygraph(test)
 as_network(test)
 as_hypergraph(create_ring(4))
-  # How to create a diff_model object from (basic) observed data
-  events <- data.frame(time = c(0,1,1,2,3), 
-                       node = c(1,2,3,2,4),
-                       var = "diffusion", 
-                       value = c("I","I","I","R","I"))
-  bind_changes(create_filled(4), events)
 }
 \seealso{
 Other coercions:
