@@ -804,6 +804,37 @@ na_to_mean <- function(.data) {
     impute_ties(.data, rule = "density")
 }
 
+
+#' @describeIn defunct Deprecated on 2026-11-09.
+#'   Use `play_opinion()`, whose `opinions`, `confidence`, and `tolerance`
+#'   replace `beliefs`, `closeness`, and `epsilon`.
+#'   A finite `closeness` plays the `"hegselmann_krause"` rule,
+#'   and the result is the table that `as_opinion()` returns.
+#' @param beliefs A vector of the opinions of the nodes at the start.
+#' @param closeness A threshold at which beliefs are too different to
+#'   influence each other. By default `Inf`, i.e. there is no threshold.
+#' @param epsilon The maximum difference in beliefs accepted
+#'   for convergence to a consensus.
+#' @export
+play_learning <- function(.data,
+                          beliefs,
+                          closeness = Inf,
+                          steps,
+                          epsilon = 0.0005){
+  .Deprecated("play_opinion", package = "manynet", old = "play_learning")
+  n <- net_nodes(.data)
+  if(length(beliefs) != n)
+    snet_abort("{.arg beliefs} must be a vector the same length as the number",
+               "of nodes in the network.")
+  if(missing(steps)) steps <- n
+  rule <- if(is.finite(closeness)) "hegselmann_krause" else "degroot"
+  # A stocnet holds the record whatever the class given, as a matrix cannot
+  out <- .play_opinion(as_stocnet(.data), beliefs, rule, stubbornness = 0,
+                       confidence = closeness, weights = NULL, steps = steps,
+                       tolerance = epsilon, record = 0)
+  as_opinion(out, "opinions")
+}
+
 # nocov end
 
 #' @describeIn defunct Deprecated on 2026-08-20.

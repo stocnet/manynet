@@ -96,6 +96,7 @@ Other ties:
 \code{\link{manip_ties_num}},
 \code{\link{modif_backbone}},
 \code{\link{modif_direction}},
+\code{\link{modif_influence}},
 \code{\link{modif_weight}}
 
 Other manipulations:

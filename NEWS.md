@@ -42,6 +42,13 @@
   - Fixed exposed nodes, which counted all ties, not the ties of transmission
   - Fixed `immune=` nodes to start as R in the record, not as S
   - Accelerated `play_diffusion()` ~2.5x by making each contact matrix once
+- Renamed `play_learning()` to `play_opinion()`, which now returns the network with changes
+  - Renamed `beliefs=` to `opinions=`, which can also name node attributes or a matrix of issues
+  - Added `rule=` for the "degroot", "hegselmann_krause", and "deffuant" rules
+  - Added `stubbornness=`, for the model of Friedkin and Johnsen
+  - Renamed `closeness=` to `confidence=`, for the bounded-confidence rules only
+  - Renamed `epsilon=` to `tolerance=`
+  - Added `weights=` to weigh influence by a tie attribute or by a matrix
 
 ## Classes
 
@@ -63,6 +70,7 @@
 - Improved `as_diffusion()` to count each value of any state attribute
   - Added `attribute=` to name the attribute, by default "diffusion"
   - Fixed the counts of E with `latency` and of S with waning on an 'igraph'
+- Added `as_opinion()` to read a record of opinions as an 'opinionModel'
 
 ## Manipulating
 
@@ -74,6 +82,7 @@
 
 ## Modifying
 
+- Added `to_influence()` for the row-stochastic influence matrix of a network
 - Improved `to_mode()` with new measures and with `through`
   - Added `"agreement"`, `"disagreement"`, and `"signed"` for signed ties
   - Added `"activity"`, the count over the pair's mean number of ties

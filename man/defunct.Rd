@@ -170,6 +170,7 @@
 \alias{node_by_triad}
 \alias{na_to_zero}
 \alias{na_to_mean}
+\alias{play_learning}
 \alias{gather_changes}
 \alias{apply_changes}
 \alias{is_egonet}
@@ -512,6 +513,9 @@ na_to_zero(.data)
 
 na_to_mean(.data)
 
+
+play_learning(.data, beliefs, closeness = Inf, steps, epsilon = 5e-04)
+
 gather_changes(.data, time)
 
 apply_changes(.data, time)
@@ -524,6 +528,14 @@ is_egonet(.data)
 \item{.data}{A manynet-consistent network.}
 
 \item{time}{A moment to gather the changes in force at.}
+
+\item{beliefs}{A vector of the opinions of the nodes at the start.}
+
+\item{closeness}{A threshold at which beliefs are too different to
+influence each other. By default \code{Inf}, i.e. there is no threshold.}
+
+\item{epsilon}{The maximum difference in beliefs accepted
+for convergence to a consensus.}
 
 \item{x}{A network of the 'mnet' class, saved by a version before 2.5.0.}
 
@@ -875,6 +887,13 @@ wherever possible and update your scripts accordingly.
 \item \code{na_to_zero()}: Deprecated on 2026-08-18.
 
 \item \code{na_to_mean()}: Deprecated on 2026-08-18.
+
+
+\item \code{play_learning()}: Deprecated on 2026-11-09.
+Use \code{play_opinion()}, whose \code{opinions}, \code{confidence}, and \code{tolerance}
+replace \code{beliefs}, \code{closeness}, and \code{epsilon}.
+A finite \code{closeness} plays the \code{"hegselmann_krause"} rule,
+and the result is the table that \code{as_opinion()} returns.
 
 \item \code{gather_changes()}: Deprecated on 2026-08-20.
 
