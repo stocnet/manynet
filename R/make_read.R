@@ -657,13 +657,12 @@ read_graphml <- function(file = file.choose(), ego = TRUE) {
   info <- parsed[[1]]$info
   if(!is.null(info)) for(nm in names(info))
     out <- igraph::set_graph_attr(out, nm, info[[1, nm]])
-  make_mnet(out)
+  out
 }
 
 #' @importFrom tidygraph tbl_graph
 .graphml_graph <- function(nodes, ties, directed) {
-  make_mnet(tidygraph::tbl_graph(nodes = nodes, edges = ties,
-                                 directed = directed))
+  tidygraph::tbl_graph(nodes = nodes, edges = ties, directed = directed)
 }
 
 .bind_col <- function(df, name, value, n) {

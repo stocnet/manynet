@@ -12,8 +12,8 @@ test_that("missing values are imputed correctly",{
   expect_false(anyNA(impute_ties(missTest, "mean")))
   expect_false(anyNA(impute_ties(missTest2)))
   expect_false(anyNA(impute_ties(missTest2, "mean")))
-  expect_s3_class(impute_ties(missTest2), "tbl_graph")
-  expect_s3_class(impute_ties(missTest2, "mean"), "tbl_graph")
+  expect_s3_class(impute_ties(missTest2), class(missTest2)[1])
+  expect_s3_class(impute_ties(missTest2, "mean"), class(missTest2)[1])
 })
 
 test_that("every rule leaves nothing the network records as unobserved", {
@@ -32,7 +32,7 @@ test_that("the two parts of a tie's missingness are imputed separately", {
   # asking for the missing ties only must leave it alone
   untouched <- impute_ties(missTest2, "zero", which = "nonresponse")
   expect_true(anyNA(tie_weights(untouched)))
-  expect_equal(igraph::ecount(untouched), igraph::ecount(missTest2))
+  expect_equal(nrow(as_edgelist(untouched)), nrow(as_edgelist(missTest2)))
   # and asking for the incomplete ties only must leave the missing ties alone
   kept <- impute_ties(ison_classmates, "mean", which = "incomplete")
   expect_equal(net_tie_missing(kept), net_tie_missing(ison_classmates))
@@ -164,7 +164,8 @@ test_that("the zero rule sets missing weights to zero instead of deleting ties",
   # documentation and its own matrix and edgelist methods
   # counted over the ties the network holds, since `net_ties()` counts only
   # those it does not record as missing, and imputing them changes that
-  expect_equal(igraph::ecount(impute_ties(missTest2)), igraph::ecount(missTest2))
+  expect_equal(nrow(as_edgelist(impute_ties(missTest2))),
+               nrow(as_edgelist(missTest2)))
   expect_equal(sum(tie_weights(impute_ties(missTest2)) == 0),
                sum(is.na(tie_weights(missTest2))))
 })
@@ -207,7 +208,7 @@ test_that("binary networks are imputed rather than passed over", {
   # tested is.na() on the index, so it never imputed anything
   # a weight column holding only 0, 1, and NA records which ties are present
   # and not their values, so an NA there marks a missing tie
-  binary <- ison_adolescents |>
+  binary <- as_tidygraph(ison_adolescents) |>
     mutate_ties(weight = c(1, NA, 1, NA, 1, 1, 1, 1, 1, 1))
   set.seed(1234)
   out <- impute_ties(binary, "density")
@@ -215,8 +216,22 @@ test_that("binary networks are imputed rather than passed over", {
   expect_true(all(tie_weights(out) %in% c(0, 1)))
 })
 
+test_that("a stocnet's missing ties are imputed from its record of them", {
+  # A stocnet does not mark a missing tie with an NA weight, but lists it in
+  # its 'missings', which is where `as_stocnet()` puts the NA weights of a
+  # binary network.
+  binary <- as_stocnet(as_tidygraph(ison_adolescents) |>
+                         mutate_ties(weight = c(1, NA, 1, NA, 1, 1, 1, 1, 1, 1)))
+  expect_equal(nrow(as_missinglist(binary)), 2)
+  set.seed(1234)
+  out <- impute_ties(binary, "density")
+  expect_null(as_missinglist(out))
+  expect_gte(nrow(out$ties), 8)
+  expect_lte(nrow(out$ties), 10)
+})
+
 test_that("the drawn rules are reproducible given a seed", {
-  binary <- ison_adolescents |>
+  binary <- as_tidygraph(ison_adolescents) |>
     mutate_ties(weight = c(1, NA, 1, NA, 1, 1, 1, 1, 1, 1))
   set.seed(1234)
   first <- tie_weights(impute_ties(binary, "density"))

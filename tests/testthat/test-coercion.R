@@ -520,14 +520,14 @@ test_that("a fixed tie keeps its mark through the other classes", {
 test_that("conversion of diff_model object works correctly", {
   skip_on_cran()
   skip_on_ci()
-  expect_warning(diff <- play_diffusion(ison_brandes, old_version = TRUE))
+  expect_warning(diff <- play_diffusion(ison_centrality, old_version = TRUE))
   tidy_diff <- as_tidygraph(diff)
-  expect_values(net_nodes(tidy_diff), net_nodes(ison_brandes))
-  expect_values(net_ties(tidy_diff), net_ties(ison_brandes))
+  expect_values(net_nodes(tidy_diff), net_nodes(ison_centrality))
+  expect_values(net_ties(tidy_diff), net_ties(ison_centrality))
   expect_values(net_nodes(tidy_diff), max(diff$I))
 })
 
-test_that("mnet objects printed correctly", {
+test_that("networks are described correctly", {
   expect_match(describe_network(ison_adolescents), "labelled, undirected")
   expect_match(describe_nodes(ison_adolescents), "8 adolescents")
   expect_match(describe_ties(ison_adolescents), "10 friendship")
@@ -951,14 +951,6 @@ test_that("to_directed orients two-mode ties from the first mode", {
   expect_true(all(!mode[match(el$from, labels)] & mode[match(el$to, labels)]))
   el <- as_edgelist(to_redirected(d))
   expect_true(all(mode[match(el$from, labels)] & !mode[match(el$to, labels)]))
-})
-
-test_that("the laterals are undirected two-mode networks", {
-  for (net in ison_laterals) {
-    expect_true(is_twomode(net))
-    expect_false(is_directed(net))
-    expect_false(is_directed(as_network(net)))
-  }
 })
 
 # Node vectors into dyadic matrices (#161) --------------------------------------

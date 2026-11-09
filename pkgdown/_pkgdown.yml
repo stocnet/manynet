@@ -80,7 +80,6 @@ reference:
       Functions for deterministically creating and stochastically generating 
       directed and undirected, one-mode and two-mode networks.
     contents:
-      - make_mnet
       - make_stocnet
       - make_explicit
       - make_create

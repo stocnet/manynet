@@ -89,22 +89,58 @@ test_that("layers are levels only where each layer holds one position", {
 test_that("a diffusion on ison_lawfirm and irps_usgeo does not depend on class", {
   # These two were 'mnet' objects until a diffusion on a stocnet could be
   # drawn (#186). The diffusion must give the same record on the stocnet as on
-  # the mnet that `as_tidygraph()` makes of it. Seed 2 is connected in both;
+  # the tbl_graph that `as_tidygraph()` makes of it. Seed 2 is connected in both;
   # seed 1 of irps_usgeo is Alaska, an isolate.
   for(nm in c("ison_lawfirm", "irps_usgeo")){
     x <- get(nm)
     expect_s3_class(x, "stocnet")
     expect_no_error(validate_stocnet(x))
     old <- as_tidygraph(x)
-    expect_s3_class(old, "mnet")
+    expect_s3_class(old, "tbl_graph")
     set.seed(186)
-    on_mnet <- play_diffusion(old, seeds = 2, transmissibility = 0.5, steps = 5)
+    on_tidygraph <- play_diffusion(old, seeds = 2, transmissibility = 0.5, steps = 5)
     set.seed(186)
     on_stocnet <- play_diffusion(x, seeds = 2, transmissibility = 0.5, steps = 5)
     expect_s3_class(on_stocnet, "stocnet")
     expect_gt(nrow(as_changelist(on_stocnet)), 1)
-    expect_equal(as_changelist(on_stocnet), as_changelist(on_mnet))
+    expect_equal(as_changelist(on_stocnet), as_changelist(on_tidygraph))
   }
   expect_equal(as_infolist(ison_lawfirm)$layers, c("friends", "advice", "cowork"))
   expect_equal(as_infolist(irps_usgeo)$doi, "10.5539/cis.v10n1p54")
+})
+
+test_that("the last single mnet datasets are stocnet objects that validate", {
+  # These six waited on downstream releases that no longer rely on the 'mnet'
+  # class or on the 'type' tie attribute (#186).
+  for(nm in c("ison_centrality", "ison_networkers", "irps_revere",
+              "ison_adolescents", "fict_lotr", "ison_algebra")){
+    x <- get(nm)
+    expect_s3_class(x, "stocnet")
+    expect_no_error(validate_stocnet(x))
+  }
+  # irps_revere's modes are named, not "FALSE" and "TRUE".
+  expect_equal(as_infolist(irps_revere)$modes, c("members", "organisations"))
+  expect_setequal(irps_revere$nodes$mode, c("members", "organisations"))
+  expect_true(is_twomode(irps_revere))
+  # ison_algebra's layers are in 'layer', not 'type'.
+  expect_setequal(layer_names(ison_algebra), c("social", "tasks", "friends"))
+  # The two-mode version of ison_centrality is one rename away.
+  expect_true(is_twomode(rename_nodes(ison_centrality, mode = twomode_type)))
+})
+
+test_that("ison_physicians is one stocnet that splits into its four cities", {
+  expect_s3_class(ison_physicians, "stocnet")
+  expect_no_error(validate_stocnet(ison_physicians))
+  expect_equal(c(net_nodes(ison_physicians)), 246)
+  expect_equal(c(net_ties(ison_physicians)), 1099)
+  expect_true(all(c("freetime", "discussions", "clubs", "friends", "proximity") %in%
+                    net_node_attributes(ison_physicians)))
+  expect_setequal(layer_names(ison_physicians),
+                  c("advice", "discussion", "friendship"))
+  cities <- to_subgraphs(ison_physicians, "city")
+  expect_length(cities, 4)
+  expect_equal(unname(vapply(cities, function(x) c(net_nodes(x)), numeric(1))),
+               c(117, 50, 44, 35))
+  expect_equal(unname(vapply(cities, function(x) c(net_ties(x)), numeric(1))),
+               c(543, 211, 174, 171))
 })

@@ -90,7 +90,7 @@ because it tells you whether your nodes will survive the operation intact.
 
 By the end of this tutorial, you should be able to:
 
-- [ ] &nbsp; Examine and subset a network with the `[`, `[[`, and `$` operators
+- [ ] &nbsp; Examine a network's nodes, ties, and adjacency matrix
 - [ ] &nbsp; Label, unlabel, and relabel a network's nodes
 - [ ] &nbsp; Change a network's direction, weights, and signs, rescale its tie
   values, and know why you might
@@ -115,50 +115,35 @@ but you can always browse the full list with `table_data()`.
 
 ## Operating on networks
 
-Before changing anything, it helps to know how to look inside a network object,
-and this same syntax turns out to offer a do-it-yourself alternative
-to many of the named functions we meet later.
-Because the data in the `{manynet}` package are either igraph objects at their core,
-or stocnet data,
-we can query (and manipulate) them using the same `[`, `[[`, and `$` operators
-used for matrices, lists, and data frames elsewhere in R.
-**Run the following code and inspect the two outputs.**
+Before changing anything, it helps to know how to look inside a network object.
+A network holds its nodes and its ties as two tables,
+and it can also be shown as an adjacency matrix.
+**Run the following code and inspect the three outputs.**
 
 ```{r examine-recall}
-ison_adolescents[1:3, 1:3]
-ison_adolescents[[2]]
+as_matrix(ison_adolescents)[1:3, 1:3]
+node_attribute(ison_adolescents, "label")
+as_edgelist(ison_adolescents)
 ```
 
 The first line returns the corner of the network's adjacency matrix,
 where a `1` indicates a tie between the row node and the column node
-and a `.` indicates no tie (because this is a sparse matrix representation;
-a 'normal' matrix representation would represent absence of a tie as a 0).
-The second line returns the second node's `r gloss("neighborhood")`:
-the set of nodes to which it is tied.
+and a `0` indicates no tie.
+The second line returns the labels of the nodes,
+and `node_attribute()` returns any other nodal attribute in the same way.
+The third line returns the ties as pairs of nodes,
+one row for each tie.
 
-The `$` operator extracts a named attribute,
-whether it belongs to the nodes, the ties, or the network itself.
-`{manynet}` is set to try and autocomplete the attribute name for you,
-so you can type `ison_adolescents$` and then hit the Tab key to see the available attributes.
-^[Note though that for igraph/tidygraph objects, since the internal list elements
-are not named, the autocomplete necessarily braces the attribute names in backticks.
-This is not the case for stocnet objects, which are named lists.]
-
-```{r examine-dollar}
-ison_adolescents$name
-```
-
-The same operators can also be used to _assign_ new values.
+The functions that change a network return the changed network,
+so you assign the result to keep it.
 Here the first line removes all of the first node's ties,
 and the second adds a new nodal attribute
-(the vector is 8 values long, matching the 8 nodes,
-which is how `{manynet}` knows it belongs to the nodes):
+(the vector is 8 values long, one value for each of the 8 nodes):
 
 ```{r examine-assign}
-test <- ison_adolescents
-test[1, ] <- FALSE
-test$smoker <- c(TRUE, FALSE, FALSE, TRUE, FALSE, TRUE, TRUE, FALSE)
-test[1:3, 1:3]
+test <- filter_ties(ison_adolescents, from != 1, to != 1)
+test <- mutate_nodes(test, smoker = c(TRUE, FALSE, FALSE, TRUE, FALSE, TRUE, TRUE, FALSE))
+as_matrix(test)[1:3, 1:3]
 test
 ```
 
@@ -166,23 +151,17 @@ Note that because this is an undirected network,
 removing the tie from node 1 to node 2 means there is also now no reciprocal tie
 from node 2 to node 1.
 
-Throughout this tutorial, keep this assignment syntax in mind:
-many of the named functions we meet have an assignment equivalent,
-and we will point these out as we go.
-The named functions are usually clearer and safer
-(they check and update the network's type for you),
-but the operators are handy for quick, surgical changes.
+Throughout this tutorial, keep in mind that each function returns a new network,
+and leaves the network you gave it as it was.
 
 ::: {.callout}
 <span class="callout-label">**Try it yourself**:</span> This section includes an interactive quiz in the live tutorial — run `run_tute()` at the R console to try it.
 :::
 
 ::: {.callout}
-<span class="callout-label">**In brief**:</span> For igraph/tidygraph objects, 
-`[` indexes a network like its adjacency matrix,
-`[[` returns a node's neighbourhood,
-and `$` gets or sets a named node, tie, or network attribute.
-All three can be used with `<-` to modify a network directly.
+<span class="callout-label">**In brief**:</span> `as_matrix()`, `node_attribute()`,
+and `as_edgelist()` show what a network holds,
+and functions such as `filter_ties()` and `mutate_nodes()` return a changed network.
 :::
 
 ## Nodal properties
@@ -192,7 +171,7 @@ All three can be used with `<-` to modify a network directly.
 <span class="page-toc-link" onclick="document.getElementById('section-labels').scrollIntoView({behavior:'auto',block:'start'});">Labels</span> ·
 <span class="page-toc-link" onclick="document.getElementById('section-attributes').scrollIntoView({behavior:'auto',block:'start'});">Attributes</span></span>
 
-The previous page showed how to _read_ a network with operators.
+The previous page showed how to _read_ a network.
 Now we start changing it, one element at a time,
 beginning with the nodes:
 which nodes are present (adding and removing them),
@@ -231,19 +210,17 @@ especially when discussing what we are seeing with others ---
 node 1 is not the same as node 2, and so on ---
 we want to give the nodes names.
 
-The assignment equivalent sets the names directly:
-`net$label <- letters[1:8]` relabels an 8-node network,
-because a value with one entry per node is stored as a nodal attribute,
-and `label` is the reserved attribute for labels.
-
-we can use `to_labelled()` to assign (random) names to the nodes.
+Labels can be set directly:
+`mutate_nodes(net, label = letters[1:8])` relabels an 8-node network,
+because `label` is the reserved attribute for labels.
+Or we can use `to_labelled()` to assign (random) names to the nodes.
 The function allows your chosen labels to be added, of course,
 but if called without further arguments it assigns random (U.S.) children's names.
 **Check whether `ison_algebra` is labelled, and then label it randomly.**
 
 
 To check your result: the printout should now say _labelled_,
-and the nodes table should have gained a `name` column
+and the nodes table should have gained a `label` column
 of alphabetically ordered first names.
 Since these names are random, they are useful for _telling nodes apart_,
 not for identifying real people.
@@ -251,7 +228,7 @@ Did you notice how the names are drawn in alphabetic sequence?
 
 The reverse operation, `to_unlabelled()`, strips all names from a network.
 This is a one-step anonymiser.
-**Anonymise `ison_adolescents`, and then relabel it with letters using `$`.**
+**Anonymise `ison_adolescents`, and then relabel it with letters using `mutate_nodes()`.**
 
 
 Note that `to_unlabelled()` removes the identifying labels
@@ -444,10 +421,7 @@ a message sent from one researcher to another is still an arc.
 
 Going the other way, `to_weighted()` adds a weight attribute,
 and weights can also be assigned directly:
-`mutate_ties(net, weight = ...)` (the general tie-attribute tool from just above)
-or the operator shorthand `net$weight <- ...`,
-which works because a value with one entry per tie
-is stored as a tie attribute.
+`mutate_ties(net, weight = ...)`, the general tie-attribute tool from just above.
 
 Weights are often easier to read once they are put in proportion.
 `to_normalised()` rescales each tie against the other ties of the same node,
@@ -1252,7 +1226,7 @@ Along the way, you have learned to use these functions:
 
 | Function | What it does |
 |---|---|
-| `[`, `[[`, `$` | examine and assign into a network directly |
+| `as_matrix()`, `node_attribute()`, `as_edgelist()` | look inside a network |
 | `add_nodes()`, `add_ties()`, `delete_nodes()`, `delete_ties()` | add/remove nodes and ties |
 | `filter_nodes()`, `filter_ties()`, `to_subgraph()` | keep elements satisfying a condition |
 | `delete_isolates()`, `to_giant()`/`to_component()`, `to_simplex()` | prune isolates, minor components, self-ties |

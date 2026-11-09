@@ -582,7 +582,12 @@ index_changes <- function(.data){
 }
 
 #' @rdname make_stocnet
-#' @inheritParams make_mnet
+#' @param x A network object.
+#' @param ... Other arguments passed to or from other methods.
+#' @param n Number of observations to print across all network components,
+#'   i.e. nodes, changes, and ties.
+#'   By default 12.
+#'   `print_all()` prints them all.
 #' @export
 print.stocnet <- function(x, ..., n = 12) {
   arg_list <- list(...)

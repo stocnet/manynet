@@ -4,8 +4,8 @@
 # swept in test-functional_to.R and test-functional_from.R.
 
 test_that("to_egos returns one ego network per node, at any distance", {
-  expect_length(to_egos(ison_brandes), length(ison_brandes))
-  expect_length(to_egos(ison_brandes), length(to_egos(ison_brandes, 2)))
+  expect_length(to_egos(ison_centrality), as.numeric(net_nodes(ison_centrality)))
+  expect_length(to_egos(ison_centrality), length(to_egos(ison_centrality, 2)))
 })
 
 unicorn <- ison_adolescents |> 
@@ -196,14 +196,14 @@ test_that("applied changes keep their type and cover every changing variable", {
 test_that("to_waves works for diff_model objects", {
   skip_on_cran()
   skip_on_ci()
-  expect_warning(wave_diff <- play_diffusion(ison_brandes, old_version = TRUE))
+  expect_warning(wave_diff <- play_diffusion(ison_centrality, old_version = TRUE))
   expect_length(to_waves(wave_diff), length(wave_diff$t))
   expect_values(net_nodes(to_waves(wave_diff)[[1]]),
                net_nodes(to_waves(wave_diff)[[12]]))
   expect_values(net_ties(to_waves(wave_diff)[[1]]),
                net_ties(to_waves(wave_diff)[[12]]))
   expect_values(net_nodes(to_waves(wave_diff)[[1]]),
-               net_nodes(ison_brandes))
+               net_nodes(ison_centrality))
   expect_true(node_attribute(to_waves(wave_diff)[[1]], "Infected")[1])
   expect_false(node_attribute(to_waves(wave_diff)[[7]], "Exposed")[1])
   expect_false(node_attribute(to_waves(wave_diff)[[10]], "Recovered")[1])

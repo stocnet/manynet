@@ -451,7 +451,7 @@ collect_pkg <- function(dir = getwd(), external = FALSE) {
 }
 
 # Resolves the left hand side of an assignment to a single name, stripping the
-# backticks or quotes that non-syntactic names such as `print.mnet` arrive with.
+# backticks or quotes that non-syntactic names such as `print.stocnet` arrive with.
 .pkg_symbol <- function(pd, row_of, kids, id) {
   i <- row_of[as.character(id)]
   if (is.na(i)) return(NA_character_)

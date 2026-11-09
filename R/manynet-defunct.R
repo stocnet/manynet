@@ -828,3 +828,50 @@ is_egonet <- function(.data) {
   .Deprecated("is_egolist", package = "manynet", old = "is_egonet")
   is_egolist(.data)
 }
+
+#' @rdname defunct
+#' @param x A network of the 'mnet' class, saved by a version before 2.5.0.
+#' @param n Number of observations to print across all network components.
+#' @section The 'mnet' class:
+#'   Deprecated on 2026-11-08.
+#'   manynet 2.5.0 no longer makes 'mnet' objects:
+#'   `as_tidygraph()` returns a plain 'tbl_graph'.
+#'   A network saved with the class still prints as before, with a warning;
+#'   `as_stocnet()` converts it.
+#' @export
+print.mnet <- function(x, ..., n = 12) {
+  .Deprecated(msg = paste("The 'mnet' class is deprecated.",
+                          "Use `as_stocnet()` or `as_tidygraph()` to convert this network."),
+              package = "manynet")
+  if(!is.null(net_name(x)) && net_name(x) != "")
+    cli::cli_h1("# {net_name(x)}")
+  net_desc <- describe_network(x)
+  tie_desc <- describe_ties(x)
+  node_desc <- describe_nodes(x)
+  change_desc <- describe_changes(x)
+  cli::cli_par()
+  cli_div(theme = list(.emph = list(color = "#4576B5")))
+  cli::cli_text("{.emph # {net_desc} of {node_desc} and {tie_desc}{change_desc}}")
+  cli::cli_end()
+  top <- dplyr::as_tibble(tidygraph::activate(x, "nodes"))
+  bottom <- dplyr::as_tibble(tidygraph::activate(x, "edges"))
+  if(!is.null(igraph::graph_attr(x, "changes"))) n <- ceiling(n/3) else
+    n <- ceiling(n/2)
+  if (ncol(top)>0){
+    cli::cli_par()
+    cli::cli_h3("Nodes")
+    print(top, n = n)
+    cli::cli_end()
+  }
+  if(!is.null(igraph::graph_attr(x, "changes"))){
+    cli::cli_par()
+    cli::cli_h3("Changes")
+    print(dplyr::as_tibble(igraph::graph_attr(x, "changes")), n = n)
+    cli::cli_end()
+  }
+  if (ncol(bottom)>0){
+    cli::cli_h3("Ties")
+    print(bottom, n = n, max_footer_lines = 1)
+  }
+  invisible(x)
+}

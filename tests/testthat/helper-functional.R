@@ -39,7 +39,7 @@ run_or_skip <- function(expr, fn, fixture) {
 
 
 # Standard grid of fixture networks covering the main formats manynet
-# functions are expected to handle. All are tidygraph/mnet objects;
+# functions are expected to handle. All are tidygraph objects;
 # class coverage is handled separately via class_versions().
 func_fixtures <- local({
   set.seed(1234)

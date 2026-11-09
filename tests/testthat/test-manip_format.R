@@ -25,10 +25,10 @@ test_that("signed-only networks are not marked weighted in any format", {
 })
 
 test_that("to_redirected works",{
-  expect_true(is_directed(to_redirected(to_directed(ison_brandes))))
-  expect_true(is_directed(to_redirected(to_directed(as_igraph(ison_brandes)))))
-  expect_true(is_directed(to_redirected(to_directed(as_matrix(ison_brandes)))))
-  expect_true(is_directed(to_redirected(to_directed(as_network(ison_brandes)))))
+  expect_true(is_directed(to_redirected(to_directed(ison_centrality))))
+  expect_true(is_directed(to_redirected(to_directed(as_igraph(ison_centrality)))))
+  expect_true(is_directed(to_redirected(to_directed(as_matrix(ison_centrality)))))
+  expect_true(is_directed(to_redirected(to_directed(as_network(ison_centrality)))))
   expect_false(is_directed(to_redirected(ison_southern_women)))
   expect_equal(colnames(as_matrix(ison_southern_women)), 
                rownames(to_redirected(as_matrix(ison_southern_women))))
@@ -65,12 +65,12 @@ test_that("to_uniplex works where layers are held in a layer column", {
 })
 
 test_that("to_reciprocated works",{
-  expect_true(is_directed(to_reciprocated(ison_brandes)))
-  expect_true(is_directed(to_reciprocated(as_igraph(ison_brandes))))
-  expect_true(isSymmetric(to_reciprocated(as_matrix(ison_brandes))))
-  expect_true(is_directed(to_reciprocated(to_directed(as_network(ison_brandes)))))
-  expect_gt(nrow(as_edgelist(to_reciprocated(ison_brandes))),
-                length(ison_brandes)*2)
+  expect_true(is_directed(to_reciprocated(ison_centrality)))
+  expect_true(is_directed(to_reciprocated(as_igraph(ison_centrality))))
+  expect_true(isSymmetric(to_reciprocated(as_matrix(ison_centrality))))
+  expect_true(is_directed(to_reciprocated(to_directed(as_network(ison_centrality)))))
+  expect_gt(nrow(as_edgelist(to_reciprocated(ison_centrality))),
+                length(ison_centrality)*2)
 })
 
 test_that("to_onemode works",{

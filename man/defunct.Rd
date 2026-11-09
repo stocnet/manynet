@@ -173,6 +173,7 @@
 \alias{gather_changes}
 \alias{apply_changes}
 \alias{is_egonet}
+\alias{print.mnet}
 \title{Functions that have been renamed, superseded, moved, or are no longer working}
 \usage{
 pkg_data(pkg = "manynet")
@@ -516,11 +517,17 @@ gather_changes(.data, time)
 apply_changes(.data, time)
 
 is_egonet(.data)
+
+\method{print}{mnet}(x, ..., n = 12)
 }
 \arguments{
 \item{.data}{A manynet-consistent network.}
 
 \item{time}{A moment to gather the changes in force at.}
+
+\item{x}{A network of the 'mnet' class, saved by a version before 2.5.0.}
+
+\item{n}{Number of observations to print across all network components.}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
@@ -876,4 +883,13 @@ wherever possible and update your scripts accordingly.
 \item \code{is_egonet()}: Deprecated on 2026-09-21.
 
 }}
+\section{The 'mnet' class}{
+
+Deprecated on 2026-11-08.
+manynet 2.5.0 no longer makes 'mnet' objects:
+\code{as_tidygraph()} returns a plain 'tbl_graph'.
+A network saved with the class still prints as before, with a warning;
+\code{as_stocnet()} converts it.
+}
+
 \keyword{internal}

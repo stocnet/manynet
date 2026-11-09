@@ -133,7 +133,7 @@ to_components                *       *                 *      *       *       *
 to_egos                      *       *                 *      *       *       *
 to_layers                    *       *                 *              *        
 to_reporters      *                  *                                        *
-to_slices                            *                 *                       
+to_slices                            *                 *                      *
 to_subgraphs                         *                 *              *       *
 to_times                             *                 *                      *
 to_waves                     *       *          *      *                       

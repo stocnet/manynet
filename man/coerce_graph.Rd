@@ -106,16 +106,16 @@ as_network                                                         *
 as_siena                                                                   *
 as_stocnet                     *                  *     *          *        
 as_tidygraph                                                       *        
-              dfm diff_model diffnet hypergraph igraph list matrix mnet network
-as_diffnet                 *                                                   
-as_diffusion               *       *                 *                *        
-as_graphAM                                                       *             
-as_hypergraph                                 *                                
-as_igraph                  *       *                 *           *            *
-as_network                         *                 *           *            *
-as_siena                                                                       
-as_stocnet      *                             *      *           *            *
-as_tidygraph               *       *                 *    *      *            *
+              dfm diff_model diffnet hypergraph igraph list matrix network
+as_diffnet                 *                                              
+as_diffusion               *       *                 *                    
+as_graphAM                                                       *        
+as_hypergraph                                 *                           
+as_igraph                  *       *                 *           *       *
+as_network                         *                 *           *       *
+as_siena                                                                  
+as_stocnet      *                             *      *           *       *
+as_tidygraph               *       *                 *    *      *       *
               network.goldfish networkDynamic node_measure node_member siena
 as_diffnet                                                                  
 as_diffusion                                                                
@@ -128,7 +128,7 @@ as_stocnet                                               *           *
 as_tidygraph                 *              *                              *
               sienadata stocnet tbl_graph
 as_diffnet                               
-as_diffusion                  *          
+as_diffusion                  *         *
 as_graphAM                               
 as_hypergraph                            
 as_igraph             *       *         *

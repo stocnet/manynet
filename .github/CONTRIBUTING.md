@@ -339,10 +339,12 @@ Conventions to preserve when writing or editing functions:
   the operation is genuinely graph-theoretic. Return a `stocnet` when you were given one:
   rebuild with `make_stocnet()` so validation and indexing re-run.
 
-The older `mnet` class ([R/class_networks.R](../R/class_networks.R)) — a thin class over
-`igraph`/`tbl_graph`, with `name`-first nodes, `type`/`wave`/`sign` tie attributes, and
-changes stored as a graph attribute — is being progressively deprecated in favour of
-`stocnet`. Keep its methods working, but write new functionality against `stocnet`.
+The older `mnet` class, which `as_tidygraph()` added on top of a `tbl_graph`,
+was removed in 2.5.0. `as_tidygraph()` now returns a plain `tbl_graph`,
+and removes the class from a network saved by an earlier version.
+Only a deprecated `print.mnet()` remains, until the next major version.
+Some comments still name the `mnet` conventions (`name`-first nodes,
+`type`/`wave`/`sign` tie attributes) where code reads data in that older form.
 
 ### Two-mode networks
 
@@ -449,10 +451,10 @@ saved with `usethis::use_data(<name>, overwrite = TRUE, compress = "bzip2")`,
 and documented in `R/data_ison.R`, `R/data_fict.R`, or `R/data_irps.R`.
 [data-raw/stocnet_conversion.R](../data-raw/stocnet_conversion.R) is the worked example.
 
-- **A new dataset is a `stocnet` object.**
-  Some older datasets are still `mnet` objects, or lists of them,
-  because a released downstream package relies on their class or attribute names;
-  see issues #185 and #186 for which, and for what each waits on.
+- **A dataset is a `stocnet` object.**
+  A dataset that holds several networks is still one `stocnet`:
+  disjoint networks share it with a node attribute that names the part
+  (see `ison_physicians`), and networks on one set of nodes are layers.
 - **Record how the network was collected in `info`,** with `add_info()`:
   `name`, `modes`, `layers`, and `directed` (named per layer where the layers differ);
   `observation`, and `update` where the ties hold moments;

@@ -621,7 +621,7 @@ as_tidygraph <- function(.data, twomode = FALSE) UseMethod("as_tidygraph")
 #' @export
 as_tidygraph.data.frame <- function(.data, twomode = FALSE) {
   out <- tidygraph::as_tbl_graph(as_igraph(.data))
-  make_mnet(out)
+  out
 }
 
 #' @importFrom tidygraph tbl_graph
@@ -636,31 +636,32 @@ as_tidygraph.list <- function(.data, twomode = FALSE) {
                                   edges = .data[["edges"]])
     } else snet_abort("Please name the list elements 'nodes' and 'ties'.")
   } else snet_abort("Please name the list elements 'nodes' and 'ties'.")
-  make_mnet(out)
+  out
 }
 
 #' @export
 as_tidygraph.matrix <- function(.data, twomode = FALSE) {
   out <- tidygraph::as_tbl_graph(as_igraph(.data, twomode = twomode))
-  make_mnet(out)
+  out
 }
 
 #' @export
 as_tidygraph.igraph <- function(.data, twomode = FALSE) {
   out <- tidygraph::as_tbl_graph(.data)
-  make_mnet(out)
+  out
 }
 
 #' @export
 as_tidygraph.tbl_graph <- function(.data, twomode = FALSE) {
-  out <- .data
-  make_mnet(out)
+  # A network saved by an earlier version may still carry the 'mnet' class.
+  class(.data) <- setdiff(class(.data), "mnet")
+  .data
 }
 
 #' @export
 as_tidygraph.network <- function(.data, twomode = FALSE) {
   out <- tidygraph::as_tbl_graph(as_igraph(.data))
-  make_mnet(out)
+  out
 }
 
 #' @export
@@ -709,13 +710,13 @@ as_tidygraph.network.goldfish <- function(.data,
   #     out <- join_edges(out, other, edges)
   #   }
   # }
-  make_mnet(out)
+  out
 }
 
 #' @export
 as_tidygraph.siena <- function(.data, twomode = FALSE) {
   out <- as_tidygraph(as_igraph.siena(.data, twomode = FALSE))
-  make_mnet(out)
+  out
 }
 
 #' @export
@@ -726,18 +727,13 @@ as_tidygraph.diff_model <- function(.data, twomode = FALSE) {
   #   out <- add_node_attribute(out, "name",
   #                             as.character(seq_len(igraph::vcount(out))))
   # }
-  make_mnet(out)
+  out
 }
 
 #' @export
 as_tidygraph.diffnet <- function(.data, twomode = FALSE) {
   out <- as_igraph(.data)
   lapply(out, as_tidygraph)
-}
-
-make_mnet <- function(out){
-  class(out) <- unique(c("mnet", class(out)))
-  out
 }
 
 #' @export
@@ -2361,7 +2357,7 @@ as_diffusion.diff_model <- function(.data, twomode = FALSE, events) {
 }
 
 #' @export
-as_diffusion.mnet <- function(.data, twomode = FALSE, events) {
+as_diffusion.tbl_graph <- function(.data, twomode = FALSE, events) {
   if (missing(events)) events <- as_changelist(.data)
   # a network can record other changes too, such as when its nodes are active
   if ("var" %in% names(events)) 
@@ -2458,7 +2454,7 @@ as_diffusion.igraph <- function(.data, twomode = FALSE, events) {
 # A diffusion is reported in the same way whatever class it was played on,
 # with a `time` column and the nodes newly susceptible in `S_new`.
 #' @export
-as_diffusion.stocnet <- as_diffusion.mnet
+as_diffusion.stocnet <- as_diffusion.tbl_graph
 
 #' @export
 as_diffusion.diffnet <- function(.data, twomode = FALSE, events) {

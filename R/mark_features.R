@@ -98,7 +98,7 @@ is_perfect_matching.igraph <- function(.data, mark = "type"){
 #' _Mathematische Annalen_, 6(1): 30–32.
 #' \doi{10.1007/BF01442866}
 #' @examples
-#' is_eulerian(ison_brandes)
+#' is_eulerian(ison_centrality)
 #' @export
 is_eulerian <- function(.data) UseMethod("is_eulerian")
 
