@@ -11,14 +11,14 @@
 #> 
 #> -- Ties
 #> # A tibble: 279 x 4
-#>    from    to type   weight
-#>   <int> <int> <chr>   <dbl>
-#> 1     1     5 social   1.2 
-#> 2     1     5 tasks    0.3 
-#> 3     1     8 social   0.15
-#> 4     1     9 social   2.85
-#> 5     1     9 tasks    0.3 
-#> 6     1    10 social   6.45
+#>    from    to weight layer 
+#>   <int> <int>  <dbl> <chr> 
+#> 1     1     5   1.2  social
+#> 2     1     5   0.3  tasks 
+#> 3     1     8   0.15 social
+#> 4     1     9   2.85 social
+#> 5     1     9   0.3  tasks 
+#> 6     1    10   6.45 social
 #> # i 273 more rows
 #> 
 }\if{html}{\out{</div>}}

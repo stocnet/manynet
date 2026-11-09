@@ -83,8 +83,8 @@
 
 ## Data
 
-- Converted `ison_lawfirm` and `irps_usgeo` to 'stocnet' objects
-- Updated `ison_lawfirm` documentation to describe all 71 attorneys
+- Converted the last single 'mnet' datasets to 'stocnet' objects (closes #186)
+  - `ison_adolescents`, `ison_lawfirm`, `ison_networkers`, and `ison_algebra`
 
 # manynet 2.4.5
 

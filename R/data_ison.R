@@ -715,8 +715,10 @@
 #'
 #' @description A directed, simple, named, weighted graph with 32 nodes and 440
 #' edges. Nodes are academics and edges illustrate the communication patterns
-#' on an Electronic Information Exchange System among them. Node attributes
-#' include the number of citations (`Citations`) and the discipline of the
+#' on an Electronic Information Exchange System among them.
+#' The 32 nodes are the participants who completed the study,
+#' which asked about their acquaintances in January and September 1978.
+#' Node attributes include the number of citations (`Citations`) and the discipline of the
 #' researchers (`Discipline`). Edge weights illustrate the number of emails
 #' sent from one academic to another over the studied time period.
 #' @docType data
@@ -740,14 +742,18 @@
 
 ## Physicians ####
 
-#' Four multiplex one-mode physician diffusion data (Coleman, Katz, and Menzel, 1966)
+#' Multiplex one-mode physician diffusion data (Coleman, Katz, and Menzel, 1966)
 #'
 #' @description
 #'   Ron Burt prepared this data from 
 #'   Coleman, Katz and Menzel's 1966 study on medical innovation. 
 #'   They had collected data from physicians in four towns in Illinois: 
 #'   Peoria, Bloomington, Quincy and Galesburg.
-#'   These four networks are held as separate networks in a list.
+#'   The four cities are held in one network, with each physician's `city`
+#'   as a node attribute.
+#'   No physician is in two cities, so there are no ties between cities.
+#'   `to_subgraphs(ison_physicians, "city")` returns the four networks.
+#'   Before version 2.5.0, this dataset was a list of the four networks.
 #'   
 #'   Coleman, Katz and Menzel were concerned with the impact of network ties 
 #'   on the physicians' adoption of a new drug, tetracycline. 

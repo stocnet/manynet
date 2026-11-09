@@ -70,15 +70,5 @@ Lazega, Emmanuel. 2001.
 \emph{The Collegial Phenomenon: The Social Mechanisms of Cooperation Among Peers in a Corporate Law Partnership}.
 Oxford: Oxford University Press.
 \doi{10.1093/acprof:oso/9780199242726.001.0001}
-
-Pattison, Philippa, and Garry Robins. 2002.
-"Neighborhood-based models for social networks".
-\emph{Sociological Methodology} 32: 301-337.
-\doi{10.1111/1467-9531.00119}
-
-Snijders, Tom A. B., and Christian E. G. Steglich. 2015.
-"Representing micro-macro linkages by actor-based dynamic network models".
-\emph{Sociological Methods & Research} 44(2): 222-271.
-\doi{10.1177/0049124113494573}
 }
 \keyword{datasets}
