@@ -2,16 +2,18 @@
 % Please edit documentation in R/make_mobility.R
 \name{make_mobility}
 \alias{make_mobility}
-\alias{play_segregation}
+\alias{play_mobility}
 \title{Making mobility models on networks}
 \usage{
-play_segregation(
+play_mobility(
   .data,
   attribute,
-  heterophily = 0,
+  preference = 0,
   who_moves = c("ordered", "random", "most_dissatisfied"),
   choice_function = c("satisficing", "optimising", "minimising"),
-  steps
+  max_dist = Inf,
+  steps,
+  ...
 )
 }
 \arguments{
@@ -26,36 +28,88 @@ play_segregation(
 }}
 
 \item{attribute}{A string naming some nodal attribute in the network.
+A missing value marks an empty place.
 Currently only tested for binary attributes.}
 
-\item{heterophily}{A score ranging between -1 and 1 as a threshold for
-how heterophilous nodes will accept their neighbours to be.
-A single proportion means this threshold is shared by all nodes,
-but it can also be a vector the same length of the nodes in the network
-for issuing different thresholds to different nodes.
-By default this is 0, meaning nodes will be dissatisfied if more than half
-of their neighbours differ on the given attribute.}
+\item{preference}{What satisfies an occupant with its place.
+Either a number, or a function.
 
-\item{who_moves}{One of the following options:
-"ordered" (the default) checks each node in turn for whether they are
-dissatisfied and there is an available space that they can move to,
-"random" will check a node at random,
-and "most_dissatisfied" will check (one of) the most dissatisfied nodes first.}
+A number is a threshold from -1 to 1 on the E-I index of the occupant's
+neighbours on \code{attribute},
+above which the occupant is dissatisfied.
+One number gives the same threshold to every occupant,
+and a vector as long as the nodes of the network gives each occupant
+its own threshold, which moves with it.
+By default this is 0, meaning occupants will be dissatisfied if more than
+half of their neighbours differ on the given attribute.
 
-\item{choice_function}{One of the following options:
-"satisficing" (the default) will move the node to any coordinates that satisfy
-their heterophily threshold,
-"optimising" will move the node to coordinates that are most homophilous,
-and "minimising" distance will move the node to the next nearest unoccupied coordinates.}
+A function takes the network (as an 'igraph') and the index of a node,
+in this order, and returns the satisfaction of the occupant of that node
+as one number.
+An occupant with a satisfaction below 0 is dissatisfied.
+This allows other preferences, such as a continuous utility.}
 
-\item{steps}{The number of steps forward in learning.
+\item{who_moves}{The order in which dissatisfied occupants are checked,
+one of the following options:
+"ordered" (the default) checks them in the order of the nodes,
+"random" checks them in a random order,
+and "most_dissatisfied" checks the most dissatisfied first.
+Alternatively, a function that takes the network and returns
+one score for each node, such as \code{netrics::node_by_degree}.
+The occupants are then checked from the highest score to the lowest.}
+
+\item{choice_function}{The empty place that a moving occupant chooses,
+one of the following options:
+"satisficing" (the default) chooses at random among the places that
+would satisfy it,
+"optimising" chooses the place that would satisfy it most,
+and "minimising" chooses the nearest empty place.
+Alternatively, a function that takes the network and returns
+one score for each node.
+The occupant then chooses the empty place with the highest score.}
+
+\item{max_dist}{The maximum distance along ties from an occupant's place to
+an empty place that it can move to.
+By default \code{Inf}, so that an occupant can move to any empty place,
+whether or not there is a path to it.
+In a directed network, distances follow the direction of the ties.
+With \code{max_dist = 1} on a directed network of positions,
+an occupant can move only to a next position,
+so that vacancy chains follow from the empty places.}
+
+\item{steps}{The maximum number of moves.
 By default the number of nodes in the network.}
+
+\item{...}{Former names of arguments, which still work but are deprecated:
+\code{heterophily} for \code{preference}.}
+}
+\value{
+The network of the class it was given,
+with its occupants in their new places.
 }
 \description{
 These functions allow mobility games to be played upon networks.
 \itemize{
-\item \code{play_segregation()} plays a Schelling segregation model upon a network.
+\item \code{play_mobility()} moves the occupants of a network of places
+to empty places, as in Schelling's model of segregation,
+in vacancy chains, or in migration.
 }
+
+Each node is a place, which holds at most one occupant.
+The nodal attributes describe the occupant of the place,
+and a missing value of \code{attribute} marks a place as empty.
+When an occupant moves, all its attributes move with it.
+Only the attributes of the place stay where they are:
+the node labels, which name the places, the nodes' mode (\code{type}),
+and whether the place is \code{active}.
+
+At each step, the occupants that are dissatisfied with their place are
+checked in the order given by \code{who_moves}.
+The first of them that has an empty place to go to,
+within \code{max_dist} of its place,
+moves to the place that \code{choice_function} chooses.
+The game stops after \code{steps} moves,
+or when no dissatisfied occupant has a place to go to.
 }
 \examples{
   startValues <- rbinom(100,1,prob = 0.5)
@@ -63,10 +117,33 @@ These functions allow mobility games to be played upon networks.
   latticeEg <- create_lattice(100)
   latticeEg <- add_node_attribute(latticeEg, "startValues", startValues)
   latticeEg
-  play_segregation(latticeEg, "startValues", 0.5)
+  play_mobility(latticeEg, "startValues", 0.5)
+  # A vacancy chain: a person moves up one position when it is empty
+  ladder <- delete_ties(create_ring(10, directed = TRUE), 10)
+  ladder <- add_node_attribute(ladder, "person", c(LETTERS[1:9], NA))
+  play_mobility(ladder, "person", preference = function(.data, node) -1,
+                choice_function = "optimising", max_dist = 1)
+}
+\references{
+\subsection{On segregation}{
+
+Schelling, Thomas C. 1971.
+"Dynamic Models of Segregation."
+\emph{Journal of Mathematical Sociology} 1(2): 143-186.
+\doi{10.1080/0022250X.1971.9989794}
+}
+
+\subsection{On vacancy chains}{
+
+White, Harrison C. 1970.
+\emph{Chains of Opportunity: System Models of Mobility in Organizations}.
+Cambridge, MA: Harvard University Press.
+}
 }
 \seealso{
 Other makes:
+\code{\link[=as_diffusion]{as_diffusion()}},
+\code{\link[=as_opinion]{as_opinion()}},
 \code{\link{make_bibliography}},
 \code{\link{make_collect}},
 \code{\link{make_create}},
@@ -75,8 +152,6 @@ Other makes:
 \code{\link{make_explicit}},
 \code{\link{make_groups}},
 \code{\link{make_growth}},
-\code{\link{make_opinion}},
-\code{\link{make_play}},
 \code{\link{make_random}},
 \code{\link{make_read}},
 \code{\link{make_statements}},
@@ -84,8 +159,8 @@ Other makes:
 \code{\link{make_write}}
 
 Other models:
-\code{\link{make_opinion}},
-\code{\link{make_play}}
+\code{\link[=as_diffusion]{as_diffusion()}},
+\code{\link[=as_opinion]{as_opinion()}}
 }
 \concept{makes}
 \concept{models}

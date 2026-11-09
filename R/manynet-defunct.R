@@ -804,6 +804,71 @@ na_to_mean <- function(.data) {
     impute_ties(.data, rule = "density")
 }
 
+#' @describeIn defunct Deprecated on 2026-11-09.
+#'   `play_segregation()` is now `play_mobility()`,
+#'   with `heterophily` renamed to `preference`.
+#'   It gives the same results as before for a seed,
+#'   and so does not move the occupant's other attributes.
+#' @export
+play_segregation <- function(.data,
+                             attribute,
+                             heterophily = 0,
+                             who_moves = c("ordered","random","most_dissatisfied"),
+                             choice_function = c("satisficing","optimising", "minimising"),
+                             steps) {
+  .Deprecated("play_mobility", package = "manynet", old = "play_segregation")
+  # This keeps the former code, rather than calling `play_mobility()`,
+  # so that a seed gives the same result as before.
+  # `play_mobility()` differs in three ways:
+  # it does not skip a place that an occupant has left,
+  # it does not draw from 1:k when only place k satisfies,
+  # and it checks a mover's threshold rather than that of the empty place.
+  n <- net_nodes(.data)
+  if(missing(steps)) steps <- n
+  who_moves <- match.arg(who_moves)
+  choice_function <- match.arg(choice_function)
+  if(length(heterophily)==1) heterophily <- rep(heterophily, n)
+  if(length(heterophily)!=n) snet_abort("Heterophily threshold must be the same length as the number of nodes in the network.")
+  swtch <- function(x,i,j) {x[c(i,j)] <- x[c(j,i)]; x}
+
+  t <- 0
+  temp <- .data
+  moved <- NULL
+  while(steps > t){
+    t <- t+1
+    current <- node_attribute(temp, attribute)
+    heterophily_scores <- .node_heterophily(temp, attribute)
+    dissatisfied <- which(heterophily_scores > heterophily)
+    unoccupied <- which(is.na(current))
+    dissatisfied <- setdiff(dissatisfied, unoccupied)
+    dissatisfied <- setdiff(dissatisfied, moved)
+    if(length(dissatisfied)==0) break
+    dissatisfied <- switch(who_moves,
+                           ordered = dissatisfied[1],
+                           random = sample(dissatisfied, 1),
+                           most_dissatisfied = dissatisfied[
+                             which(heterophily_scores[dissatisfied] ==
+                                     max(heterophily_scores[dissatisfied]))[1]])
+    options <- vapply(unoccupied, function(u){
+      test <- add_node_attribute(temp, "test",
+                                          swtch(current, dissatisfied, u))
+      .node_heterophily(test, "test")[u]
+    }, FUN.VALUE = numeric(1))
+    if(length(options)==0) next
+    move_to <- switch(choice_function,
+                      satisficing = unoccupied[sample(which(options <= heterophily[unoccupied]), 1)],
+                      optimising = unoccupied[which.min(options)[1]],
+                      minimising = unoccupied[which.min(igraph::distances(temp,
+                                                                          igraph::V(temp)[dissatisfied],
+                                                                          igraph::V(temp)[unoccupied]))])
+    if(is.na(move_to)) next
+    snet_minor_info("Moving node {dissatisfied} to node {move_to}")
+    temp <- add_node_attribute(temp, attribute,
+                                        swtch(current, dissatisfied, move_to))
+    moved <- c(dissatisfied, moved)
+  }
+  temp
+}
 
 #' @describeIn defunct Deprecated on 2026-11-09.
 #'   Use `play_opinion()`, whose `opinions`, `confidence`, and `tolerance`

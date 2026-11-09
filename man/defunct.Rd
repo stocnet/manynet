@@ -170,6 +170,7 @@
 \alias{node_by_triad}
 \alias{na_to_zero}
 \alias{na_to_mean}
+\alias{play_segregation}
 \alias{play_learning}
 \alias{gather_changes}
 \alias{apply_changes}
@@ -513,6 +514,14 @@ na_to_zero(.data)
 
 na_to_mean(.data)
 
+play_segregation(
+  .data,
+  attribute,
+  heterophily = 0,
+  who_moves = c("ordered", "random", "most_dissatisfied"),
+  choice_function = c("satisficing", "optimising", "minimising"),
+  steps
+)
 
 play_learning(.data, beliefs, closeness = Inf, steps, epsilon = 5e-04)
 
@@ -888,6 +897,11 @@ wherever possible and update your scripts accordingly.
 
 \item \code{na_to_mean()}: Deprecated on 2026-08-18.
 
+\item \code{play_segregation()}: Deprecated on 2026-11-09.
+\code{play_segregation()} is now \code{play_mobility()},
+with \code{heterophily} renamed to \code{preference}.
+It gives the same results as before for a seed,
+and so does not move the occupant's other attributes.
 
 \item \code{play_learning()}: Deprecated on 2026-11-09.
 Use \code{play_opinion()}, whose \code{opinions}, \code{confidence}, and \code{tolerance}

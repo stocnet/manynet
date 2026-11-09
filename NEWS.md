@@ -49,6 +49,11 @@
   - Renamed `closeness=` to `confidence=`, for the bounded-confidence rules only
   - Renamed `epsilon=` to `tolerance=`
   - Added `weights=` to weigh influence by a tie attribute or by a matrix
+- Renamed `play_segregation()` to `play_mobility()`, after the mechanism
+  - Renamed `heterophily=` to `preference=`, which can also be a function
+  - `who_moves=` and `choice_function=` can also be functions that score nodes
+  - Added `max_dist=` to limit moves to a distance along ties, for vacancy chains
+  - All attributes of an occupant move with it, not only `attribute=`
 
 ## Classes
 
