@@ -63,7 +63,9 @@
 #'   "satisficing" (the default) chooses at random among the places that
 #'   would satisfy it,
 #'   "optimising" chooses the place that would satisfy it most,
-#'   and "minimising" chooses the nearest empty place.
+#'   and "minimising" chooses the nearest of the places that would satisfy it.
+#'   With "satisficing" or "minimising", an occupant that no empty place
+#'   would satisfy does not move, and the next occupant is checked.
 #'   Alternatively, a function that takes the network and returns
 #'   one score for each node.
 #'   The occupant then chooses the empty place with the highest score.
@@ -200,8 +202,6 @@ play_mobility <- function(.data,
       if(length(options)==0) next
       if(is.function(choice_function)){
         move_to <- options[which.max(choice_scores[options])]
-      } else if(choice_function == "minimising"){
-        move_to <- options[which.min(dists)]
       } else {
         option_sat <- vapply(options, function(u){
           satisfaction(swap(g, i, u), u, occupant[i])
@@ -209,9 +209,14 @@ play_mobility <- function(.data,
         if(choice_function == "optimising"){
           move_to <- options[which.max(option_sat)]
         } else {
-          options <- options[!is.na(option_sat) & option_sat >= 0]
-          if(length(options)==0) next
-          move_to <- options[sample.int(length(options), 1)]
+          # Satisficing and minimising both take only a place that satisfies
+          satisfies <- !is.na(option_sat) & option_sat >= 0
+          if(!any(satisfies)) next
+          move_to <- if(choice_function == "minimising"){
+            options[satisfies][which.min(dists[satisfies])]
+          } else {
+            options[satisfies][sample.int(sum(satisfies), 1)]
+          }
         }
       }
       move_from <- i

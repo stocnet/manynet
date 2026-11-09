@@ -113,6 +113,22 @@ test_that("play_mobility takes a function as choice_function", {
   expect_identical(node_attribute(out, "person"), c(NA, "B", NA, "D", NA, "A"))
 })
 
+test_that("play_mobility minimising takes the nearest place that satisfies", {
+  # Node 1 (a 0 among 1s) is dissatisfied. The empty place 3 is nearer,
+  # but it too is among 1s, so node 1 goes to the empty place 7, among 0s.
+  ring <- add_node_attribute(create_ring(10), "group",
+                             c(0, 1, NA, 1, 1, 0, NA, 0, 1, 1))
+  out <- play_mobility(ring, "group", choice_function = "minimising", steps = 1)
+  expect_identical(as.numeric(node_attribute(out, "group")),
+                   c(NA, 1, NA, 1, 1, 0, 0, 0, 1, 1))
+  # With no place that satisfies, nobody moves
+  # (only node 1 is dissatisfied, and the empty place 4 is among 1s)
+  stuck <- add_node_attribute(create_ring(6), "group", c(0, 1, 1, NA, 1, 1))
+  out <- play_mobility(stuck, "group", choice_function = "minimising")
+  expect_identical(as.numeric(node_attribute(out, "group")),
+                   as.numeric(node_attribute(stuck, "group")))
+})
+
 test_that("play_mobility with max_dist = 1 makes a vacancy chain", {
   ladder <- delete_ties(create_ring(10, directed = TRUE), 10)
   ladder <- add_node_attribute(ladder, "person", c(LETTERS[1:9], NA))

@@ -63,7 +63,9 @@ one of the following options:
 "satisficing" (the default) chooses at random among the places that
 would satisfy it,
 "optimising" chooses the place that would satisfy it most,
-and "minimising" chooses the nearest empty place.
+and "minimising" chooses the nearest of the places that would satisfy it.
+With "satisficing" or "minimising", an occupant that no empty place
+would satisfy does not move, and the next occupant is checked.
 Alternatively, a function that takes the network and returns
 one score for each node.
 The occupant then chooses the empty place with the highest score.}

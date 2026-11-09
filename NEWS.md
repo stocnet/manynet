@@ -54,6 +54,7 @@
   - `who_moves=` and `choice_function=` can also be functions that score nodes
   - Added `max_dist=` to limit moves to a distance along ties, for vacancy chains
   - All attributes of an occupant move with it, not only `attribute=`
+  - `choice_function = "minimising"` takes the nearest place that satisfies
 
 ## Classes
 
