@@ -138,13 +138,9 @@ delete_isolates.tbl_graph <- function(.data) {
 
 #' @export
 delete_isolates.list <- function(.data) {
-  nodes <- NULL
-  # Delete edges not present vertices in each list
-  lapply(.data, function(x) {
-    x |> tidygraph::activate(nodes) |>
-      dplyr::filter(!tidygraph::node_is_isolated()) |>
-      .record_exclusion(x, "isolates", "nodes")
-  })
+  # Each network goes to the method for its own class, so that a list of
+  # stocnets is not handed to tidygraph.
+  lapply(.data, delete_isolates)
 }
 
 #' @export

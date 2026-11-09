@@ -10,12 +10,13 @@ test_that("delete_isolates removes nodes without ties", {
                as.numeric(net_ties(stranded)))
 })
 
+# Keeps the ties among Betty, Sue, Alice, Jane, and Pam, which leaves Dale,
+# Carol, and Tina as isolates.
 isolate <- ison_adolescents |>
-  activate(edges) |>
-  to_subgraph(from == 1:5)
+  filter_ties(from <= 3, to != 5)
 
 test_that("delete_isolates returns the class it was given", {
-  expect_length(delete_isolates(isolate), 5)
+  expect_equal(as.numeric(net_nodes(delete_isolates(isolate))), 5)
   expect_length(delete_isolates(as_igraph(isolate)), 5)
   expect_true(all(rowSums(delete_isolates(as_matrix(isolate))) >= 1))
   expect_length(delete_isolates(as_network(isolate)), 5)

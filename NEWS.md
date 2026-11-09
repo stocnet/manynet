@@ -45,6 +45,7 @@
 
 - Fixed `filter_nodes()` on a 'stocnet' where it drops every node of a mode
 - Fixed `bind_node_attributes()` to keep the names of the modes
+- Fixed `delete_isolates()` on a list of 'stocnet' objects, which failed
 
 ## Modifying
 
