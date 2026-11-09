@@ -754,14 +754,20 @@
 #'   - `conferences` attended 
 #'   (those that attended "Specialty" conferences presumably also attended "General" conferences)
 #'   - regular subscriptions to medical `journals`
-#'   - `free_time` spent associating with doctors
-#'   - `discussions` on medical matters when with other doctors sociallyy
-#'   - memberships in `clubs` with other doctores
-#'   - number of top 3 `friends` that are doctors
+#'   - `freetime` spent associating with doctors
+#'   - `discussions`, discussions on medical matters when with other doctors socially
+#'   - `clubs`, memberships in clubs with other doctors
+#'   - `friends`, the number of top 3 friends that are doctors
 #'   - time practicing in current `community`
 #'   - `patients` load (ordinal)
-#'   - physical `proximity` to other physicians (in building/sharing office)
+#'   - `proximity`, the physical proximity to other physicians (in building/sharing office)
 #'   - medical `specialty` (GP/Internist/Pediatrician/Other)
+#'   - the `city` where the physician practised
+#'
+#'   The physicians were interviewed with structured interviews
+#'   15 months after the drug was released.
+#'   The month of adoption comes from the prescription records of
+#'   the local pharmacies, not from the interviews.
 #' @docType data
 #' @keywords datasets
 #' @name ison_physicians
@@ -770,6 +776,11 @@
 #'   Coleman, James, Elihu Katz, and Herbert Menzel. 1966.
 #'   \emph{Medical innovation: A diffusion study}.
 #'   Indianapolis: The Bobbs-Merrill Company.
+#'
+#'   Coleman, James, Elihu Katz, and Herbert Menzel. 1957.
+#'   "The diffusion of an innovation among physicians".
+#'   _Sociometry_ 20(4): 253-270.
+#'   \doi{10.2307/2785979}
 #' @source `{networkdata}`
 #' @format
 #'   ```{r, echo = FALSE}
