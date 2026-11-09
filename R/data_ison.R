@@ -594,25 +594,6 @@
 #'   ```
 "ison_koenigsberg"
 
-## Laterals ####
-
-#' Two-mode projection examples (Hollway 2021)
-#'
-#' @description
-#'  These networks are for demonstration purposes and do not describe any real world network.
-#'  All examples contain named nodes.
-#'  The networks are gathered together as a list and can be retrieved simply by plucking 
-#'  the desired network.
-#' @docType data
-#' @keywords datasets
-#' @name ison_laterals
-#' @usage data(ison_laterals)
-#' @format
-#'   ```{r, echo = FALSE}
-#'   ison_laterals
-#'   ```
-"ison_laterals"
-
 ## Lawfirm ####
 
 #' Multiplex, directed network of advice, friendship, and coworking in a law firm (Lazega 2001)

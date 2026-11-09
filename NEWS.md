@@ -86,6 +86,7 @@
 - Converted the last single 'mnet' datasets to 'stocnet' objects (closes #186)
   - `ison_adolescents`, `ison_lawfirm`, `ison_networkers`, and `ison_algebra`
   - `fict_lotr`, `irps_usgeo`, and `irps_revere` 
+- Removed `ison_laterals`, which nothing used (#185)
 
 # manynet 2.4.5
 
