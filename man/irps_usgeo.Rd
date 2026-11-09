@@ -45,10 +45,6 @@ States are named by their two-letter ISO-3166 code.
 This data includes also the names of the capitol cities of each state,
 which are listed in the node attribute 'capitol',
 and their populations, in the node attribute 'population'.
-
-Meghanathan (2017) models the 48 contiguous states and the
-District of Columbia. This network holds the 50 states and not
-the District, so Alaska and Hawaii are isolates.
 }
 \references{
 Meghanathan, Natarajan. 2017.
