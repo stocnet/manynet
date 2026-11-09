@@ -105,6 +105,53 @@
 #' `compartments = list(S = c("Conservative", "Moderate"), I = "Liberal")`.
 #' The first value of a role is the one that the record writes.
 #' By default, each role is its own value.
+#' @section Transitions:
+#'
+#' A diffusion moves the nodes between the values of `attribute`.
+#' `transitions` gives these moves as a data frame, with one row for each
+#' transition and these columns:
+#'
+#' - `from` and `to`: the value that a node leaves, and the value it goes to.
+#' - `rate`: the hazard per step, 0 or more (`Inf` is certain).
+#'   A number, a number for each node, the name of a numeric node attribute,
+#'   or a function of `state`, `exposure`, `time` and `.data` that returns
+#'   a hazard for each node at each step.
+#'   A function replaces the exposure model of its row.
+#' - `source`: the value that causes the transition, or `NA` (the default)
+#'   for a spontaneous transition.
+#'   Several values, as in `"E+I"` or as a list column, count together.
+#' - `exposure`: how the contacts in `source` give the hazard.
+#'   `"threshold"` (the default) gives `rate` to each node with at least
+#'   `threshold` such contacts.
+#'   `"cascade"` gives each such contact its own chance, so the hazard is
+#'   `rate` times the number of contacts.
+#'   `"voter"` gives `rate` times the share of contacts in `source`.
+#' - `threshold`: the number of contacts in `source` (1 or more), or their
+#'   share (less than 1), that a node needs. By default 1.
+#'   A number, a number for each node, or the name of a node attribute.
+#' - `prevalence`: how much the share of all nodes in `source` lowers
+#'   the threshold, as in `threshold * (1 - prevalence * share)`.
+#'   By default 0.
+#'
+#' A node moves with probability \eqn{1 - e^{-\sum h}} over the rows that
+#' it can take, and its destination is drawn in proportion to their hazards.
+#' Rows with the same `from` and `to` add their hazards.
+#' In each step, the spontaneous transitions (rows with no `source`) occur
+#' first, from the state at the start of the step.
+#' The other transitions then count only the contacts that are still in
+#' `source`, so a node that recovers or dies in a step does not infect others
+#' in that step.
+#' Each value that the attribute holds must be in at least one row.
+#' For a value that never changes, add a row with `rate = 0`.
+#'
+#' Without `transitions`, the arguments after `...` give the table.
+#' They are chances per step, and each chance \eqn{p} becomes the hazard
+#' \eqn{-\log(1 - p)}.
+#' With `transitions`, these arguments are ignored, with a warning.
+#'
+#' For example, the voter model on two values:
+#' `data.frame(from = c("Liberal", "Conservative"), to = c("Conservative", "Liberal"),`
+#' `rate = 1, source = c("Conservative", "Liberal"), exposure = "voter")`.
 #' @section Arguments that set the model:
 #'
 #' The arguments after `...` are shortcuts that set the default model.
@@ -118,9 +165,8 @@
 #'   See the section "Start state".
 #'   For `as_diffusion()`, the attribute whose changes record the diffusion:
 #'   the report has one column for each of its values.
-#' @param transitions A table of the transitions between the values of
-#'   `attribute`.
-#'   This is not yet available.
+#' @param transitions A data frame of the transitions between the values of
+#'   `attribute`. See the section "Transitions".
 #'   By default `NULL`, which uses the model that the other arguments set.
 #' @param ... Not used. Any argument given here gives an error,
 #'   with the nearest argument name.
@@ -154,13 +200,12 @@
 #'   of the number of contacts/exposures sufficient for infection.
 #'   If less than 1, the threshold is interpreted as complex,
 #'   where the threshold concerns the proportion of contacts.
-#' @param prevalence The proportion that global prevalence contributes
-#'   to diffusion.
-#'   That is, if prevalence is 0.5, then the current number of infections
-#'   is multiplied by 0.5 and added
-#'   "prevalence" is 0 by default, i.e. there is no global mechanism.
-#'   Note that this is endogenously defined and is updated
-#'   at the outset of each step.
+#' @param prevalence How much the share of infected nodes in the whole
+#'   network lowers each node's threshold, from 0 to 1.
+#'   The threshold becomes `thresholds * (1 - prevalence * share)`,
+#'   where `share` is the share of the live nodes that are infected
+#'   at the start of the step.
+#'   By default 0, which means that there is no global mechanism.
 #' @param background The probability that a susceptible node becomes
 #'   infected at a step without any exposure, its background rate of
 #'   infection or innovation.
@@ -179,8 +224,9 @@
 #'   four days to recover, then \eqn{\gamma = 0.25}.
 #'   By default 0, which means there is no recovery (i.e. an SI model).
 #'   Anything higher results in an SIR model.
-#' @param latency The inverse probability those who have been exposed
-#'   become infectious (infected), \eqn{\sigma} or \eqn{\kappa}.
+#' @param latency The probability that those who have been exposed
+#'   stay exposed (not yet infectious) at a step, \eqn{\sigma} or \eqn{\kappa}.
+#'   An exposed node becomes infectious at a later step.
 #'   For example, if exposed individuals take, on average,
 #'   four days to become infectious, then \eqn{\sigma = 0.75} (1/1-0.75 = 1/0.25 = 4).
 #'   By default 0, which means those exposed become immediately infectious (i.e. an SI model).
@@ -208,7 +254,7 @@
 #'   after the start.
 #'   By default the number of nodes in the network.
 #'   If `steps = Inf` then the diffusion process will continue until
-#'   there are no new infections or all nodes are infected.
+#'   a step in which no node changes state.
 #' @family makes
 #' @family models
 #' @family diffusion
@@ -228,6 +274,10 @@ NULL
 #'   smeg <- mutate_nodes(smeg, aware = rep(c("yes", "no", "no"), 5))
 #'   play_diffusion(smeg, "aware", steps = 5,
 #'                  compartments = c(S = "no", I = "yes"))
+#'   # A spontaneous transition, from a table of transitions
+#'   play_diffusion(ison_lawfirm, "status", steps = 5,
+#'                  transitions = data.frame(from = "associate", to = "partner",
+#'                                           rate = 0.1))
 #' @export
 play_diffusion <- function(.data,
                            attribute = "diffusion",
@@ -271,9 +321,6 @@ play_diffusion <- function(.data,
   }
   if(!is.character(attribute) || length(attribute) != 1 || is.na(attribute))
     snet_abort("{.arg attribute} must be the name of one node attribute.")
-  if(!is.null(transitions))
-    snet_unavailable("A table of {.arg transitions} is not yet available.",
-                     "Please use the other arguments to set the model.")
   direction <- match.arg(direction)
   if(old_version)
     snet_warn(paste("Please use the new version of this function (since v1.4.0), with new features.",
@@ -284,34 +331,54 @@ play_diffusion <- function(.data,
   first <- if(waves) .data[[1]] else .data
   n <- net_nodes(first)
   if(missing(steps)) steps <- n
-  if(is.character(thresholds)) thresholds <- node_attribute(first, thresholds)
-  if(length(thresholds)==1) thresholds <- rep(thresholds, n)
-  if(all(thresholds <= 1) & !all(thresholds == 1))
-    thresholds <- thresholds *
-      .node_deg(first)
+
+  # The model ####
+  shortcuts <- c("prevalence", "background", "thresholds", "transmissibility",
+                 "latency", "recovery", "waning", "fatality")
+  env <- environment()
+  table_given <- !is.null(transitions)
+  if(table_given){
+    supplied <- shortcuts[!vapply(shortcuts, function(a)
+      eval(call("missing", as.name(a)), envir = env), logical(1))]
+    if(length(supplied))
+      snet_warn("{.arg {supplied}} {?is/are} ignored, because {.arg transitions} sets the model.")
+    if(old_version)
+      snet_abort("{.arg old_version} works only with the shortcuts, not with {.arg transitions}.")
+    known <- c(if(!is.null(compartments)) as.character(unlist(compartments)),
+               if(attribute %in% net_node_attributes(first))
+                 as.character(node_attribute(first, attribute)))
+    transitions <- make_transitions(transitions, values = known)
+  }
 
   # Start state ####
   begin <- .diffusion_start(first, attribute = attribute,
                             seeds = if(seeds_given) seeds else NULL,
-                            compartments = compartments, immune = immune)
+                            compartments = compartments, immune = immune,
+                            values = if(table_given) .transition_values(transitions))
   comps <- begin$compartments
-  .diffusion_roles_needed(comps, recovery = recovery, latency = latency,
-                          fatality = fatality, waning = waning,
-                          immune = begin$recovered)
-  infected <- begin$infected
-  latent <- begin$latent
-  recovered <- begin$recovered
-  dead <- begin$dead
+  if(!table_given){
+    .diffusion_roles_needed(comps, recovery = recovery, latency = latency,
+                            fatality = fatality, waning = waning,
+                            immune = begin$recovered)
+    transitions <- make_transitions(compartments = comps,
+                                    transmissibility = transmissibility,
+                                    recovery = recovery, latency = latency,
+                                    waning = waning, fatality = fatality,
+                                    background = background,
+                                    thresholds = thresholds,
+                                    prevalence = prevalence)
+    begin$dead_value <- if(any(fatality > 0)) comps$D[1] else NULL
+  } else {
+    .transitions_cover(transitions, begin$state, attribute)
+    begin$dead_value <- if(isTRUE(begin$given) && "D" %in% names(comps))
+      as.character(comps$D[1]) else NULL
+  }
+  state <- as.character(begin$state)
   start <- begin$time
   time <- start
 
-  # initialise events table
-  events <- list(data.frame(t = rep(time, length(begin$seeds)),
-                            nodes = begin$seeds, event = rep("I", length(begin$seeds)),
-                            exposure = rep(NA, length(begin$seeds))))
   # The contact matrices are made once, before the loop.
   twomode <- is_twomode(first)
-  complex <- is_complex(first)
   # Until the diffusion follows the time of the ties, a network that changes
   # is played on all its ties at once.
   if(!waves && is.null(contact) && (is_longitudinal(first) || is_dynamic(first)))
@@ -320,114 +387,42 @@ play_diffusion <- function(.data,
                     "To play each wave in turn, use {.code to_waves()} first."))
   contacts <- if(waves) .data else list(if(is.null(contact)) .data else contact)
   contacts <- lapply(contacts, .exposure_matrix, inform = TRUE)
-  sinit <- sum(.exposure_exposed(contacts[[1]], infected, direction, twomode))
-  # initialise report table
-  report <- list(data.frame(t = time,
-                            n = n,
-                            S = n - (length(latent) + length(infected) +
-                                       length(recovered) + length(dead)),
-                            s = sinit,
-                            E = length(latent),
-                            I_new = length(begin$seeds),
-                            I = length(infected),
-                            R = length(recovered)))
-  last_new <- length(begin$seeds)
+  engine <- .transitions_engine(transitions, first, n, contacts, direction, twomode)
+
+  # initialise events table: the seeds at the start
+  seeded <- begin$seeds
+  events <- list(data.frame(t = rep(time, length(seeded)), nodes = seeded,
+                            event = state[seeded],
+                            exposure = rep(NA, length(seeded))))
+  report <- NULL
+  if(old_version){
+    roles <- .diffusion_inverse(comps)
+    report <- list(.diffusion_old_report(time, state, roles, contacts[[1]],
+                                         direction, twomode, length(seeded)))
+  }
 
   repeat{ # At each time step:
-    # update network, if necessary:
     # a wave stays in force until the next one, and the last after that
-    mat <- contacts[[min(time - start + 1, length(contacts))]]
-    # some who have already recovered may lose their immunity:
-    waned <- recovered[stats::rbinom(length(recovered), 1, waning)==1]
-    # some may recover:
-    recovers <- infected[stats::rbinom(length(infected), 1, recovery)==1]
-    # the recovered are no longer infected
-    recovered <- c(recovered, recovers)
-    infected <- setdiff(infected, recovered)
-    # those for whom immunity has waned are no longer immune
-    recovered <- setdiff(recovered, waned)
-    # some infected, sadly, shake off this mortal coil
-    deceased <- infected[stats::rbinom(length(infected), 1, fatality)==1]
-    # and the dead no longer infect anyone
-    if(length(deceased) > 0){
-      infected <- setdiff(infected, deceased)
-      dead <- c(dead, deceased)
+    wave <- min(time - start + 1, length(contacts))
+    step <- .transitions_step(engine, state, wave, time, begin)
+    if(is.infinite(steps) && length(step$moves) == 0) break
+    time <- time + 1
+    if(length(step$moves)){
+      events[[length(events) + 1]] <- data.frame(t = time, nodes = step$moves,
+                                                 event = step$to,
+                                                 exposure = step$exposure)
+      state[step$moves] <- step$to
     }
-
-    # add any global/prevalence feedback
-    new_prev <- mat + ((last_new - length(recovers)) * prevalence)
-    if(!twomode & !complex) diag(new_prev) <- 0
-
-    # at main infection stage, get currently exposed to infection:
-    exposed <- .exposure_exposed(new_prev, infected, direction, twomode)
-    # count exposures for each node:
-    exposure <- .exposure_count(new_prev, infected, direction, twomode)
-    # identify those nodes who are exposed at or above their threshold
-
-    open_to_it <- which(exposure >= thresholds)
-    newinf <- open_to_it[stats::rbinom(length(open_to_it), 1, transmissibility)==1]
-    if(!is.null(recovery) & length(recovered)>0)
-      newinf <- setdiff(newinf, recovered) # recovered can't be reinfected
-    if(!is.null(latent) & length(latent)>0)
-      newinf <- setdiff(newinf, latent) # latent already infected
-    if(length(dead)>0) newinf <- setdiff(newinf, dead) # nor can the dead
-    # some may adopt without any exposure, at the background rate
-    if(background > 0){
-      unaware <- setdiff(seq_len(n), c(infected, latent, recovered, dead, newinf))
-      newinf <- c(newinf,
-                  unaware[stats::rbinom(length(unaware), 1, background)==1])
-    }
-    if(is.infinite(steps) & length(newinf)==0 & length(latent)==0) break # if no new infections we can stop
-
-    # new list of infected
-    latent <- c(latent, newinf)
-    infectious <- latent[stats::rbinom(length(latent), 1, latency)==0]
-    latent <- setdiff(latent, infectious)
-    newinf <- setdiff(newinf, infectious)
-    infected <- c(infected, infectious)
-    # tick time
-    time <- time+1
-
-    # Update events table ####
-    # record new infections
-    if(!is.null(infectious) & length(infectious)>0)
-      events[[length(events)+1]] <- data.frame(t = time, nodes = infectious, event = "I",
-                                               exposure = exposure[infectious])
-    # record exposures
-    if(!is.null(newinf) & length(newinf)>0)
-      events[[length(events)+1]] <- data.frame(t = time, nodes = newinf, event = "E",
-                                               exposure = exposure[newinf])
-    # record recoveries
-    if(!is.null(recovers) & length(recovers)>0)
-      events[[length(events)+1]] <- data.frame(t = time, nodes = recovers, event = "R",
-                                               exposure = NA)
-    # record wanings
-    if(!is.null(waned) & length(waned)>0)
-      events[[length(events)+1]] <- data.frame(t = time, nodes = waned, event = "S",
-                                               exposure = NA)
-    # record fatalities
-    if(!is.null(fatality) & length(deceased)>0)
-      events[[length(events)+1]] <- data.frame(t = time, nodes = deceased, event = "D",
-                                               exposure = NA)
-    # Update report table ####
-    last_new <- length(infectious)
-    report[[length(report)+1]] <- data.frame(t = time,
-                                             n = n,
-                                             S = n - (length(latent) + length(infected) +
-                                                        length(recovered) + length(dead)),
-                                             s = sum(exposed),
-                                             E = length(latent),
-                                             I_new = length(infectious),
-                                             I = length(infected),
-                                             R = length(recovered))
-
-    if(is.infinite(steps) & length(infected)==n) break
+    if(old_version)
+      report[[length(report) + 1]] <-
+        .diffusion_old_report(time, state, roles, contacts[[wave]], direction,
+                              twomode, sum(step$to == comps$I[1]))
     if(time - start == steps) break
   }
   events <- do.call(rbind, events)
-  report <- do.call(rbind, report)
   if(old_version){
-    make_diff_model(events, report, .data)
+    events$event <- unname(roles[as.character(events$event)])
+    make_diff_model(events, do.call(rbind, report), .data)
   } else {
     if(waves) lapply(.data, .diffusion_record, events = events, begin = begin,
                      attribute = attribute) else
@@ -437,15 +432,327 @@ play_diffusion <- function(.data,
 
 # contagion_function = attrib ~ 1 + prevalence + threshold + contact + equivalence
 
+# Transitions ####
+
+# The table of transitions that the diffusion engine runs on, with one row
+# for each transition: `from`, `to`, `rate` (a hazard per step), `source`,
+# `exposure`, `threshold` and `prevalence`.
+# Given a data frame, it checks the table and fills the defaults.
+# `values` are the other known values of the attribute, which decide
+# whether a text source such as "E+I" is split.
+# Given no table, it compiles the shortcuts of play_diffusion() into a table,
+# in the first value of each role in `compartments`.
+make_transitions <- function(transitions = NULL, values = NULL,
+                             compartments = NULL, transmissibility = 1,
+                             recovery = 0, latency = 0, waning = 0,
+                             fatality = 0, background = 0, thresholds = 1,
+                             prevalence = 0){
+  if(is.null(transitions)){
+    if(is.null(compartments)) compartments <- .diffusion_compartments(NULL, character(0))
+    role <- function(r) as.character(compartments[[r]][1])
+    infect_to <- if(any(latency > 0)) role("E") else role("I")
+    rows <- list(list(from = role("S"), to = infect_to,
+                      rate = .chance_hazard(transmissibility, "transmissibility"),
+                      source = role("I"), exposure = "threshold",
+                      threshold = thresholds, prevalence = prevalence))
+    add <- function(chance, arg, from, to)
+      if(any(chance > 0)) rows[[length(rows) + 1]] <<-
+        list(from = role(from), to = to, rate = .chance_hazard(chance, arg),
+             source = NULL, exposure = NA_character_, threshold = NA,
+             prevalence = NA_real_)
+    add(background, "background", "S", infect_to)
+    if(any(latency > 0)) add(1 - latency, "latency", "E", role("I"))
+    add(recovery, "recovery", "I", role("R"))
+    add(fatality, "fatality", "I", role("D"))
+    add(waning, "waning", "R", role("S"))
+    out <- dplyr::tibble(from = vapply(rows, `[[`, "", "from"),
+                         to = vapply(rows, `[[`, "", "to"),
+                         rate = lapply(rows, `[[`, "rate"),
+                         source = lapply(rows, `[[`, "source"),
+                         exposure = vapply(rows, `[[`, "", "exposure"),
+                         threshold = lapply(rows, `[[`, "threshold"),
+                         prevalence = vapply(rows, function(x) as.numeric(x$prevalence), 1))
+    class(out) <- c("diffusionTransitions", class(out))
+    return(out)
+  }
+  if(inherits(transitions, "diffusionTransitions")) return(transitions)
+  if(!is.data.frame(transitions))
+    snet_abort("{.arg transitions} must be a data frame, with one row for each transition.")
+  columns <- c("from", "to", "rate", "source", "exposure", "threshold", "prevalence")
+  unknown <- setdiff(names(transitions), columns)
+  if(length(unknown))
+    snet_abort(paste("{.arg transitions} can only have the columns {.val {columns}},",
+                     "but {.val {unknown}} {?is/are} not one of them."))
+  needed <- setdiff(c("from", "to", "rate"), names(transitions))
+  if(length(needed))
+    snet_abort("{.arg transitions} needs the column{?s} {.val {needed}}.")
+  k <- nrow(transitions)
+  if(k == 0) snet_abort("{.arg transitions} needs at least one row.")
+  from <- as.character(transitions$from)
+  to <- as.character(transitions$to)
+  if(anyNA(from) || anyNA(to))
+    snet_abort("{.arg transitions} cannot have a missing {.var from} or {.var to}.")
+  as_rows <- function(x) if(is.list(x)) x else as.list(x)
+  # rate: a hazard, the name of a node attribute, or a function
+  rate <- as_rows(transitions$rate)
+  for(r in seq_len(k)){
+    x <- rate[[r]]
+    ok <- is.function(x) || (is.character(x) && length(x) == 1 && !is.na(x)) ||
+      (is.numeric(x) && length(x) > 0 && !anyNA(x) && all(x >= 0))
+    if(!ok)
+      snet_abort(paste("The {.var rate} in row {r} of {.arg transitions} must be",
+                       "a hazard of 0 or more, the name of a numeric node attribute,",
+                       "or a function."))
+  }
+  # source: NULL for a spontaneous transition, or one or more values
+  source <- if("source" %in% names(transitions)) as_rows(transitions$source) else
+    vector("list", k)
+  known <- unique(c(from, to, values,
+                    unlist(lapply(source, function(x)
+                      if(length(x) > 1) as.character(x)))))
+  source <- lapply(source, .transition_source, known = known)
+  spontaneous <- vapply(source, is.null, logical(1))
+  exposure <- if("exposure" %in% names(transitions))
+    as.character(transitions$exposure) else rep(NA_character_, k)
+  exposure[is.na(exposure) & !spontaneous] <- "threshold"
+  exposure[spontaneous] <- NA_character_
+  models <- c("threshold", "cascade", "voter")
+  wrong <- setdiff(exposure[!spontaneous], models)
+  if(length(wrong))
+    snet_abort(paste("The {.var exposure} of a transition must be {.or {.val {models}}},",
+                     "but {.val {wrong}} {?is/are} not."))
+  threshold <- if("threshold" %in% names(transitions))
+    as_rows(transitions$threshold) else as.list(rep(1, k))
+  threshold <- lapply(threshold, function(x)
+    if(length(x) == 0 || all(is.na(x))) 1 else x)
+  threshold[spontaneous] <- list(NA)
+  prevalence <- if("prevalence" %in% names(transitions))
+    as.numeric(transitions$prevalence) else rep(0, k)
+  prevalence[is.na(prevalence)] <- 0
+  if(any(prevalence < 0 | prevalence > 1))
+    snet_abort("The {.var prevalence} of a transition must be between 0 and 1.")
+  prevalence[spontaneous] <- NA_real_
+  out <- dplyr::tibble(from = from, to = to, rate = rate, source = source,
+                       exposure = exposure, threshold = threshold,
+                       prevalence = prevalence)
+  class(out) <- c("diffusionTransitions", class(out))
+  out
+}
+
+# Reads one source: NA is spontaneous; text such as "E+I" is split on "+"
+# only when every part is a known value and the whole is not.
+.transition_source <- function(x, known){
+  if(is.null(x) || length(x) == 0 || all(is.na(x))) return(NULL)
+  x <- as.character(x)
+  if(length(x) == 1 && grepl("+", x, fixed = TRUE)){
+    parts <- strsplit(x, "+", fixed = TRUE)[[1]]
+    if(all(parts %in% known)){
+      if(x %in% known)
+        snet_abort(paste("The source {.val {x}} is a value, and its parts",
+                         "{.val {parts}} are values too.",
+                         "Please give the source as a list, as in {.code list(c(\"E\", \"I\"))},",
+                         "or rename the value."))
+      x <- parts
+    }
+  }
+  x
+}
+
+# A chance per step becomes a hazard per step; a chance of 1 is certain.
+.chance_hazard <- function(chance, arg){
+  if(!is.numeric(chance) || anyNA(chance) || any(chance < 0 | chance > 1))
+    snet_abort("{.arg {arg}} must be a chance between 0 and 1.")
+  -log1p(-chance)
+}
+
+# The values that a table of transitions uses.
+.transition_values <- function(transitions)
+  unique(c(transitions$from, transitions$to, unlist(transitions$source)))
+
+# Stops where the start state holds a value that no transition uses.
+.transitions_cover <- function(transitions, state, attribute){
+  unused <- setdiff(unique(as.character(state[!is.na(state)])),
+                    .transition_values(transitions))
+  if(length(unused))
+    snet_abort(paste("{.var {attribute}} holds the {cli::qty(length(unused))}value{?s}",
+                     "{.val {unused}}, which no transition uses.",
+                     "For a value that never changes, add a row with {.code rate = 0},",
+                     "as in {.code data.frame(from = \"{unused[1]}\", to = \"{unused[1]}\", rate = 0)}."))
+  invisible(transitions)
+}
+
+# Readies each row for the loop: rates, thresholds and degrees as vectors.
+.transitions_engine <- function(transitions, .data, n, contacts, direction,
+                                twomode){
+  attr_vector <- function(x, what, r){
+    if(is.character(x)){
+      if(!x %in% net_node_attributes(.data))
+        snet_abort("The {what} in row {r} of {.arg transitions} names {.val {x}}, which is not a node attribute.")
+      x <- node_attribute(.data, x)
+      if(!is.numeric(x) || anyNA(x))
+        snet_abort("The node attribute that gives the {what} in row {r} must be numeric, with no missing values.")
+      if(what == "rate" && any(x < 0))
+        snet_abort("The node attribute that gives the rate in row {r} must be 0 or more.")
+    }
+    rep_len(x, n)
+  }
+  deg <- .node_deg(.data)
+  rows <- lapply(seq_len(nrow(transitions)), function(r){
+    rate <- transitions$rate[[r]]
+    if(!is.function(rate)) rate <- attr_vector(rate, "rate", r)
+    source <- transitions$source[[r]]
+    thr <- NULL
+    if(!is.null(source)){
+      thr <- attr_vector(transitions$threshold[[r]], "threshold", r)
+      # a threshold of a share of the contacts, as before
+      if(all(thr <= 1) && !all(thr == 1)) thr <- thr * deg
+    }
+    list(from = transitions$from[r], to = transitions$to[r], rate = rate,
+         source = source, exposure = transitions$exposure[r], threshold = thr,
+         prevalence = transitions$prevalence[r])
+  })
+  voter <- any(transitions$exposure %in% "voter")
+  degrees <- if(voter) lapply(contacts, function(mat)
+    if(twomode) deg else .exposure_degree(mat, direction))
+  list(rows = rows, n = n, contacts = contacts, direction = direction,
+       twomode = twomode, degrees = degrees, .data = .data)
+}
+
+# The number (or weight) of the contacts of each node, in `direction`.
+.exposure_degree <- function(mat, direction = "in"){
+  weighted <- !all(mat %in% c(0, 1))
+  if(direction == "out") mat <- t(mat) else if(direction == "all"){
+    if(weighted){
+      if(!isSymmetric(unname(mat))) mat <- mat + t(mat)
+    } else mat <- (mat != 0) | (t(mat) != 0)
+  }
+  diag(mat) <- 0
+  unname(if(weighted) colSums(mat) else colSums(mat != 0))
+}
+
+# One step of the engine, in two parts.
+# First the spontaneous transitions (rows with no source), from the state at
+# the start of the step. Then the transitions that a source causes, for the
+# nodes that have not moved, where a source counts only if it was in a source
+# value at the start of the step and is still in it.
+# So a node that recovers or dies in a step does not infect in that step.
+# In each part, a node at risk moves with probability 1 - exp(-sum(h)),
+# and its destination is drawn in proportion to h.
+.transitions_step <- function(engine, state, wave, time, begin){
+  n <- engine$n
+  rows <- engine$rows
+  spontaneous <- vapply(rows, function(row) is.null(row$source), logical(1))
+  alive <- !is.na(state)
+  if(!is.null(begin$dead_value))
+    alive <- alive & state != as.character(begin$dead_value)
+  first <- .transitions_draw(engine, which(spontaneous), state, state, alive,
+                             wave, time, begin)
+  after <- state
+  after[first$moves] <- first$to
+  stayed <- alive
+  stayed[first$moves] <- FALSE
+  second <- .transitions_draw(engine, which(!spontaneous), state, after, stayed,
+                              wave, time, begin)
+  list(moves = c(first$moves, second$moves), to = c(first$to, second$to),
+       exposure = c(first$exposure, second$exposure))
+}
+
+# Draws the moves of the nodes at risk (`at_risk`) over the rows `which`.
+# `state` is the state at the start of the step, and `after` the state after
+# the spontaneous transitions: a source must be in a source value in both.
+.transitions_draw <- function(engine, which, state, after, at_risk, wave,
+                              time, begin){
+  n <- engine$n
+  none <- list(moves = integer(0), to = character(0), exposure = numeric(0))
+  if(!length(which)) return(none)
+  mat <- engine$contacts[[wave]]
+  live <- !is.na(after)
+  if(!is.null(begin$dead_value))
+    live <- live & after != as.character(begin$dead_value)
+  H <- matrix(0, n, length(which))
+  K <- matrix(NA_real_, n, length(which))
+  typed <- NULL
+  for(j in seq_along(which)){
+    r <- which[j]
+    row <- engine$rows[[r]]
+    risk <- at_risk & state == row$from
+    if(!any(risk)) next
+    k <- NULL
+    if(!is.null(row$source)){
+      mark <- which(live & state %in% row$source & after %in% row$source)
+      k <- .exposure_count(mat, mark, engine$direction, engine$twomode)
+      K[, j] <- k
+    }
+    if(is.function(row$rate)){
+      if(is.null(typed)) typed <- .state_values(after, begin$template)
+      h <- row$rate(state = typed, exposure = k, time = time,
+                    .data = engine$.data)
+      if(!is.numeric(h) || anyNA(h) || any(h < 0) || !length(h) %in% c(1, n))
+        snet_abort(paste("The function in the {.var rate} of row {r} must return",
+                         "one hazard of 0 or more, or one for each node."))
+      h <- rep_len(h, n)
+    } else if(is.null(k)){
+      h <- row$rate
+    } else {
+      thr <- row$threshold
+      if(row$prevalence > 0)
+        thr <- thr * (1 - row$prevalence * mean(state[live] %in% row$source))
+      h <- switch(row$exposure,
+                  threshold = row$rate,
+                  cascade = ifelse(k > 0, row$rate * k, 0),
+                  voter = ifelse(k > 0, row$rate * k /
+                                   pmax(engine$degrees[[wave]], 1), 0))
+      h[k < thr] <- 0
+    }
+    h <- rep_len(h, n)
+    h[!risk] <- 0
+    H[, j] <- h
+  }
+  total <- rowSums(H)
+  chance <- ifelse(is.infinite(total), 1, 1 - exp(-total))
+  moves <- which(total > 0 & stats::runif(n) < chance)
+  if(!length(moves)) return(none)
+  chosen <- vapply(moves, function(i){
+    h <- H[i, ]
+    if(any(is.infinite(h))) h <- as.numeric(is.infinite(h))
+    options <- which(h > 0)
+    if(length(options) == 1) options else sample(options, 1, prob = h[options])
+  }, integer(1))
+  list(moves = moves,
+       to = vapply(engine$rows[which[chosen]], `[[`, "", "to"),
+       exposure = K[cbind(moves, chosen)])
+}
+
+# The role of each value of the compartments, for the old report.
+.diffusion_inverse <- function(comps){
+  values <- unlist(lapply(comps, as.character))
+  stats::setNames(rep(names(comps), lengths(comps)), values)
+}
+
+# One row of the report of the old version.
+.diffusion_old_report <- function(time, state, roles, mat, direction, twomode,
+                                  new_infected){
+  role <- roles[as.character(state)]
+  infected <- which(role == "I")
+  data.frame(t = time, n = length(state), S = sum(role == "S", na.rm = TRUE),
+             s = sum(.exposure_exposed(mat, infected, direction, twomode)),
+             E = sum(role == "E", na.rm = TRUE), I_new = new_infected,
+             I = length(infected), R = sum(role == "R", na.rm = TRUE))
+}
+
+
 # Start state ####
 
 # Finds the start of a diffusion on `.data`, in one of three cases:
 # a history of `attribute` in the changes (1), the values of `attribute` on the
 # nodes (2), or no `attribute`, where `seeds` and `immune` give the start (3).
-# Returns the nodes in each role at the start, the start time, the seeds that
-# the record writes at the start (case 3 only), and the compartments as a list.
+# Returns the state of each node and the nodes in each role at the start,
+# the start time, the seeds that the record writes at the start (case 3 only),
+# and the compartments as a list.
+# With a table of transitions, `values` holds its values, and the state is
+# read in these values directly, with no roles.
 .diffusion_start <- function(.data, attribute = "diffusion", seeds = NULL,
-                             compartments = NULL, immune = NULL){
+                             compartments = NULL, immune = NULL, values = NULL){
   n <- net_nodes(.data)
   # a stocnet can keep its compartments, as bind_changes() does
   if(is.null(compartments) && inherits(.data, "stocnet"))
@@ -481,8 +788,24 @@ play_diffusion <- function(.data,
       time <- max(history$time)
     }
     comps <- .diffusion_compartments(compartments, state)
-    roles <- .diffusion_roles(state, comps, attribute)
-    list(infected = which(roles == "I"), latent = which(roles == "E"),
+    template <- state
+    if(is.null(values)){
+      roles <- .diffusion_roles(state, comps, attribute)
+      # the engine holds each role in the first value of that role
+      state <- unlist(lapply(roles, function(r) comps[[r]][1]))
+    } else {
+      roles <- rep(NA_character_, n)
+      missing_state <- sum(is.na(state))
+      if(missing_state > 0){
+        susceptible <- comps$S[1]
+        if(!is.null(susceptible) && as.character(susceptible) %in% values){
+          snet_info("{missing_state} node{?s} with a missing state start{?s/} as {.val {susceptible}}.")
+          state[is.na(state)] <- susceptible
+        } else snet_info("{missing_state} node{?s} with a missing state do{?es/} not take part.")
+      }
+    }
+    list(state = state, template = template,
+         infected = which(roles == "I"), latent = which(roles == "E"),
          recovered = which(roles == "R"), dead = which(roles == "D"),
          seeds = integer(0), time = time, compartments = comps,
          case = if(!is.null(history)) 1 else 2, given = !is.null(compartments))
@@ -491,7 +814,11 @@ play_diffusion <- function(.data,
     seeds <- .resolve_nodes(.data, seeds, "seeds")
     if(!is.null(immune)) immune <- .resolve_nodes(.data, immune, "immune")
     comps <- .diffusion_compartments(compartments, character(0))
-    list(infected = seeds, latent = NULL, recovered = immune, dead = integer(0),
+    state <- rep(comps$S[1], n)
+    if(length(immune) && !is.null(comps$R)) state[immune] <- comps$R[1]
+    state[seeds] <- comps$I[1]
+    list(state = state, template = unlist(comps, use.names = FALSE),
+         infected = seeds, latent = NULL, recovered = immune, dead = integer(0),
          seeds = seeds, time = .network_start(.data), compartments = comps,
          case = 3, given = !is.null(compartments))
   }
@@ -605,10 +932,12 @@ play_diffusion <- function(.data,
   # a stocnet keeps the compartments that were given, so that others can read them
   if(inherits(.data, "stocnet") && isTRUE(begin$given))
     .data$info$compartments <- comps
-  died <- events$event == "D"
+  # a node that dies keeps its last value, and becomes inactive
+  dead <- begin$dead_value
+  died <- if(is.null(dead)) rep(FALSE, nrow(events)) else
+    as.character(events$event) == as.character(dead)
   states <- events[!died, , drop = FALSE]
-  values <- unlist(lapply(states$event, function(r) comps[[r]][1]))
-  if(is.null(values)) values <- rep(comps$S[1], 0)
+  values <- .state_values(as.character(states$event), begin$template)
   changes <- data.frame(time = states$t, node = as.integer(states$nodes),
                         var = rep(attribute, nrow(states)))
   changes$value <- values
@@ -621,6 +950,12 @@ play_diffusion <- function(.data,
     .data <- bind_changes(.data, deaths)
   }
   .data
+}
+
+# Gives the values that the engine holds as text the type of the attribute.
+.state_values <- function(keys, template){
+  if(is.logical(template)) as.logical(keys) else
+    if(is.numeric(template)) as.numeric(keys) else keys
 }
 
 .unlist_values <- function(v){

@@ -56,16 +56,15 @@ with columns \code{t} indicating the time (typically an integer) of the event,
 and \code{event}, which can take on the values "I" for an infection event,
 "E" for an exposure event, or "R" for a recovery event.}
 
-\item{transitions}{A table of the transitions between the values of
-\code{attribute}.
-This is not yet available.
+\item{transitions}{A data frame of the transitions between the values of
+\code{attribute}. See the section "Transitions".
 By default \code{NULL}, which uses the model that the other arguments set.}
 
 \item{steps}{The number of steps forward in the diffusion to play,
 after the start.
 By default the number of nodes in the network.
 If \code{steps = Inf} then the diffusion process will continue until
-there are no new infections or all nodes are infected.}
+a step in which no node changes state.}
 
 \item{...}{Not used. Any argument given here gives an error,
 with the nearest argument name.}
@@ -95,13 +94,12 @@ at risk.
 and \code{"all"} counts both.
 On an undirected network, the three are the same.}
 
-\item{prevalence}{The proportion that global prevalence contributes
-to diffusion.
-That is, if prevalence is 0.5, then the current number of infections
-is multiplied by 0.5 and added
-"prevalence" is 0 by default, i.e. there is no global mechanism.
-Note that this is endogenously defined and is updated
-at the outset of each step.}
+\item{prevalence}{How much the share of infected nodes in the whole
+network lowers each node's threshold, from 0 to 1.
+The threshold becomes \code{thresholds * (1 - prevalence * share)},
+where \code{share} is the share of the live nodes that are infected
+at the start of the step.
+By default 0, which means that there is no global mechanism.}
 
 \item{background}{The probability that a susceptible node becomes
 infected at a step without any exposure, its background rate of
@@ -127,8 +125,9 @@ or exceeded will become infected.
 Anything lower means a correspondingly lower probability of adoption,
 even when the threshold is met or exceeded.}
 
-\item{latency}{The inverse probability those who have been exposed
-become infectious (infected), \eqn{\sigma} or \eqn{\kappa}.
+\item{latency}{The probability that those who have been exposed
+stay exposed (not yet infectious) at a step, \eqn{\sigma} or \eqn{\kappa}.
+An exposed node becomes infectious at a later step.
 For example, if exposed individuals take, on average,
 four days to become infectious, then \eqn{\sigma = 0.75} (1/1-0.75 = 1/0.25 = 4).
 By default 0, which means those exposed become immediately infectious (i.e. an SI model).
@@ -298,6 +297,57 @@ The first value of a role is the one that the record writes.
 By default, each role is its own value.
 }
 
+\section{Transitions}{
+
+
+A diffusion moves the nodes between the values of \code{attribute}.
+\code{transitions} gives these moves as a data frame, with one row for each
+transition and these columns:
+\itemize{
+\item \code{from} and \code{to}: the value that a node leaves, and the value it goes to.
+\item \code{rate}: the hazard per step, 0 or more (\code{Inf} is certain).
+A number, a number for each node, the name of a numeric node attribute,
+or a function of \code{state}, \code{exposure}, \code{time} and \code{.data} that returns
+a hazard for each node at each step.
+A function replaces the exposure model of its row.
+\item \code{source}: the value that causes the transition, or \code{NA} (the default)
+for a spontaneous transition.
+Several values, as in \code{"E+I"} or as a list column, count together.
+\item \code{exposure}: how the contacts in \code{source} give the hazard.
+\code{"threshold"} (the default) gives \code{rate} to each node with at least
+\code{threshold} such contacts.
+\code{"cascade"} gives each such contact its own chance, so the hazard is
+\code{rate} times the number of contacts.
+\code{"voter"} gives \code{rate} times the share of contacts in \code{source}.
+\item \code{threshold}: the number of contacts in \code{source} (1 or more), or their
+share (less than 1), that a node needs. By default 1.
+A number, a number for each node, or the name of a node attribute.
+\item \code{prevalence}: how much the share of all nodes in \code{source} lowers
+the threshold, as in \code{threshold * (1 - prevalence * share)}.
+By default 0.
+}
+
+A node moves with probability \eqn{1 - e^{-\sum h}} over the rows that
+it can take, and its destination is drawn in proportion to their hazards.
+Rows with the same \code{from} and \code{to} add their hazards.
+In each step, the spontaneous transitions (rows with no \code{source}) occur
+first, from the state at the start of the step.
+The other transitions then count only the contacts that are still in
+\code{source}, so a node that recovers or dies in a step does not infect others
+in that step.
+Each value that the attribute holds must be in at least one row.
+For a value that never changes, add a row with \code{rate = 0}.
+
+Without \code{transitions}, the arguments after \code{...} give the table.
+They are chances per step, and each chance \eqn{p} becomes the hazard
+\eqn{-\log(1 - p)}.
+With \code{transitions}, these arguments are ignored, with a warning.
+
+For example, the voter model on two values:
+\verb{data.frame(from = c("Liberal", "Conservative"), to = c("Conservative", "Liberal"),}
+\verb{rate = 1, source = c("Conservative", "Liberal"), exposure = "voter")}.
+}
+
 \section{Arguments that set the model}{
 
 
@@ -320,6 +370,10 @@ with the nearest argument name.
   smeg <- mutate_nodes(smeg, aware = rep(c("yes", "no", "no"), 5))
   play_diffusion(smeg, "aware", steps = 5,
                  compartments = c(S = "no", I = "yes"))
+  # A spontaneous transition, from a table of transitions
+  play_diffusion(ison_lawfirm, "status", steps = 5,
+                 transitions = data.frame(from = "associate", to = "partner",
+                                          rate = 0.1))
 }
 \seealso{
 Other makes:

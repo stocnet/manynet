@@ -36,7 +36,12 @@
   - Added `background=` for adoption rate without exposure
   - Added `direction=` for which ties expose a node, by default "in"
   - Missing states start as S, and missing ties count as absent
-  - Added `transitions=` to the signature, which is not yet available
+  - Added `transitions=`, a table of transitions with competing risks
+    - Columns `from`, `to`, `rate`, `source`, `exposure`, `threshold`, `prevalence`
+    - `rate` is a hazard, the name of a node attribute, or a function
+    - `exposure` is "threshold", "cascade", or "voter"
+  - In each step, spontaneous transitions occur first, then contagion
+  - `prevalence=` lowers each threshold by the share infected in the network
   - Fixed `fatality=`, which failed, and let the dead infect others
   - Fixed a list of waves, which failed, and keeps the last wave after it
   - Fixed exposed nodes, which counted all ties, not the ties of transmission
@@ -66,6 +71,7 @@
 - Added the 'opinionModel' class, with 'learn_model' second for one release
 - Added `.stocnet$info$uncoded` for units of text still to code
 - Added `.stocnet$info$compartments` for the roles of the values of a diffusion
+- Added the 'diffusionTransitions' class, which prints a joint source as "E+I"
 
 ## Coercion
 

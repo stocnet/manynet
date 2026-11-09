@@ -231,6 +231,25 @@ as_diffusion.diffnet <- function(.data, attribute = "diffusion", twomode = FALSE
   make_diff_model(events, report, net)
 }
 
+# diffusionTransitions ####
+
+# A table of transitions shows a joint source as "E+I", a spontaneous
+# transition with no source as NA, and a function in `rate` as "<function>".
+#' @export
+print.diffusionTransitions <- function(x, ...){
+  show <- function(v) vapply(v, function(e){
+    if(is.function(e)) "<function>" else if(is.null(e) || all(is.na(e))) NA_character_ else
+      if(length(e) > 1 && !is.character(e)) "<by node>" else
+        if(is.numeric(e)) format(signif(e, 3)) else paste(e, collapse = "+")
+  }, character(1))
+  out <- dplyr::tibble(from = x$from, to = x$to, rate = show(x$rate),
+                       source = show(x$source), exposure = x$exposure,
+                       threshold = show(x$threshold),
+                       prevalence = x$prevalence)
+  print(out, ...)
+  invisible(x)
+}
+
 # learn_model ####
 make_learn_model <- function(out, .data) {
   out <- as.data.frame(out)

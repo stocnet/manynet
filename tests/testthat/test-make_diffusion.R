@@ -164,9 +164,13 @@ test_that("play_diffusion moves an old positional seeds with a warning", {
   expect_equal(as_changelist(old), as_changelist(new))
 })
 
-test_that("play_diffusion does not yet take transitions", {
+test_that("play_diffusion checks the columns of transitions", {
   expect_error(play_diffusion(ison_adolescents, transitions = data.frame()),
-               "not yet available")
+               "from")
+  expect_error(play_diffusion(ison_adolescents,
+                              transitions = data.frame(from = "S", to = "I",
+                                                       rate = 1, speed = 2)),
+               "speed")
 })
 
 test_that("play_diffusion warns for the old version with snet_warn", {
@@ -176,6 +180,7 @@ test_that("play_diffusion warns for the old version with snet_warn", {
 # Fixes ####
 
 test_that("play_diffusion does not let the dead infect", {
+  # the seed dies in the first step, before it can infect anyone
   set.seed(6)
   played <- play_diffusion(create_ring(10), fatality = 1, steps = 5)
   changes <- as_changelist(played)
