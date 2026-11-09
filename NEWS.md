@@ -29,6 +29,19 @@
   - Each unit coded by concepts, speakers, and sign, can be skipped with "?"
   - `roster` offers known speakers and concepts, or the terms of `collect_text()`
   - `.data` continues a network that is coded in part, with skips shown again first
+- Improved `play_diffusion()` to start from the state that a network holds
+  - Added `attribute=` to name the node attribute that holds the state history/start
+  - `seeds=` also takes several labels or the name of a logical attribute
+  - Added `compartments=` to map the roles S, E, I, R, and D onto own values
+  - Added `background=` for adoption rate without exposure
+  - Added `direction=` for which ties expose a node, by default "in"
+  - Missing states start as S, and missing ties count as absent
+  - Added `transitions=` to the signature, which is not yet available
+  - Fixed `fatality=`, which failed, and let the dead infect others
+  - Fixed a list of waves, which failed, and keeps the last wave after it
+  - Fixed exposed nodes, which counted all ties, not the ties of transmission
+  - Fixed `immune=` nodes to start as R in the record, not as S
+  - Accelerated `play_diffusion()` ~2.5x by making each contact matrix once
 
 ## Classes
 
@@ -47,12 +60,17 @@
   - `as_stocnet.dfm()` for a document-feature matrix of 'quanteda'
   - `as_stocnet.DocumentTermMatrix()` and `as_stocnet.TermDocumentMatrix()`
 - Added `as_stocnet.bibliometrixDB()` for the records of 'bibliometrix'
+- Improved `as_diffusion()` to count each value of any state attribute
+  - Added `attribute=` to name the attribute, by default "diffusion"
+  - Fixed the counts of E with `latency` and of S with waning on an 'igraph'
 
 ## Manipulating
 
 - Fixed `filter_nodes()` on a 'stocnet' where it drops every node of a mode
 - Fixed `bind_node_attributes()` to keep the names of the modes
 - Fixed `delete_isolates()` on a list of 'stocnet' objects, which failed
+- Improved `bind_changes()` to start any categorical state variable
+  - Starts every node as "S", or as the S of `compartments=`
 
 ## Modifying
 

@@ -343,6 +343,7 @@ to_mode1.matrix <- function(.data, similarity = c("count", "jaccard", "rand", "p
   igraph::set_edge_attr(.data, "weight", value = abs(weight))
 }
 
+#' @export
 to_mode1.igraph <- function(.data, similarity = c("count", "jaccard", "rand", "pearson", "yule",
                                  "match", "overlap", "crossmin", "maxcrossmin",
                                  "sqdiff", "covariance", "bonacich", "ochiai",

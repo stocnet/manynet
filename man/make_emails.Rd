@@ -109,6 +109,8 @@ collect_emails(mbox, twomode = TRUE)
 \code{\link[=collect_ego]{collect_ego()}}, \code{\link[=to_time]{to_time()}}, \code{\link[=to_aggregated]{to_aggregated()}}, \code{\link[=to_unlabelled]{to_unlabelled()}}
 
 Other makes:
+\code{\link[=as_diffusion]{as_diffusion()}},
+\code{\link[=as_opinion]{as_opinion()}},
 \code{\link{make_bibliography}},
 \code{\link{make_collect}},
 \code{\link{make_create}},
@@ -117,8 +119,6 @@ Other makes:
 \code{\link{make_groups}},
 \code{\link{make_growth}},
 \code{\link{make_mobility}},
-\code{\link{make_opinion}},
-\code{\link{make_play}},
 \code{\link{make_random}},
 \code{\link{make_read}},
 \code{\link{make_statements}},

@@ -172,6 +172,8 @@ fractional counting".
 \code{\link[=to_uniplex]{to_uniplex()}}, \code{\link[=to_proximity]{to_proximity()}}, \code{\link[=to_mode]{to_mode()}}, \code{\link[=to_time]{to_time()}}
 
 Other makes:
+\code{\link[=as_diffusion]{as_diffusion()}},
+\code{\link[=as_opinion]{as_opinion()}},
 \code{\link{make_collect}},
 \code{\link{make_create}},
 \code{\link{make_ego}},
@@ -180,8 +182,6 @@ Other makes:
 \code{\link{make_groups}},
 \code{\link{make_growth}},
 \code{\link{make_mobility}},
-\code{\link{make_opinion}},
-\code{\link{make_play}},
 \code{\link{make_random}},
 \code{\link{make_read}},
 \code{\link{make_statements}},

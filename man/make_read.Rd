@@ -226,6 +226,8 @@ Audun Myers, Joshua Pickard, Brenda Praggastis, and Przemysław Szufel. 2025.
 \link{as}
 
 Other makes:
+\code{\link[=as_diffusion]{as_diffusion()}},
+\code{\link[=as_opinion]{as_opinion()}},
 \code{\link{make_bibliography}},
 \code{\link{make_collect}},
 \code{\link{make_create}},
@@ -235,8 +237,6 @@ Other makes:
 \code{\link{make_groups}},
 \code{\link{make_growth}},
 \code{\link{make_mobility}},
-\code{\link{make_opinion}},
-\code{\link{make_play}},
 \code{\link{make_random}},
 \code{\link{make_statements}},
 \code{\link{make_text}},

@@ -254,6 +254,8 @@ Borgatti, Stephen P., and Martin G. Everett. 2000.
 }
 \seealso{
 Other makes:
+\code{\link[=as_diffusion]{as_diffusion()}},
+\code{\link[=as_opinion]{as_opinion()}},
 \code{\link{make_bibliography}},
 \code{\link{make_collect}},
 \code{\link{make_create}},
@@ -262,8 +264,6 @@ Other makes:
 \code{\link{make_explicit}},
 \code{\link{make_growth}},
 \code{\link{make_mobility}},
-\code{\link{make_opinion}},
-\code{\link{make_play}},
 \code{\link{make_random}},
 \code{\link{make_read}},
 \code{\link{make_statements}},

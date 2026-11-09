@@ -173,6 +173,8 @@ coded <- collect_statements(speeches, .data = coded)
 \code{\link[=collect_text]{collect_text()}}, \code{\link[=to_mode]{to_mode()}}, \code{\link[=to_times]{to_times()}}
 
 Other makes:
+\code{\link[=as_diffusion]{as_diffusion()}},
+\code{\link[=as_opinion]{as_opinion()}},
 \code{\link{make_bibliography}},
 \code{\link{make_collect}},
 \code{\link{make_create}},
@@ -182,8 +184,6 @@ Other makes:
 \code{\link{make_groups}},
 \code{\link{make_growth}},
 \code{\link{make_mobility}},
-\code{\link{make_opinion}},
-\code{\link{make_play}},
 \code{\link{make_random}},
 \code{\link{make_read}},
 \code{\link{make_text}},

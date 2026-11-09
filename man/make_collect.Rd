@@ -128,6 +128,8 @@ collect_pkg()
 \code{\link[=to_ego]{to_ego()}}, \code{\link[=to_uniplex]{to_uniplex()}}, \code{\link[=delete_isolates]{delete_isolates()}}
 
 Other makes:
+\code{\link[=as_diffusion]{as_diffusion()}},
+\code{\link[=as_opinion]{as_opinion()}},
 \code{\link{make_bibliography}},
 \code{\link{make_create}},
 \code{\link{make_ego}},
@@ -136,8 +138,6 @@ Other makes:
 \code{\link{make_groups}},
 \code{\link{make_growth}},
 \code{\link{make_mobility}},
-\code{\link{make_opinion}},
-\code{\link{make_play}},
 \code{\link{make_random}},
 \code{\link{make_read}},
 \code{\link{make_statements}},
