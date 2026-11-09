@@ -33,6 +33,12 @@
 ## Classes
 
 - Added `.stocnet$info$uncoded` for units of text still to code
+- Removed the 'mnet' class, now that no dataset uses it
+  - `as_tidygraph()` returns a plain 'tbl_graph', which prints as in 'tidygraph'
+  - Deprecated `print.mnet()`, which still prints a network saved with the class
+  - Removed the `$` accessors of 'mnet' objects
+  - `as_diffusion()` reports a 'tbl_graph' as before, with `time` and `S_new`
+  - `print_all()` is now documented with 'stocnet' objects
 
 ## Coercion
 
@@ -86,6 +92,8 @@
 - Converted the last single 'mnet' datasets to 'stocnet' objects (closes #186)
   - `ison_adolescents`, `ison_lawfirm`, `ison_networkers`, and `ison_algebra`
   - `fict_lotr`, `irps_usgeo`, and `irps_revere` 
+- Renamed `ison_brandes` to `ison_centrality`, converted it, and added info
+  - `rename_nodes(ison_centrality, mode = twomode_type)` gives the two-mode version
 - Improved `ison_physicians` to be one 'stocnet', not a list of four (closes #185)
 - Removed `ison_laterals`, which nothing used (#185)
 

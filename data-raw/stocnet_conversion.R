@@ -342,3 +342,118 @@ irps_usgeo <- as_stocnet(manynet::irps_usgeo) |> conform_grand() |>
 
 usethis::use_data(ison_lawfirm, overwrite = TRUE, compress = "bzip2")
 usethis::use_data(irps_usgeo, overwrite = TRUE, compress = "bzip2")
+
+# The six networks below waited on releases of 'netrics', 'autograph', and
+# 'migraph' that no longer rely on the 'mnet' class or on the 'type' tie
+# attribute (#186). manynet 2.5.0 is released with those versions.
+
+# This network illustrates centrality, and describes no real network.
+# 'twomode_type' marks the nodes that the two-mode version puts in the second
+# mode. It was called 'ison_brandes' before manynet 2.5.0.
+ison_centrality <- as_stocnet(manynet::ison_brandes) |> conform_names() |>
+  add_info(name = "Centrality example",
+           observation = "cross-sectional",
+           directed = FALSE,
+           source = "Synthetic")
+
+# Freeman's EIES study gave fifty network researchers terminals on the
+# Electronic Information Exchange System at the New Jersey Institute of
+# Technology. The weight of a tie counts the messages that the system recorded
+# from one of the 32 who completed the study to another. The acquaintance
+# questionnaires were given in January and September 1978 (Wasserman and Faust
+# 1994, sec. 2.5.3). A record kept by the system is a trace, and the 32 are a
+# roster.
+ison_networkers <- as_stocnet(manynet::ison_networkers) |> conform_names() |>
+  add_info(observation = "cross-sectional",
+           directed = TRUE,
+           source = "Empirical", method = "Trace", boundary = "roster",
+           date = 1978)
+
+# Healy coded the memberships of 254 people in seven Boston organisations from
+# the appendix of Fischer's 'Paul Revere's Ride', which describes the town on
+# the eve of the ride in April 1775. `as_stocnet()` names the modes of an igraph
+# after its logical 'type', so they are named here: FALSE are the members and
+# TRUE the organisations.
+irps_revere <- as_stocnet(manynet::irps_revere) |> conform_names()
+irps_revere$nodes$mode <- ifelse(irps_revere$nodes$mode %in%
+                                   c("TRUE", "organisations"),
+                                 "organisations", "members")
+irps_revere <- add_info(irps_revere,
+           name = "Paul Revere's Boston",
+           modes = c("members", "organisations"),
+           observation = "cross-sectional",
+           directed = FALSE,
+           sender = "members", receiver = "organisations",
+           source = "Empirical", method = "Archival", boundary = "roster",
+           location = "Boston, Massachusetts, United States",
+           date = 1775)
+
+# Coleman asked the students of 12 high schools to name their friends. Feld
+# (1991, fig. 1) shows the mutual friendships among eight girls at the school
+# Coleman calls 'Marketville', with names Feld made up. 'year' was when
+# Coleman's book was published, and 'vertex1.total' does not say what it
+# counts, so both are dropped.
+ison_adolescents <- as_stocnet(manynet::ison_adolescents) |> conform_grand()
+ison_adolescents$info$vertex1.total <- NULL
+ison_adolescents <- add_info(ison_adolescents,
+           observation = "cross-sectional",
+           directed = FALSE,
+           source = "Empirical", method = "Survey",
+           location = "United States",
+           doi = "10.1086/229693")
+
+# The interactions among the characters of Tolkien's novel. The coder is not
+# known, so only what the novel fixes is recorded.
+fict_lotr <- as_stocnet(manynet::fict_lotr) |> conform_grand() |>
+  add_info(observation = "cross-sectional",
+           directed = FALSE,
+           source = "Empirical", method = "Archival", boundary = "roster")
+
+# McFarland (2001) observed the class and coded each turn of talk as social or
+# task interaction, so those two layers count interactions per hour. The
+# friendship layer rates each classmate 2 (best friend), 1 (friend), or 0.
+ison_algebra <- as_stocnet(manynet::ison_algebra) |> conform_names()
+ison_algebra <- add_info(ison_algebra,
+           observation = "cross-sectional",
+           directed = stats::setNames(rep(TRUE, 3), layer_names(ison_algebra)),
+           source = "Empirical", method = "Ethnography", boundary = "roster",
+           doi = "10.1086/338779")
+
+usethis::use_data(ison_centrality, overwrite = TRUE, compress = "bzip2")
+usethis::use_data(ison_networkers, overwrite = TRUE, compress = "bzip2")
+usethis::use_data(irps_revere, overwrite = TRUE, compress = "bzip2")
+usethis::use_data(ison_adolescents, overwrite = TRUE, compress = "bzip2")
+usethis::use_data(fict_lotr, overwrite = TRUE, compress = "bzip2")
+usethis::use_data(ison_algebra, overwrite = TRUE, compress = "bzip2")
+
+# Coleman, Katz and Menzel's physicians were a list of four networks, one for
+# each city, until manynet 2.5.0 (#185). No physician is in two cities, so one
+# network holds them all, with the city as a node attribute;
+# 'to_subgraphs(ison_physicians, "city")' returns the four networks again.
+# Coleman, Katz and Menzel (1957: 254) interviewed the physicians with
+# structured interviews, which asked three sociometric questions, 15 months
+# after the drug was released; they give no calendar date, so 'date' is left
+# out. The adoption month came from pharmacy prescription records.
+if(!inherits(ison_physicians, "stocnet")){
+  ison_physicians <- lapply(names(manynet::ison_physicians), function(city){
+    g <- as_igraph(manynet::ison_physicians[[city]])
+    igraph::V(g)$city <- city
+    g
+  })
+  ison_physicians <- as_stocnet(do.call(igraph::disjoint_union, ison_physicians))
+}
+ison_physicians <- conform_names(ison_physicians) |>
+  add_info(name = "Medical innovation",
+           observation = "cross-sectional",
+           directed = stats::setNames(rep(TRUE, 3), layer_names(ison_physicians)),
+           source = "Empirical", method = "Survey",
+           location = "Peoria, Bloomington, Quincy, and Galesburg, Illinois, United States",
+           doi = "10.2307/2785979")
+# Drop the 'doc_' prefix so that the attribute names are easier to read.
+physician_names <- c(doc_freetime = "freetime", doc_discuss = "discussions",
+                     doc_club = "clubs", doc_friends = "friends",
+                     doc_proximity = "proximity")
+renamed <- names(ison_physicians$nodes) %in% names(physician_names)
+names(ison_physicians$nodes)[renamed] <-
+  physician_names[names(ison_physicians$nodes)[renamed]]
+usethis::use_data(ison_physicians, overwrite = TRUE, compress = "bzip2")

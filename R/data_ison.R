@@ -125,23 +125,32 @@
 #'   ```
 "ison_bankwiring"
 
-## Brandes ####
+## Centrality ####
 
 #' One-mode and two-mode centrality demonstration networks
 #'
 #' This network should solely be used
 #' for demonstration purposes as it does not describe a real network.
-#' To convert into the two-mode version, 
-#' assign `ison_brandes |> rename(type = twomode_type)`.
+#' A different node is the most central by each of degree, closeness,
+#' betweenness, and eigenvector centrality,
+#' as in the graphs that Brandes and Hildenbrand (2014) discuss.
+#' To convert into the two-mode version,
+#' assign `ison_centrality |> rename_nodes(mode = twomode_type)`.
+#' Before version 2.5.0, this network was called `ison_brandes`.
 #' @docType data
 #' @keywords datasets
-#' @name ison_brandes
-#' @usage data(ison_brandes)
+#' @name ison_centrality
+#' @references
+#'   Brandes, Ulrik, and Jan Hildenbrand. 2014.
+#'   "Smallest graphs with distinct singleton centers".
+#'   _Network Science_ 2(3): 416-418.
+#'   \doi{10.1017/nws.2014.25}
+#' @usage data(ison_centrality)
 #' @format
 #'   ```{r, echo = FALSE}
-#'   ison_brandes
+#'   ison_centrality
 #'   ```
-"ison_brandes"
+"ison_centrality"
 
 ## Classmates ####
 
