@@ -211,9 +211,12 @@ test_that("from_layers() adds unlabelled nodes rather than guessing labels", {
 test_that("from_layers() carries changes tables through the merge", {
   sn1 <- as_stocnet(fict_starwars)
   sn2 <- as_stocnet(delete_changes(fict_starwars))
-  expect_warning(from_layers(a = sn1, b = sn2), "renamed to b.interaction")
+  # Each network has one relation, so each becomes the layer it is named as,
+  # and the two do not clash.
+  expect_no_warning(from_layers(a = sn1, b = sn2))
   out <- run_or_skip(from_layers(a = sn1, b = sn2), "from_layers", "changes")
   expect_s3_class(out, "stocnet")
+  expect_setequal(layer_names(out), c("a", "b"))
   expect_false(is.null(out$changes))
 })
 

@@ -295,7 +295,7 @@ from_reporters <- function(netlist) {
 
 # The class a list of networks came in, which a join gives back.
 .as_class_of <- function(out, template){
-  cls <- setdiff(class(template), c("mnet", "tbl_df", "tbl"))[1]
+  cls <- setdiff(class(template), c("tbl_df", "tbl"))[1]
   switch(cls,
          stocnet = as_stocnet(out),
          tbl_graph = as_tidygraph(out),
@@ -523,6 +523,11 @@ from_reporters <- function(netlist) {
     # alone, so its missing ties are listed before the node tables are merged.
     net <- .explicit_missing(netlist[[i]])
     layers_i <- .get_layers(net, layer_names[i])
+    # The relation a network of one layer was known by in its info is renamed
+    # to the layer it now is, along with the fields named after it.
+    old <- net$info$layers
+    if(length(old) == 1 && length(layers_i) == 1 && old != layers_i)
+      net <- .rename_layers(net, stats::setNames(layers_i, old))
     clash <- intersect(layers_i, seen_layers)
     if(length(clash)){
       rn <- stats::setNames(paste0(layer_names[i], ".", clash), clash)
@@ -586,16 +591,18 @@ from_reporters <- function(netlist) {
 
 ## --- Helpers ----------------------------------------------------------------
 
-# Work out a network's layer name(s), preferring info$layers and any
-# 'layer' column on ties; falling back to the list-element name.
+# Work out a network's layer name(s). A network whose ties name their layers
+# keeps those names. A network of one relation becomes the layer it is given
+# as, so the name in the call wins over the one in its info. Only a network
+# that declares several layers without naming them on its ties keeps its info.
 .get_layers <- function(net, fallback_name){
-  layers <- net$info$layers
   if(!is.null(net$ties) && "layer" %in% names(net$ties)){
     tl <- unique(net$ties$layer)
-    layers <- union(layers, tl[!is.na(tl)])
+    tl <- tl[!is.na(tl)]
+    if(length(tl)) return(tl)
   }
-  if(is.null(layers) || length(layers) == 0) layers <- fallback_name
-  layers
+  layers <- net$info$layers
+  if(length(layers) > 1) layers else fallback_name
 }
 
 # Make sure info$layers and ties$layer are consistent with `layers`,

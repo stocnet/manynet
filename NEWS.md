@@ -73,6 +73,9 @@
   - Fixed the increments of a 'stocnet', which were counted as ties, to add up
 - Improved `to_times()` with `window` and `kernel` for moving windows
 - Fixed `to_slices()` to add up the increments of a 'stocnet'
+- Improved `from_layers()` on 'stocnet' objects
+  - Fixed a network of one layer to take the name it is given in the call
+  - Fixed layers renamed for a clash to be renamed in the info as well
 
 ## Describing
 
