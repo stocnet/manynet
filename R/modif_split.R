@@ -752,6 +752,11 @@ to_slices.tbl_graph <- function(.data, attribute = "time", slice = NULL) {
   out
 }
 
+# A stocnet is sliced in place, since converting it to another class first
+# loses the declaration in its info that its weights are increments.
+#' @export
+to_slices.stocnet <- to_slices.tbl_graph
+
 # The state a network's ties have accumulated to at a moment: every row up to
 # and including it, summed where each row increments a tie's value and carried
 # forward where each states it afresh. A tie that has accumulated to zero is
@@ -762,8 +767,15 @@ to_slices.tbl_graph <- function(.data, attribute = "time", slice = NULL) {
 # asked for directly rather than through `is_weighted()`.
 .slice_at <- function(.data, attribute, tm){
   out <- filter_ties(.data, !!as.name(attribute) <= tm)
+  # A stocnet holds each increment in its 'weight' and declares in
+  # `info$update` that the weights add up, and keeps that declaration when it
+  # is converted to another class. Otherwise the increments are in an
+  # 'increment' column.
   if("increment" %in% net_tie_attributes(.data))
-    out <- summarise_ties(out, sum(increment))
+    out <- summarise_ties(out, sum(increment)) else
+      if(isTRUE(any(as_infolist(.data)$update == "increment")) &&
+         "weight" %in% net_tie_attributes(.data))
+        out <- summarise_ties(out, sum(weight))
   if("replace" %in% net_tie_attributes(.data))
     out <- summarise_ties(out, dplyr::last(replace))
   if("weight" %in% net_tie_attributes(out)) out <- filter_ties(out, weight != 0)

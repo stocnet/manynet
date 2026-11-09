@@ -9,8 +9,7 @@ test_that("to_egos returns one ego network per node, at any distance", {
 })
 
 unicorn <- ison_adolescents |> 
-    tidygraph::activate(nodes) |> 
-    mutate(unicorn = rep(c("yes", "no"), 4))
+    mutate_nodes(unicorn = rep(c("yes", "no"), 4))
 
 test_that("to_subgraphs returns one subgraph per value of the attribute", {
   expect_length(to_subgraphs(unicorn, "unicorn"), 2)
@@ -19,7 +18,8 @@ test_that("to_subgraphs returns one subgraph per value of the attribute", {
 test_that("to_components works", {
   expect_length(to_components(to_uniplex(fict_marvel,"relationship")), 4)
   expect_length(to_components(ison_adolescents), 1)
-  expect_s3_class(to_components(ison_adolescents)[[1]], "tbl_graph")
+  expect_s3_class(to_components(ison_adolescents)[[1]],
+                  class(ison_adolescents)[1])
 })
 
 test_that("to_components is ordered from largest to smallest", {
@@ -39,28 +39,26 @@ test_that("to_components respects connectivity", {
 
 set.seed(1234)
 wave <- ison_adolescents |>
-    tidygraph::activate(edges) |>
-    mutate(wave = sample(1995:1998, 10, replace = TRUE))
+    mutate_ties(wave = sample(1995:1998, 10, replace = TRUE))
 
 test_that("to_waves works", {
   expect_length(to_waves(wave), 4)
   expect_length(to_waves(wave, panels = c(1995, 1996)), 2)
-  expect_length(from_waves(to_waves(wave)), 8)
-  expect_s3_class(to_waves(wave)[[1]], "tbl_graph")
-  expect_s3_class(from_waves(to_waves(wave)), "tbl_graph")
+  expect_equal(as.numeric(net_nodes(from_waves(to_waves(wave)))), 8)
+  expect_s3_class(to_waves(wave)[[1]], class(wave)[1])
+  expect_s3_class(from_waves(to_waves(wave)), class(wave)[1])
 })
 
 set.seed(1234)
 yearly <- ison_adolescents |>
-    tidygraph::activate(edges) |>
-    mutate(year = sample(1:12, 10, replace = TRUE))
+    mutate_ties(year = sample(1:12, 10, replace = TRUE))
 
 test_that("to_waves honours an explicitly named attribute (stocnet/autograph#40)", {
   # "year" is not one of the attributes that mark a network longitudinal,
   # but naming it explicitly should still split the network by it.
   expect_length(to_waves(yearly, attribute = "year"),
                 length(unique(tie_attribute(yearly, "year"))))
-  expect_s3_class(to_waves(yearly, attribute = "year")[[1]], "tbl_graph")
+  expect_s3_class(to_waves(yearly, attribute = "year")[[1]], class(yearly)[1])
 })
 
 test_that("cumulative waves accumulate and stay in natural order", {
@@ -77,7 +75,7 @@ test_that("cumulative waves accumulate and stay in natural order", {
 test_that("to_waves returns networks without the attribute unchanged", {
   # Nothing to split on: the network is returned as it came in, in its own
   # class, rather than erroring or being iterated over as a list of waves.
-  expect_s3_class(to_waves(ison_adolescents), "tbl_graph")
+  expect_s3_class(to_waves(ison_adolescents), class(ison_adolescents)[1])
   expect_s3_class(to_waves(as_igraph(ison_adolescents)), "igraph")
   expect_equal(as.numeric(net_ties(to_waves(as_igraph(ison_adolescents)))),
                as.numeric(net_ties(ison_adolescents)))
@@ -86,7 +84,7 @@ test_that("to_waves returns networks without the attribute unchanged", {
 })
 
 test_that("to_waves returns a single network for a single wave", {
-  expect_s3_class(to_waves(wave, panels = 1995), "tbl_graph")
+  expect_s3_class(to_waves(wave, panels = 1995), class(wave)[1])
   expect_s3_class(to_waves(as_igraph(wave), panels = 1995), "igraph")
   expect_s3_class(to_waves(as_edgelist(wave), panels = 1995), "data.frame")
 })
@@ -216,16 +214,16 @@ slice <- ison_adolescents |>
     add_ties(c(1,2), list(time = 3, increment = -1))
 
 test_that("to_ and from_ slices works", {
-  expect_length(to_slices(slice, slice = 7), length(ison_adolescents))
-  expect_lt(length(igraph::edge_attr(to_slices(slice, slice = 7), "weight")), 7)
+  expect_equal(net_nodes(to_slices(slice, slice = 7)), net_nodes(ison_adolescents))
+  expect_lt(as.numeric(net_ties(to_slices(slice, slice = 7))), 7)
   expect_length(to_slices(slice, slice = c(5, 7)), 2)
-  expect_s3_class(to_slices(slice, slice = 7), "igraph")
+  expect_s3_class(to_slices(slice, slice = 7), class(slice)[1])
 })
 
 test_that("to_slices returns networks without the attribute unchanged", {
   # No time attribute to slice on: return the network rather than filtering
   # ties on a variable that does not exist.
-  expect_s3_class(to_slices(ison_adolescents), "tbl_graph")
+  expect_s3_class(to_slices(ison_adolescents), class(ison_adolescents)[1])
   expect_equal(as.numeric(net_ties(to_slices(ison_adolescents))),
                as.numeric(net_ties(ison_adolescents)))
   expect_s3_class(to_slices(as_igraph(ison_adolescents)), "igraph")
@@ -236,10 +234,10 @@ test_that("to_slices works on unweighted, unincremented networks", {
   timed <- mutate_ties(ison_adolescents, time = seq_len(10) %% 3 + 1)
   sl <- to_slices(timed)
   expect_length(sl, length(unique(tie_attribute(timed, "time"))))
-  expect_s3_class(sl[[1]], "tbl_graph")
+  expect_s3_class(sl[[1]], class(timed)[1])
   # Slices are cumulative in time: ties up to and including each moment
   expect_equal(as.numeric(net_ties(sl[["3"]])), 10)
-  expect_s3_class(from_slices(sl), "tbl_graph")
+  expect_s3_class(from_slices(sl), class(timed)[1])
 })
 
 test_that("to_times slices an interval (begin/end) network at each change", {

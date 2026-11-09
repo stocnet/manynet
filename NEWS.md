@@ -70,7 +70,9 @@
     - `window = c(15, 15)` centres the window on `time`
   - Added `kernel` to weight the ties in a window by their distance from `time`
     - `"uniform"`, `"triangular"`, `"epanechnikov"`, or `"gaussian"`
+  - Fixed the increments of a 'stocnet', which were counted as ties, to add up
 - Improved `to_times()` with `window` and `kernel` for moving windows
+- Fixed `to_slices()` to add up the increments of a 'stocnet'
 
 ## Describing
 
