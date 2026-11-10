@@ -51,6 +51,9 @@ summary.diff_model <- function(object, ...) {
 #'   each value (for example `I` and `I_new`).
 #'   A record in S, E, I, and R always has these four columns,
 #'   and `s` counts the susceptible nodes that are exposed.
+#'   A node that dies, as from `fatality`, becomes inactive,
+#'   and is counted in the value of D (and `D_new`) from then on,
+#'   and not in the value it held when it died.
 #'   The table keeps the name of the attribute in `attr(, "attribute")`,
 #'   and the roles of its values in `attr(, "compartments")`,
 #'   where these are known.
@@ -88,8 +91,8 @@ as_diffusion.tbl_graph <- function(.data, attribute = "diffusion", twomode = FAL
 as_diffusion.igraph <- function(.data, attribute = "diffusion", twomode = FALSE, events) {
   net <- as_tidygraph(.data)
   if (missing(events)) events <- as_changelist(.data)
-  events <- .diffusion_events(events, attribute)
   report <- .diffusion_report(net, attribute, events)
+  events <- .diffusion_events(events, attribute)
   keys <- attributes(report)[c("attribute", "compartments")]
   report <- dplyr::rename(report, t = time)
   report$S_new <- NULL
@@ -125,24 +128,31 @@ as_diffusion.stocnet <- as_diffusion.tbl_graph
 # Counts the nodes in each value of `attribute` at each step, from the start
 # of the diffusion to its last change.
 .diffusion_report <- function(.data, attribute = "diffusion", events){
+  # The deaths are changes of `active`, so they are read before the changes
+  # are kept to those of the attribute.
+  deaths <- .diffusion_deaths(events)
   events <- .diffusion_events(events, attribute)
   n <- c(net_nodes(.data))
-  comps <- if(inherits(.data, "stocnet")) .data$info$compartments else NULL
+  comps <- .net_compartments(.data)
+  dead <- if(nrow(deaths)) .diffusion_dead_value(.data, comps) else NULL
+  if(is.null(dead)) deaths <- deaths[0, , drop = FALSE]
   # the start state is on the nodes; without it, all nodes start in S
   susceptible <- if(!is.null(comps$S)) comps$S[1] else "S"
   state <- if(attribute %in% net_node_attributes(.data)) 
     node_attribute(.data, attribute) else rep(susceptible, n)
   if(is.factor(state)) state <- as.character(state)
-  if(nrow(events) && is.character(events$value) && !is.character(state)) 
-    state <- as.character(state)
+  if((nrow(events) && is.character(events$value) || !is.null(dead)) &&
+     !is.character(state)) state <- as.character(state)
   # the values, in the order of the compartments, then as they appear
   values <- unique(c(unlist(comps, use.names = FALSE), 
                      sort(unique(c(state[!is.na(state)], events$value)))))
+  if(!is.null(dead)) values <- union(values, dead)
   seir <- all(values %in% c("S", "E", "I", "R", "D"))
   if(seir) values <- union(c("S", "E", "I", "R"), values)
   # the roles of the values, so that a plot can name and colour them
   if(is.null(comps)) comps <- if(is.logical(state)) list(S = FALSE, I = TRUE) else
     if(seir) list(S = "S", E = "E", I = "I", R = "R")
+  if(!is.null(dead) && !is.null(comps) && is.null(comps$D)) comps$D <- dead
   # In a two-mode network, a mode with no state and no change takes no part,
   # as in a diffusion through co-affiliation in `play_diffusion()`.
   exclude <- rep(FALSE, n)
@@ -156,8 +166,8 @@ as_diffusion.stocnet <- as_diffusion.tbl_graph
   # a missing state starts as susceptible, as in `play_diffusion()`
   if(!is.null(comps$S)) state[is.na(state) & !exclude] <- comps$S[1]
   # the diffusion starts at the start of the network, or its first change
-  begin <- min(c(.network_start(.data), events$time))
-  end <- max(c(begin, events$time))
+  begin <- min(c(.network_start(.data), events$time, deaths$time))
+  end <- max(c(begin, events$time, deaths$time))
   times <- seq(begin, end)
   
   infectious <- if(!is.null(comps$I)) comps$I else if("I" %in% values) "I" else NULL
@@ -170,13 +180,18 @@ as_diffusion.stocnet <- as_diffusion.tbl_graph
   for(i in seq_along(times)){
     now <- events[events$time == times[i], , drop = FALSE]
     if(nrow(now)) state[now$node] <- now$value
+    # a node that dies leaves its value for the value of D
+    died <- deaths$node[deaths$time == times[i]]
+    if(length(died)) state[died] <- dead
     counts[i, ] <- vapply(values, function(v) sum(state %in% v), numeric(1))
     news[i, ] <- vapply(values, function(v) sum(now$value %in% v), numeric(1))
+    if(length(died)) news[i, values == dead] <- news[i, values == dead] +
+      length(died)
     if(!is.null(infectious)){
       infected <- which(state %in% infectious)
       expos <- if(is_twomode(.data)) c(.node_is_exposed(.data, infected)) else
         .exposure_kernel(mat, infected, weighted = FALSE) > 0
-      expos[state %in% recovered | exclude] <- FALSE
+      expos[state %in% c(recovered, dead) | exclude] <- FALSE
       exposed[i] <- sum(expos)
     }
   }
@@ -194,6 +209,40 @@ as_diffusion.stocnet <- as_diffusion.tbl_graph
   attr(report, "attribute") <- attribute
   attr(report, "compartments") <- comps
   report
+}
+
+# The first time that each node becomes inactive, from the changes of `active`.
+.diffusion_deaths <- function(events){
+  none <- data.frame(time = numeric(0), node = integer(0))
+  if(is.null(events)) return(none)
+  events <- as.data.frame(events)
+  if(!all(c("time", "node", "var", "value") %in% names(events))) return(none)
+  value <- as.character(.unlist_values(events$value))
+  died <- events[events$var == "active" & value %in% "FALSE", , drop = FALSE]
+  died <- died[order(died$time), , drop = FALSE]
+  died <- died[!duplicated(died$node), , drop = FALSE]
+  data.frame(time = died$time, node = died$node)
+}
+
+# The compartments that a network keeps: in `info` for a stocnet, and as a
+# graph attribute once it is coerced to an igraph or a tidygraph.
+.net_compartments <- function(.data){
+  if(inherits(.data, "stocnet")) return(.data$info$compartments)
+  if(inherits(.data, "igraph")) return(igraph::graph_attr(.data, "compartments"))
+  NULL
+}
+
+# The value of D, where a node that becomes inactive has died:
+# the first value of D in the compartments, or "D", where the transitions
+# of the diffusion lead to it, or where the compartments give D and the
+# network keeps no transitions.
+.diffusion_dead_value <- function(.data, comps = NULL){
+  trans <- if(inherits(.data, "stocnet")) .data$info$transitions else
+    if(inherits(.data, "igraph")) igraph::graph_attr(.data, "transitions")
+  dead <- if(!is.null(comps$D)) as.character(comps$D[1]) else "D"
+  if(is.null(trans) || !"to" %in% names(trans))
+    return(if(!is.null(comps$D)) dead else NULL)
+  if(dead %in% as.character(trans$to)) dead else NULL
 }
 
 #' @export

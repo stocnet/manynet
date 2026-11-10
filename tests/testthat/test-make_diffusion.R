@@ -187,6 +187,45 @@ test_that("play_diffusion does not let the dead infect", {
   changes <- as_changelist(played)
   expect_equal(sum(changes$var == "diffusion"), 1)
   expect_equal(sum(changes$var == "active"), 1)
+  # the report counts the dead seed in D, and not in I
+  report <- as_diffusion(played)
+  expect_equal(report$D[nrow(report)], 1)
+  expect_equal(report$I[nrow(report)], 0)
+  expect_equal(sum(report$D_new), 1)
+})
+
+test_that("as_diffusion counts the nodes that die as D", {
+  set.seed(1)
+  played <- play_diffusion(ison_networkers, seeds = 1:3, recovery = 0.1,
+                           fatality = 0.1, steps = 30)
+  report <- as_diffusion(played)
+  expect_true(all(c("D", "D_new") %in% names(report)))
+  values <- c("S", "E", "I", "R", "D")
+  expect_true(all(rowSums(as.data.frame(report)[, values]) == report$n))
+  expect_equal(sum(report$D_new), report$D[nrow(report)])
+  expect_equal(report$D[nrow(report)],
+               sum(as_changelist(played)$var == "active"))
+  expect_equal(attr(report, "compartments")$D, "D")
+  # the same on an igraph
+  expect_equal(as_diffusion(as_igraph(played))$D, report$D)
+  # a value of its own for D
+  set.seed(2)
+  played <- play_diffusion(ison_networkers, seeds = 1:3, recovery = 0.1,
+                           fatality = 0.1, steps = 30,
+                           compartments = c(S = "healthy", I = "sick",
+                                            R = "immune", D = "deceased"))
+  report <- as_diffusion(played)
+  expect_gt(max(report$deceased), 0)
+  expect_equal(report$healthy + report$sick + report$immune + report$deceased,
+               report$n)
+  # without fatality, a node that becomes inactive has not died
+  set.seed(3)
+  net <- as_stocnet(create_ring(6))
+  net <- mutate_nodes(net, active = TRUE)
+  net <- bind_changes(net, data.frame(time = 1, node = 4L, var = "active",
+                                      value = FALSE))
+  report <- as_diffusion(play_diffusion(net, steps = 3))
+  expect_false("D" %in% names(report))
 })
 
 test_that("play_diffusion runs on a list of waves, also past the last wave", {

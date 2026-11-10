@@ -181,6 +181,9 @@ The table has a column for each value, and a column of the new nodes in
 each value (for example \code{I} and \code{I_new}).
 A record in S, E, I, and R always has these four columns,
 and \code{s} counts the susceptible nodes that are exposed.
+A node that dies, as from \code{fatality}, becomes inactive,
+and is counted in the value of D (and \code{D_new}) from then on,
+and not in the value it held when it died.
 The table keeps the name of the attribute in \code{attr(, "attribute")},
 and the roles of its values in \code{attr(, "compartments")},
 where these are known.
