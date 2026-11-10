@@ -144,6 +144,13 @@ under its own name.
 under its layer name.
 }
 
+\code{as_monan()} also takes a network of places with an \code{occupant} record,
+as \code{\link[=play_mobility]{play_mobility()}} gives.
+The occupants are then the people,
+and the attributes of the occupants at the start are
+the attributes of the people.
+The start is time 0.
+
 A person who has no place at one of the two times is not included.
 MoNAn requires that every place occurs in \code{moves},
 so a place that no person holds at either time is removed.

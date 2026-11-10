@@ -585,6 +585,11 @@ to_mode2.data.frame <- function(.data, similarity = c("count", "jaccard", "rand"
 #'   with their attributes,
 #'   and one tie from the origin to the destination for each move.
 #'   The tie has the `time` of the move and the `person` who moves.
+#'
+#'   `to_mobility()` also takes a network of places with an `occupant` record,
+#'   as [play_mobility()] gives.
+#'   The `person` of each tie is then the name of the occupant,
+#'   and the nodes keep only the attributes of the places.
 #'   See also [as_monan()], which gives the places of the people
 #'   at two times to `{MoNAn}`.
 #' @examples
@@ -597,9 +602,9 @@ to_mode2.data.frame <- function(.data, similarity = c("count", "jaccard", "rand"
 #' @export
 to_mobility <- function(.data, layer = NULL, weighted = FALSE) {
   net <- as_stocnet(.data)
-  stays <- .person_places(net, layer = layer)
-  modes <- .mode_index(net$nodes$mode, mode_names(net))
-  places <- which(modes == 2L)
+  mobility <- .mobility_stays(net, layer = layer)
+  stays <- mobility$stays
+  places <- mobility$places
   n <- nrow(stays)
   # each stay that follows a stay of the same person is a move
   move <- which(c(FALSE, stays$person[-1] == stays$person[-n]))
@@ -611,7 +616,8 @@ to_mobility <- function(.data, layer = NULL, weighted = FALSE) {
   ties <- ties[ties$from != ties$to, ]
   ties$from <- match(ties$from, places)
   ties$to <- match(ties$to, places)
-  ties$person <- if(is_labelled(net)) net$nodes$label[ties$person] else
+  ties$person <- if(mobility$occupant) ties$person else
+    if(is_labelled(net)) net$nodes$label[ties$person] else
     as.character(ties$person)
   if(weighted){
     pair <- paste(ties$from, ties$to)
@@ -619,7 +625,10 @@ to_mobility <- function(.data, layer = NULL, weighted = FALSE) {
                           to = ties$to[!duplicated(pair)],
                           weight = as.vector(table(pair)[unique(pair)]))
   }
-  nodes <- net$nodes[places, setdiff(names(net$nodes), "mode"), drop = FALSE]
+  # the attributes of an occupant record describe the occupants, not the places
+  keep <- if(mobility$occupant) intersect(names(net$nodes), c("label", "active")) else
+    setdiff(names(net$nodes), "mode")
+  nodes <- net$nodes[places, keep, drop = FALSE]
   out <- make_stocnet(info = list(directed = TRUE), nodes = nodes, ties = ties)
   .as_class_of(out, .data)
 }

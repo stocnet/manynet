@@ -367,3 +367,96 @@ summary.opinionModel <- function(object, ..., tolerance = 0.0005) {
   } else
     cat(paste("No consensus after", steps - 1, "steps."))
 }
+
+# mobilityModel ####
+
+#' @rdname make_mobility
+#' @param .data A network.
+#'   For `as_mobility()`, a network of places with a record of `occupant`
+#'   in its changes, such as [play_mobility()] gives, or a 'mobilityModel'.
+#' @returns
+#'   `as_mobility()` returns a 'mobilityModel' (a tibble),
+#'   with one row for each move:
+#'   the `time` of the move, the `person` who moves (the `occupant`),
+#'   the node index of the `origin` and of the `destination`,
+#'   the value of `attribute` for the person
+#'   (in a column with the name of the attribute,
+#'   or `value` if another column has that name),
+#'   and the number of occupants that are `dissatisfied` after the move.
+#'   `dissatisfied` is `NA` if the network has no `satisfied` record.
+#' @export
+as_mobility <- function(.data, attribute) UseMethod("as_mobility")
+
+#' @export
+as_mobility.mobilityModel <- function(.data, attribute) .data
+
+#' @export
+as_mobility.default <- function(.data, attribute){
+  if(!is_manynet(.data))
+    snet_abort("{.fn as_mobility} needs a network with a record of moves,",
+               "such as one that {.fn play_mobility} returns.")
+  net <- as_stocnet(.data)
+  if(missing(attribute)) attribute <- net$info$mobility$attribute
+  if(is.null(attribute))
+    snet_abort("Please name the node attribute of the occupants in {.arg attribute}.")
+  if(!is.character(attribute) || length(attribute) != 1 ||
+     !attribute %in% names(net$nodes))
+    snet_abort("There is no node attribute {.val {attribute}} in the network.")
+  if(!"occupant" %in% names(net$nodes))
+    snet_abort("{.fn as_mobility} needs a node attribute {.var occupant},",
+               "such as one that {.fn play_mobility} adds.")
+  changes <- net$changes
+  if(is.null(changes)) changes <- data.frame(time = numeric(0), node = integer(0),
+                                             var = character(0), value = character(0))
+  if(is.character(changes$node))
+    changes$node <- match(changes$node, net$nodes$label)
+  value_of <- function(v){
+    if(is.list(v)) unlist(lapply(v, function(e) if(length(e)) e[1] else NA))
+    else v
+  }
+  moves <- changes[changes$var == "occupant", , drop = FALSE]
+  moves$value <- as.character(value_of(moves$value))
+  times <- sort(unique(moves$time))
+  start_value <- net$nodes[[attribute]]
+  att <- changes[changes$var == attribute, , drop = FALSE]
+  att$value <- value_of(att$value)
+  sat <- changes[changes$var == "satisfied", , drop = FALSE]
+  sat$value <- as.logical(value_of(sat$value))
+  satisfied <- if("satisfied" %in% names(net$nodes))
+    as.logical(net$nodes$satisfied) else NULL
+  rows <- lapply(times, function(t){
+    now <- moves[moves$time == t, , drop = FALSE]
+    to <- now$node[!is.na(now$value)]
+    from <- now$node[is.na(now$value)]
+    if(length(to) != 1 || length(from) != 1)
+      snet_abort("At time {t}, the record of {.var occupant} is not one move.")
+    a <- att[att$time == t & att$node == to, , drop = FALSE]
+    dplyr::tibble(time = t, person = now$value[now$node == to],
+                  origin = as.integer(from), destination = as.integer(to),
+                  value = if(nrow(a)) a$value[nrow(a)] else start_value[from])
+  })
+  out <- dplyr::bind_rows(rows)
+  if(!nrow(out))
+    out <- dplyr::tibble(time = numeric(0), person = character(0),
+                         origin = integer(0), destination = integer(0),
+                         value = start_value[0])
+  # the value keeps the name of the attribute, unless another column has it
+  if(!attribute %in% c("time", "person", "origin", "destination", "dissatisfied"))
+    names(out)[names(out) == "value"] <- attribute
+  out$dissatisfied <- if(is.null(satisfied)) rep(NA_integer_, nrow(out)) else
+    vapply(out$time, function(t){
+      now <- satisfied
+      upto <- sat[sat$time <= t, , drop = FALSE]
+      now[upto$node] <- upto$value
+      sum(!now, na.rm = TRUE)
+    }, integer(1))
+  class(out) <- c("mobilityModel", class(out))
+  attr(out, "attribute") <- attribute
+  out
+}
+
+#' @export
+print.mobilityModel <- function(x, ...){
+  print(dplyr::tibble(x), ...)
+  invisible(x)
+}

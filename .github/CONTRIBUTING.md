@@ -276,6 +276,7 @@ Conventions to preserve when writing or editing functions:
   of a network are the waves of a panel or a stream of events.
 - `nodes`: one row per node. The label column is `label` (not `name`); reserved columns
   are `mode` (multimodal/two-mode), `active`/`present` (changing networks), and `na`.
+  `occupant` names the occupant of each place in a mobility model, with `NA` for an empty place.
 - `ties`: one row per tie. `from` and `to` are required (even for undirected networks)
   and are stored as *integer indices* into `nodes`, not labels — `make_stocnet()`
   matches labels to indices on construction. Reserved columns are `layer` (multiplex),

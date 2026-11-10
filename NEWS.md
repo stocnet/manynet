@@ -60,6 +60,8 @@
   - Added `max_dist=` to limit moves to a distance along ties, for vacancy chains
   - All attributes of an occupant move with it, not only `attribute=`
   - `choice_function = "minimising"` takes the nearest place that satisfies
+  - Returns the start state, with a record of the moves in the changes
+  - Added `occupant` and `satisfied` to the nodes, which the record follows
 
 ## Classes
 
@@ -69,6 +71,8 @@
   - Removed the `$` accessors of 'mnet' objects
 - Added the 'diffusionModel' class, with 'diff_model' second for one release
 - Added the 'opinionModel' class, with 'learn_model' second for one release
+- Added the 'mobilityModel' class, a table of moves with one row for each step
+- Added `occupant` as a reserved node column, naming the occupant of a place
 - Added `.stocnet$info$uncoded` for units of text still to code
 - Added `.stocnet$info$compartments` for the roles of the values of a diffusion
 - Added the 'diffusionTransitions' class, which prints a joint source as "E+I"
@@ -84,6 +88,8 @@
   - Fixed the counts of E with `latency` and of S with waning on an 'igraph'
 - Added `as_opinion()` to read a record of opinions as an 'opinionModel'
 - Added `as_monan()` to coerce a network of people and places for 'MoNAn'
+  - Also takes a network of places with an `occupant` record of moves
+- Added `as_mobility()` to read a record of moves as a 'mobilityModel'
 
 ## Manipulating
 
@@ -97,6 +103,7 @@
 
 - Added `to_influence()` for the row-stochastic influence matrix of a network
 - Added `to_mobility()` for a network of places with one tie for each move
+  - Also takes a network of places with an `occupant` record of moves
 - Improved `to_mode()` with new measures and with `through`
   - Added `"agreement"`, `"disagreement"`, and `"signed"` for signed ties
   - Added `"activity"`, the count over the pair's mean number of ties

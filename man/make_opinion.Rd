@@ -230,6 +230,7 @@ Hegselmann, Rainer, and Ulrich Krause. 2002.
 \seealso{
 Other makes:
 \code{\link[=as_diffusion]{as_diffusion()}},
+\code{\link[=as_mobility]{as_mobility()}},
 \code{\link{make_bibliography}},
 \code{\link{make_collect}},
 \code{\link{make_create}},
@@ -238,7 +239,6 @@ Other makes:
 \code{\link{make_explicit}},
 \code{\link{make_groups}},
 \code{\link{make_growth}},
-\code{\link{make_mobility}},
 \code{\link{make_random}},
 \code{\link{make_read}},
 \code{\link{make_statements}},
@@ -247,7 +247,7 @@ Other makes:
 
 Other models:
 \code{\link[=as_diffusion]{as_diffusion()}},
-\code{\link{make_mobility}}
+\code{\link[=as_mobility]{as_mobility()}}
 }
 \concept{makes}
 \concept{models}

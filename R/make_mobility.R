@@ -27,7 +27,6 @@
 #' @name make_mobility
 #' @family makes
 #' @family models
-#' @inheritParams mark_is
 #' @param steps The maximum number of moves.
 #'   By default the number of nodes in the network.
 #' @param attribute A string naming some nodal attribute in the network.
@@ -80,7 +79,25 @@
 #' @param ... Former names of arguments, which still work but are deprecated:
 #'   `heterophily` for `preference`.
 #' @return The network of the class it was given,
-#'   with its occupants in their new places.
+#'   with the occupants in their start places,
+#'   and a record of the moves in its changes.
+#'   Each move is one step of time.
+#'   At each move, the record gives the new value of each attribute
+#'   of the occupant at the two places, and the `satisfied` value
+#'   of each occupant whose satisfaction changes.
+#'   Use [to_time()] to get the network at a step,
+#'   [as_mobility()] to get a table of the moves,
+#'   and [to_mobility()] to get the moves as a network of places.
+#'
+#'   Two node attributes are added at the start.
+#'   `occupant` names the occupant of each place, with `NA` for an empty place.
+#'   A network that already has an `occupant` attribute keeps it.
+#'   Otherwise, each occupant has the index of its start place as its name.
+#'   `satisfied` is `TRUE` for an occupant that is satisfied with its place,
+#'   `FALSE` for an occupant that is dissatisfied,
+#'   and `NA` for an empty place.
+#'   A 'stocnet' also keeps `attribute`, and `preference` if it is a number,
+#'   in `info$mobility`.
 #' @references
 #' ## On segregation
 #' Schelling, Thomas C. 1971.
@@ -98,12 +115,16 @@
 #'   latticeEg <- create_lattice(100)
 #'   latticeEg <- add_node_attribute(latticeEg, "startValues", startValues)
 #'   latticeEg
-#'   play_mobility(latticeEg, "startValues", 0.5)
+#'   schelling <- play_mobility(latticeEg, "startValues", 0.5)
+#'   # The network after the last move
+#'   to_time(schelling, max(as_changelist(schelling)$time))
 #'   # A vacancy chain: a person moves up one position when it is empty
 #'   ladder <- delete_ties(create_ring(10, directed = TRUE), 10)
 #'   ladder <- add_node_attribute(ladder, "person", c(LETTERS[1:9], NA))
-#'   play_mobility(ladder, "person", preference = function(.data, node) -1,
-#'                 choice_function = "optimising", max_dist = 1)
+#'   chain <- play_mobility(ladder, "person",
+#'                          preference = function(.data, node) -1,
+#'                          choice_function = "optimising", max_dist = 1)
+#'   as_mobility(chain, "person")
 #' @export
 play_mobility <- function(.data,
                           attribute,
@@ -128,6 +149,7 @@ play_mobility <- function(.data,
   if(!is.function(choice_function)) choice_function <- match.arg(choice_function)
   if(!is.numeric(max_dist) || length(max_dist) != 1 || is.na(max_dist) || max_dist < 1)
     snet_abort("`max_dist` must be one number of at least 1.")
+  preference_given <- preference
   if(!is.function(preference)){
     if(!is.numeric(preference))
       snet_abort("`preference` must be a number or a function.")
@@ -137,14 +159,23 @@ play_mobility <- function(.data,
                        "or as many numbers as there are nodes in the network."))
   }
 
+  # Who holds each place. This identifies an occupant across its moves.
+  holder <- seq_len(n)
+  holder[is.na(igraph::vertex_attr(g, attribute))] <- NA
+  # The `occupant` column names the occupants in the record of moves.
+  # A network that has no such column gets one, with the start node index
+  # of each occupant.
+  if(!"occupant" %in% igraph::vertex_attr_names(g)){
+    snet_info("Named each occupant by its start node in the node attribute {.var occupant}.")
+    g <- igraph::set_vertex_attr(g, "occupant", value = as.character(holder))
+    .data <- add_node_attribute(.data, "occupant", as.character(holder))
+  }
   # Everything that describes the occupant moves with it;
   # only what describes the place stays:
   # its label, its mode, and whether it is active.
-  carried <- setdiff(igraph::vertex_attr_names(g), c("name", "type", "active"))
-  # Who holds each place. This identifies an occupant across its moves,
-  # and so is what a record of moves would refer to.
-  occupant <- seq_len(n)
-  occupant[is.na(igraph::vertex_attr(g, attribute))] <- NA
+  # Whether the occupant is satisfied is found again after each move.
+  carried <- setdiff(igraph::vertex_attr_names(g),
+                     c("name", "type", "active", "satisfied"))
 
   # The satisfaction of the occupants of the places given,
   # were the network `net`
@@ -171,13 +202,25 @@ play_mobility <- function(.data,
     out
   }
 
+  # Whether each occupant is satisfied, with NA for an empty place
+  satisfied_now <- function(net){
+    sat <- rep(NA_real_, n)
+    occupied <- which(!is.na(holder))
+    if(length(occupied))
+      sat[occupied] <- satisfaction(net, occupied, holder[occupied])
+    sat
+  }
+  sat <- satisfied_now(g)
+  satisfied <- ifelse(is.na(sat), NA, sat >= 0)
+  .data <- add_node_attribute(.data, "satisfied", satisfied)
+  # The record of the moves: the nodes keep the start,
+  # and each move adds its rows at its step
+  record <- list()
   t <- 0
   while(steps > t){
-    occupied <- which(!is.na(occupant))
-    unoccupied <- which(is.na(occupant))
+    occupied <- which(!is.na(holder))
+    unoccupied <- which(is.na(holder))
     if(length(unoccupied)==0 || length(occupied)==0) break
-    sat <- rep(NA_real_, n)
-    sat[occupied] <- satisfaction(g, occupied, occupant[occupied])
     dissatisfied <- occupied[!is.na(sat[occupied]) & sat[occupied] < 0]
     if(length(dissatisfied)==0) break
     if(is.function(who_moves)){
@@ -204,7 +247,7 @@ play_mobility <- function(.data,
         move_to <- options[which.max(choice_scores[options])]
       } else {
         option_sat <- vapply(options, function(u){
-          satisfaction(swap(g, i, u), u, occupant[i])
+          satisfaction(swap(g, i, u), u, holder[i])
         }, FUN.VALUE = numeric(1))
         if(choice_function == "optimising"){
           move_to <- options[which.max(option_sat)]
@@ -226,13 +269,39 @@ play_mobility <- function(.data,
     t <- t+1
     snet_minor_info("Moving the occupant of node {move_from} to node {move_to}")
     g <- swap(g, move_from, move_to)
-    occupant[c(move_from, move_to)] <- occupant[c(move_to, move_from)]
+    holder[c(move_from, move_to)] <- holder[c(move_to, move_from)]
+    # The carried attributes at the two places, then the occupants
+    # whose satisfaction changes
+    places <- c(move_from, move_to)
+    for(a in carried){
+      record[[length(record) + 1]] <- list(time = t, node = places, var = a,
+                                           value = igraph::vertex_attr(g, a)[places])
+    }
+    sat <- satisfied_now(g)
+    now <- ifelse(is.na(sat), NA, sat >= 0)
+    changed <- which(!(now %in% NA & satisfied %in% NA) &
+                       (is.na(now) | is.na(satisfied) | now != satisfied))
+    if(length(changed))
+      record[[length(record) + 1]] <- list(time = t, node = changed,
+                                           var = "satisfied",
+                                           value = now[changed])
+    satisfied <- now
   }
 
-  # The occupants' attributes are given back in their new places,
-  # on the network as it was given
-  for(a in carried){
-    .data <- add_node_attribute(.data, a, igraph::vertex_attr(g, a))
+  # The nodes keep the start, and the moves are bound as changes
+  if(inherits(.data, "stocnet")){
+    .data$info$mobility <- list(attribute = attribute)
+    if(is.numeric(preference_given))
+      .data$info$mobility$preference <- preference_given
+  }
+  if(length(record)){
+    changes <- dplyr::tibble(
+      time = unlist(lapply(record, function(r) rep(r$time, length(r$node)))),
+      node = as.integer(unlist(lapply(record, `[[`, "node"))),
+      var = unlist(lapply(record, function(r) rep(r$var, length(r$node)))),
+      value = unlist(lapply(record, function(r) as.list(r$value)),
+                     recursive = FALSE))
+    .data <- bind_changes(.data, changes)
   }
   .data
 }

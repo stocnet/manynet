@@ -339,6 +339,11 @@ The result is a directed network of the places,
 with their attributes,
 and one tie from the origin to the destination for each move.
 The tie has the \code{time} of the move and the \code{person} who moves.
+
+\code{to_mobility()} also takes a network of places with an \code{occupant} record,
+as \code{\link[=play_mobility]{play_mobility()}} gives.
+The \code{person} of each tie is then the name of the occupant,
+and the nodes keep only the attributes of the places.
 See also \code{\link[=as_monan]{as_monan()}}, which gives the places of the people
 at two times to \code{{MoNAn}}.
 }

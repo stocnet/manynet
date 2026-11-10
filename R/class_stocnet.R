@@ -113,6 +113,7 @@
 #'   Where a layer's ties name who reported them,
 #'   a non-responsive node instead missed its whole report of that layer.
 #'   See [as_missinglist()].
+#'   - 'occupant' should be a character vector naming the occupant of each place, with `NA` for an empty place, as [play_mobility()] records it.
 #' @section Changes:
 #'   There are several required names for the columns of the changes component of a stocnet object (if one is included).
 #'   - 'time' can be an integer (e.g. for a wave) or date (e.g. POSIXct or mdate) vector of the times at which changes occur.

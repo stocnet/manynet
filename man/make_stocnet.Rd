@@ -214,6 +214,7 @@ but cannot report outgoing ties.
 Where a layer's ties name who reported them,
 a non-responsive node instead missed its whole report of that layer.
 See \code{\link[=as_missinglist]{as_missinglist()}}.
+\item 'occupant' should be a character vector naming the occupant of each place, with \code{NA} for an empty place, as \code{\link[=play_mobility]{play_mobility()}} records it.
 }
 }
 

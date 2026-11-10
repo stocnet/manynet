@@ -128,6 +128,7 @@ The direction of a tie is not written.
 
 Other makes:
 \code{\link[=as_diffusion]{as_diffusion()}},
+\code{\link[=as_mobility]{as_mobility()}},
 \code{\link[=as_opinion]{as_opinion()}},
 \code{\link{make_bibliography}},
 \code{\link{make_collect}},
@@ -137,7 +138,6 @@ Other makes:
 \code{\link{make_explicit}},
 \code{\link{make_groups}},
 \code{\link{make_growth}},
-\code{\link{make_mobility}},
 \code{\link{make_random}},
 \code{\link{make_read}},
 \code{\link{make_statements}},

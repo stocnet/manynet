@@ -821,6 +821,14 @@ as_siena.stocnet <- function(.data, twomode = FALSE) {
 #'   - each layer of ties among the places, such as adjacency or distance,
 #'   under its layer name.
 #'
+#'
+#'   `as_monan()` also takes a network of places with an `occupant` record,
+#'   as [play_mobility()] gives.
+#'   The occupants are then the people,
+#'   and the attributes of the occupants at the start are
+#'   the attributes of the people.
+#'   The start is time 0.
+#'
 #'   A person who has no place at one of the two times is not included.
 #'   MoNAn requires that every place occurs in `moves`,
 #'   so a place that no person holds at either time is removed.
@@ -829,7 +837,8 @@ as_siena.stocnet <- function(.data, twomode = FALSE) {
 as_monan <- function(.data, layer = NULL, time1, time2) {
   thisRequires("MoNAn")
   net <- as_stocnet(.data)
-  stays <- .person_places(net, layer = layer)
+  mobility <- .mobility_stays(net, layer = layer)
+  stays <- mobility$stays
   times <- sort(unique(stays$begin[is.finite(stays$begin)]))
   if(!length(times))
     snet_abort("The ties between people and places have no times.")
@@ -849,8 +858,13 @@ as_monan <- function(.data, layer = NULL, time1, time2) {
   people <- people[keep]
   origin <- origin[keep]
   destination <- destination[keep]
-  modes <- .mode_index(net$nodes$mode, mode_names(net))
-  places <- which(modes == 2L)
+  places <- mobility$places
+  modes <- if(mobility$occupant) rep(2L, nrow(net$nodes)) else
+    .mode_index(net$nodes$mode, mode_names(net))
+  # The rows of the nodes that hold the attributes of the people:
+  # for an occupant record, the start places of the occupants
+  person_rows <- if(mobility$occupant)
+    stays$place[match(people, stays$person)] else people
   held <- places[places %in% c(origin, destination)]
   if(length(held) < length(places))
     snet_info("{length(places) - length(held)}",
@@ -883,14 +897,16 @@ as_monan <- function(.data, layer = NULL, time1, time2) {
     }
   }
   # The numeric attributes of the people and of the places
-  reserved <- c("label", "mode", "active", "na", "name", "type")
+  reserved <- c("label", "mode", "active", "na", "name", "type",
+                "occupant", "satisfied")
   for(att in setdiff(names(net$nodes), reserved)){
     vals <- net$nodes[[att]]
     if(!is.numeric(vals)) next
-    if(!anyNA(vals[people]))
-      elements[[att]] <- MoNAn::createNodeVariable(as.numeric(vals[people]),
+    if(!anyNA(vals[person_rows]))
+      elements[[att]] <- MoNAn::createNodeVariable(as.numeric(vals[person_rows]),
                                                    nodeSet = "people")
-    else if(!anyNA(vals[places]))
+    # the attributes of an occupant record all describe the occupants
+    else if(!mobility$occupant && !anyNA(vals[places]))
       elements[[att]] <- MoNAn::createNodeVariable(as.numeric(vals[places]),
                                                    nodeSet = "places")
   }
@@ -962,19 +978,88 @@ as_monan <- function(.data, layer = NULL, time1, time2) {
                          begin = -Inf, end = Inf)
   }
   out <- out[order(out$person, out$begin), ]
-  # One place for each person at each time
-  for(p in unique(out$person)){
-    s <- out[out$person == p, ]
+  .check_one_place(net, out)
+  out
+}
+
+# The places that each occupant holds, and when, from a network of places
+# with an `occupant` record, as `play_mobility()` gives. The same table as
+# `.person_places()`, but `person` is the name of the occupant, as in the
+# `occupant` column, and `place` is the node index of the place.
+# The occupants of the nodes hold their places from time 0, the start.
+.occupant_places <- function(.data){
+  net <- as_stocnet(.data)
+  current <- as.character(net$nodes$occupant)
+  held <- which(!is.na(current))
+  out <- list(dplyr::tibble(person = current[held], place = held,
+                            begin = 0, end = Inf))
+  changes <- net$changes
+  if(!is.null(changes) && nrow(changes)){
+    changes <- changes[changes$var == "occupant", , drop = FALSE]
+    value <- changes$value
+    if(is.list(value)) value <- unlist(lapply(value, function(v)
+      if(length(v)) as.character(v)[1] else NA_character_))
+    changes$value <- as.character(value)
+    if(is.character(changes$node))
+      changes$node <- match(changes$node, net$nodes$label)
+    for(t in sort(unique(.bare_time(changes$time)))){
+      now <- changes[.bare_time(changes$time) == t, , drop = FALSE]
+      now <- now[!duplicated(now$node, fromLast = TRUE), , drop = FALSE]
+      # the stays at these places end, and the new stays begin
+      ends <- now$node[!is.na(current[now$node])]
+      out <- c(out, list(dplyr::tibble(person = current[ends], place = ends,
+                                       begin = NA_real_, end = t)))
+      current[now$node] <- now$value
+      begins <- now$node[!is.na(now$value)]
+      out <- c(out, list(dplyr::tibble(person = current[begins], place = begins,
+                                       begin = t, end = Inf)))
+    }
+  }
+  rows <- dplyr::bind_rows(out)
+  # each end closes the open stay of that person at that place
+  stays <- rows[!is.na(rows$begin), ]
+  ends <- rows[is.na(rows$begin), ]
+  for(k in seq_len(nrow(ends))){
+    open <- which(stays$person == ends$person[k] & stays$place == ends$place[k] &
+                    is.infinite(stays$end))
+    stays$end[open[length(open)]] <- ends$end[k]
+  }
+  stays <- stays[stays$begin < stays$end, ]
+  stays <- stays[order(stays$person, stays$begin), ]
+  .check_one_place(net, stays)
+  stays
+}
+
+# Whether a network is a network of places with an `occupant` record,
+# rather than a network of people and places
+.is_occupant_record <- function(net){
+  "occupant" %in% names(net$nodes) && net_modes(net) < 2
+}
+
+# The stays of the people at the places, from either form of mobility data,
+# with the node indices of the places
+.mobility_stays <- function(net, layer = NULL){
+  if(.is_occupant_record(net))
+    return(list(stays = .occupant_places(net), places = seq_len(nrow(net$nodes)),
+                occupant = TRUE))
+  stays <- .person_places(net, layer = layer)
+  modes <- .mode_index(net$nodes$mode, mode_names(net))
+  list(stays = stays, places = which(modes == 2L), occupant = FALSE)
+}
+
+# One place for each person at each time
+.check_one_place <- function(net, stays){
+  for(p in unique(stays$person)){
+    s <- stays[stays$person == p, ]
     if(nrow(s) > 1){
       clash <- which(s$begin[-1] < s$end[-nrow(s)])
       if(length(clash)) .two_places_abort(net, p, s$begin[clash[1] + 1])
     }
   }
-  out
 }
 
 .two_places_abort <- function(net, person, time){
-  who <- if(is_labelled(net)) net$nodes$label[person] else person
+  who <- if(!is.character(person) && is_labelled(net)) net$nodes$label[person] else person
   snet_abort("A person can hold one place at a time,",
              "but {.val {who}} holds two places at time {time}.")
 }
