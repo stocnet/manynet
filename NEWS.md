@@ -96,6 +96,7 @@
 - Fixed `filter_nodes()` on a 'stocnet' where it drops every node of a mode
 - Fixed `bind_node_attributes()` to keep the names of the modes
 - Fixed `delete_isolates()` on a list of 'stocnet' objects, which failed
+- Fixed `summarise_ties()` on a 'stocnet', which dropped the nodes with no tie
 - Improved `bind_changes()` to start any categorical state variable
   - Starts every node as "S", or as the S of `compartments=`
 

@@ -692,11 +692,36 @@ summarise_ties.default <- function(.data, ...){
 
 #' @export
 summarise_ties.tbl_graph <- function(.data, ...){
-  out <- as_edgelist(.data) |> 
-    dplyr::summarise(..., .by = c("from","to")) |> 
-    as_tidygraph(twomode = is_twomode(.data))
-  out <- as_tidygraph(bind_node_attributes(out, .data))
-  if(!is_directed(.data)) out <- to_undirected(out)
+  ties <- .summarise_tie_table(
+    tibble::as_tibble(tidygraph::activate(.data, "edges")),
+    is_directed(.data), is_twomode(.data), ...)
+  # The nodes are kept as they are, also the nodes with no tie, so that the
+  # ties still index the same nodes.
+  out <- tidygraph::activate(.data, "edges") |>
+    dplyr::filter(FALSE) |>
+    dplyr::select(from, to) |>
+    tidygraph::bind_edges(ties) |>
+    tidygraph::activate("nodes")
+  out
+}
+
+#' @export
+summarise_ties.stocnet <- function(.data, ...){
+  .data$ties <- .summarise_tie_table(.data$ties, is_directed(.data),
+                                     is_twomode(.data), ...)
+  .data
+}
+
+# Summarises the ties of each pair of nodes. An undirected one-mode tie is
+# the same pair in either order. One summary column is named 'weight'.
+.summarise_tie_table <- function(ties, directed, twomode, ...){
+  if(!directed && !twomode){
+    lo <- pmin(ties$from, ties$to)
+    ties$to <- pmax(ties$from, ties$to)
+    ties$from <- lo
+  }
+  out <- dplyr::summarise(ties, ..., .by = c("from", "to"))
+  if(ncol(out) == 3) names(out)[3] <- "weight"
   out
 }
 

@@ -78,7 +78,7 @@ delete_tie_attribute          *       *      *
 mutate_ties                           *              *         *
 rename_ties                   *       *              *         *
 select_ties                   *       *              *         *
-summarise_ties                        *                        *
+summarise_ties                        *              *         *
 }\if{html}{\out{</div>}}
 
 If a method is not available for a particular class, but a default method is,

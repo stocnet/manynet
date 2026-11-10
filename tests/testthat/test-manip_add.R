@@ -197,3 +197,12 @@ test_that("add_node_attribute takes a mode-length vector above two modes", {
   # a length two modes share is ambiguous, so it is an error rather than a guess
   expect_error(add_node_attribute(three, "pair", c(1, 2)), "as long as")
 })
+
+test_that("summarise_ties keeps every node of a stocnet", {
+  moments <- sort(unique(tie_attribute(irps_nuclear, "time")))
+  first <- summarise_ties(filter_ties(irps_nuclear, time <= moments[2]),
+                          sum(weight))
+  expect_equal(net_nodes(first), net_nodes(irps_nuclear))
+  expect_true(all(first$ties$to > net_dims(irps_nuclear)[1]))
+  expect_true("weight" %in% net_tie_attributes(first))
+})
