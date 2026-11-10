@@ -250,3 +250,66 @@ test_that("count adds the products of weights and of repeated ties", {
   # a simple network still gives the shared nodes
   expect_equal(as_matrix(to_mode(ison_southern_women, 1))["Evelyn", "Laura"], 6)
 })
+
+# Mobility ####
+
+# Four people and three places. Ann moves twice, Bob once, Cat never,
+# and Dan moves and comes back.
+mobility_panel <- make_stocnet(
+  info = list(directed = FALSE, update = "replace"),
+  nodes = data.frame(label = c("Ann", "Bob", "Cat", "Dan", "X", "Y", "Z"),
+                     mode = rep(c("people", "places"), c(4, 3)),
+                     size = c(NA, NA, NA, NA, 10, 20, 30)),
+  ties = data.frame(from = rep(1:4, each = 3),
+                    to = c(5, 6, 7,  5, 5, 6,  7, 7, 7,  6, 5, 6),
+                    time = rep(1:3, 4)))
+mobility_interval <- make_stocnet(
+  info = list(directed = FALSE),
+  nodes = mobility_panel$nodes,
+  ties = data.frame(from = c(1, 1, 1, 2, 2, 3, 4, 4, 4),
+                    to = c(5, 6, 7, 5, 6, 7, 6, 5, 6),
+                    begin = c(1, 2, 3, 1, 3, 1, 1, 2, 3),
+                    end = c(2, 3, NA, 3, NA, NA, 2, 3, NA)))
+
+test_that("to_mobility gives one tie for each move", {
+  for(net in list(mobility_panel, mobility_interval)){
+    out <- to_mobility(net)
+    expect_equal(net_nodes(out), 3)
+    expect_true(is_directed(out))
+    expect_equal(out$nodes$label, c("X", "Y", "Z"))
+    expect_equal(out$nodes$size, c(10, 20, 30))
+    ties <- out$ties
+    expect_equal(nrow(ties), 5)
+    expect_equal(ties$person, c("Ann", "Ann", "Bob", "Dan", "Dan"))
+    expect_equal(ties$time, c(2, 3, 3, 2, 3))
+    # each origin is the place where the person was before
+    expect_equal(ties$from, c(1, 2, 1, 2, 1))
+    expect_equal(ties$to, c(2, 3, 2, 1, 2))
+    weighted <- to_mobility(net, weighted = TRUE)
+    expect_equal(sum(weighted$ties$weight), 5)
+    expect_equal(nrow(weighted$ties), 3)
+  }
+})
+
+test_that("to_mobility returns the class it was given", {
+  expect_s3_class(to_mobility(mobility_panel), "stocnet")
+  expect_s3_class(to_mobility(as_tidygraph(mobility_panel)), "tbl_graph")
+  expect_s3_class(to_mobility(as_igraph(mobility_panel)), "igraph")
+  expect_equal(as.numeric(net_ties(to_mobility(as_igraph(mobility_panel)))), 5)
+})
+
+test_that("to_mobility stops when a person holds two places at one time", {
+  twice <- make_stocnet(
+    info = list(directed = FALSE),
+    nodes = data.frame(label = c("Ann", "X", "Y"),
+                       mode = c("people", "places", "places")),
+    ties = data.frame(from = c(1, 1), to = c(2, 3),
+                      begin = c(1, 2), end = c(3, 4)))
+  expect_error(to_mobility(twice), "one place at a time")
+  twice_panel <- make_stocnet(
+    info = list(directed = FALSE, update = "replace"),
+    nodes = twice$nodes,
+    ties = data.frame(from = c(1, 1), to = c(2, 3), time = c(1, 1)))
+  expect_error(to_mobility(twice_panel), "one place at a time")
+  expect_error(to_mobility(ison_adolescents), "two modes")
+})

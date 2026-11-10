@@ -96,6 +96,7 @@
 ## Modifying
 
 - Added `to_influence()` for the row-stochastic influence matrix of a network
+- Added `to_mobility()` for a network of places with one tie for each move
 - Improved `to_mode()` with new measures and with `through`
   - Added `"agreement"`, `"disagreement"`, and `"signed"` for signed ties
   - Added `"activity"`, the count over the pair's mean number of ties

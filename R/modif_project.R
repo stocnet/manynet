@@ -14,6 +14,8 @@
 #'   for example the rows.
 #'   - `to_mode2()` projects a two-mode network onto its second mode,
 #'   for example the columns.
+#'   - `to_mobility()` projects a two-mode network of people and places
+#'   onto the places, with one tie for each move of a person.
 #'   - `to_linegraph()` makes the line graph of a network.
 #'   Each tie becomes a node.
 #'   Two of these nodes get a tie when their ties share a node.
@@ -562,6 +564,64 @@ to_mode2.data.frame <- function(.data, similarity = c("count", "jaccard", "rand"
                                  "agreement", "disagreement", "signed",
                                  "activity", "association", "fractional")) {
   as_edgelist(to_mode2(as_tidygraph(.data), similarity))
+}
+
+#' @rdname modif_project
+#' @param layer For a network of people and places with more than one layer
+#'   of ties between people and places,
+#'   the name of the layer that says where each person is.
+#' @param weighted Logical. If `TRUE`, the ties of the moves between two
+#'   places are summed into one tie, with the number of moves as its `weight`.
+#'   The default is `FALSE`, one tie for each move.
+#' @section Mobility:
+#'   `to_mobility()` projects a two-mode network of people and places
+#'   onto the places.
+#'   The people are the first mode, and the places the second mode.
+#'   The ties between people and places say where each person is.
+#'   They have `begin` and `end` times, or the `time` of each wave of a panel.
+#'   A person holds one place at a time.
+#'   A move is the end of one stay of a person and the begin of the next.
+#'   The result is a directed network of the places,
+#'   with their attributes,
+#'   and one tie from the origin to the destination for each move.
+#'   The tie has the `time` of the move and the `person` who moves.
+#'   See also [as_monan()], which gives the places of the people
+#'   at two times to `{MoNAn}`.
+#' @examples
+#' moves <- make_stocnet(info = list(directed = FALSE, update = "replace"),
+#'   nodes = data.frame(label = c("Ann", "Bob", "Home", "Work"),
+#'                      mode = c("people", "people", "places", "places")),
+#'   ties = data.frame(from = c(1, 1, 2, 2), to = c(3, 4, 3, 3),
+#'                     time = c(1, 2, 1, 2)))
+#' to_mobility(moves)
+#' @export
+to_mobility <- function(.data, layer = NULL, weighted = FALSE) {
+  net <- as_stocnet(.data)
+  stays <- .person_places(net, layer = layer)
+  modes <- .mode_index(net$nodes$mode, mode_names(net))
+  places <- which(modes == 2L)
+  n <- nrow(stays)
+  # each stay that follows a stay of the same person is a move
+  move <- which(c(FALSE, stays$person[-1] == stays$person[-n]))
+  ties <- dplyr::tibble(from = stays$place[move - 1],
+                        to = stays$place[move],
+                        time = stays$begin[move],
+                        person = stays$person[move])
+  # a person who leaves and comes back to the same place does not move
+  ties <- ties[ties$from != ties$to, ]
+  ties$from <- match(ties$from, places)
+  ties$to <- match(ties$to, places)
+  ties$person <- if(is_labelled(net)) net$nodes$label[ties$person] else
+    as.character(ties$person)
+  if(weighted){
+    pair <- paste(ties$from, ties$to)
+    ties <- dplyr::tibble(from = ties$from[!duplicated(pair)],
+                          to = ties$to[!duplicated(pair)],
+                          weight = as.vector(table(pair)[unique(pair)]))
+  }
+  nodes <- net$nodes[places, setdiff(names(net$nodes), "mode"), drop = FALSE]
+  out <- make_stocnet(info = list(directed = TRUE), nodes = nodes, ties = ties)
+  .as_class_of(out, .data)
 }
 
 #' @rdname modif_project

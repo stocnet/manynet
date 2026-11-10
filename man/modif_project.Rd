@@ -4,6 +4,7 @@
 \alias{modif_project}
 \alias{to_mode1}
 \alias{to_mode2}
+\alias{to_mobility}
 \alias{to_mode}
 \alias{to_linegraph}
 \alias{to_hypergraph}
@@ -27,6 +28,8 @@ to_mode2(
     "hamming", "cosine", "spearman", "kendall", "ruzicka", "agreement", "disagreement",
     "signed", "activity", "association", "fractional")
 )
+
+to_mobility(.data, layer = NULL, weighted = FALSE)
 
 to_mode(
   .data,
@@ -184,6 +187,14 @@ See the section on weighted and signed networks below.
 These six measures count every tie,
 also when a node has more than one tie to the same node.}
 
+\item{layer}{For a network of people and places with more than one layer
+of ties between people and places,
+the name of the layer that says where each person is.}
+
+\item{weighted}{Logical. If \code{TRUE}, the ties of the moves between two
+places are summed into one tie, with the number of moves as its \code{weight}.
+The default is \code{FALSE}, one tie for each move.}
+
 \item{mode}{The mode to project the network onto.
 Give an index, such as 1 or 2, or the name of the mode.
 For a two-mode network, \code{FALSE} is the first mode and \code{TRUE} the second.
@@ -229,6 +240,8 @@ It also projects a network of three or more modes.
 for example the rows.
 \item \code{to_mode2()} projects a two-mode network onto its second mode,
 for example the columns.
+\item \code{to_mobility()} projects a two-mode network of people and places
+onto the places, with one tie for each move of a person.
 \item \code{to_linegraph()} makes the line graph of a network.
 Each tie becomes a node.
 Two of these nodes get a tie when their ties share a node.
@@ -313,6 +326,23 @@ To weight a two-mode network of documents and terms
 before the projection, use \code{to_normalised(rule = "tfidf")}.
 }
 
+\section{Mobility}{
+
+\code{to_mobility()} projects a two-mode network of people and places
+onto the places.
+The people are the first mode, and the places the second mode.
+The ties between people and places say where each person is.
+They have \code{begin} and \code{end} times, or the \code{time} of each wave of a panel.
+A person holds one place at a time.
+A move is the end of one stay of a person and the begin of the next.
+The result is a directed network of the places,
+with their attributes,
+and one tie from the origin to the destination for each move.
+The tie has the \code{time} of the move and the \code{person} who moves.
+See also \code{\link[=as_monan]{as_monan()}}, which gives the places of the people
+at two times to \code{{MoNAn}}.
+}
+
 \section{Hypergraphs}{
 
 In a hypergraph, one tie can connect any number of nodes.
@@ -366,6 +396,12 @@ that are not a subset of another hyperedge.
 \examples{
 to_mode1(ison_southern_women)
 to_mode2(ison_southern_women)
+moves <- make_stocnet(info = list(directed = FALSE, update = "replace"),
+  nodes = data.frame(label = c("Ann", "Bob", "Home", "Work"),
+                     mode = c("people", "people", "places", "places")),
+  ties = data.frame(from = c(1, 1, 2, 2), to = c(3, 4, 3, 3),
+                    time = c(1, 2, 1, 2)))
+to_mobility(moves)
 to_mode(ison_southern_women, 2)
 to_mode(ison_southern_women, "events")
 to_mode(irps_nuclear, "speakers", "signed")
