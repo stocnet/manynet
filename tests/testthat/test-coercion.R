@@ -1172,3 +1172,10 @@ test_that("as_monan removes a place that no person holds", {
   expect_equal(length(state$places$ids), 2)
   expect_equal(unname(state$moves$data), matrix(c(1, 1, 2, 1), 2))
 })
+
+test_that("a time column of an edgelist is not read as a weight", {
+  ties <- data.frame(from = c("A", "B", "C"), to = c("B", "C", "D"),
+                     time = c(0, 4, 8))
+  expect_equal(net_tie_attributes(as_tidygraph(ties)), "time")
+  expect_equal(as_stocnet(as_tidygraph(ties))$ties$time, c(0, 4, 8))
+})

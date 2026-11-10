@@ -86,10 +86,11 @@
 - Improved `as_diffusion()` to count each value of any state attribute
   - Added `attribute=` to name the attribute, by default "diffusion"
   - Fixed the counts of E with `latency` and of S with waning on an 'igraph'
-- Added `as_opinion()` to read a record of opinions as an 'opinionModel'
 - Added `as_monan()` to coerce a network of people and places for 'MoNAn'
   - Also takes a network of places with an `occupant` record of moves
+- Added `as_opinion()` to read a record of opinions as an 'opinionModel'
 - Added `as_mobility()` to read a record of moves as a 'mobilityModel'
+- Fixed `as_igraph()` and `as_tidygraph()` reading edgelist `time` column as weights
 
 ## Manipulating
 

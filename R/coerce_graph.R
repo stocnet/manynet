@@ -48,7 +48,10 @@ as_igraph.data.frame <- function(.data,
   if (inherits(.data, "tbl_df")) .data <- as.data.frame(.data)
   # Warn if no column named weight and weight set to true
   if ((is_weighted(.data) | is_signed(.data)) & !("weight" %in% names(.data))) {
-    if(!names(.data)[3] %in% c("begin","sign","date", .not_weights))
+    # a column of time or of layers is not a weight
+    if(!names(.data)[3] %in% c("begin", "beg", "start", "end", "time", "wave",
+                               "panel", "sign", "date", "layer", "type",
+                               .not_weights))
       names(.data)[3] <- "weight"
     # snet_abort("Please rename the weight column of your dataframe to 'weight'")
   }
