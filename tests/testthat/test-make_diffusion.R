@@ -140,10 +140,11 @@ test_that("play_diffusion runs an SI model with only S and I", {
 test_that("play_diffusion starts at the first time of the network", {
   expect_equal(min(as_changelist(play_diffusion(create_ring(5), steps = 2))$time), 0)
   classes <- delete_changes(ison_classmates)
-  expect_warning(played <- play_diffusion(classes, steps = 2), "time of the ties")
+  # the diffusion follows the waves, so it no longer warns
+  expect_no_warning(played <- play_diffusion(classes, steps = 2))
   expect_equal(min(as_changelist(played)$time), 1)
   expect_equal(as_diffusion(played)$time[1], 1)
-  potter <- suppressWarnings(play_diffusion(fict_potter, steps = 2))
+  potter <- play_diffusion(fict_potter, steps = 2)
   expect_equal(min(as_changelist(potter)$time), 1)
 })
 
@@ -278,9 +279,21 @@ test_that("the exposure kernel agrees with the old exposure", {
     expect_equal(c(manynet:::.node_exposure(net, mark)), old_exposure(net, mark),
                  ignore_attr = TRUE)
   }
+})
+
+test_that("two-mode exposure goes through co-affiliation or direct ties", {
   two <- ison_southern_women
-  expect_equal(c(manynet:::.node_exposure(two, 1)),
-               c(manynet:::.node_exposure_twomode(as_tidygraph(two), 1)))
+  mat <- manynet:::.exposure_matrix(two)
+  n1 <- nrow(mat)
+  # marks in one mode expose the nodes of that mode that share an event
+  shared <- c(mat[, mat[1, ] != 0, drop = FALSE] %*% rep(1, sum(mat[1, ] != 0))) > 0
+  shared[1] <- FALSE
+  expo <- c(manynet:::.node_exposure(two, 1))
+  expect_equal(expo[seq_len(n1)] > 0, shared, ignore_attr = TRUE)
+  expect_true(all(expo[-seq_len(n1)] == 0))
+  # marks in both modes expose the nodes that they are tied to
+  both <- c(manynet:::.node_exposure(two, c(1, n1 + 1)))
+  expect_equal(both[n1 + 2], as.numeric(mat[1, 2] != 0), ignore_attr = TRUE)
 })
 
 test_that("exposure follows the direction of the ties", {
@@ -308,4 +321,141 @@ test_that("missing ties count as absent for exposure", {
   mat <- matrix(c(0, NA, 1, NA, 0, 0, 1, 0, 0), 3)
   net <- as_tidygraph(mat)
   expect_false(anyNA(manynet:::.exposure_matrix(net)))
+})
+
+# Time and composition (phase 3) ####
+
+# A chain whose ties are each observed in one wave, at times 0, 4 and 8.
+# As an event stream, each tie is an increment at its time.
+timed_chain <- function(stream = FALSE){
+  net <- mutate_ties(create_explicit(A-B, B-C, C-D), time = c(0, 4, 8))
+  if(stream) net <- mutate_ties(net, increment = 1)
+  net
+}
+
+diffusion_times <- function(net){
+  ch <- as_changelist(net)
+  ch <- ch[ch$var == "diffusion", , drop = FALSE]
+  stats::setNames(as.numeric(ch$time), node_labels(net)[ch$node])
+}
+
+test_that("play_diffusion uses the ties of each wave of a panel", {
+  net <- timed_chain()
+  expect_true(is_longitudinal(net))
+  played <- play_diffusion(net, seeds = "A", steps = 11)
+  # B is reached in the wave at 0, C only once the wave at 4 holds B-C,
+  # and D only once the wave at 8 holds C-D
+  expect_equal(diffusion_times(played), c(A = 0, B = 1, C = 5, D = 9))
+})
+
+test_that("waves at times 0, 4 and 8 give four steps for each wave", {
+  timeline <- manynet:::.diffusion_contacts(timed_chain(), 0, 11)
+  expect_equal(timeline$times, c(0, 4, 8))
+  expect_length(timeline$contacts, 3)
+  waves <- vapply(0:11, function(t)
+    manynet:::.diffusion_wave(timeline, t, 0), numeric(1))
+  expect_equal(waves, rep(1:3, each = 4))
+  # after the last wave, the last wave stays in force
+  expect_equal(manynet:::.diffusion_wave(timeline, 20, 0), 3)
+})
+
+test_that("a list of networks is a panel only with the same nodes", {
+  expect_error(play_diffusion(list(create_ring(4), create_ring(5)), steps = 2),
+               "same nodes")
+})
+
+test_that("an event stream uses only the ties that have happened", {
+  net <- timed_chain(stream = TRUE)
+  expect_true(is_dynamic(net))
+  early <- play_diffusion(net, seeds = "A", steps = 3)
+  expect_equal(diffusion_times(early), c(A = 0, B = 1))
+  late <- play_diffusion(net, seeds = "A", steps = 11)
+  expect_equal(diffusion_times(late), c(A = 0, B = 1, C = 5, D = 9))
+})
+
+test_that("an interval tie transmits only while it is active", {
+  net <- mutate_ties(create_explicit(A-B, A-C), begin = c(0, 3), end = c(10, 4))
+  played <- play_diffusion(net, seeds = "A", steps = 8)
+  times <- diffusion_times(played)
+  expect_equal(unname(times["B"]), 1)
+  expect_gt(unname(times["C"]), 3)
+})
+
+test_that("an inactive node never changes state and does not transmit", {
+  set.seed(11)
+  net <- mutate_nodes(create_filled(6), active = c(TRUE, TRUE, FALSE, TRUE, TRUE, TRUE))
+  played <- play_diffusion(net, steps = 5)
+  ch <- as_changelist(played)
+  expect_false(3 %in% ch$node[ch$var == "diffusion"])
+  # the centre of a star is the only path, so an inactive centre stops it
+  star <- mutate_nodes(create_star(5), active = c(FALSE, rep(TRUE, 4)))
+  ch <- as_changelist(play_diffusion(star, seeds = 2, steps = 5))
+  expect_equal(ch$node[ch$var == "diffusion"], 2)
+})
+
+test_that("a node that becomes active later takes part from then on", {
+  net <- as_stocnet(create_star(3))
+  net <- mutate_nodes(net, active = c(TRUE, TRUE, FALSE))
+  net <- bind_changes(net, data.frame(time = 3, node = 3L, var = "active",
+                                      value = TRUE))
+  played <- play_diffusion(net, steps = 6)
+  times <- diffusion_times(played)
+  expect_equal(unname(times[2]), 1)
+  expect_equal(unname(times[3]), 4)
+})
+
+test_that("a stocnet keeps the transitions of its diffusion", {
+  played <- play_diffusion(as_stocnet(create_ring(5)), steps = 2, recovery = 0.5)
+  expect_s3_class(played$info$transitions, "diffusionTransitions")
+  expect_true(all(c("I", "R") %in% played$info$transitions$to))
+})
+
+test_that("a two-mode diffusion of one mode goes through co-affiliation", {
+  set.seed(12)
+  played <- play_diffusion(ison_southern_women, steps = 10)
+  ch <- as_changelist(played)
+  ch <- ch[ch$var == "diffusion", , drop = FALSE]
+  expect_s3_class(ch$time, "Date")
+  # no node is infected twice, and only women are infected
+  expect_false(anyDuplicated(ch$node) > 0)
+  expect_true(all(ch$node <= 18))
+  expect_true(all(is.na(node_attribute(played, "diffusion")[19:32])))
+  # a woman is infected only once an event that she shares with Evelyn
+  # has happened (the first, event 23, on 25 February)
+  expect_true(all(ch$time[ch$node != 1] > as.Date("1936-02-25")))
+  # the report counts only the women, keeps the dates, and prints
+  report <- as_diffusion(played)
+  expect_equal(unique(report$S + report$I), 18)
+  expect_s3_class(report$time, "Date")
+  expect_output(print(report), "1936")
+})
+
+test_that("a state on the second mode diffuses on that mode", {
+  sw <- mutate_nodes(ison_southern_women,
+                     flu = c(rep(NA, 18), "I", rep("S", 13)))
+  ch <- as_changelist(play_diffusion(sw, "flu"))
+  ch <- ch[ch$var == "flu", , drop = FALSE]
+  expect_gt(nrow(ch), 0)
+  expect_true(all(ch$node > 18))
+})
+
+test_that("a state on both modes diffuses along their ties", {
+  played <- play_diffusion(ison_southern_women, seeds = c(1, 19), steps = 3)
+  ch <- as_changelist(played)
+  ch <- ch[ch$var == "diffusion" & !ch$node %in% c(1, 19), , drop = FALSE]
+  # Evelyn infects an event she attends, once it has happened
+  expect_true(all(ch$node > 18))
+})
+
+test_that("data that change in time run for their whole period", {
+  # waves at 0, 4 and 8: the last wave gets a step
+  played <- play_diffusion(timed_chain(), seeds = "A")
+  expect_equal(max(as.numeric(as_changelist(played)$time)), 9)
+  # a list of three waves gives three steps
+  three <- list(contacts = list(1, 2, 3), times = NULL)
+  expect_equal(manynet:::.diffusion_period(three, NULL, create_ring(3),
+                                           "diffusion", 0, 3), 3)
+  # the dates of the changes of ison_southern_women set the period
+  ch <- as_changelist(play_diffusion(ison_southern_women))
+  expect_equal(max(ch$time), as.Date("1936-11-21"))
 })

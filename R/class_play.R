@@ -17,7 +17,11 @@ make_diff_model <- function(events, report, .data) {
 
 #' @export
 print.diff_model <- function(x, ..., verbose = FALSE){
-  x <- x[,colSums(x, na.rm=TRUE) != 0]
+  # the time column stays, also where it holds dates
+  keep <- vapply(x, function(col) !is.numeric(col) || inherits(col, "Date") ||
+                   sum(col, na.rm = TRUE) != 0, logical(1))
+  keep[names(x) %in% c("t", "time")] <- TRUE
+  x <- x[, keep]
   if(!verbose){
     x$n <- NULL
     x$s <- NULL
@@ -139,8 +143,18 @@ as_diffusion.stocnet <- as_diffusion.tbl_graph
   # the roles of the values, so that a plot can name and colour them
   if(is.null(comps)) comps <- if(is.logical(state)) list(S = FALSE, I = TRUE) else
     if(seir) list(S = "S", E = "E", I = "I", R = "R")
+  # In a two-mode network, a mode with no state and no change takes no part,
+  # as in a diffusion through co-affiliation in `play_diffusion()`.
+  exclude <- rep(FALSE, n)
+  if(is_twomode(.data) && !is_multilevel(.data)){
+    first_mode <- seq_len(n) <= net_dims(.data)[1]
+    for(m in list(first_mode, !first_mode))
+      if(all(is.na(state[m])) && !any(events$node %in% which(m)))
+        exclude[m] <- TRUE
+    n <- sum(!exclude)
+  }
   # a missing state starts as susceptible, as in `play_diffusion()`
-  if(!is.null(comps$S)) state[is.na(state)] <- comps$S[1]
+  if(!is.null(comps$S)) state[is.na(state) & !exclude] <- comps$S[1]
   # the diffusion starts at the start of the network, or its first change
   begin <- min(c(.network_start(.data), events$time))
   end <- max(c(begin, events$time))
@@ -162,7 +176,7 @@ as_diffusion.stocnet <- as_diffusion.tbl_graph
       infected <- which(state %in% infectious)
       expos <- if(is_twomode(.data)) c(.node_is_exposed(.data, infected)) else
         .exposure_kernel(mat, infected, weighted = FALSE) > 0
-      expos[state %in% recovered] <- FALSE
+      expos[state %in% recovered | exclude] <- FALSE
       exposed[i] <- sum(expos)
     }
   }

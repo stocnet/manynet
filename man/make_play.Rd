@@ -62,9 +62,11 @@ By default \code{NULL}, which uses the model that the other arguments set.}
 
 \item{steps}{The number of steps forward in the diffusion to play,
 after the start.
-By default the number of nodes in the network.
+By default the number of nodes in the network,
+or the period of data that change in time.
 If \code{steps = Inf} then the diffusion process will continue until
-a step in which no node changes state.}
+a step in which no node changes state,
+after the last wave and the last change to \code{active}.}
 
 \item{...}{Not used. Any argument given here gives an error,
 with the nearest argument name.}
@@ -85,7 +87,9 @@ See the section "Start state".}
 other explicit contact network, e.g.
 \code{create_components(.data, membership = node_in_structural(.data))}.
 Can be of arbitrary complexity, but must of the same dimensions
-as .data.}
+as .data.
+A panel, an event stream, or a list of networks is followed in time,
+as ".data" is.}
 
 \item{direction}{Which ties expose a node, from the view of the node
 at risk.
@@ -346,6 +350,35 @@ With \code{transitions}, these arguments are ignored, with a warning.
 For example, the voter model on two values:
 \verb{data.frame(from = c("Liberal", "Conservative"), to = c("Conservative", "Liberal"),}
 \verb{rate = 1, source = c("Conservative", "Liberal"), exposure = "voter")}.
+}
+
+\section{Time and composition}{
+
+
+A diffusion follows the time of the ties.
+On a panel, each wave stays in force until the next wave,
+and the last wave stays in force after the end.
+A list of networks with the same nodes is a panel, with one wave for each step.
+On an event stream, a tie can transmit only once it occurs,
+and an interval tie only while it is active.
+A network whose ties or changes are dated plays one step for each day.
+By default, data that change in time run until one step after their last
+moment, and a list of networks runs one step for each network.
+
+In a two-mode network, a state that is known on one mode only
+(on the nodes, in their history, or from \code{seeds} and \code{immune})
+diffuses on that mode only, through co-affiliation:
+a node is exposed by the infected nodes with which it shares a node of the
+other mode, while that node is active.
+The nodes of the other mode have no state.
+A state on both modes diffuses along the ties between the two modes.
+
+A node with \code{active = FALSE} is not at risk and does not transmit.
+Changes to \code{active} take effect at their time.
+Use \code{active = FALSE} to exclude a node whose state is not known.
+A node that dies (D) becomes inactive in the record.
+
+A 'stocnet' keeps the table of transitions in \code{info$transitions}.
 }
 
 \section{Arguments that set the model}{

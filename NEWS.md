@@ -29,23 +29,32 @@
   - Each unit coded by concepts, speakers, and sign, can be skipped with "?"
   - `roster` offers known speakers and concepts, or the terms of `collect_text()`
   - `.data` continues a network that is coded in part, with skips shown again first
-- Improved `play_diffusion()` to start from the state that a network holds
-  - Added `attribute=` to name the node attribute that holds the state history/start
-  - `seeds=` also takes several labels or the name of a logical attribute
-  - Added `compartments=` to map the roles S, E, I, R, and D onto own values
-  - Added `background=` for adoption rate without exposure
-  - Added `direction=` for which ties expose a node, by default "in"
-  - Missing states start as S, and missing ties count as absent
-  - Added `transitions=`, a table of transitions with competing risks
-    - Columns `from`, `to`, `rate`, `source`, `exposure`, `threshold`, `prevalence`
-    - `rate` is a hazard, the name of a node attribute, or a function
-    - `exposure` is "threshold", "cascade", or "voter"
-  - In each step, spontaneous transitions occur first, then contagion
-  - `prevalence=` lowers each threshold by the share infected in the network
-  - Fixed `fatality=`, which failed, and let the dead infect others
-  - Fixed a list of waves, which failed, and keeps the last wave after it
-  - Fixed exposed nodes, which counted all ties, not the ties of transmission
-  - Fixed `immune=` nodes to start as R in the record, not as S
+- Improved `play_diffusion()` arguments and handling different data shapes
+  - Added and improved arguments
+    - Added `attribute=` to name the node attribute that holds the state history/start
+    - Improved `seeds=` to take several labels or the name of a logical attribute
+    - Added `compartments=` to map the roles S, E, I, R, and D onto own values
+    - Added `background=` for adoption rate without exposure
+    - Added `direction=` for which ties expose a node, by default "in"
+    - Added `transitions=`, a table of transitions with competing risks
+      - Columns `from`, `to`, `rate`, `source`, `exposure`, `threshold`, `prevalence`
+      - `rate` is a hazard, the name of a node attribute, or a function
+      - `exposure` is "threshold", "cascade", or "voter"
+    - Fixed `prevalence=` lowers each threshold by the share infected in the network
+  - Improved data shape handling
+    - Missing states start as S, and missing ties count as absent
+    - Inactive nodes are not at risk and do not transmit, also as `active` changes
+    - In each step, spontaneous transitions occur first, then contagion
+    - Follows the waves of a panel, each in force until the next
+    - Follows an event stream, where a tie transmits only once it occurs or while active
+    - Follows a list of networks with the same nodes as a panel, one wave each step
+    - Runs by default over the whole period of data that change in time
+    - Fixed exposed nodes, which counted all ties, not the ties of transmission
+    - Fixed two-mode exposure, which counted the wrong nodes
+    - Fixed dated changes exposure
+    - Fixed `fatality=`, which failed, and let the dead infect others
+    - Fixed `immune=` nodes to start as R in the record, not as S
+  - Keeps the table of transitions of a 'stocnet' in `info$transitions`
   - Accelerated `play_diffusion()` ~2.5x by making each contact matrix once
 - Renamed `play_learning()` to `play_opinion()`, which now returns the network with changes
   - Renamed `beliefs=` to `opinions=`, which can also name node attributes or a matrix of issues

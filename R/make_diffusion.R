@@ -152,6 +152,32 @@
 #' For example, the voter model on two values:
 #' `data.frame(from = c("Liberal", "Conservative"), to = c("Conservative", "Liberal"),`
 #' `rate = 1, source = c("Conservative", "Liberal"), exposure = "voter")`.
+#' @section Time and composition:
+#'
+#' A diffusion follows the time of the ties.
+#' On a panel, each wave stays in force until the next wave,
+#' and the last wave stays in force after the end.
+#' A list of networks with the same nodes is a panel, with one wave for each step.
+#' On an event stream, a tie can transmit only once it occurs,
+#' and an interval tie only while it is active.
+#' A network whose ties or changes are dated plays one step for each day.
+#' By default, data that change in time run until one step after their last
+#' moment, and a list of networks runs one step for each network.
+#'
+#' In a two-mode network, a state that is known on one mode only
+#' (on the nodes, in their history, or from `seeds` and `immune`)
+#' diffuses on that mode only, through co-affiliation:
+#' a node is exposed by the infected nodes with which it shares a node of the
+#' other mode, while that node is active.
+#' The nodes of the other mode have no state.
+#' A state on both modes diffuses along the ties between the two modes.
+#'
+#' A node with `active = FALSE` is not at risk and does not transmit.
+#' Changes to `active` take effect at their time.
+#' Use `active = FALSE` to exclude a node whose state is not known.
+#' A node that dies (D) becomes inactive in the record.
+#'
+#' A 'stocnet' keeps the table of transitions in `info$transitions`.
 #' @section Arguments that set the model:
 #'
 #' The arguments after `...` are shortcuts that set the default model.
@@ -185,6 +211,8 @@
 #'   `create_components(.data, membership = node_in_structural(.data))`.
 #'   Can be of arbitrary complexity, but must of the same dimensions
 #'   as .data.
+#'   A panel, an event stream, or a list of networks is followed in time,
+#'   as ".data" is.
 #' @param direction Which ties expose a node, from the view of the node
 #'   at risk.
 #'   `"in"` (the default) counts the ties that infected nodes send to it,
@@ -252,9 +280,11 @@
 #'   By default NULL, indicating that no nodes begin immune.
 #' @param steps The number of steps forward in the diffusion to play,
 #'   after the start.
-#'   By default the number of nodes in the network.
+#'   By default the number of nodes in the network,
+#'   or the period of data that change in time.
 #'   If `steps = Inf` then the diffusion process will continue until
-#'   a step in which no node changes state.
+#'   a step in which no node changes state,
+#'   after the last wave and the last change to `active`.
 #' @family makes
 #' @family models
 #' @family diffusion
@@ -326,11 +356,15 @@ play_diffusion <- function(.data,
     snet_warn(paste("Please use the new version of this function (since v1.4.0), with new features.",
                     "The old version will no longer be maintained and is retained here only for backwards compatibility."))
 
-  # A list of networks is a list of waves. Its first wave gives the nodes.
+  # A list of networks with the same nodes is a panel, with one wave for each
+  # step. Its first wave gives the nodes.
   waves <- is_list(.data)
+  if(waves && length(unique(vapply(.data, net_nodes, numeric(1)))) > 1)
+    snet_abort(paste("{.fn play_diffusion} reads a list of networks as a panel,",
+                     "so every network in the list must have the same nodes."))
   first <- if(waves) .data[[1]] else .data
   n <- net_nodes(first)
-  if(missing(steps)) steps <- n
+  steps_given <- !missing(steps)
 
   # The model ####
   shortcuts <- c("prevalence", "background", "thresholds", "transmissibility",
@@ -350,11 +384,17 @@ play_diffusion <- function(.data,
     transitions <- make_transitions(transitions, values = known)
   }
 
+  # In a two-mode network, a state on one mode only diffuses on that mode,
+  # through the nodes of the other mode that they share.
+  affiliation <- .diffusion_affiliation(first, attribute,
+                                        if(seeds_given) seeds else 1, immune)
+
   # Start state ####
   begin <- .diffusion_start(first, attribute = attribute,
                             seeds = if(seeds_given) seeds else NULL,
                             compartments = compartments, immune = immune,
-                            values = if(table_given) .transition_values(transitions))
+                            values = if(table_given) .transition_values(transitions),
+                            exclude = affiliation$exclude)
   comps <- begin$compartments
   if(!table_given){
     .diffusion_roles_needed(comps, recovery = recovery, latency = latency,
@@ -377,17 +417,28 @@ play_diffusion <- function(.data,
   start <- begin$time
   time <- start
 
-  # The contact matrices are made once, before the loop.
+  # The contact matrices are made once, before the loop:
+  # one for each wave of a panel, or for each moment of an event stream.
   twomode <- is_twomode(first)
-  # Until the diffusion follows the time of the ties, a network that changes
-  # is played on all its ties at once.
-  if(!waves && is.null(contact) && (is_longitudinal(first) || is_dynamic(first)))
-    snet_warn(paste("{.fn play_diffusion} does not yet follow the time of the ties,",
-                    "so it uses all the ties of all the waves at once.",
-                    "To play each wave in turn, use {.code to_waves()} first."))
-  contacts <- if(waves) .data else list(if(is.null(contact)) .data else contact)
-  contacts <- lapply(contacts, .exposure_matrix, inform = TRUE)
-  engine <- .transitions_engine(transitions, first, n, contacts, direction, twomode)
+  timeline <- .diffusion_contacts(if(waves) .data else
+    if(is.null(contact)) .data else contact, start,
+    if(steps_given) steps else Inf)
+  # Composition: an inactive node is not at risk and does not transmit.
+  presence <- .diffusion_presence(first, start)
+  degree <- NULL
+  if(!is.null(affiliation)){
+    timeline <- .coaffiliation_timeline(timeline, presence, affiliation$mode,
+                                        start)
+    twomode <- FALSE
+    degree <- .exposure_degree(timeline$contacts[[1]], "all")
+  }
+  contacts <- timeline$contacts
+  engine <- .transitions_engine(transitions, first, n, contacts, direction,
+                                twomode, degree)
+  died <- if(is.null(affiliation)) rep(FALSE, n) else affiliation$exclude
+  # Data that change in time set the period, and the number of nodes otherwise.
+  if(!steps_given)
+    steps <- .diffusion_period(timeline, presence, first, attribute, start, n)
 
   # initialise events table: the seeds at the start
   seeded <- begin$seeds
@@ -403,15 +454,22 @@ play_diffusion <- function(.data,
 
   repeat{ # At each time step:
     # a wave stays in force until the next one, and the last after that
-    wave <- min(time - start + 1, length(contacts))
-    step <- .transitions_step(engine, state, wave, time, begin)
-    if(is.infinite(steps) && length(step$moves) == 0) break
+    wave <- .diffusion_wave(timeline, time, start)
+    active <- .diffusion_active(presence, time) & !died
+    step <- .transitions_step(engine, state, wave, time, begin, active)
+    # with no move, stop only when no later wave or change of `active` can
+    # start one again
+    if(is.infinite(steps) && length(step$moves) == 0 &&
+       wave == length(contacts) && !isTRUE(presence$last > time)) break
     time <- time + 1
     if(length(step$moves)){
       events[[length(events) + 1]] <- data.frame(t = time, nodes = step$moves,
                                                  event = step$to,
                                                  exposure = step$exposure)
       state[step$moves] <- step$to
+      # feedback: a node that moves to the D value becomes inactive
+      if(!is.null(begin$dead_value))
+        died[step$moves[step$to == as.character(begin$dead_value)]] <- TRUE
     }
     if(old_version)
       report[[length(report) + 1]] <-
@@ -425,8 +483,8 @@ play_diffusion <- function(.data,
     make_diff_model(events, do.call(rbind, report), .data)
   } else {
     if(waves) lapply(.data, .diffusion_record, events = events, begin = begin,
-                     attribute = attribute) else
-      .diffusion_record(.data, events, begin, attribute)
+                     attribute = attribute, transitions = transitions) else
+      .diffusion_record(.data, events, begin, attribute, transitions)
   }
 }
 
@@ -583,7 +641,7 @@ make_transitions <- function(transitions = NULL, values = NULL,
 
 # Readies each row for the loop: rates, thresholds and degrees as vectors.
 .transitions_engine <- function(transitions, .data, n, contacts, direction,
-                                twomode){
+                                twomode, degree = NULL){
   attr_vector <- function(x, what, r){
     if(is.character(x)){
       if(!x %in% net_node_attributes(.data))
@@ -596,7 +654,8 @@ make_transitions <- function(transitions = NULL, values = NULL,
     }
     rep_len(x, n)
   }
-  deg <- .node_deg(.data)
+  # the degree in the co-affiliation network, where only one mode diffuses
+  deg <- if(is.null(degree)) .node_deg(.data) else degree
   rows <- lapply(seq_len(nrow(transitions)), function(r){
     rate <- transitions$rate[[r]]
     if(!is.function(rate)) rate <- attr_vector(rate, "rate", r)
@@ -638,21 +697,24 @@ make_transitions <- function(transitions = NULL, values = NULL,
 # So a node that recovers or dies in a step does not infect in that step.
 # In each part, a node at risk moves with probability 1 - exp(-sum(h)),
 # and its destination is drawn in proportion to h.
-.transitions_step <- function(engine, state, wave, time, begin){
+.transitions_step <- function(engine, state, wave, time, begin,
+                              active = NULL){
   n <- engine$n
   rows <- engine$rows
+  if(is.null(active)) active <- rep(TRUE, n)
   spontaneous <- vapply(rows, function(row) is.null(row$source), logical(1))
-  alive <- !is.na(state)
+  # an inactive node is not at risk
+  alive <- !is.na(state) & active
   if(!is.null(begin$dead_value))
     alive <- alive & state != as.character(begin$dead_value)
   first <- .transitions_draw(engine, which(spontaneous), state, state, alive,
-                             wave, time, begin)
+                             wave, time, begin, active)
   after <- state
   after[first$moves] <- first$to
   stayed <- alive
   stayed[first$moves] <- FALSE
   second <- .transitions_draw(engine, which(!spontaneous), state, after, stayed,
-                              wave, time, begin)
+                              wave, time, begin, active)
   list(moves = c(first$moves, second$moves), to = c(first$to, second$to),
        exposure = c(first$exposure, second$exposure))
 }
@@ -661,12 +723,13 @@ make_transitions <- function(transitions = NULL, values = NULL,
 # `state` is the state at the start of the step, and `after` the state after
 # the spontaneous transitions: a source must be in a source value in both.
 .transitions_draw <- function(engine, which, state, after, at_risk, wave,
-                              time, begin){
+                              time, begin, active = rep(TRUE, engine$n)){
   n <- engine$n
   none <- list(moves = integer(0), to = character(0), exposure = numeric(0))
   if(!length(which)) return(none)
   mat <- engine$contacts[[wave]]
-  live <- !is.na(after)
+  # an inactive node does not transmit
+  live <- !is.na(after) & active
   if(!is.null(begin$dead_value))
     live <- live & after != as.character(begin$dead_value)
   H <- matrix(0, n, length(which))
@@ -752,7 +815,8 @@ make_transitions <- function(transitions = NULL, values = NULL,
 # With a table of transitions, `values` holds its values, and the state is
 # read in these values directly, with no roles.
 .diffusion_start <- function(.data, attribute = "diffusion", seeds = NULL,
-                             compartments = NULL, immune = NULL, values = NULL){
+                             compartments = NULL, immune = NULL, values = NULL,
+                             exclude = NULL){
   n <- net_nodes(.data)
   # a stocnet can keep its compartments, as bind_changes() does
   if(is.null(compartments) && inherits(.data, "stocnet"))
@@ -790,17 +854,20 @@ make_transitions <- function(transitions = NULL, values = NULL,
     comps <- .diffusion_compartments(compartments, state)
     template <- state
     if(is.null(values)){
-      roles <- .diffusion_roles(state, comps, attribute)
+      roles <- .diffusion_roles(state, comps, attribute, exclude)
       # the engine holds each role in the first value of that role
-      state <- unlist(lapply(roles, function(r) comps[[r]][1]))
+      state <- vapply(roles, function(r) if(is.na(r)) NA_character_ else
+        as.character(comps[[r]][1]), character(1), USE.NAMES = FALSE)
     } else {
       roles <- rep(NA_character_, n)
-      missing_state <- sum(is.na(state))
+      unknown <- is.na(state)
+      if(!is.null(exclude)) unknown <- unknown & !exclude
+      missing_state <- sum(unknown)
       if(missing_state > 0){
         susceptible <- comps$S[1]
         if(!is.null(susceptible) && as.character(susceptible) %in% values){
           snet_info("{missing_state} node{?s} with a missing state start{?s/} as {.val {susceptible}}.")
-          state[is.na(state)] <- susceptible
+          state[unknown] <- susceptible
         } else snet_info("{missing_state} node{?s} with a missing state do{?es/} not take part.")
       }
     }
@@ -808,7 +875,8 @@ make_transitions <- function(transitions = NULL, values = NULL,
          infected = which(roles == "I"), latent = which(roles == "E"),
          recovered = which(roles == "R"), dead = which(roles == "D"),
          seeds = integer(0), time = time, compartments = comps,
-         case = if(!is.null(history)) 1 else 2, given = !is.null(compartments))
+         case = if(!is.null(history)) 1 else 2, given = !is.null(compartments),
+         exclude = exclude)
   } else {
     if(is.null(seeds)) seeds <- 1
     seeds <- .resolve_nodes(.data, seeds, "seeds")
@@ -817,21 +885,234 @@ make_transitions <- function(transitions = NULL, values = NULL,
     state <- rep(comps$S[1], n)
     if(length(immune) && !is.null(comps$R)) state[immune] <- comps$R[1]
     state[seeds] <- comps$I[1]
+    if(!is.null(exclude)) state[exclude] <- NA
     list(state = state, template = unlist(comps, use.names = FALSE),
          infected = seeds, latent = NULL, recovered = immune, dead = integer(0),
          seeds = seeds, time = .network_start(.data), compartments = comps,
-         case = 3, given = !is.null(compartments))
+         case = 3, given = !is.null(compartments), exclude = exclude)
   }
 }
 
 # The first time of a network is the earliest time of its ties, or 0.
+# The time of the ties is their stamp, or the begin of an interval tie.
+# A network whose ties have no time but whose changes are dated starts at
+# its first change, because 0 cannot be a date.
 .network_start <- function(.data){
-  if("time" %in% net_tie_attributes(.data)){
-    times <- tie_attribute(.data, "time")
-    if(is.numeric(times) && any(!is.na(times)))
+  atts <- net_tie_attributes(.data)
+  stamp <- intersect(c("time", "begin", "beg", "start", "wave", "panel"), atts)[1]
+  if(!is.na(stamp)){
+    times <- .bare_time(tie_attribute(.data, stamp))
+    if((is.numeric(times) || inherits(times, "Date")) && any(!is.na(times)))
+      return(min(times, na.rm = TRUE))
+  }
+  if(is_changing(.data)){
+    times <- as_changelist(.data)$time
+    if(inherits(times, "Date") && any(!is.na(times)))
       return(min(times, na.rm = TRUE))
   }
   0
+}
+
+# Time and composition ####
+
+# The contact matrices of a diffusion, made once, before the loop.
+# A list of networks is a panel, with one wave for each step.
+# A panel network has a matrix for each wave, made with to_time().
+# An event stream has a matrix for each moment: the ties accumulated to that
+# moment (to_slices()), or the interval ties active at it (to_time()).
+# `times` holds the moment of each matrix, or NULL for one matrix each step.
+# Only the moments that the steps can reach are made.
+.diffusion_contacts <- function(src, start, steps){
+  if(is_list(src))
+    return(list(contacts = lapply(src, .exposure_matrix, inform = TRUE),
+                times = NULL))
+  whole <- list(contacts = list(.exposure_matrix(src, inform = TRUE)),
+                times = NULL)
+  rule <- .time_rule(src)
+  if(rule == "none") return(whole)
+  atts <- net_tie_attributes(src)
+  if(rule == "interval"){
+    stamp <- intersect(c("begin", "beg", "start"), atts)[1]
+    moments <- .bare_time(tie_attribute(src, stamp))
+    if("end" %in% atts) moments <- c(moments, .bare_time(tie_attribute(src, "end")))
+  } else {
+    stamp <- intersect(c("time", "wave", "panel"), atts)[1]
+    # a network that changes only in its nodes has one set of ties
+    if(is.na(stamp)) return(whole)
+    moments <- .bare_time(tie_attribute(src, stamp))
+  }
+  moments <- sort(unique(moments[!is.na(moments)]))
+  if(length(moments) < 2) return(whole)
+  ordered <- is.numeric(moments) || inherits(moments, "Date")
+  if(ordered){
+    # the moment in force at the start, and the later ones that a step reaches
+    keep <- moments >= max(c(moments[1], moments[moments <= start]))
+    if(is.finite(steps)) keep <- keep & moments <= start + steps
+    moments <- moments[keep]
+  }
+  # node changes are not ties: to_time() would remove the inactive nodes
+  static <- .without_changes(src)
+  nets <- if(rule == "increment"){
+    out <- to_slices(static, attribute = stamp, slice = moments)
+    if(length(moments) == 1) list(out) else unname(out)
+  } else lapply(moments, function(m) to_time(static, m))
+  list(contacts = lapply(nets, .exposure_matrix, inform = FALSE),
+       times = if(ordered) moments else NULL)
+}
+
+# Which mode of a two-mode network diffuses. A state that is known on one
+# mode only (in the attribute, its history, or the seeds and immune nodes)
+# diffuses on that mode, through the nodes of the other mode that they share.
+# Returns NULL for a one-mode network, or where the state is known on both
+# modes, which then diffuse along their ties to each other.
+.diffusion_affiliation <- function(.data, attribute, seeds = 1, immune = NULL){
+  if(!is_twomode(.data) || is_multilevel(.data)) return(NULL)
+  dims <- net_dims(.data)
+  n <- sum(dims)
+  first_mode <- seq_len(n) <= dims[1]
+  known <- NULL
+  if(attribute %in% net_node_attributes(.data))
+    known <- !is.na(node_attribute(.data, attribute))
+  if(is_changing(.data)){
+    history <- as_changelist(.data)
+    history <- history[history$var == attribute, , drop = FALSE]
+    if(nrow(history)){
+      if(is.null(known)) known <- rep(FALSE, n)
+      known[history$node] <- TRUE
+    }
+  }
+  if(is.null(known)){
+    nodes <- c(.resolve_nodes(.data, seeds, "seeds"),
+               if(!is.null(immune)) .resolve_nodes(.data, immune, "immune"))
+    known <- seq_len(n) %in% nodes
+  }
+  on_first <- any(known & first_mode)
+  on_second <- any(known & !first_mode)
+  if(on_first == on_second) return(NULL)
+  list(mode = if(on_first) 1 else 2,
+       exclude = if(on_first) !first_mode else first_mode)
+}
+
+# The co-affiliation matrix of one mode of a two-mode (biadjacency) matrix,
+# in a square matrix of all the nodes, with no ties for the other mode.
+# Unweighted, two nodes are tied if they share a node of the other mode.
+# Weighted or signed, the tie sums the products of their weights.
+.coaffiliation_matrix <- function(mat, mode = 1){
+  weighted <- !all(mat %in% c(0, 1))
+  proj <- if(mode == 1) mat %*% t(mat) else t(mat) %*% mat
+  if(!weighted) proj <- (proj > 0) * 1
+  diag(proj) <- 0
+  n1 <- nrow(mat)
+  n2 <- ncol(mat)
+  idx <- if(mode == 1) seq_len(n1) else n1 + seq_len(n2)
+  out <- matrix(0, n1 + n2, n1 + n2)
+  out[idx, idx] <- unname(proj)
+  out
+}
+
+# The co-affiliation matrices over time: a pair of nodes shares a node of the
+# other mode only while that node is active, so there is a matrix for each
+# moment of the ties and each change of `active`.
+.coaffiliation_timeline <- function(timeline, presence, mode, start){
+  times <- timeline$times
+  # c() with NULL first would drop the class of dates
+  if(!is.null(presence))
+    times <- if(is.null(times)) presence$times else
+      sort(unique(c(times, presence$times)))
+  if(is.null(timeline$times) && length(timeline$contacts) > 1)
+    times <- NULL
+  if(is.null(times))
+    return(list(contacts = lapply(timeline$contacts, .coaffiliation_matrix,
+                                  mode = mode), times = timeline$times))
+  contacts <- lapply(times, function(t){
+    mat <- timeline$contacts[[.diffusion_wave(timeline, t, start)]]
+    active <- .diffusion_active(presence, t)
+    if(length(active) > 1){
+      n1 <- nrow(mat)
+      if(mode == 1) mat[, !active[n1 + seq_len(ncol(mat))]] <- 0 else
+        mat[!active[seq_len(n1)], ] <- 0
+    }
+    .coaffiliation_matrix(mat, mode)
+  })
+  list(contacts = contacts, times = times)
+}
+
+# The exposure of each node to the marked nodes of a two-mode network.
+# Marked nodes in one mode expose the nodes of that mode that share a node
+# of the other mode with them. Marked nodes in both modes expose the nodes
+# of the other mode that they are tied to.
+.twomode_exposure <- function(mat, mark, weighted = NULL){
+  if(is.logical(mark)) mark <- which(mark)
+  n1 <- nrow(mat)
+  n <- n1 + ncol(mat)
+  if(!length(mark)) return(rep(0, n))
+  if(all(mark <= n1) || all(mark > n1))
+    return(.exposure_kernel(.coaffiliation_matrix(mat, if(all(mark <= n1)) 1 else 2),
+                            mark, "all", weighted))
+  .exposure_kernel(.bipartite_square(mat), mark, "all", weighted)
+}
+
+# The number of steps over which data that change in time run: one step for
+# each network of a list, and otherwise until one step after the last moment
+# of the ties, of `active`, or of the changes to other attributes.
+# The number of nodes where nothing changes in time.
+.diffusion_period <- function(timeline, presence, .data, attribute, start, n){
+  if(is.null(timeline$times) && length(timeline$contacts) > 1)
+    return(length(timeline$contacts))
+  ends <- list(timeline$times, if(!is.null(presence)) presence$times)
+  if(is_changing(.data)){
+    chg <- as_changelist(.data)
+    ends[[3]] <- chg$time[chg$var != attribute]
+  }
+  span <- unlist(lapply(ends, function(x){
+    if(!length(x)) return(NULL)
+    d <- tryCatch(suppressWarnings(as.numeric(x - start)),
+                  error = function(e) NULL)
+    if(is.null(d)) NULL else d
+  }))
+  span <- span[is.finite(span)]
+  if(length(span) && max(span) > 0) max(span) + 1 else n
+}
+
+# The network without its node changes.
+.without_changes <- function(.data){
+  if(!is_changing(.data)) return(.data)
+  if(inherits(.data, "stocnet")){
+    .data$changes <- NULL
+    return(.data)
+  }
+  out <- igraph::delete_graph_attr(as_igraph(.data), "changes")
+  if(is_tidygraph(.data)) as_tidygraph(out) else out
+}
+
+# The matrix in force at `time`: the latest moment at or before it,
+# the first before the first moment, and the last after the last moment.
+# With no moments, the matrix of the step, and the last after the last step.
+.diffusion_wave <- function(timeline, time, start){
+  if(is.null(timeline$times))
+    return(min(as.numeric(time - start) + 1, length(timeline$contacts)))
+  max(1, sum(timeline$times <= time))
+}
+
+# Which nodes are active at each moment that `active` changes, from the
+# `active` node attribute and its changes. NULL when no node is inactive.
+.diffusion_presence <- function(.data, start){
+  has_col <- "active" %in% net_node_attributes(.data)
+  st <- if(inherits(.data, "stocnet")) .data else as_stocnet(.data)
+  chg <- if(is_changing(st)) as_changelist(st) else NULL
+  if(!is.null(chg)) chg <- chg[as.character(chg$var) == "active", , drop = FALSE]
+  if(!has_col && (is.null(chg) || !nrow(chg))) return(NULL)
+  times <- start
+  if(!is.null(chg) && nrow(chg))
+    times <- sort(unique(c(start, chg$time)))
+  list(times = times, matrix = .node_state(st, "active", times, default = TRUE),
+       last = times[length(times)])
+}
+
+# Whether each node is active at `time`.
+.diffusion_active <- function(presence, time){
+  if(is.null(presence)) return(TRUE)
+  presence$matrix[, max(1, sum(presence$times <= time))]
 }
 
 # Reads seeds or immune nodes as indices: an index, a logical vector, labels,
@@ -882,7 +1163,7 @@ make_transitions <- function(transitions = NULL, values = NULL,
 }
 
 # Maps the values of the state onto roles. Missing values start as S.
-.diffusion_roles <- function(state, comps, attribute){
+.diffusion_roles <- function(state, comps, attribute, exclude = NULL){
   roles <- rep(NA_character_, length(state))
   for(role in names(comps))
     roles[!is.na(state) & state %in% comps[[role]]] <- role
@@ -892,12 +1173,15 @@ make_transitions <- function(transitions = NULL, values = NULL,
                      "which {?has/have} no role in {.arg compartments}.",
                      "Please give each value a role, as in",
                      "{.code compartments = c(S = \"unaware\", I = \"adopter\")}."))
-  missing_state <- sum(is.na(state))
+  # the nodes of the other mode of a co-affiliation diffusion have no state
+  unknown <- is.na(state)
+  if(!is.null(exclude)) unknown <- unknown & !exclude
+  missing_state <- sum(unknown)
   if(missing_state > 0){
     if(!"S" %in% names(comps))
       snet_abort("{.arg compartments} needs the role {.val S} for the nodes whose state is missing.")
     snet_info("{missing_state} node{?s} with a missing state start{?s/} as susceptible.")
-    roles[is.na(state)] <- "S"
+    roles[unknown] <- "S"
   }
   roles
 }
@@ -921,12 +1205,18 @@ make_transitions <- function(transitions = NULL, values = NULL,
 }
 
 # Writes the events of a diffusion onto the network as changes.
-.diffusion_record <- function(.data, events, begin, attribute){
+.diffusion_record <- function(.data, events, begin, attribute,
+                              transitions = NULL){
   comps <- begin$compartments
+  # a stocnet keeps the model, so that netrics and infernet can read it
+  if(inherits(.data, "stocnet") && !is.null(transitions))
+    .data$info$transitions <- transitions
   if(begin$case == 3){
     # all nodes start in S, except the immune, which start in R
     start <- rep(comps$S[1], net_nodes(.data))
     if(length(begin$recovered)) start[begin$recovered] <- comps$R[1]
+    # the other mode of a co-affiliation diffusion has no state
+    if(!is.null(begin$exclude)) start[begin$exclude] <- NA
     .data <- add_node_attribute(.data, attribute, start)
   }
   # a stocnet keeps the compartments that were given, so that others can read them
@@ -1047,15 +1337,30 @@ make_transitions <- function(transitions = NULL, values = NULL,
 }
 
 # The exposure of each node to the marked nodes, as the diffusion counts it.
+# In a two-mode network, a node is exposed by the marked nodes of the other
+# mode that it is tied to, as a woman by the events she attends.
 .exposure_count <- function(mat, mark, direction = "in", twomode = FALSE){
-  if(twomode) return(c(.node_exposure_twomode(as_tidygraph(mat), mark)))
+  if(twomode) return(.exposure_kernel(.bipartite_square(mat), mark, "all"))
   .exposure_kernel(mat, mark, direction)
 }
 
 # Whether each node is exposed to the marked nodes.
 .exposure_exposed <- function(mat, mark, direction = "in", twomode = FALSE){
-  if(twomode) return(c(.node_is_exposed_twomode(as_tidygraph(mat), mark)))
+  if(twomode)
+    return(.exposure_kernel(.bipartite_square(mat), mark, "all",
+                            weighted = FALSE) > 0)
   .exposure_kernel(mat, mark, direction, weighted = FALSE) > 0
+}
+
+# The square matrix of all the nodes of a two-mode (biadjacency) matrix,
+# with the first mode in the rows and the second in the columns.
+.bipartite_square <- function(mat){
+  n1 <- nrow(mat)
+  n2 <- ncol(mat)
+  out <- matrix(0, n1 + n2, n1 + n2)
+  out[seq_len(n1), n1 + seq_len(n2)] <- mat
+  out[n1 + seq_len(n2), seq_len(n1)] <- t(mat)
+  out
 }
 
 .node_exposure <- function(.data, mark, time = 0, direction = "in"){
@@ -1069,44 +1374,12 @@ make_transitions <- function(transitions = NULL, values = NULL,
     }
   }
   .data <- manynet::as_tidygraph(.data)
-  if(manynet::is_twomode(.data))
-    return(.node_exposure_twomode(.data, mark))
+  weighted <- manynet::is_weighted(.data) || manynet::is_signed(.data)
+  if(manynet::is_twomode(.data) && !manynet::is_multilevel(.data))
+    return(make_node_measure(.twomode_exposure(.exposure_matrix(.data), mark,
+                                               weighted = weighted), .data))
   out <- .exposure_kernel(.exposure_matrix(.data), mark, direction,
-                          weighted = manynet::is_weighted(.data) ||
-                            manynet::is_signed(.data))
-  make_node_measure(out, .data)
-}
-
-# Two-mode exposure goes through the shared events, as before the kernel.
-.node_exposure_twomode <- function(.data, mark){
-  if(manynet::is_weighted(.data) || manynet::is_signed(.data)){
-    if(is.numeric(mark)){
-      mk <- rep(FALSE, manynet::net_nodes(.data))
-      mk[mark] <- TRUE
-    } else mk <- mark
-    out <- manynet::as_matrix(.data)
-    out <- colSums(out * matrix(mk, nrow(out), ncol(out)) *
-                     matrix(!mk, nrow(out), ncol(out), byrow = TRUE))
-  } else {
-    if(is.logical(mark)) mark <- which(mark)
-    if(!length(mark)) return(make_node_measure(rep(0, manynet::net_nodes(.data)), .data))
-    if(mark[1]>manynet::mode_nodes(.data)[1]){
-      dat <- manynet::to_mode2(.data)
-      mark <- mark - manynet::mode_nodes(.data)[1]
-      contacts <- unlist(lapply(igraph::neighborhood(dat, nodes = mark, mode = "out"),
-                                function(x) setdiff(x, mark)))
-      contacts <- contacts + manynet::mode_nodes(.data)[1]
-    } else {
-      dat <- manynet::to_mode1(.data)
-      contacts <- unlist(lapply(igraph::neighborhood(dat),
-                                function(x) setdiff(x, mark)))
-      contacts <- contacts + manynet::mode_nodes(.data)[2]
-    }
-    # count exposures for each node:
-    tabcontact <- table(contacts)
-    out <- rep(0, manynet::net_nodes(.data))
-    out[as.numeric(names(tabcontact))] <- unname(tabcontact)
-  }
+                          weighted = weighted)
   make_node_measure(out, .data)
 }
 
@@ -1231,17 +1504,11 @@ make_transitions <- function(transitions = NULL, values = NULL,
       .data <- attr(.data, "network")
     }    
   }
-  if(is_twomode(.data)) return(.node_is_exposed_twomode(.data, mark))
+  if(is_twomode(.data) && !is_multilevel(.data))
+    return(make_node_mark(.twomode_exposure(.exposure_matrix(.data), mark,
+                                            weighted = FALSE) > 0, .data))
   out <- .exposure_kernel(.exposure_matrix(.data), mark, direction,
                           weighted = FALSE) > 0
   make_node_mark(out, .data)
 }
 
-# In a two-mode network, a node is exposed by the nodes it shares a tie with.
-.node_is_exposed_twomode <- function(.data, mark){
-  if(is.logical(mark)) mark <- which(mark)
-  out <- rep(F, manynet::net_nodes(.data))
-  out[unique(setdiff(unlist(igraph::neighborhood(as_igraph(.data), nodes = mark)),
-                     mark))] <- TRUE
-  make_node_mark(out, .data)
-}
