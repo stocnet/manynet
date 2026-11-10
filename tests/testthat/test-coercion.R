@@ -1131,3 +1131,44 @@ test_that("bibliometrix records are read as a network by every function", {
   expect_equal(as_matrix(to_mode(records, "authors", through = "works"))[
     "SMITH J", "JONES K"], 1)
 })
+
+test_that("as_monan rebuilds the mobility data of MoNAn", {
+  skip_if_not_installed("MoNAn")
+  data("mobilityEdgelist", "orgRegion", "indSex", package = "MoNAn",
+       envir = environment())
+  n <- nrow(mobilityEdgelist)
+  k <- length(orgRegion)
+  net <- make_stocnet(
+    info = list(directed = FALSE, update = "replace"),
+    nodes = dplyr::tibble(label = c(paste0("p", 1:n), paste0("o", 1:k)),
+                          mode = rep(c("people", "places"), c(n, k)),
+                          sex = c(indSex, rep(NA, k)),
+                          region = c(rep(NA, n), orgRegion)),
+    ties = dplyr::tibble(from = rep(1:n, 2),
+                         to = n + c(mobilityEdgelist[, 1],
+                                    mobilityEdgelist[, 2]),
+                         time = rep(1:2, each = n)))
+  state <- as_monan(net)
+  expect_s3_class(state, "processState.monan")
+  expect_equal(state$dep.var, "moves")
+  expect_equal(unname(state$moves$data), unname(mobilityEdgelist + 0))
+  expect_equal(state$sex$data, indSex)
+  expect_equal(state$region$data, orgRegion)
+  expect_equal(length(state$places$ids), k)
+  # the moves are also the ties of the mobility network
+  expect_equal(as.numeric(net_ties(to_mobility(net))),
+               sum(mobilityEdgelist[, 1] != mobilityEdgelist[, 2]))
+})
+
+test_that("as_monan removes a place that no person holds", {
+  skip_if_not_installed("MoNAn")
+  net <- make_stocnet(
+    info = list(directed = FALSE, update = "replace"),
+    nodes = data.frame(label = c("Ann", "Bob", "X", "Y", "Z"),
+                       mode = rep(c("people", "places"), c(2, 3))),
+    ties = data.frame(from = c(1, 1, 2, 2), to = c(3, 4, 3, 3),
+                      time = c(1, 2, 1, 2)))
+  state <- as_monan(net)
+  expect_equal(length(state$places$ids), 2)
+  expect_equal(unname(state$moves$data), matrix(c(1, 1, 2, 1), 2))
+})

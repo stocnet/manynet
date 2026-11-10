@@ -5,12 +5,7 @@
 \alias{as_igraph}
 \alias{as_tidygraph}
 \alias{as_network}
-\alias{as_stocnet}
-\alias{as_stocnet.node_measure}
-\alias{as_stocnet.node_member}
 \alias{as_hypergraph}
-\alias{as_stocnet.array}
-\alias{as_siena}
 \alias{as_graphAM}
 \alias{as_diffnet}
 \title{Coercing into graph objects}
@@ -21,27 +16,7 @@ as_tidygraph(.data, twomode = FALSE)
 
 as_network(.data, twomode = FALSE)
 
-as_stocnet(.data, twomode = FALSE, ...)
-
-\method{as_stocnet}{node_measure}(
-  .data,
-  twomode = FALSE,
-  compare = c("absdiff", "diff", "sender", "receiver"),
-  ...
-)
-
-\method{as_stocnet}{node_member}(.data, twomode = FALSE, compare = "same", ...)
-
 as_hypergraph(.data)
-
-\method{as_stocnet}{array}(
-  .data,
-  twomode = FALSE,
-  ...,
-  attribute = c("time", "by", "about", "layer")
-)
-
-as_siena(.data, twomode = FALSE)
 
 as_graphAM(.data, twomode = NULL)
 
@@ -62,71 +37,31 @@ as_diffnet(.data, twomode = FALSE)
 distinguishing incidence (two-mode/bipartite) from
 adjacency (one-mode/unipartite) networks.
 By default FALSE.}
-
-\item{...}{Further arguments passed to or from other methods,
-such as \code{attribute} for an array.}
-
-\item{compare}{For a node measure or a node membership, how the values of
-two nodes are compared to give the tie between them;
-see \code{as_matrix()}.
-Comparing by "same" or "absdiff" gives an undirected network,
-and comparing by "diff", "sender", or "receiver" a directed one.
-A comparison of zero is no tie.}
-
-\item{attribute}{For a three-dimensional array, what its third dimension
-holds, which becomes a column of the ties:
-"time" for the waves of a panel,
-"by" for the reporters of a cognitive social structure,
-"about" for the targets of gossip,
-or "layer" for the layers of a multiplex network.
-An array cannot say which of these it holds.
-Where its third dimension is as long as the network has nodes,
-it could hold any of them, so this must be given.
-Otherwise it cannot hold reporters or targets, and "time" is assumed.}
 }
 \value{
 The currently implemented coercions or translations are:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{              DocumentTermMatrix TermDocumentMatrix array data.frame default
+\if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame default diff_model diffnet hypergraph igraph list
+as_diffnet                                *                               
+as_graphAM                     *                                          
+as_hypergraph                  *                             *            
+as_igraph              *                  *       *                 *     
+as_network             *                          *                 *     
+as_tidygraph           *                  *       *                 *    *
+              matrix network network.goldfish networkDynamic siena sienadata
 as_diffnet                                                                  
-as_diffusion                                                                
-as_graphAM                                                                 *
-as_hypergraph                                                              *
-as_igraph                                                          *        
-as_network                                                         *        
-as_siena                                                                   *
-as_stocnet                     *                  *     *          *        
-as_tidygraph                                                       *        
-              dfm diff_model diffnet hypergraph igraph list matrix network
-as_diffnet                 *                                              
-as_diffusion               *       *                 *                    
-as_graphAM                                                       *        
-as_hypergraph                                 *                           
-as_igraph                  *       *                 *           *       *
-as_network                         *                 *           *       *
-as_siena                                                                  
-as_stocnet      *                             *      *           *       *
-as_tidygraph               *       *                 *    *      *       *
-              network.goldfish networkDynamic node_measure node_member siena
-as_diffnet                                                                  
-as_diffusion                                                                
-as_graphAM                                                                  
+as_graphAM         *                                                        
 as_hypergraph                                                               
-as_igraph                    *              *                              *
-as_network                   *              *                              *
-as_siena                                                                    
-as_stocnet                                               *           *      
-as_tidygraph                 *              *                              *
-              sienadata stocnet tbl_graph
-as_diffnet                               
-as_diffusion                  *         *
-as_graphAM                               
-as_hypergraph                            
-as_igraph             *       *         *
-as_network            *       *         *
-as_siena                      *          
-as_stocnet            *       *          
-as_tidygraph          *       *         *
+as_igraph          *       *                *              *     *         *
+as_network         *       *                *              *     *         *
+as_tidygraph       *       *                *              *     *         *
+              stocnet tbl_graph
+as_diffnet                     
+as_graphAM                     
+as_hypergraph                  
+as_igraph           *         *
+as_network          *         *
+as_tidygraph        *         *
 }\if{html}{\out{</div>}}
 }
 \description{
@@ -136,7 +71,6 @@ of social network objects in R into the declared class:
 \item \code{as_igraph()} coerces the object into an \code{{igraph}} \code{graph} object.
 \item \code{as_tidygraph()} coerces the object into a \code{{tidygraph}} \code{tbl_graph} object.
 \item \code{as_network()} coerces the object into a \code{{network}} \code{network} object.
-\item \code{as_siena()} coerces the (igraph/tidygraph) object into a SIENA dependent variable.
 \item \code{as_graphAM()} coerces the object into a graph adjacency matrix.
 \item \code{as_diffnet()} coerces a \code{diffusionModel} (see \code{\link[=as_diffusion]{as_diffusion()}})
 into a \code{{netdiffuseR}} \code{diffnet} object.
@@ -148,33 +82,6 @@ kinds of information than others.
 Note also that there are some reserved column names in one or more
 object classes, which could otherwise lead to some unexpected results.
 }
-\section{Text}{
-
-\code{as_stocnet()} reads a document-feature matrix of \code{{quanteda}} ('dfm')
-and a term-document or document-term matrix of \code{{tm}}
-('TermDocumentMatrix', 'DocumentTermMatrix').
-Each gives a two-mode network of "documents" and "terms",
-with the count (or other weighting) of each term in each document as the
-weight of its tie, as \code{\link[=collect_text]{collect_text()}} gives.
-The document variables of a 'dfm' become attributes of the documents.
-Neither \code{{quanteda}} nor \code{{tm}} needs to be installed.
-}
-
-\section{Records}{
-
-\code{as_stocnet()} reads the bibliographic records of \code{{bibliometrix}}
-('bibliometrixDB', as \code{bibliometrix::convert2df()} gives)
-as \code{\link[=collect_bibliography]{collect_bibliography()}} does,
-into a multimodal network of works, authors, keywords, and sources.
-The other coercions, such as \code{as_igraph()} and \code{as_tidygraph()},
-read the records through \code{as_stocnet()},
-so the functions of the stocnet packages take the records directly.
-The records cannot be rebuilt from a network,
-so a function that would return the class it was given
-returns a 'stocnet' for them.
-\code{{bibliometrix}} does not need to be installed.
-}
-
 \section{Hypergraphs}{
 
 \code{as_hypergraph()} returns a 'hypergraph' object of the \code{{HyperG}} package,
@@ -204,6 +111,7 @@ as_hypergraph(create_ring(4))
 \seealso{
 Other coercions:
 \code{\link{coerce_list}},
-\code{\link{coerce_matrix}}
+\code{\link{coerce_matrix}},
+\code{\link{coerce_stocnet}}
 }
 \concept{coercions}

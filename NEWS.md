@@ -83,6 +83,7 @@
   - Added `attribute=` to name the attribute, by default "diffusion"
   - Fixed the counts of E with `latency` and of S with waning on an 'igraph'
 - Added `as_opinion()` to read a record of opinions as an 'opinionModel'
+- Added `as_monan()` to coerce a network of people and places for 'MoNAn'
 
 ## Manipulating
 

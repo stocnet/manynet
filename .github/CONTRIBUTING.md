@@ -231,7 +231,8 @@ not by data structure. When looking for a function, search by what it *does*:
 |---|---|
 | `make_*.R` | creating/reading/generating networks: `create_*()` (deterministic structures), `generate_*()` (stochastic mechanisms), `read_*()`/`write_*()` (import/export), `collect_*()` (gathering a network from a source, `make_collect.R`), `play_*()` (diffusion/learning simulations) |
 | `data_*.R` | documentation of the bundled datasets: `ison_*` classic/instructional, `fict_*` fictional, `irps_*` international-relations (see [Datasets](#datasets)) |
-| `coerce_graph.R`, `coerce_list.R`, `coerce_matrix.R` | the `as_*()` translation layer between representations (`as_igraph()`, `as_tidygraph()`, `as_network()`, `as_matrix()`, `as_edgelist()`, `as_siena()`, `as_diffnet()`, …), implemented as S3 methods dispatching on input class |
+| `coerce_graph.R`, `coerce_list.R`, `coerce_matrix.R` | the `as_*()` translation layer between representations (`as_igraph()`, `as_tidygraph()`, `as_network()`, `as_matrix()`, `as_edgelist()`, `as_diffnet()`, …), implemented as S3 methods dispatching on input class |
+| `coerce_stocnet.R` | the coercions into a `stocnet` (`as_stocnet()`) and from it into the data of the modelling packages (`as_siena()`, `as_monan()`), and the internal readers of mobility data (`.person_places()`) |
 | `class_*.R` | the network classes themselves (`class_stocnet.R`: `make_stocnet()`, `print.stocnet()`, the info/nodes/ties/changes/global data model; `class_networks.R`: the legacy `mnet` class, `print.mnet`, `$`/`$<-` accessors), related result classes (`class_measures.R`, `class_members.R`, `class_motifs.R`, `class_models.R`), the `snet_*()` CLI layer (`class_interface.R`), input validation (`class_validate.R`: `validate_stocnet()` and its component validators), and the `describe_*()` helpers behind the print methods (`class_describe.R`) |
 | `manip_*.R` | dplyr-style verbs for manipulating nodes/ties/attributes (`manip_nodes.R`, `manip_ties.R`, `manip_globals.R`, `manip_info.R`, `manip_changes.R`) |
 | `mark_*.R` | logical/predicate functions returning `TRUE`/`FALSE` or marks about a network, e.g. the `is_*()` family (`mark_classes.R`, `mark_features.R`, `mark_format.R`, `mark_changes.R`) |
@@ -421,7 +422,7 @@ Tests in `tests/testthat/` mostly mirror the `R/` files (e.g. `test-make_create.
 function families.
 Some test files keep an older name than the file they test:
 `test-manip_split.R` tests `R/modif_split.R`, `test-model_play.R` tests `R/make_play.R`,
-and `test-coercion.R` tests all three `R/coerce_*.R` files.
+and `test-coercion.R` tests all four `R/coerce_*.R` files.
 `tests/testthat/helper-manynet.R` defines the shared fixtures and helpers used across
 tests, and `tests/testthat/helper-functional.R` the family-sweeping machinery.
 Test fixtures (Pajek, UCINET, GraphML, xlsx, etc.) live under `tests/testthat/sheets/`.
