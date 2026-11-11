@@ -486,6 +486,21 @@ test_that("a state on both modes diffuses along their ties", {
   expect_true(all(ch$node > 18))
 })
 
+test_that("a multilevel network diffuses along all its ties", {
+  # its matrix is already square over both modes
+  set.seed(1)
+  ch <- as_changelist(play_diffusion(fict_marvel, steps = 3))
+  ch <- ch[ch$var == "diffusion", , drop = FALSE]
+  expect_gt(nrow(ch), 1)
+  expect_false(anyDuplicated(ch$node) > 0)
+})
+
+test_that("infected nodes are not infected again", {
+  # a threshold of 0, as an isolate gets from a fractional threshold
+  ch <- as_changelist(play_diffusion(create_ring(10), thresholds = 0))
+  expect_false(anyDuplicated(ch$node[ch$value == "I"]) > 0)
+})
+
 test_that("data that change in time run for their whole period", {
   # waves at 0, 4 and 8: the last wave gets a step
   played <- play_diffusion(timed_chain(), seeds = "A")

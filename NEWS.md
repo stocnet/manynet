@@ -51,6 +51,8 @@
     - Runs by default over the whole period of data that change in time
     - Fixed exposed nodes, which counted all ties, not the ties of transmission
     - Fixed two-mode exposure, which counted the wrong nodes
+    - Fixed multilevel networks, which failed as their matrix was squared twice
+    - Fixed infected nodes infected again at every step, as isolates were (closes #203)
     - Fixed dated changes exposure
     - Fixed `fatality=`, which failed, and let the dead infect others
     - Fixed `immune=` nodes to start as R in the record, not as S
@@ -140,6 +142,9 @@
   - Fixed the increments of a 'stocnet', which were counted as ties, to add up
 - Improved `to_times()` with `window` and `kernel` for moving windows
 - Fixed `to_slices()` to add up the increments of a 'stocnet'
+- Fixed `to_waves()` to carry a cross-sectional layer into every wave (closes #202)
+- Fixed `from_waves()`, which failed where only some layers were longitudinal
+- Fixed `from_times()` to keep a cross-sectional layer once, not for each moment
 - Improved `from_layers()` on 'stocnet' objects
   - Fixed a network of one layer to take the name it is given in the call
   - Fixed layers renamed for a clash to be renamed in the info as well

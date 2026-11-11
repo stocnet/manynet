@@ -419,7 +419,8 @@ play_diffusion <- function(.data,
 
   # The contact matrices are made once, before the loop:
   # one for each wave of a panel, or for each moment of an event stream.
-  twomode <- is_twomode(first)
+  # a multilevel network's matrix is already square over all its nodes
+  twomode <- is_twomode(first) && !is_multilevel(first)
   timeline <- .diffusion_contacts(if(waves) .data else
     if(is.null(contact)) .data else contact, start,
     if(steps_given) steps else Inf)

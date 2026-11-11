@@ -137,7 +137,24 @@ from_waves <- function(netlist) {
   }
   if (.all_matrices(netlist)) return(.stack_matrices(netlist))
   ann <- lapply(netlist, as_igraph)
-  .as_class_of(.rebind_netlist(ann), netlist[[1]])
+  out <- .as_class_of(.rebind_netlist(ann), netlist[[1]])
+  .unrepeat_invariant(out, .invariant_layers(netlist[[1]]),
+                      intersect(c("wave", "panel", "time"),
+                                net_tie_attributes(out))[1])
+}
+
+# A layer that holds throughout is carried into every moment that a network
+# is split into, so joining the moments back would repeat its ties once for
+# each moment. Each such tie is kept once, at the first moment it is in.
+.unrepeat_invariant <- function(.data, invariant, stamp){
+  layer <- intersect(c("layer", "type"), net_tie_attributes(.data))[1]
+  if(!length(invariant) || is.na(layer) || is.na(stamp)) return(.data)
+  ties <- if(inherits(.data, "stocnet")) .data$ties else
+    igraph::as_data_frame(as_igraph(.data), what = "edges")
+  ties <- as.data.frame(ties)[setdiff(names(ties), stamp)]
+  repeated <- duplicated(ties) & as.character(ties[[layer]]) %in% invariant
+  if(!any(repeated)) return(.data)
+  .keep_ties_of(.data, which(!repeated))
 }
 
 # Reassemble a list of igraphs into one network, keeping isolates and node
@@ -145,11 +162,13 @@ from_waves <- function(netlist) {
 # For nodes whose attributes differ between waves/slices (e.g. 'active'),
 # the first appearance wins.
 .rebind_netlist <- function(ann, distinct_ties = FALSE) {
-  ties <- do.call(rbind, lapply(ann, igraph::as_data_frame, what = "edges"))
+  # The networks need not all carry the same attributes, as where one wave
+  # holds a layer that the others do not, so the tables are bound by name.
+  ties <- dplyr::bind_rows(lapply(ann, igraph::as_data_frame, what = "edges"))
   if (isTRUE(distinct_ties)) ties <- dplyr::distinct(ties)
   if (all(vapply(ann, is_labelled, logical(1)))) {
-    nodes <- do.call(rbind, lapply(ann, igraph::as_data_frame,
-                                   what = "vertices"))
+    nodes <- dplyr::bind_rows(lapply(ann, igraph::as_data_frame,
+                                     what = "vertices"))
     nodes <- nodes[!duplicated(nodes$name), , drop = FALSE]
     as_tidygraph(igraph::graph_from_data_frame(ties, vertices = nodes))
   } else {
@@ -204,11 +223,15 @@ from_times <- function(netlist) {
   # The names are the moments as characters, and a moment counted or dated is
   # not a character, so they are read back as what they were written from.
   moments <- utils::type.convert(moments, as.is = TRUE)
-  if(all(vapply(netlist, function(x) inherits(x, "stocnet"), logical(1))))
-    return(.join_stocnets(netlist, "time", moments))
-  stamped <- Map(function(net, at) mutate_ties(net, time = at),
-                 netlist, moments)
-  .as_class_of(.rebind_netlist(lapply(stamped, as_igraph)), netlist[[1]])
+  out <- if(all(vapply(netlist, function(x) inherits(x, "stocnet"),
+                       logical(1)))){
+    .join_stocnets(netlist, "time", moments)
+  } else {
+    stamped <- Map(function(net, at) mutate_ties(net, time = at),
+                   netlist, moments)
+    .as_class_of(.rebind_netlist(lapply(stamped, as_igraph)), netlist[[1]])
+  }
+  .unrepeat_invariant(out, .invariant_layers(netlist[[1]]), "time")
 }
 
 #' @rdname modif_from_ternary
@@ -377,6 +400,19 @@ from_reporters <- function(netlist) {
 # a node that did not report in one of them for that one alone.
 .join_stocnets <- function(netlist, col, values){
   first <- .clear_missing(netlist[[1]])
+  # Networks scoped to different moments need not hold the same nodes, as
+  # where a node has left, so their ties are matched to the nodes by label.
+  labels <- lapply(netlist, function(net) net$nodes[["label"]])
+  realign <- !all(vapply(labels, is.null, logical(1))) &&
+    !all(vapply(labels, identical, logical(1), labels[[1]]))
+  if(realign){
+    if(any(vapply(labels, is.null, logical(1))) ||
+       any(vapply(netlist, is_twomode, logical(1))))
+      snet_abort("Networks with different nodes can only be joined where",
+                 "they are all labelled and one-mode.")
+    nodes <- dplyr::bind_rows(lapply(netlist, function(net) net$nodes))
+    first$nodes <- nodes[!duplicated(nodes$label), , drop = FALSE]
+  }
   # The networks record one relation, which is directed wherever any of them
   # is, so the ties of an undirected one are then held in both directions.
   each <- vapply(netlist, is_directed, logical(1))
@@ -397,6 +433,10 @@ from_reporters <- function(netlist) {
       ties <- dplyr::bind_rows(ties, missing)
     }
     if(directed && !is_directed(net) && !is_twomode(net)) ties <- bothways(ties)
+    if(realign){
+      ties$from <- match(net$nodes$label[ties$from], first$nodes$label)
+      ties$to <- match(net$nodes$label[ties$to], first$nodes$label)
+    }
     ties[[col]] <- rep(value, nrow(ties))
     ties
   }, netlist, values)

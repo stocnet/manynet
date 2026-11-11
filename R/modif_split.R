@@ -446,11 +446,12 @@ to_waves.tbl_graph <- function(.data, attribute = "wave", panels = NULL,
     times <- sort(unique(tie_attribute(.data, attribute)))
     if(!is.null(panels))
       times <- intersect(panels, times)
+    invariant <- .invariant_layers(.data)
     # The ties recorded as missing are scoped to the wave as the ties are,
     # so a node that did not report in one wave is not missing in another.
     waves <- lapply(times, function(t) {
       out <- .apply_changes_upto(.data, cl, t)
-      out <- filter_ties(out, !!as.name(attribute) == t)
+      out <- .wave_ties(out, attribute, t, invariant)
       .scope_missings(out, t)
     })
     names(waves) <- paste("Wave", times)
@@ -473,13 +474,15 @@ to_waves.tbl_graph <- function(.data, attribute = "wave", panels = NULL,
     wp <- sort(unique(tie_attribute(.data, attribute)))
     if(!is.null(panels))
       wp <- intersect(panels, wp)
+    # Cumulative waves already gather the ties of the first wave, which
+    # holds the layers that hold throughout, into every later wave.
+    invariant <- if(isTRUE(cumulative)) character(0) else
+      .invariant_layers(.data)
     if(length(wp) > 1) {
-      out <- lapply(wp, function(l){
-        filter_ties(.data, !!as.name(attribute) == l)
-      })
+      out <- lapply(wp, function(l) .wave_ties(.data, attribute, l, invariant))
       names(out) <- wp
     } else {
-      out <- filter_ties(.data, !!as.name(attribute) == wp)
+      out <- .wave_ties(.data, attribute, wp, invariant)
     }
     if (isTRUE(cumulative) && is.list(out) && !is_manynet(out)) {
       out <- .cumulative_ties(out, attribute)
@@ -551,6 +554,17 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL,
     out <- .cumulative_ties(out, attribute)
   }
   out
+}
+
+# The ties of one wave: those stamped with it, and those of a layer that
+# holds throughout, as `to_time()` carries them into every moment (#202).
+# Such a tie keeps its own stamp, so `from_waves()` can tell it apart.
+.wave_ties <- function(.data, attribute, wave, invariant = character(0)){
+  keep <- tie_attribute(.data, attribute) == wave
+  layer <- intersect(c("layer", "type"), net_tie_attributes(.data))[1]
+  if(length(invariant) && !is.na(layer))
+    keep <- keep | as.character(tie_attribute(.data, layer)) %in% invariant
+  .keep_ties_of(.data, which(keep))
 }
 
 # Applies to a network the changes recorded in its changelist up to and

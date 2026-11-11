@@ -152,7 +152,9 @@ test_that("to_waves splits a panel whose waves are named 'time'", {
   expect_true(is_longitudinal(ison_monks))
   waves <- to_waves(ison_monks)
   expect_length(waves, length(unique(tie_attribute(ison_monks, "time"))))
-  expect_equal(sum(vapply(waves, net_ties, numeric(1))),
+  # The cross-sectional layers are in every wave, so the waves add up to the
+  # network only once they are joined back (#202)
+  expect_equal(as.numeric(net_ties(from_waves(waves))),
                as.numeric(net_ties(ison_monks)))
   expect_s3_class(waves[[1]], class(ison_monks)[1])
   # Naming the attribute gives the same waves as letting it be found
@@ -310,6 +312,33 @@ test_that("from_times rejoins what to_times returns", {
   # an interval network already holds its moments in its ties
   expect_equal(as.numeric(net_ties(from_times(to_times(irps_wwi)))),
                as.numeric(net_ties(irps_wwi)))
+})
+
+test_that("to_waves and from_* agree with to_time on cross-sectional layers (#202)", {
+  # 'primary' is declared cross-sectional and stamped at the first wave only
+  layers <- function(x) as.numeric(table(factor(tie_attribute(x, "layer"),
+                                                 c("friends", "primary"))))
+  waves <- to_waves(ison_classmates)
+  times <- to_times(ison_classmates)
+  for(t in 1:4){
+    expect_equal(layers(waves[[t]])[1], layers(times[[t]])[1])
+    expect_gt(layers(waves[[t]])[2], 0)
+  }
+  # The layer keeps its own stamp, and every wave keeps every node
+  expect_equal(unique(tie_attribute(to_uniplex(waves[[4]], "primary"), "time")), 1)
+  expect_equal(unname(vapply(waves, function(x) as.numeric(net_nodes(x)), 1)),
+               rep(26, 4))
+  # Joining the waves or the moments back gives each tie once, at its moment
+  ties_of <- function(x){
+    el <- as.data.frame(as_edgelist(x))[c("from", "to", "layer", "time")]
+    el[do.call(order, el), , drop = FALSE]
+  }
+  expect_equal(ties_of(from_waves(waves)), ties_of(ison_classmates),
+               ignore_attr = TRUE)
+  expect_equal(ties_of(from_times(times)), ties_of(ison_classmates),
+               ignore_attr = TRUE)
+  expect_equal(as.numeric(net_ties(from_times(to_times(as_igraph(ison_classmates))))),
+               as.numeric(net_ties(ison_classmates)))
 })
 
 test_that("to_slices and to_waves are unchanged by the time-form work", {
