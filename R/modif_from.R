@@ -440,6 +440,18 @@ from_reporters <- function(netlist) {
     ties[[col]] <- rep(value, nrow(ties))
     ties
   }, netlist, values)
+  # The structural zeros of each network come along as well, still fixed.
+  zeros <- dplyr::bind_rows(Map(function(net, value){
+    zero <- net$missings
+    if(is.null(zero) || !any(.fixed_rows(zero))) return(NULL)
+    zero <- zero[.fixed_rows(zero), , drop = FALSE]
+    if(realign){
+      zero$from <- match(net$nodes$label[zero$from], first$nodes$label)
+      zero$to <- match(net$nodes$label[zero$to], first$nodes$label)
+    }
+    zero[[col]] <- rep(value, nrow(zero))
+    zero
+  }, netlist, values))
   ties <- dplyr::bind_rows(rows)
   # A join of networks without ties still records what joins them.
   if(!nrow(ties)){
@@ -452,7 +464,8 @@ from_reporters <- function(netlist) {
   # be one for each layer, stands for them all.
   if(!all(each == directed)) info$directed <- directed
   make_stocnet(info = info, nodes = first$nodes, ties = ties,
-               changes = first$changes, globals = first$globals)
+               changes = first$changes, globals = first$globals,
+               missings = if(nrow(zeros)) zeros else NULL)
 }
 
 # Joins a list of networks, each the report of one reporter ('by') or each

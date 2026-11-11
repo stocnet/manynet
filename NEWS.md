@@ -87,6 +87,10 @@
 - Added `.stocnet$info$uncoded` for units of text still to code
 - Added `.stocnet$info$compartments` for the roles of the values of a diffusion
 - Added the 'diffusionTransitions' class, which prints a joint source as "E+I"
+- Added structural zeros, dyads fixed at no tie, to the 'stocnet' (closes #195)
+  - Held as rows of `.stocnet$missings` with `fixed = TRUE`
+  - Dyads of inactive nodes are implied, not held
+  - `as_missinglist()` and imputation leave them out, since they are not missing
 
 ## Coercion
 
@@ -103,6 +107,8 @@
 - Added `as_opinion()` to read a record of opinions as an 'opinionModel'
 - Added `as_mobility()` to read a record of moves as a 'mobilityModel'
 - Fixed `as_igraph()` and `as_tidygraph()` reading edgelist `time` column as weights
+- Improved `as_stocnet.sienadata()` to read SIENA's 10 as a structural zero, not as a non-tie
+- Improved `as_siena.stocnet()` to write a structural zero as SIENA's 10
 
 ## Manipulating
 

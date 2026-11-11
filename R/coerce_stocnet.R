@@ -201,6 +201,13 @@ as_stocnet.igraph <- function(.data, twomode = FALSE, ...) {
     ties <- split$ties
     missing <- split$missing
   }
+  # The structural zeros travel beside the missing ties, marked as fixed.
+  zeros <- if(inherits(.data, "igraph") &&
+              "missings" %in% igraph::graph_attr_names(.data))
+    igraph::graph_attr(.data, "missings") else NULL
+  zeros <- if(!is.null(zeros)) zeros[.fixed_rows(zeros), , drop = FALSE]
+  if(!is.null(zeros) && nrow(zeros))
+    missing <- dplyr::bind_rows(missing, dplyr::as_tibble(zeros))
   out <- list(info = info, nodes = nodes, ties = ties,
               changes = changes, globals = globals, missings = NULL)
   class(out) <- c("stocnet", class(out))
@@ -675,6 +682,9 @@ as_siena.stocnet <- function(.data, twomode = FALSE) {
   # so the ties recorded as missing join the ties here, marked as such, and the
   # array builder writes them out as missing rather than as observed non-ties.
   x$ties <- .join_missing_ties(x)
+  # A structural zero is written as SIENA's 10. The dyads of an absent actor
+  # are not, since the composition change already tells SIENA about them.
+  x$ties <- .join_fixed_zeros(x$ties, .fixed_registry(.data))
   # The longitudinal column may arrive as 'wave' (mnet convention) or 'time'.
   x$ties <- .siena_wave_to_time(x$ties)
   x$changes <- .siena_wave_to_time(x$changes)
@@ -1082,7 +1092,7 @@ as_stocnet.sienadata <- function(.data, twomode = FALSE, ...) {
   multimode <- length(set_names) > 1
   nodes <- dplyr::tibble(label = unlist(labs, use.names = FALSE))
   if (multimode) nodes$mode <- rep(set_names, set_sizes)
-  ties <- list(); changes <- list()
+  ties <- list(); changes <- list(); zeros <- list()
   focal <- character(0); centered <- logical(0)
   directed <- logical(0); svars <- list()
   # Dependent variables ----
@@ -1102,6 +1112,8 @@ as_stocnet.sienadata <- function(.data, twomode = FALSE, ...) {
       ties[[nm]] <- .siena_array_to_ties(dv, nm, ns, offsets, W,
                                          onemode = identical(type, "oneMode"),
                                          fixed = TRUE)
+      zeros[[nm]] <- attr(ties[[nm]], "zeros")
+      attr(ties[[nm]], "zeros") <- NULL
     }
   }
   # Constant covariates -> nodal columns ----
@@ -1171,8 +1183,11 @@ as_stocnet.sienadata <- function(.data, twomode = FALSE, ...) {
   # with them, being read as missing throughout.
   ties_tbl <- if (length(ties)) .mark_missing_weights(dplyr::bind_rows(ties)) else NULL
   changes_tbl <- if (length(changes)) dplyr::bind_rows(changes) else NULL
+  # SIENA's structural zeros are held as fixed rows of the missings, apart
+  # from the dyads of absent actors, which the composition change implies.
+  zeros_tbl <- if (length(zeros)) dplyr::bind_rows(zeros) else NULL
   make_stocnet(info = info, nodes = nodes, ties = ties_tbl,
-               changes = changes_tbl)
+               changes = changes_tbl, missings = zeros_tbl)
 }
 
 # siena coercion helpers ####
@@ -1229,16 +1244,23 @@ as_stocnet.sienadata <- function(.data, twomode = FALSE, ...) {
 
 # A [n, n(/m), W] siena array -> tie tibble (from, to, layer, weight, time).
 # With `fixed`, SIENA's structural codes are read as such rather than as
-# values: 11 as a tie fixed by design, and 10 as no tie.
+# values: 11 as a tie fixed by design, and 10 as a dyad fixed at no tie.
+# A structural zero is not a tie, so those dyads are returned apart, as the
+# 'zeros' attribute, for `make_stocnet()` to hold in the missings.
 .siena_array_to_ties <- function(arr, nm, ns, offsets, W, onemode,
                                  fixed = FALSE) {
   off_from <- unname(offsets[ns[1]]); off_to <- unname(offsets[ns[length(ns)]])
-  zeros <- 0
+  zeros <- list()
   rows <- lapply(seq_len(W), function(w) {
     g <- if (length(dim(arr)) == 3) arr[, , w] else arr
     if (onemode) diag(g) <- 0
     if (fixed) {
-      zeros <<- zeros + sum(g == 10, na.rm = TRUE)
+      zero <- which(!is.na(g) & g == 10, arr.ind = TRUE)
+      if (nrow(zero))
+        zeros[[length(zeros) + 1]] <<- dplyr::tibble(
+          from = as.integer(off_from + zero[, 1]),
+          to = as.integer(off_to + zero[, 2]), layer = nm, time = w,
+          fixed = TRUE)
       g[!is.na(g) & g == 10] <- 0
     }
     idx <- which(g != 0 | is.na(g), arr.ind = TRUE)
@@ -1251,12 +1273,9 @@ as_stocnet.sienadata <- function(.data, twomode = FALSE, ...) {
     }
     out
   })
-  # Note that a dyad fixed at no tie has nowhere to go among the ties, which
-  # hold only ties, so it is read as an observed non-tie for now (see #195).
-  if (zeros > 0)
-    snet_warn("Reading {zeros} structural zero{?s} in {.val {nm}} as observed non-ties, since a stocnet does not hold structural zeros yet.")
   out <- dplyr::bind_rows(rows)
   if (fixed && "fixed" %in% names(out) && !any(out$fixed)) out$fixed <- NULL
+  if (length(zeros)) attr(out, "zeros") <- dplyr::bind_rows(zeros)
   out
 }
 
@@ -1304,6 +1323,17 @@ as_stocnet.sienadata <- function(.data, twomode = FALSE, ...) {
   dplyr::bind_rows(rows)
 }
 
+# The ties with the structural zeros joined to them, marked in a '.zero'
+# column that only `.siena_ties_to_array()` reads.
+.join_fixed_zeros <- function(ties, zeros){
+  if (is.null(zeros) || !nrow(zeros)) return(ties)
+  zeros <- zeros[intersect(names(zeros), c("from", "to", names(ties)))]
+  zeros$.zero <- TRUE
+  out <- dplyr::bind_rows(ties, zeros)
+  out$.zero[is.na(out$.zero)] <- FALSE
+  out
+}
+
 # Tie rows -> a [sz_from, sz_to, W] array (weights, preserving NA).
 # With `fixed`, a tie fixed by design is written as SIENA's structural one.
 .siena_ties_to_array <- function(sub, W, sz_from, sz_to, off_from, off_to,
@@ -1319,6 +1349,10 @@ as_stocnet.sienadata <- function(.data, twomode = FALSE, ...) {
     # reads from a code of 11. Validation has already ruled out a weight of 0.
     if (fixed && "fixed" %in% names(sub))
       wv[!is.na(sub$fixed) & sub$fixed] <- 11
+    # A dyad fixed at no tie is SIENA's structural zero, and is no tie at all
+    # wherever the array has no code for one, as a covariate has not.
+    if (".zero" %in% names(sub))
+      wv[!is.na(sub$.zero) & sub$.zero] <- if (fixed) 10 else 0
     # all cells are written at once, the later of two rows for the same cell
     # taking its place as it would have one row at a time
     w <- ifelse(is.na(tv), 1L, as.integer(tv))

@@ -498,15 +498,39 @@ test_that("a fixed tie is SIENA's structural one, there and back", {
   expect_true(all(back$weight == 1))
 })
 
-test_that("a structural zero from SIENA is read as no tie, with a warning", {
+test_that("a structural zero is SIENA's 10, there and back (#195)", {
   skip_if_not_installed("RSiena")
   a <- array(0, c(4, 4, 2))
   a[1, 2, ] <- 1; a[3, 4, ] <- 10
   d <- RSiena::sienaDataCreate(net = RSiena::sienaDependent(a, allowOnly = FALSE))
-  expect_warning(out <- as_stocnet(d), "structural zeros")
+  expect_no_warning(out <- as_stocnet(d))
+  # it is not a tie, and not a missing tie, but a fixed row of the missings
   expect_false(any(out$ties$from == 3 & out$ties$to == 4))
+  expect_equal(out$missings$from, c(3L, 3L))
+  expect_equal(out$missings$to, c(4L, 4L))
+  expect_true(all(out$missings$fixed))
+  expect_null(as_missinglist(out))
   # a layer without structural ones gets no 'fixed' column
   expect_false("fixed" %in% names(out$ties))
+  back <- as_siena(out)$depvars[[1]]
+  expect_equal(back[3, 4, ], c(10, 10))
+  expect_equal(back[1, 2, ], c(1, 1))
+})
+
+test_that("the structural zeros of an absent actor come from the composition", {
+  skip_if_not_installed("RSiena")
+  a <- array(0, c(4, 4, 3))
+  a[1, 2, ] <- 1; a[3, 4, ] <- 10
+  # the fourth actor leaves before the third wave
+  a[4, , 3] <- 10; a[, 4, 3] <- 10; diag(a[, , 3]) <- 0
+  cc <- RSiena::sienaCompositionChange(list(c(1, 3), c(1, 3), c(1, 3), c(1, 2.5)))
+  d <- RSiena::sienaDataCreate(net = RSiena::sienaDependent(a, allowOnly = FALSE), cc)
+  x <- as_stocnet(d)
+  # only the zeros that the composition does not imply are held as rows
+  expect_equal(x$missings$time, c(1L, 2L))
+  expect_equal(sum(.expand_fixed(x)$time == 3), 6)
+  arr <- as_siena(x)$depvars[[1]]
+  expect_equal(arr[3, 4, ], c(10, 10, 0))
 })
 
 test_that("a fixed tie keeps its mark through the other classes", {

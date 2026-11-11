@@ -352,3 +352,71 @@ test_that("imputing as zero keeps a fixed tie", {
                                        fixed = c(TRUE, FALSE, FALSE)))
   expect_equal(impute_ties(st, "zero")$ties$weight, c(1, 0, 1))
 })
+
+# Structural zeros (#195) ####
+
+zero_panel <- function()
+  make_stocnet(nodes = data.frame(label = letters[1:4]),
+               ties = data.frame(from = c("a", "b"), to = c("b", "c"),
+                                 time = c(1, 2)),
+               missings = data.frame(from = c(3L, 1L), to = c(4L, 3L),
+                                     time = c(1, 2), fixed = c(TRUE, FALSE)),
+               info = list(directed = TRUE))
+
+test_that("a structural zero is held in the missings but is not missing", {
+  x <- zero_panel()
+  expect_equal(x$missings$fixed, c(FALSE, TRUE))
+  miss <- as_missinglist(x)
+  expect_equal(nrow(miss), 1)
+  expect_equal(c(miss$from, miss$to), c(1L, 3L))
+  expect_equal(nrow(.expand_fixed(x)), 1)
+  # the headings are messages from cli, so the tables are captured apart
+  expect_message(utils::capture.output(print(x)), "Structural zeros")
+})
+
+test_that("a structural zero cannot also be a tie or a missing tie", {
+  nodes <- data.frame(label = letters[1:3])
+  expect_error(make_stocnet(nodes = nodes,
+                            ties = data.frame(from = "a", to = "b"),
+                            missings = data.frame(from = 1L, to = 2L, fixed = TRUE),
+                            info = list(directed = TRUE)),
+               "cannot also be a tie")
+  x <- make_stocnet(nodes = nodes, ties = data.frame(from = "a", to = "b"),
+                    info = list(directed = TRUE))
+  x$missings <- dplyr::tibble(from = c(2L, 2L), to = c(3L, 3L),
+                              fixed = c(TRUE, FALSE))
+  expect_error(validate_stocnet(x), "cannot also be missing")
+})
+
+test_that("imputation fills the missing ties and keeps the structural zeros", {
+  out <- to_imputed(zero_panel())
+  expect_null(as_missinglist(out))
+  expect_equal(nrow(out$missings), 1)
+  expect_true(out$missings$fixed)
+})
+
+test_that("a structural zero survives the classes that can hold it", {
+  x <- zero_panel()
+  for(back in list(as_stocnet(as_igraph(x)), as_stocnet(as_tidygraph(x)))){
+    expect_equal(back$missings, x$missings)
+    expect_equal(nrow(as_missinglist(back)), 1)
+  }
+  expect_equal(nrow(as_missinglist(as_igraph(x))), 1)
+})
+
+test_that("a structural zero is scoped to its moment and joined back", {
+  x <- zero_panel()
+  expect_true(to_time(x, 1)$missings$fixed)
+  expect_null(as_missinglist(to_time(x, 1)))
+  back <- from_times(to_times(x))
+  expect_equal(back$missings$fixed, c(FALSE, TRUE))
+})
+
+test_that("the dyads of a node that has left are structural zeros", {
+  # a21 is not in the class from wave 3, and there are 25 others to tie to
+  zeros <- .expand_fixed(ison_classmates)
+  expect_equal(as.numeric(table(zeros$time)), c(50, 50))
+  expect_true(all(zeros$from == 21 | zeros$to == 21))
+  # those dyads are implied by 'active', and so are not held as rows
+  expect_null(ison_classmates$missings)
+})

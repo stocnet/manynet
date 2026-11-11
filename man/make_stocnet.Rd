@@ -281,8 +281,8 @@ please add them to the missings component as an edgelist.
 \item 'fixed' should be a logical vector marking the ties that are present
 by design, and so not free to vary, such as SIENA's structural ones (\code{11}).
 A fixed tie is never missing and is never removed by imputation.
-Structural zeros, dyads fixed at no tie, are not held yet,
-so a fixed tie cannot have a weight of 0.
+A fixed tie cannot have a weight of 0, since a dyad fixed at no tie
+is a structural zero, which the missings component holds.
 \item 'time' should be a numeric, character, or date vector of the moment at
 which each tie was recorded.
 \item 'begin' and 'end' should instead give the interval over which each tie
@@ -397,6 +397,12 @@ It takes the same columns as the ties component:
 \item 'from' and 'to' must be integer vectors of the nodes at each end
 \item 'layer' and 'time' should name the layer and moment the tie was missing
 from, where the network records them.
+\item 'fixed' should be a logical vector marking the rows that are
+structural zeros, such as SIENA's \code{10}: dyads fixed at no tie by design.
+A structural zero is neither a tie nor a missing tie, so
+\code{\link[=as_missinglist]{as_missinglist()}} does not return it and imputation never fills it.
+The dyads of a node that is not in the network at a moment, as 'active'
+records, are structural zeros too, and are not listed here.
 }
 
 Since most missing tie data is a node that did not report,

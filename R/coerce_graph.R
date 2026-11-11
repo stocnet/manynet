@@ -231,6 +231,14 @@ as_igraph.network <- function(.data,
 # they can be written into whichever form the target class holds them in.
 .missing_out <- function(.data){
   out <- as_missinglist(.data)
+  # A structural zero is not missing, but it travels in the same table, marked
+  # as fixed, so that it comes back as one.
+  zeros <- if(inherits(.data, "stocnet")) .fixed_registry(.data) else NULL
+  if(!is.null(zeros)){
+    zeros$fixed <- TRUE
+    if(!is.null(out) && nrow(out)) out$fixed <- FALSE
+    out <- dplyr::bind_rows(out, zeros)
+  }
   if(is.null(out) || !nrow(out)) return(NULL)
   if(all(is.na(out$layer))) out$layer <- NULL
   if(all(is.na(out$time))) out$time <- NULL

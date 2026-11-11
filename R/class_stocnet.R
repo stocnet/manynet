@@ -166,8 +166,8 @@
 #'   - 'fixed' should be a logical vector marking the ties that are present
 #'   by design, and so not free to vary, such as SIENA's structural ones (`11`).
 #'   A fixed tie is never missing and is never removed by imputation.
-#'   Structural zeros, dyads fixed at no tie, are not held yet,
-#'   so a fixed tie cannot have a weight of 0.
+#'   A fixed tie cannot have a weight of 0, since a dyad fixed at no tie
+#'   is a structural zero, which the missings component holds.
 #'   - 'time' should be a numeric, character, or date vector of the moment at
 #'   which each tie was recorded.
 #'   - 'begin' and 'end' should instead give the interval over which each tie
@@ -262,6 +262,12 @@
 #'   - 'from' and 'to' must be integer vectors of the nodes at each end
 #'   - 'layer' and 'time' should name the layer and moment the tie was missing
 #'   from, where the network records them.
+#'   - 'fixed' should be a logical vector marking the rows that are
+#'   structural zeros, such as SIENA's `10`: dyads fixed at no tie by design.
+#'   A structural zero is neither a tie nor a missing tie, so
+#'   [as_missinglist()] does not return it and imputation never fills it.
+#'   The dyads of a node that is not in the network at a moment, as 'active'
+#'   records, are structural zeros too, and are not listed here.
 #'
 #'   Since most missing tie data is a node that did not report,
 #'   this component is usually NULL.
@@ -659,10 +665,18 @@ print.stocnet <- function(x, ..., n = 12) {
     cli::cli_end()
   }
   if(!is.null(x$missings) && ncol(x$missings) >0){
-    cli::cli_par()
-    cli::cli_h3("Missings")
-    print(dplyr::as_tibble(x$missings), n = n)
-    cli::cli_end()
+    # A structural zero is held among the missings, but it is not missing,
+    # so the two are printed apart.
+    fixed <- .fixed_rows(x$missings)
+    for(part in c("Missings", "Structural zeros")){
+      rows <- x$missings[if(part == "Missings") !fixed else fixed, , drop = FALSE]
+      if(!nrow(rows)) next
+      rows$fixed <- NULL
+      cli::cli_par()
+      cli::cli_h3(part)
+      print(dplyr::as_tibble(rows), n = n)
+      cli::cli_end()
+    }
   }
   if (!is.null(bottom) && ncol(bottom)>0){
     # cli::cli_par()

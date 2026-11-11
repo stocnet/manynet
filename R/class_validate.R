@@ -72,14 +72,14 @@ validate_ties <- function(.data){
   reserved_cols(.data, "ties", "layer", "character",
            aka = c("type", "plex", "tie"))
   # A fixed tie is present by design, and so not free to vary, as SIENA's
-  # structural one is. A dyad fixed at no tie would need a row that is not a
-  # tie, which the ties do not hold, so a fixed tie cannot weigh nothing.
+  # structural one is. A dyad fixed at no tie is a structural zero, which the
+  # missings hold as a fixed row, so a fixed tie cannot weigh nothing.
   reserved_cols(.data, "ties", "fixed", "logical")
   ties <- .data$ties
   if("fixed" %in% names(ties) && "weight" %in% names(ties) &&
      any(ties$fixed & ties$weight == 0, na.rm = TRUE))
     snet_abort(c(x = "A fixed tie marks a tie that is present by design, so it cannot have a weight of 0.",
-                 i = "Structural zeros are not held yet (see #195)."))
+                 i = "Hold a dyad fixed at no tie in the missings, with {.code fixed = TRUE}."))
   invisible(.data)
 }
 
@@ -221,6 +221,19 @@ validate_missings <- function(.data){
   reserved_cols(.data, "missings", "time",
                 class = c("character","numeric","integer","mdate","Date","POSIXct","POSIXlt"),
                 aka = c("wave", "period", "date"))
+  # A row fixed by design is a structural zero: a dyad fixed at no tie.
+  # So it cannot also be a tie, nor also a tie that is missing.
+  reserved_cols(.data, "missings", "fixed", "logical")
+  fixed <- .fixed_rows(.data$missings)
+  if(any(fixed)){
+    zeros <- .tie_key(.data$missings[fixed, , drop = FALSE])
+    if(any(zeros %in% .tie_key(.data$ties)))
+      snet_abort(c(x = "A structural zero marks a dyad fixed at no tie, so it cannot also be a tie.",
+                   i = "Remove the tie, or the row of the missings with {.code fixed = TRUE}."))
+    if(any(zeros %in% .tie_key(.data$missings[!fixed, , drop = FALSE])))
+      snet_abort(c(x = "A structural zero marks a dyad fixed at no tie, so it cannot also be missing.",
+                   i = "Keep only one row of the missings for each dyad."))
+  }
   invisible(.data)
 }
 
