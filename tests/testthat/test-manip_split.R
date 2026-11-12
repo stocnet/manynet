@@ -540,6 +540,22 @@ test_that("as_stocnet() reads the third dimension by its former name too", {
   expect_error(as_stocnet(css_array()), "over")
 })
 
+test_that("to_consensus holds the ties that enough reporters report", {
+  css <- as_stocnet(css_array(), over = "by")
+  half <- as_matrix(to_consensus(css))
+  # A->B is reported by all four reporters, B->A by two, and C->D by one
+  expect_equal(unname(half["A", "B"]), 1)
+  expect_equal(unname(half["B", "A"]), 1)
+  expect_equal(unname(half["C", "D"]), 0)
+  all <- as_matrix(to_consensus(css, threshold = 1))
+  expect_equal(unname(all["A", "B"]), 1)
+  expect_equal(unname(all["B", "A"]), 0)
+  expect_equal(half, as_matrix(to_unweighted(to_aggregated(css, "by", "mean"),
+                                             threshold = 0.5)))
+  expect_error(to_consensus(css, threshold = 0), "threshold")
+  expect_error(to_consensus(css, threshold = 2), "threshold")
+})
+
 test_that("to_firsthand is the locally aggregated structure", {
   css <- as_stocnet(css_array(), over = "by")
   expect_equal(as_matrix(to_firsthand(css)),

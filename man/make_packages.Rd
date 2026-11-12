@@ -4,7 +4,7 @@
 \alias{make_packages}
 \alias{collect_cran}
 \alias{collect_pkg}
-\title{Making networks of package dependencies}
+\title{Making networks of inter- and intra-package dependencies}
 \source{
 https://www.r-bloggers.com/2016/01/r-graph-objects-igraph-vs-network/
 

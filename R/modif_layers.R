@@ -18,6 +18,8 @@
 #'   `to_aggregated()` retains what every layer records.
 #'   - `to_firsthand()` keeps, for each dyad of a cognitive social structure,
 #'   only the reports of the two nodes in it.
+#'   - `to_consensus()` keeps the ties of a cognitive social structure that at
+#'   least a share of its reporters report.
 #'   - `to_disaggregated()` turns tie weights back into that many parallel
 #'   ties, reversing `to_aggregated(over = NULL, rule = "sum")`.
 #'
@@ -57,6 +59,34 @@ NULL
 to_firsthand <- function(.data, rule = c("min", "max")) {
   to_aggregated(.data, over = "by", rule = match.arg(rule),
                 reporters = "both")
+}
+
+#' @rdname modif_layers
+#' @param threshold The share of the reporters that must report a tie for the
+#'   consensus to hold it, above 0 and at most 1.
+#'   By default 0.5, so that a tie is held where at least half of the
+#'   reporters report it, and `1` holds only the ties that all of them report.
+#' @section Consensus structures:
+#'   `to_consensus()` gives the consensus structure of Krackhardt (1987):
+#'   a tie from i to j where at least the `threshold` share of the reporters
+#'   report it.
+#'   Where `to_firsthand()` asks only i and j, this asks every reporter, so a
+#'   tie can be held that its own two nodes do not report.
+#'   A reporter that did not report is left out of the share,
+#'   as `to_aggregated()` leaves it out.
+#'   It is `to_aggregated(over = "by", rule = "mean")` followed by
+#'   `to_unweighted(threshold = threshold)`.
+#' @examples
+#' to_consensus(css)
+#' to_consensus(css, threshold = 1)
+#' @export
+to_consensus <- function(.data, threshold = 0.5) {
+  if(!is.numeric(threshold) || length(threshold) != 1 || is.na(threshold) ||
+     threshold <= 0 || threshold > 1)
+    snet_abort("{.arg threshold} must be one share of the reporters,",
+               "above 0 and at most 1.")
+  to_unweighted(to_aggregated(.data, over = "by", rule = "mean"),
+                threshold = threshold)
 }
 
 # Layers are held in a 'type' tie attribute in tidygraph/igraph objects and in
@@ -200,7 +230,7 @@ to_layer.tbl_graph <- function(.data, layer, tie){
 #'   and "sum" how many of them do.
 #'   A consensus structure is therefore
 #'   `to_aggregated(.data, over = "by", rule = "mean")` followed by
-#'   `to_unweighted(threshold = 0.5)`.
+#'   `to_unweighted(threshold = 0.5)`, which `to_consensus()` does.
 #'   A reporter that did not report is left out of the reports that are
 #'   combined, rather than making every tie missing, and a tie is missing
 #'   only where none of the reporters it is pooled over reported it.

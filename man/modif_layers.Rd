@@ -3,12 +3,15 @@
 \name{modif_layers}
 \alias{modif_layers}
 \alias{to_firsthand}
+\alias{to_consensus}
 \alias{to_layer}
 \alias{to_aggregated}
 \alias{to_disaggregated}
 \title{Modifying network layers}
 \usage{
 to_firsthand(.data, rule = c("min", "max"))
+
+to_consensus(.data, threshold = 0.5)
 
 to_layer(.data, layer, tie)
 
@@ -51,6 +54,11 @@ network records one, and strong ties are rewarded disproportionately.
 Missing values propagate rather than being ignored, so that a dyad
 unobserved in any of the networks is unobserved in the result.
 Use \code{impute_ties()} first to state a different assumption.}
+
+\item{threshold}{The share of the reporters that must report a tie for the
+consensus to hold it, above 0 and at most 1.
+By default 0.5, so that a tie is held where at least half of the
+reporters report it, and \code{1} holds only the ties that all of them report.}
 
 \item{layer}{Character string naming one of the layers, or tie types,
 in the network, i.e. one of those returned by \code{layer_names()},
@@ -109,6 +117,8 @@ Where \code{to_layer()} selects one layer and discards the rest,
 \code{to_aggregated()} retains what every layer records.
 \item \code{to_firsthand()} keeps, for each dyad of a cognitive social structure,
 only the reports of the two nodes in it.
+\item \code{to_consensus()} keeps the ties of a cognitive social structure that at
+least a share of its reporters report.
 \item \code{to_disaggregated()} turns tie weights back into that many parallel
 ties, reversing \code{to_aggregated(over = NULL, rule = "sum")}.
 }
@@ -144,6 +154,19 @@ a tie from i to j where both i and j report it
 It is \code{to_aggregated(over = "by", reporters = "both")} by another name.
 }
 
+\section{Consensus structures}{
+
+\code{to_consensus()} gives the consensus structure of Krackhardt (1987):
+a tie from i to j where at least the \code{threshold} share of the reporters
+report it.
+Where \code{to_firsthand()} asks only i and j, this asks every reporter, so a
+tie can be held that its own two nodes do not report.
+A reporter that did not report is left out of the share,
+as \code{to_aggregated()} leaves it out.
+It is \code{to_aggregated(over = "by", rule = "mean")} followed by
+\code{to_unweighted(threshold = threshold)}.
+}
+
 \section{Aggregating reports}{
 
 Over reporters, "max" gives a tie where any reporter reports one,
@@ -151,7 +174,7 @@ Over reporters, "max" gives a tie where any reporter reports one,
 and "sum" how many of them do.
 A consensus structure is therefore
 \code{to_aggregated(.data, over = "by", rule = "mean")} followed by
-\code{to_unweighted(threshold = 0.5)}.
+\code{to_unweighted(threshold = 0.5)}, which \code{to_consensus()} does.
 A reporter that did not report is left out of the reports that are
 combined, rather than making every tie missing, and a tie is missing
 only where none of the reporters it is pooled over reported it.
@@ -175,6 +198,8 @@ A matrix cannot hold parallel ties, so it is returned as it is.
 \examples{
 css <- as_stocnet(array(rbinom(27, 1, 0.5), c(3, 3, 3)), over = "by")
 to_firsthand(css)
+to_consensus(css)
+to_consensus(css, threshold = 1)
 as_tidygraph(create_filled(5)) |>
   mutate_ties(type = sample(c("friend", "enemy"), 10, replace = TRUE)) |>
   to_layer("friend")
