@@ -2,16 +2,6 @@
 % Please edit documentation in R/manynet-defunct.R
 \name{defunct}
 \alias{defunct}
-\alias{pkg_data}
-\alias{network_nodes}
-\alias{network_ties}
-\alias{network_dims}
-\alias{network_dims.data.frame}
-\alias{network_dims.matrix}
-\alias{network_dims.igraph}
-\alias{network_dims.network}
-\alias{network_node_attributes}
-\alias{network_tie_attributes}
 \alias{node_mode}
 \alias{mutate_net}
 \alias{net_info}
@@ -176,28 +166,12 @@
 \alias{apply_changes}
 \alias{is_egonet}
 \alias{print.mnet}
+\alias{is_complex}
+\alias{to_simplex}
+\alias{to_uniplex}
+\alias{to_flat}
 \title{Functions that have been renamed, superseded, moved, or are no longer working}
 \usage{
-pkg_data(pkg = "manynet")
-
-network_nodes(.data)
-
-network_ties(.data)
-
-network_dims(.data)
-
-network_dims.data.frame(.data)
-
-network_dims.matrix(.data)
-
-network_dims.igraph(.data)
-
-network_dims.network(.data)
-
-network_node_attributes(.data)
-
-network_tie_attributes(.data)
-
 node_mode(.data)
 
 mutate_net(.data, ...)
@@ -532,6 +506,18 @@ apply_changes(.data, time)
 is_egonet(.data)
 
 \method{print}{mnet}(x, ..., n = 12)
+
+is_complex(.data)
+
+to_simplex(.data)
+
+to_uniplex(.data, layer, tie)
+
+to_flat(
+  .data,
+  rule = c("max", "min", "mean", "sum", "product"),
+  over = "layer"
+)
 }
 \arguments{
 \item{.data}{A manynet-consistent network.}
@@ -551,9 +537,10 @@ for convergence to a consensus.}
 \item{n}{Number of observations to print across all network components.}
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 Generally these functions have been superseded, renamed, and/or moved.
-Upon using them, a message is provided directing the user to the new function.
+Upon using them, a warning directs the user to the new function.
+A function that is only superseded still works without a warning
+for one minor release, since a released package may still call it.
 However, at this stage of package development,
 we generally clear older defunct functions at each minor release,
 and so you are strongly encouraged to use the new functions/names/syntax
@@ -561,26 +548,6 @@ wherever possible and update your scripts accordingly.
 }
 \section{Functions}{
 \itemize{
-\item \code{pkg_data()}: Deprecated on 2024-06-17.
-
-\item \code{network_nodes()}: Deprecated on 2024-06-20.
-
-\item \code{network_ties()}: Deprecated on 2024-06-20.
-
-\item \code{network_dims()}: Deprecated on 2024-06-20.
-
-\item \code{network_dims.data.frame()}: Deprecated on 2024-06-20.
-
-\item \code{network_dims.matrix()}: Deprecated on 2024-06-20.
-
-\item \code{network_dims.igraph()}: Deprecated on 2024-06-20.
-
-\item \code{network_dims.network()}: Deprecated on 2024-06-20.
-
-\item \code{network_node_attributes()}: Deprecated on 2024-06-20.
-
-\item \code{network_tie_attributes()}: Deprecated on 2024-06-20.
-
 \item \code{node_mode()}: Deprecated on 2026-03-22.
 
 \item \code{mutate_net()}: Deprecated on 2026-03-22.
@@ -914,6 +881,19 @@ and the result is the table that \code{as_opinion()} returns.
 \item \code{apply_changes()}: Deprecated on 2026-08-20.
 
 \item \code{is_egonet()}: Deprecated on 2026-09-21.
+
+\item \code{is_complex()}: Superseded by \code{is_looped()} on 2026-11-12.
+This name gives a warning from 2.6.0.
+
+\item \code{to_simplex()}: Superseded by \code{to_unlooped()} on 2026-11-12.
+This name gives a warning from 2.6.0.
+
+\item \code{to_uniplex()}: Superseded by \code{to_layer()} on 2026-11-12.
+This name gives a warning from 2.6.0.
+
+\item \code{to_flat()}: Superseded by \code{to_aggregated()} on 2026-11-12,
+which combines layers by default and takes the \code{rule} third.
+This name gives a warning from 2.6.0.
 
 }}
 \section{The 'mnet' class}{

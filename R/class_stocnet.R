@@ -1,6 +1,9 @@
 #' Multilevel, multiplex, multimodal, signed, dynamic or longitudinal changing networks
 #' @name make_stocnet
 #' @description
+#'   A 'stocnet' can hold multilevel, multiplex, multimodal, signed,
+#'   and dynamic or longitudinal changing networks in one object.
+#'
 #'   The 'stocnet' class of network object is a list of six elements:
 #'   nodes, ties, (nodal) changes, globals, missings,
 #'   and info metadata about the network as a whole.
