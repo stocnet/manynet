@@ -165,7 +165,7 @@ read_matrix <- function(file = file.choose(),
       out <- read.csv2(file, ...) # For EU
     }
   } else if (grepl("xlsx$|xls$", file)) {
-    thisRequires("readxl")
+    snet_requires("readxl")
     out <- readxl::read_excel(file, ...)
   }
   if((dim(out)[1]+1) == dim(out)[2])
@@ -196,7 +196,7 @@ read_edgelist <- function(file = file.choose(),
       out <- read.csv2(file, header = TRUE, ...) # For EU
     }
   } else if (grepl("xlsx$|xls$", file)) {
-    thisRequires("readxl")
+    snet_requires("readxl")
     out <- readxl::read_excel(file, ...)
   }
   out
@@ -217,7 +217,7 @@ read_nodelist <- function(file = file.choose(),
       out <- read.csv2(file, header = TRUE, ...) # For EU
     }
   } else if (grepl("xlsx$|xls$", file)) {
-    thisRequires("readxl")
+    snet_requires("readxl")
     out <- readxl::read_excel(file, ...)
   }
   out
@@ -442,7 +442,7 @@ read_ucinet <- function(file = file.choose()) {
 read_dynetml <- function(file = file.choose()) {
   if(missing(file)) cli::cli_alert_success("Executing: read_dynetml('{file}')")
   if(!grepl("\\.xml$", file, ignore.case = TRUE)) file <- paste0(file, ".xml")
-  thisRequires("xml2")
+  snet_requires("xml2")
   name <- type <- nodeset <- target <- value <- NULL
   xmlfile <- xml2::read_xml(file)
   xmllist <- xml2::as_list(xmlfile)
@@ -509,7 +509,7 @@ read_graphml <- function(file = file.choose(), ego = TRUE) {
   if(missing(file)) snet_success("Executing: read_graphml('{file}')")
   if(!grepl("\\.graphml$", file, ignore.case = TRUE))
     file <- paste0(file, ".graphml")
-  thisRequires("xml2")
+  snet_requires("xml2")
   xmlfile <- xml2::read_xml(file)
   # Network Canvas is identified by its namespace before it is stripped
   netcanvas <- any(grepl("schema.networkcanvas.com",
@@ -917,7 +917,7 @@ read_gdf <- function(file = file.choose()) {
 read_gexf <- function(file = file.choose()) {
   if(missing(file)) snet_success("Executing: read_gexf('{file}')")
   if(!grepl("\\.gexf$", file, ignore.case = TRUE)) file <- paste0(file, ".gexf")
-  thisRequires("xml2")
+  snet_requires("xml2")
   xmlfile <- xml2::read_xml(file)
   xml2::xml_ns_strip(xmlfile)
   graph <- xml2::xml_find_first(xmlfile, "/gexf/graph")
@@ -1487,7 +1487,7 @@ write_gexf <- function(.data,
   }
   if(!grepl("\\.gexf$", filename, ignore.case = TRUE))
     filename <- paste0(filename, ".gexf")
-  thisRequires("xml2")
+  snet_requires("xml2")
   g <- as_igraph(.data)
   ids <- as.character(seq_len(igraph::vcount(g)) - 1)
   el <- igraph::as_edgelist(g, names = FALSE)
@@ -1651,7 +1651,7 @@ write_dynetml <- function(.data,
     snet_success("Writing to {.file {filename}}")
   }
   if(!grepl("\\.xml$", filename, ignore.case = TRUE)) filename <- paste0(filename, ".xml")
-  thisRequires("xml2")
+  snet_requires("xml2")
   g <- as_igraph(.data)
   ids <- node_labels(g)
   el <- igraph::as_edgelist(g, names = FALSE)
@@ -1693,7 +1693,7 @@ read_geojson <- function(file = file.choose(), junctions = TRUE,
   if(missing(file)) snet_success("Executing: read_geojson('{file}')")
   if(!grepl("\\.(geo)?json$", file, ignore.case = TRUE))
     file <- paste0(file, ".geojson")
-  thisRequires("jsonlite")
+  snet_requires("jsonlite")
   gj <- jsonlite::fromJSON(file, simplifyVector = FALSE)
   feats <- .geojson_features(gj)
   kinds <- vapply(feats, function(f) {
@@ -1941,7 +1941,7 @@ write_geojson <- function(.data,
   }
   if(!grepl("\\.(geo)?json$", filename, ignore.case = TRUE))
     filename <- paste0(filename, ".geojson")
-  thisRequires("jsonlite")
+  snet_requires("jsonlite")
   pos <- .node_coordinates(.data)
   if(is.null(pos))
     snet_abort(c("Only a spatial network can be written as GeoJSON.",
@@ -2002,7 +2002,7 @@ write_geojson <- function(.data,
 read_hif <- function(file = file.choose()) {
   if(missing(file)) snet_success("Executing: read_hif('{file}')")
   if(!grepl("\\.json$", file, ignore.case = TRUE)) file <- paste0(file, ".json")
-  thisRequires("jsonlite")
+  snet_requires("jsonlite")
   hif <- jsonlite::fromJSON(file, simplifyVector = FALSE)
   if(!is.list(hif) || !"incidences" %in% names(hif))
     snet_abort("{.file {file}} is not a HIF file, which must list the",
@@ -2093,7 +2093,7 @@ write_hif <- function(.data,
   }
   if(!grepl("\\.json$", filename, ignore.case = TRUE))
     filename <- paste0(filename, ".json")
-  thisRequires("jsonlite")
+  snet_requires("jsonlite")
   net <- .dyads_to_hyper(to_hypergraph(as_stocnet(.data)))
   nodes <- net$nodes
   ties <- net$ties

@@ -159,6 +159,13 @@
 ## Describing
 
 - Fixed `layer_ties()` to count a layer without ties as none
+- Added `snet_deprecated()` for the old name of a function, argument, or value
+  - A "superseded" name still works without a warning, for one minor release
+  - A "deprecated" name warns with the class `.Deprecated()` gives
+  - A "defunct" name aborts with the class `.Defunct()` gives
+- Replaced `fn_moved()` with `snet_moved()` for a function that moved to another package
+- Added `snet_requires()` for a package that a function needs
+  - Aborts with the command to install it where it is missing, also in a script
 
 ## Data
 

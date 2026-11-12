@@ -375,6 +375,9 @@ rather than base `message()`/`stop()`/`warning()` or `{cli}` calls directly:
 | `snet_success()` | confirmation that a requested operation completed |
 | `snet_prompt()` | interactive questions to the user |
 | `snet_unavailable()` | not-yet-implemented features; aborts, as `snet_abort()` does |
+| `snet_deprecated()` | an old name of a function, argument, or value; reports only under 'debug' when "superseded", warns when "deprecated", and aborts when "defunct" |
+| `snet_moved()` | a function that moved to another package; aborts, or warns with `stage = "deprecated"` |
+| `snet_requires()` | a package that a function needs; aborts with the install command where it is missing, and offers to install it only in an interactive session |
 | `snet_progress_step()`, `snet_progress_along()`, `snet_progress_seq()`, `snet_progress_nodes()` | progress reporting in longer-running loops |
 
 One rule decides what the verbosity silences:
@@ -482,10 +485,20 @@ A function that is renamed, superseded, or moved keeps working under its old nam
 for a time, through a shim in [R/manynet-defunct.R](../R/manynet-defunct.R):
 
 - Document the shim with `#' @describeIn defunct Deprecated on <date>.` and export it.
-- For a rename, call `.Deprecated("<new>", package = "manynet", old = "<old>")`
+- For a rename, call `snet_deprecated("<old>", "<new>")`
   and then the new function, so that the old name still returns a result.
-- For a function moved to another package, call `fn_moved()`,
+- Where a released package that cannot be released again with manynet calls
+  the old name, as migraph 1.7.2 and infernet do in 2.5.0,
+  call `snet_deprecated("<old>", "<new>", "superseded")` for one minor release
+  first, so that the old name works without a warning,
+  and write "Superseded by `<new>()` on <date>" in its `@describeIn` line.
+- For a function moved to another package, call `snet_moved()`,
   which tells the user where it went and how to install that package.
+  With `stage = "deprecated"` it warns instead of aborting,
+  so that the shim can go on to call the function in its new package.
+- For a renamed argument or value, call
+  `snet_deprecated("<old>", "<new>", type = "argument")` (or `type = "value"`),
+  and give the reason or the new call in `why`.
 - A renamed *argument* keeps working under its former name through `...`
   and `.former_args()` (see [R/make_generate.R](../R/make_generate.R)).
 - Record the change as `Renamed ... to ...` or `Moved ...` in `NEWS.md`.

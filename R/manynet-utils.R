@@ -38,17 +38,6 @@ collect_functions <- function(pattern, package = "manynet"){
 }
 
 # Helper function for checking and downloading packages
-thisRequires <- function(pkgname){
-  if (!requireNamespace(pkgname, quietly = TRUE) & interactive()) {
-    if(utils::askYesNo(msg = paste("The", pkgname, 
-                                   "package is required to run this function. Would you like to install", pkgname, "from CRAN?"))) {
-      utils::install.packages(pkgname)
-    } else {
-      snet_abort(paste("Please install", pkgname, "from CRAN to run this function."))
-    }
-  }
-}
-
 interpolate <- function(values, positions, n, fill = NA) {
   out <- rep(fill, n) 
   out[positions] <- values

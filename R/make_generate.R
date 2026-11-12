@@ -364,7 +364,7 @@ generate_man <- function(n, p = NULL, directed = NULL, ...){
   if (length(n) == 2) {
     out <- .rgbman(n[1], n[2], dcen)
   } else if (directed) {
-    thisRequires("sna")
+    snet_requires("sna")
     # the direction is stated, since a matrix that happens to be symmetric
     # would otherwise be read as undirected
     out <- igraph::graph_from_adjacency_matrix(

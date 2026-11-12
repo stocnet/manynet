@@ -162,7 +162,7 @@ is_aperiodic.default <- function(.data, max_path_length = 4) {
 
 #' @export
 is_aperiodic.igraph <- function(.data, max_path_length = 4){
-  # thisRequires("minMSE") # >80x faster than e.g. cheapr::gcd()
+  # snet_requires("minMSE") # >80x faster than e.g. cheapr::gcd()
   if(is_twomode(.data)) return(FALSE)
   snet_info("Obtaining paths no greater than {max_path_length}.")
   # A cycle closes a path of at most `max_path_length` ties with one more, and

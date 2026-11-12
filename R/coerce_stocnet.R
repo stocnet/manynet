@@ -689,7 +689,7 @@ as_siena.default <- function(.data, twomode = FALSE) {
 
 #' @export
 as_siena.stocnet <- function(.data, twomode = FALSE) {
-  thisRequires("RSiena")
+  snet_requires("RSiena")
   x <- .data
   # SIENA holds a missing tie as a missing cell of the array, which it imputes,
   # so the ties recorded as missing join the ties here, marked as such, and the
@@ -858,7 +858,7 @@ as_siena.stocnet <- function(.data, twomode = FALSE) {
 #'   See also [to_mobility()], which gives the moves as a network of places.
 #' @export
 as_monan <- function(.data, layer = NULL, time1, time2) {
-  thisRequires("MoNAn")
+  snet_requires("MoNAn")
   net <- as_stocnet(.data)
   mobility <- .mobility_stays(net, layer = layer)
   stays <- mobility$stays
@@ -1091,7 +1091,7 @@ as_monan <- function(.data, layer = NULL, time1, time2) {
 
 #' @export
 as_stocnet.sienadata <- function(.data, twomode = FALSE, ...) {
-  thisRequires("RSiena")
+  snet_requires("RSiena")
   sd <- .data
   W <- sd$observations
   nsets <- sd$nodeSets

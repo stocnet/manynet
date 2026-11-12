@@ -13,7 +13,7 @@ alive_functions <- function(pattern) {
   keep <- vapply(fns, function(f) {
     fun <- get(f, envir = asNamespace("manynet"))
     is.function(fun) &&
-      !grepl("Deprecated|Defunct|fn_moved",
+      !grepl("Deprecated|Defunct|fn_moved|snet_deprecated|snet_moved",
              paste(deparse(body(fun)), collapse = " "))
   }, logical(1))
   fns[keep]

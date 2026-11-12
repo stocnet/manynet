@@ -1229,7 +1229,7 @@ as_graphAM.default <- function(.data, twomode = NULL) {
 
 #' @export
 as_graphAM.matrix <- function(.data, twomode = NULL) {
-  thisRequires("methods")
+  snet_requires("methods")
   methods::new("graphAM", adjMat = to_onemode(.data), 
                edgemode = ifelse(is_directed(.data), "directed", "undirected"))
 }
