@@ -267,6 +267,46 @@ to_reporters.array <- function(.data){
   lapply(to_reporters.stocnet(as_stocnet(.data, over = "by")), as_matrix)
 }
 
+#' @rdname modif_split
+#' @section `to_targets()`:
+#'   Gossip names in 'about' the node each tie is about, as a cognitive social
+#'   structure names in 'by' the node that reported it.
+#'   `to_targets()` splits gossip into one network for each node, named by its
+#'   label, of the ties about that node, as `to_reporters()` splits reports.
+#'   Ties that are about no node are kept in every network.
+#'   `from_targets()` joins them again.
+#'   A network that names no target is returned as a list of length one.
+#' @examples
+#' to_targets(as_stocnet(array(rbinom(27, 1, 0.5), c(3, 3, 3)),
+#'                       over = "about"))
+#' @export
+to_targets <- function(.data) UseMethod("to_targets")
+
+#' @export
+to_targets.default <- function(.data){
+  lapply(to_targets.stocnet(as_stocnet(.data)), .as_class_of, .data)
+}
+
+#' @export
+to_targets.array <- function(.data){
+  # The third dimension of an array could hold anything, but this function
+  # takes it to hold targets, as its name says.
+  lapply(to_targets.stocnet(as_stocnet(.data, over = "about")), as_matrix)
+}
+
+#' @export
+to_targets.stocnet <- function(.data){
+  ties <- .data$ties
+  if(is.null(ties) || !"about" %in% names(ties) || all(is.na(ties$about))){
+    snet_info("This network names no target for its ties, so is one view.")
+    return(stats::setNames(list(.data), "ties"))
+  }
+  n <- as.numeric(net_nodes(.data))
+  out <- lapply(seq_len(n), function(t) .reporter_slice(.data, t, "about"))
+  names(out) <- .node_names_or_positions(.data)
+  out
+}
+
 #' @export
 to_reporters.stocnet <- function(.data){
   # A network that names no reporter is one view already, as a network that

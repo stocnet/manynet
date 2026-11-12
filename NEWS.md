@@ -161,6 +161,8 @@
   - Renamed `to_flat()` to `to_aggregated()`, which combines layers by default
 - Added `to_looped()` to give every node a loop, as a diagonal of ones
 - Added `to_simplified()` to remove loops and combine parallel ties by a rule
+- Added `to_firsthand()` for the locally aggregated structure of Krackhardt
+- Added `to_targets()` and `from_targets()` to split and join gossip by its targets
 
 ## Describing
 

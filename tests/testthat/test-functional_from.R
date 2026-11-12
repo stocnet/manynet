@@ -28,7 +28,9 @@ pair_fixture_makers <- list(
                                           time = seq_len(10) %% 3 + 1),
   from_subgraphs = function() add_node_attribute(ison_adolescents, "group",
                                                  rep(c("A", "B"), 4)),
-  from_reporters = function() func_fixtures$cognitive
+  from_reporters = function() func_fixtures$cognitive,
+  # gossip, whose ties are each about one of the nodes
+  from_targets   = function() as_stocnet(css_array(), over = "about")
 )
 
 # Required arguments for the to_*() half of a pair

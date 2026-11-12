@@ -8,6 +8,7 @@
 \alias{from_layers}
 \alias{from_ties}
 \alias{from_reporters}
+\alias{from_targets}
 \title{Joining networks along a third dimension}
 \usage{
 from_waves(netlist)
@@ -21,6 +22,8 @@ from_layers(..., layer_names)
 from_ties(..., layer_names)
 
 from_reporters(netlist)
+
+from_targets(netlist)
 }
 \arguments{
 \item{netlist}{A list of network, igraph, tidygraph, matrix, or edgelist
@@ -101,6 +104,13 @@ the nodes in order.
 A node that is not in the list did not report, and so is marked as missing.
 A list of matrices is stacked into an array of one slice per node,
 with \code{NA} in the slice for each non-reporting node.
+
+\code{from_targets()} joins a list of networks, each of the gossip about one
+node, into one network that names that node in 'about'.
+It takes the target of each network from the names of the list,
+as \code{from_reporters()} takes the reporter.
+A node that is not in the list is about nothing, and is not missing,
+since nobody had to gossip about it.
 }
 \examples{
 ison_adolescents |>

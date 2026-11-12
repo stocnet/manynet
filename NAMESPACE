@@ -687,6 +687,9 @@ S3method(to_subgraphs,igraph)
 S3method(to_subgraphs,network)
 S3method(to_subgraphs,stocnet)
 S3method(to_subgraphs,tbl_graph)
+S3method(to_targets,array)
+S3method(to_targets,default)
+S3method(to_targets,stocnet)
 S3method(to_time,default)
 S3method(to_time,igraph)
 S3method(to_time,stocnet)
@@ -831,6 +834,7 @@ export(from_layers)
 export(from_reporters)
 export(from_slices)
 export(from_subgraphs)
+export(from_targets)
 export(from_ties)
 export(from_times)
 export(from_waves)
@@ -1147,6 +1151,7 @@ export(to_disaggregated)
 export(to_dominating)
 export(to_ego)
 export(to_egos)
+export(to_firsthand)
 export(to_flat)
 export(to_geodesic)
 export(to_giant)
@@ -1186,6 +1191,7 @@ export(to_simplified)
 export(to_slices)
 export(to_subgraph)
 export(to_subgraphs)
+export(to_targets)
 export(to_ties)
 export(to_time)
 export(to_times)
@@ -1273,7 +1279,6 @@ importFrom(igraph,
   is_graphical,
   is_igraph,
   is_named,
-  is_simple,
   is_weighted,
   make_ego_graph,
   make_graph,

@@ -6,6 +6,7 @@
 \alias{to_subgraphs}
 \alias{to_layers}
 \alias{to_reporters}
+\alias{to_targets}
 \alias{to_components}
 \alias{to_waves}
 \alias{to_times}
@@ -19,6 +20,8 @@ to_subgraphs(.data, attribute)
 to_layers(.data)
 
 to_reporters(.data)
+
+to_targets(.data)
 
 to_components(.data, connectivity = c("weak", "strong"))
 
@@ -192,6 +195,17 @@ Egocentric data cannot be split this way, since each ego reports on its
 own alters; see \code{to_egos()}.
 }
 
+\section{\code{to_targets()}}{
+
+Gossip names in 'about' the node each tie is about, as a cognitive social
+structure names in 'by' the node that reported it.
+\code{to_targets()} splits gossip into one network for each node, named by its
+label, of the ties about that node, as \code{to_reporters()} splits reports.
+Ties that are about no node are kept in every network.
+\code{from_targets()} joins them again.
+A network that names no target is returned as a list of length one.
+}
+
 \examples{
   to_egos(ison_adolescents)
   # graphs(to_egos(ison_adolescents,2))
@@ -203,8 +217,10 @@ as_tidygraph(create_filled(5)) |>
   mutate_ties(type = sample(c("friend", "enemy"), 10, replace = TRUE)) |>
   to_layers()
 to_reporters(as_stocnet(array(rbinom(27, 1, 0.5), c(3, 3, 3)),
-                        attribute = "by"))
-  to_components(to_uniplex(fict_marvel, "relationship"))
+                        over = "by"))
+to_targets(as_stocnet(array(rbinom(27, 1, 0.5), c(3, 3, 3)),
+                      over = "about"))
+  to_components(to_layer(fict_marvel, "relationship"))
   # Strong decomposition of a directed network returns many small components,
   # ordered here from largest to smallest, so just the largest is shown:
   to_components(fict_starwars, connectivity = "strong")[[1]]
