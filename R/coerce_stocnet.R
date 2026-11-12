@@ -486,8 +486,9 @@ as_stocnet.matrix <- function(.data,
 }
 
 #' @rdname coerce_stocnet
-#' @param attribute For a three-dimensional array, what its third dimension
-#'   holds, which becomes a column of the ties:
+#' @param over For a three-dimensional array, what its third dimension
+#'   runs over, which becomes a column of the ties, as the `over` of
+#'   `to_aggregated()` names the column it combines:
 #'   "time" for the waves of a panel,
 #'   "by" for the reporters of a cognitive social structure,
 #'   "about" for the targets of gossip,
@@ -497,10 +498,22 @@ as_stocnet.matrix <- function(.data,
 #'   it could hold any of them, so this must be given.
 #'   Otherwise it cannot hold reporters or targets, and "time" is assumed.
 #' @param ... Further arguments passed to or from other methods,
-#'   such as `attribute` for an array.
+#'   such as `over` for an array.
+#'   `attribute` is the former name of `over`, and still works.
 #' @export
 as_stocnet.array <- function(.data, twomode = FALSE, ...,
-                             attribute = c("time", "by", "about", "layer")) {
+                             over = c("time", "by", "about", "layer")) {
+  # `over` was called `attribute` until 2.5.0, a name that `to_waves()` uses
+  # for a tie attribute (#182).
+  dots <- list(...)
+  named <- !missing(over)
+  if(!named && !is.null(dots[["attribute"]])){
+    snet_deprecated("as_stocnet(attribute = )", "as_stocnet(over = )",
+                    "superseded")
+    over <- dots[["attribute"]]
+    named <- TRUE
+  }
+  attribute <- over
   d <- dim(.data)
   if(length(d) != 3)
     # a two-dimensional array is a matrix, and is read by the matrix method
@@ -508,15 +521,15 @@ as_stocnet.array <- function(.data, twomode = FALSE, ...,
                "array, but not from an array of {length(d)} dimensions.")
   twomode <- isTRUE(twomode) || d[1] != d[2]
   n <- if(twomode) d[1] + d[2] else d[1]
-  if(missing(attribute)){
+  if(!named){
     if(d[3] == n)
       snet_abort("The third dimension of this array has one slice for each",
                  "node, so it could hold reporters, targets, waves, or layers.",
-                 "Please say which with {.arg attribute},",
-                 "e.g. {.code attribute = \"by\"}.")
+                 "Please say which with {.arg over},",
+                 "e.g. {.code over = \"by\"}.")
     attribute <- "time"
   }
-  attribute <- match.arg(attribute)
+  attribute <- match.arg(attribute, c("time", "by", "about", "layer"))
   if(attribute %in% c("by", "about") && d[3] != n)
     snet_abort("'{attribute}' needs one slice for each of the {n} nodes,",
                "but this array has {d[3]}.")

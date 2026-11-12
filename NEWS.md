@@ -107,6 +107,7 @@
 - Added `as_opinion()` to read a record of opinions as an 'opinionModel'
 - Added `as_mobility()` to read a record of moves as a 'mobilityModel'
 - Fixed `as_igraph()` and `as_tidygraph()` reading edgelist `time` column as weights
+- Renamed `attribute=`to `over=` in `as_stocnet.array()`
 - Improved `as_stocnet.sienadata()` to read SIENA's 10 as a structural zero, not as a non-tie
 - Improved `as_siena.stocnet()` to write a structural zero as SIENA's 10
 

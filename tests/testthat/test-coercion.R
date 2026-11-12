@@ -642,7 +642,7 @@ test_that("coercing to a network keeps what the network knows about itself", {
 
 test_that("a cognitive social structure coerces to an array of every node", {
   arr <- css_array()
-  css <- as_stocnet(arr, attribute = "by")
+  css <- as_stocnet(arr, over = "by")
   expect_equal(as_matrix(css), arr)
   # the reporters are named in every class
   expect_setequal(as_edgelist(css)$by, c("A", "B", "C", "D"))
@@ -667,10 +667,10 @@ test_that("a cognitive social structure coerces to an array of every node", {
 
 test_that("an array coerces to a stocnet once it says what its slices hold", {
   arr <- css_array()
-  expect_error(as_stocnet(arr), "attribute")
-  expect_equal(as_matrix(as_stocnet(arr, attribute = "by")), arr)
-  expect_equal(as_matrix(as_stocnet(arr, attribute = "about")), arr)
-  expect_error(as_stocnet(arr[, , 1:3], attribute = "by"), "one slice for each")
+  expect_error(as_stocnet(arr), "over")
+  expect_equal(as_matrix(as_stocnet(arr, over = "by")), arr)
+  expect_equal(as_matrix(as_stocnet(arr, over = "about")), arr)
+  expect_error(as_stocnet(arr[, , 1:3], over = "by"), "one slice for each")
   # waves are assumed where the slices cannot be one for each node
   waves <- arr[, , 1:3]
   dimnames(waves)[[3]] <- c("1", "2", "3")
@@ -680,17 +680,17 @@ test_that("an array coerces to a stocnet once it says what its slices hold", {
     all(as_matrix(to_time(panel, w)) == waves[, , w]), logical(1))))
   layered <- waves
   dimnames(layered)[[3]] <- c("x", "y", "z")
-  multi <- as_stocnet(layered, attribute = "layer")
+  multi <- as_stocnet(layered, over = "layer")
   expect_equal(multi$info$layers, c("x", "y", "z"))
   for(layer in c("x", "y", "z"))
-    expect_equal(as_matrix(to_uniplex(multi, layer)), layered[, , layer])
+    expect_equal(as_matrix(to_layer(multi, layer)), layered[, , layer])
 })
 
 test_that("a node that did not report misses its whole report", {
   arr <- css_array()
   arr[, , "C"] <- NA
   diag(arr[, , "C"]) <- 0
-  css <- as_stocnet(arr, attribute = "by")
+  css <- as_stocnet(arr, over = "by")
   expect_equal(css$nodes$na, c(FALSE, FALSE, TRUE, FALSE))
   expect_null(css$missings)
   missing <- as_missinglist(css)
@@ -703,10 +703,10 @@ test_that("a node that did not report misses its whole report", {
 })
 
 test_that("a stocnet describes the third node its ties name", {
-  css <- as_stocnet(css_array(), attribute = "by")
+  css <- as_stocnet(css_array(), over = "by")
   expect_match(describe_network(css), "cognitive social structure$")
   expect_match(describe_ties(css), "from 4 reporters$")
-  gossip <- as_stocnet(css_array(), attribute = "about")
+  gossip <- as_stocnet(css_array(), over = "about")
   expect_match(describe_network(gossip), "gossip network$")
   expect_match(describe_ties(gossip), "about 4 targets$")
   expect_equal(describe_network(ison_adolescents), "A labelled, undirected network")
@@ -729,7 +729,7 @@ test_that("a silent reporter is found even where nobody reported a tie", {
   arr <- array(0, dim = c(3, 3, 3), dimnames = list(nodes, nodes, nodes))
   arr[, , "B"] <- NA
   diag(arr[, , "B"]) <- 0
-  css <- as_stocnet(arr, attribute = "by")
+  css <- as_stocnet(arr, over = "by")
   # only B did not report, and not every node whose ties are missing
   expect_equal(css$nodes$na, c(FALSE, TRUE, FALSE))
   expect_null(css$missings)
@@ -760,16 +760,16 @@ test_that("an array warns of a wave that holds no ties", {
   # Such a wave cannot be recorded, which is said rather than hidden
   lull <- array(0, dim = c(3, 3, 2))
   lull[1, 2, 1] <- 1
-  expect_warning(as_stocnet(lull, attribute = "time"), "no ties")
+  expect_warning(as_stocnet(lull, over = "time"), "no ties")
 })
 
 test_that("an array in which nobody reported a tie stays an array of reports", {
   nodes <- c("A", "B", "C")
   empty <- array(0, dim = c(3, 3, 3), dimnames = list(nodes, nodes, nodes))
-  css <- as_stocnet(empty, attribute = "by")
+  css <- as_stocnet(empty, over = "by")
   expect_true(is_cognitive(css))
   expect_equal(as_matrix(css), empty)
-  gossip <- as_stocnet(empty, attribute = "about")
+  gossip <- as_stocnet(empty, over = "about")
   expect_true(is_gossip(gossip))
   expect_equal(as_matrix(gossip), empty)
 })
@@ -816,11 +816,11 @@ test_that("an array of layers keeps the direction of each layer", {
                    dimnames = list(nodes, nodes, c("sym", "asym")))
   layered["a", "b", "sym"] <- layered["b", "a", "sym"] <- 1
   layered["a", "c", "asym"] <- 1
-  multi <- as_stocnet(layered, attribute = "layer")
+  multi <- as_stocnet(layered, over = "layer")
   expect_equal(multi$info$directed, c(sym = FALSE, asym = TRUE))
   expect_equal(sum(multi$ties$layer == "sym"), 1)
   for(layer in c("sym", "asym"))
-    expect_equal(as_matrix(to_uniplex(multi, layer)), layered[, , layer])
+    expect_equal(as_matrix(to_layer(multi, layer)), layered[, , layer])
 })
 
 test_that("a reporter column survives other names for the ends", {
@@ -881,7 +881,7 @@ test_that("from_reporters joins reports as the array route reads them", {
   expect_true(is_cognitive(css))
   # reports built on their own may be undirected, but the join is directed
   expect_equal(as_matrix(css), arr)
-  direct <- as_stocnet(arr, attribute = "by")
+  direct <- as_stocnet(arr, over = "by")
   sorted <- function(x) x$ties[do.call(order, x$ties), ]
   expect_equal(sorted(css), sorted(direct), ignore_attr = TRUE)
   expect_equal(css$nodes, direct$nodes)
@@ -1150,7 +1150,7 @@ test_that("bibliometrix records are read as a network by every function", {
   expect_true(is_multiplex(records))
   expect_false(is_twomode(records))
   # and give back a stocnet, since the records cannot be rebuilt
-  expect_s3_class(to_uniplex(records, "cites"), "stocnet")
+  expect_s3_class(to_layer(records, "cites"), "stocnet")
   expect_s3_class(to_undirected(records), "stocnet")
   expect_equal(as_matrix(to_mode(records, "authors", through = "works"))[
     "SMITH J", "JONES K"], 1)
