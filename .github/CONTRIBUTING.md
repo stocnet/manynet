@@ -229,13 +229,14 @@ not by data structure. When looking for a function, search by what it *does*:
 
 | Prefix | Contains |
 |---|---|
-| `make_*.R` | creating/reading/generating networks: `create_*()` (deterministic structures), `generate_*()` (stochastic mechanisms), `read_*()`/`write_*()` (import/export), `collect_*()` (gathering a network from a source, `make_collect.R`), `play_*()` (diffusion/learning simulations) |
+| `make_*.R` | creating/reading/generating networks: `create_*()` (deterministic structures), `generate_*()` (stochastic mechanisms), `read_*()`/`write_*()` (import/export), `collect_*()` (gathering a network from a source, `make_collect.R`), `play_*()` (diffusion, opinion, and mobility simulations: `make_diffusion.R`, `make_opinion.R`, `make_mobility.R`) |
 | `data_*.R` | documentation of the bundled datasets: `ison_*` classic/instructional, `fict_*` fictional, `irps_*` international-relations (see [Datasets](#datasets)) |
-| `coerce_graph.R`, `coerce_list.R`, `coerce_matrix.R` | the `as_*()` translation layer between representations (`as_igraph()`, `as_tidygraph()`, `as_network()`, `as_matrix()`, `as_edgelist()`, `as_siena()`, `as_diffnet()`, …), implemented as S3 methods dispatching on input class |
-| `class_*.R` | the network classes themselves (`class_stocnet.R`: `make_stocnet()`, `print.stocnet()`, the info/nodes/ties/changes/global data model; `class_networks.R`: the legacy `mnet` class, `print.mnet`, `$`/`$<-` accessors), related result classes (`class_measures.R`, `class_members.R`, `class_motifs.R`, `class_models.R`), the `snet_*()` CLI layer (`class_interface.R`), input validation (`class_validate.R`: `validate_stocnet()` and its component validators), and the `describe_*()` helpers behind the print methods (`class_describe.R`) |
+| `coerce_graph.R`, `coerce_list.R`, `coerce_matrix.R` | the `as_*()` translation layer between representations (`as_igraph()`, `as_tidygraph()`, `as_network()`, `as_matrix()`, `as_edgelist()`, `as_diffnet()`, …), implemented as S3 methods dispatching on input class |
+| `coerce_stocnet.R` | the coercions into a `stocnet` (`as_stocnet()`) and from it into the data of the modelling packages (`as_siena()`, `as_monan()`), and the internal readers of mobility data (`.person_places()`) |
+| `class_*.R` | the network classes themselves (`class_stocnet.R`: `make_stocnet()`, `print.stocnet()`, the info/nodes/ties/changes/globals/missings data model), the derivation of missing ties and structural zeros (`class_missing.R`), related result classes (`class_marks.R`, `class_measures.R`, `class_members.R`, `class_motifs.R`, and `class_play.R` for the model results of `play_*()`), the `snet_*()` CLI layer (`class_interface.R`), input validation (`class_validate.R`: `validate_stocnet()` and its component validators), and the `describe_*()` helpers behind the print methods (`class_describe.R`). The legacy 'mnet' class is gone; its `print.mnet()` shim is in `manynet-defunct.R` |
 | `manip_*.R` | dplyr-style verbs for manipulating nodes/ties/attributes (`manip_nodes.R`, `manip_ties.R`, `manip_globals.R`, `manip_info.R`, `manip_changes.R`) |
 | `mark_*.R` | logical/predicate functions returning `TRUE`/`FALSE` or marks about a network, e.g. the `is_*()` family (`mark_classes.R`, `mark_features.R`, `mark_format.R`, `mark_changes.R`) |
-| `modif_*.R` | structural transformations/reformatting: direction, weighting, projection, splitting (`to_*()`, `modif_split.R`) and joining (`from_*()`, `modif_from.R`), path/level operations, missing data (`modif_direction.R`, `modif_project.R`, `modif_miss.R`, …) |
+| `modif_*.R` | structural transformations/reformatting: direction, weighting, loops (`modif_loops.R`), layers and aggregation (`modif_layers.R`), projection, splitting (`to_*()`, `modif_split.R`) and joining (`from_*()`, `modif_from.R`), path/level operations, missing data (`modif_direction.R`, `modif_project.R`, `modif_miss.R`, …) |
 | `measure_*.R` | descriptive/attribute measures (`measure_attributes.R`, `measure_properties.R`); heavier network-analytic measures live in `{netrics}` |
 | `reexports_classes.R` | re-exports of classes/generics from `{igraph}`/`{tidygraph}`/`{network}` so users need not load those packages directly |
 | `manynet-utils.R`, `manynet-glossary.R`, `manynet-defunct.R` | shared internal helpers, the `gloss()`/glossary system used in tutorials and docs, and defunct-function shims |
@@ -275,6 +276,7 @@ Conventions to preserve when writing or editing functions:
   of a network are the waves of a panel or a stream of events.
 - `nodes`: one row per node. The label column is `label` (not `name`); reserved columns
   are `mode` (multimodal/two-mode), `active`/`present` (changing networks), and `na`.
+  `occupant` names the occupant of each place in a mobility model, with `NA` for an empty place.
 - `ties`: one row per tie. `from` and `to` are required (even for undirected networks)
   and are stored as *integer indices* into `nodes`, not labels — `make_stocnet()`
   matches labels to indices on construction. Reserved columns are `layer` (multiplex),
@@ -339,10 +341,12 @@ Conventions to preserve when writing or editing functions:
   the operation is genuinely graph-theoretic. Return a `stocnet` when you were given one:
   rebuild with `make_stocnet()` so validation and indexing re-run.
 
-The older `mnet` class ([R/class_networks.R](../R/class_networks.R)) — a thin class over
-`igraph`/`tbl_graph`, with `name`-first nodes, `type`/`wave`/`sign` tie attributes, and
-changes stored as a graph attribute — is being progressively deprecated in favour of
-`stocnet`. Keep its methods working, but write new functionality against `stocnet`.
+The older `mnet` class, which `as_tidygraph()` added on top of a `tbl_graph`,
+was removed in 2.5.0. `as_tidygraph()` now returns a plain `tbl_graph`,
+and removes the class from a network saved by an earlier version.
+Only a deprecated `print.mnet()` remains, until the next major version.
+Some comments still name the `mnet` conventions (`name`-first nodes,
+`type`/`wave`/`sign` tie attributes) where code reads data in that older form.
 
 ### Two-mode networks
 
@@ -371,6 +375,9 @@ rather than base `message()`/`stop()`/`warning()` or `{cli}` calls directly:
 | `snet_success()` | confirmation that a requested operation completed |
 | `snet_prompt()` | interactive questions to the user |
 | `snet_unavailable()` | not-yet-implemented features; aborts, as `snet_abort()` does |
+| `snet_deprecated()` | an old name of a function, argument, or value; reports only under 'debug' when "superseded", warns when "deprecated", and aborts when "defunct" |
+| `snet_moved()` | a function that moved to another package; aborts, or warns with `stage = "deprecated"` |
+| `snet_requires()` | a package that a function needs; aborts with the install command where it is missing, and offers to install it only in an interactive session |
 | `snet_progress_step()`, `snet_progress_along()`, `snet_progress_seq()`, `snet_progress_nodes()` | progress reporting in longer-running loops |
 
 One rule decides what the verbosity silences:
@@ -419,7 +426,7 @@ Tests in `tests/testthat/` mostly mirror the `R/` files (e.g. `test-make_create.
 function families.
 Some test files keep an older name than the file they test:
 `test-manip_split.R` tests `R/modif_split.R`, `test-model_play.R` tests `R/make_play.R`,
-and `test-coercion.R` tests all three `R/coerce_*.R` files.
+and `test-coercion.R` tests all four `R/coerce_*.R` files.
 `tests/testthat/helper-manynet.R` defines the shared fixtures and helpers used across
 tests, and `tests/testthat/helper-functional.R` the family-sweeping machinery.
 Test fixtures (Pajek, UCINET, GraphML, xlsx, etc.) live under `tests/testthat/sheets/`.
@@ -449,10 +456,10 @@ saved with `usethis::use_data(<name>, overwrite = TRUE, compress = "bzip2")`,
 and documented in `R/data_ison.R`, `R/data_fict.R`, or `R/data_irps.R`.
 [data-raw/stocnet_conversion.R](../data-raw/stocnet_conversion.R) is the worked example.
 
-- **A new dataset is a `stocnet` object.**
-  Some older datasets are still `mnet` objects, or lists of them,
-  because a released downstream package relies on their class or attribute names;
-  see issues #185 and #186 for which, and for what each waits on.
+- **A dataset is a `stocnet` object.**
+  A dataset that holds several networks is still one `stocnet`:
+  disjoint networks share it with a node attribute that names the part
+  (see `ison_physicians`), and networks on one set of nodes are layers.
 - **Record how the network was collected in `info`,** with `add_info()`:
   `name`, `modes`, `layers`, and `directed` (named per layer where the layers differ);
   `observation`, and `update` where the ties hold moments;
@@ -478,10 +485,20 @@ A function that is renamed, superseded, or moved keeps working under its old nam
 for a time, through a shim in [R/manynet-defunct.R](../R/manynet-defunct.R):
 
 - Document the shim with `#' @describeIn defunct Deprecated on <date>.` and export it.
-- For a rename, call `.Deprecated("<new>", package = "manynet", old = "<old>")`
+- For a rename, call `snet_deprecated("<old>", "<new>")`
   and then the new function, so that the old name still returns a result.
-- For a function moved to another package, call `fn_moved()`,
+- Where a released package that cannot be released again with manynet calls
+  the old name, as migraph 1.7.2 and infernet do in 2.5.0,
+  call `snet_deprecated("<old>", "<new>", "superseded")` for one minor release
+  first, so that the old name works without a warning,
+  and write "Superseded by `<new>()` on <date>" in its `@describeIn` line.
+- For a function moved to another package, call `snet_moved()`,
   which tells the user where it went and how to install that package.
+  With `stage = "deprecated"` it warns instead of aborting,
+  so that the shim can go on to call the function in its new package.
+- For a renamed argument or value, call
+  `snet_deprecated("<old>", "<new>", type = "argument")` (or `type = "value"`),
+  and give the reason or the new call in `why`.
 - A renamed *argument* keeps working under its former name through `...`
   and `.former_args()` (see [R/make_generate.R](../R/make_generate.R)).
 - Record the change as `Renamed ... to ...` or `Moved ...` in `NEWS.md`.

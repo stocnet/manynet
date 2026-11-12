@@ -39,3 +39,35 @@ test_that("the verbosity levels order the reports", {
   expect_message(snet_minor_info("a detail"), "detail")
   expect_message(snet_info("chose a default"), "default")
 })
+
+test_that("snet_deprecated() follows the stages of an old name", {
+  expect_silent(snet_deprecated("old", "new", "superseded"))
+  expect_warning(snet_deprecated("old", "new"), class = "deprecatedWarning")
+  expect_warning(snet_deprecated("old", "new", type = "argument"),
+                 "argument is deprecated")
+  expect_warning(snet_deprecated("x = 1", "x = 2", type = "value",
+                                 why = "Two is more."), "Two is more")
+  expect_error(snet_deprecated("old", "new", "defunct"), class = "defunctError")
+})
+
+test_that("snet_moved() aborts or warns with where the function went", {
+  expect_error(snet_moved("old", "new", "netrics", version = "2.0.0"),
+               class = "defunctError")
+  expect_error(snet_moved("old", "new", "netrics"), "netrics::new")
+  expect_warning(snet_moved("old", "new", "netrics", stage = "deprecated"),
+                 class = "deprecatedWarning")
+})
+
+test_that("snet_requires() aborts for a package that is not installed", {
+  expect_invisible(snet_requires("stats"))
+  expect_error(snet_requires("notapackageatall", ask = FALSE),
+               "install.packages")
+  expect_error(snet_requires("notapackageatall", "to test this", ask = FALSE),
+               "required to test this")
+})
+
+test_that("a renamed argument of to_layer() warns as deprecated", {
+  multi <- as_tidygraph(create_filled(5)) |>
+    mutate_ties(type = rep(c("friend", "enemy"), 5))
+  expect_warning(to_layer(multi, tie = "friend"), class = "deprecatedWarning")
+})

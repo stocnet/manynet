@@ -11,7 +11,7 @@
 #> 
 #> -- Nodes
 #> # A tibble: 36 x 2
-#>   name     Race  
+#>   label    Race  
 #>   <chr>    <chr> 
 #> 1 Aragorn  Human 
 #> 2 Beregond Human 

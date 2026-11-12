@@ -26,7 +26,7 @@ describe_network <- function(.data) {
          ifelse(is_dynamic(.data), "dynamic, ", ""),
          ifelse(is_longitudinal(.data), "longitudinal, ", ""),
          ifelse(is_labelled(.data), "labelled, ", ""),
-         ifelse(is_complex(.data), "complex, ", ""),
+         ifelse(is_looped(.data), "complex, ", ""),
          # A multilevel network whose layers are its levels is multiplex only
          # because it is multilevel, so reporting both says the same thing
          # twice. A layer that is not a level, such as one of the four kinds

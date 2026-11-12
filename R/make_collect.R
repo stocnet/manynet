@@ -155,7 +155,7 @@ q_yes <- function(msg = NULL){
 #'   defined in the directory by default.
 #'
 #'   Both return networks that can be scoped further using, for example,
-#'   [to_ego()], [to_uniplex()], [to_giant()], [delete_isolates()],
+#'   [to_ego()], [to_layer()], [to_giant()], [delete_isolates()],
 #'   [to_blockmodel()], or [to_subgraph()].
 #'
 #'   Each node of the network that `collect_cran()` returns has
@@ -180,12 +180,12 @@ q_yes <- function(msg = NULL){
 #' @return A `tidygraph` object representing the network of package dependencies
 #'   or function dependencies in a package.
 #' @importFrom utils available.packages contrib.url getParseData
-#' @name make_collect
+#' @name make_packages
 #' @family makes
-#' @seealso [to_ego()], [to_uniplex()], [delete_isolates()]
+#' @seealso [to_ego()], [to_layer()], [delete_isolates()]
 NULL
 
-#' @rdname make_collect
+#' @rdname make_packages
 #' @param pkg A character vector of one or more package names,
 #'   from which dependencies are collected.
 #'   By default "all", which collects the dependencies among all the packages
@@ -248,7 +248,7 @@ collect_cran <- function(pkg = "all",
     snet_info("Collected {net_nodes(out)} packages and {net_ties(out)}",
               "dependencies. Consider scoping this network with e.g.",
               "{.fn to_ego}, {.fn to_giant}, {.fn delete_isolates},",
-              "or {.fn to_uniplex}.")
+              "or {.fn to_layer}.")
   out
 }
 
@@ -330,7 +330,7 @@ collect_cran <- function(pkg = "all",
   as_tidygraph(igraph::induced_subgraph(.data, vs))
 }
 
-#' @rdname make_collect
+#' @rdname make_packages
 #' @param dir Character string with the path of the directory in which to
 #'   look for R scripts.
 #'   By default the current working directory.
@@ -451,7 +451,7 @@ collect_pkg <- function(dir = getwd(), external = FALSE) {
 }
 
 # Resolves the left hand side of an assignment to a single name, stripping the
-# backticks or quotes that non-syntactic names such as `print.mnet` arrive with.
+# backticks or quotes that non-syntactic names such as `print.stocnet` arrive with.
 .pkg_symbol <- function(pd, row_of, kids, id) {
   i <- row_of[as.character(id)]
   if (is.na(i)) return(NA_character_)
@@ -1094,4 +1094,1658 @@ collect_emails <- function(file = file.choose(), ego = NULL,
   info$sender <- "addresses"
   info$receiver <- "messages"
   make_stocnet(info = info, nodes = nodes, ties = ties, changes = changes)
+}
+
+# Text ####
+
+#' Making networks from text
+#'
+#' @description
+#' `collect_text()` creates a network from free text,
+#' such as speeches, articles, posts, novels, or the lines of a play.
+#' It splits the text into units, such as documents or sentences,
+#' and ties each unit to the terms it uses, or to the names it mentions.
+#' The result is a two-mode network of units and terms,
+#' from which a network of terms that co-occur, or of units that share terms,
+#' is a projection: see [to_mode()].
+#'
+#' Where the text records who speaks (and to whom),
+#' the result is instead a one-mode network of speakers and what they mention.
+#' @details
+#'   Only base R is used, so no text-mining package is needed.
+#'   Words are lowercased, and a word is a run of letters and digits,
+#'   possibly joined by an apostrophe, as in "let's".
+#'   So punctuation and hyphens separate words.
+#'   For finer control, such as lemmas or only the nouns,
+#'   tokenise the text elsewhere and pass the tokens as a data frame
+#'   (see `text` and `token`).
+#'
+#'   Paragraphs are separated by a blank line,
+#'   and sentences end with a full stop, a question mark, or an
+#'   exclamation mark that is followed by a space.
+#'   Abbreviations such as "e.g." therefore end a sentence too.
+#'
+#'   Where the units are paragraphs, sentences, or windows,
+#'   and there are two or more of them,
+#'   each unit is stamped with its position in the text,
+#'   in a `time` column of the ties, so that [to_time()] and similar can
+#'   scope the network to a part of the text.
+#'   Documents are not stamped, since a corpus need not be in any order.
+#'   Units are positions and not waves or events,
+#'   so the network does not say how one record of a tie updates another.
+#' @section Terms:
+#'   By default, every word is a term.
+#'   Terms are then ordered alphabetically.
+#'   A dictionary in `terms` keeps only the terms it lists,
+#'   in the order it lists them.
+#'   It can be a character vector of terms,
+#'   or a named list, each element of which gives the aliases of one name,
+#'   such as `list(Harry = c("harry", "potter", "the boy who lived"))`.
+#'   A term of several words matches where its words follow one another,
+#'   and the longest match is taken where matches overlap,
+#'   so "harry potter" is one mention of Harry and not two.
+#'   The second mode is called "terms",
+#'   or "characters" where the dictionary is a named list.
+#'
+#'   Stopwords are dropped from the terms and are not scored for sentiment,
+#'   but a term of several words is still matched across them,
+#'   so "bank of england" is found where "of" is a stopword.
+#' @section Speakers:
+#'   A text with speakers, such as a transcript or a play,
+#'   gives a one-mode, directed network.
+#'   With `from` only, each tie runs from the speaker to a term they mention.
+#'   With both `from` and `to`, each tie runs from the speaker to the
+#'   addressee, and the term mentioned is recorded in the 'about' column,
+#'   as in gossip (see [is_gossip()]).
+#'   A unit without a speaker (or an addressee) gives no ties.
+#'   Speakers, addressees, and terms with the same label are one node,
+#'   so name the dictionary entries as the speakers are named,
+#'   since words are lowercased.
+#' @section Sentiment:
+#'   A `lexicon` scores each unit by the sum of the values of its words.
+#'   Where units are nodes, they hold this score as a 'sentiment' attribute.
+#'   Where the text has speakers, the ties from a unit of negative score
+#'   are negative, so that the network is signed (positive and negative
+#'   mentions, or gossip).
+#'   `tidytext::get_sentiments("afinn")` and
+#'   `tidytext::get_sentiments("bing")` are suitable lexicons.
+#' @param text The text, as one or more documents.
+#'   This can be:
+#'   - a character vector, each element of which is one document,
+#'   named by its names if it has any;
+#'   - a data frame with a 'text' column, each row of which is one document,
+#'   named by its 'doc_id', 'document', or 'id' column if it has one;
+#'   further columns become attributes of the units;
+#'   - a data frame with one token in each row,
+#'   such as from `tidytext::unnest_tokens()` or `udpipe::udpipe()`,
+#'   with a 'doc_id', 'document', or 'id' column naming the document of each.
+#'   Paragraph and sentence units need 'paragraph_id' and 'sentence_id'
+#'   columns, as `{udpipe}` gives.
+#' @param unit The unit that ties to terms.
+#'   One of "document" (the default), "paragraph", "sentence",
+#'   or an integer for a moving window of that many words.
+#'   The first mode is named after it, e.g. "sentences".
+#' @param terms The terms to collect.
+#'   By default `NULL`, every word.
+#'   Otherwise a character vector or a named list of aliases (see Terms).
+#' @param stopwords Words to drop.
+#'   A character vector, or a data frame with a 'word' column,
+#'   such as `tidytext::stop_words`.
+#'   By default `NULL`, none.
+#' @param from The speaker of each document.
+#'   The name of a column of `text`,
+#'   or a vector with one value for each document.
+#'   The speaker is the 'from' of the ties of each unit in the document.
+#'   By default `NULL`, no speakers, which gives a two-mode network.
+#' @param to The addressee of each document, given in the same way as `from`.
+#'   The addressee is the 'to' of the ties of each unit in the document.
+#'   Needs `from`.
+#' @param ties How ties are recorded.
+#'   Either "counts" (the default), one tie for each unit and term,
+#'   with the number of times the term is used in the unit as its weight,
+#'   or "tokens", one tie for each use of the term.
+#' @param token The column of a token data frame that holds the term,
+#'   such as "lemma" for `{udpipe}` output.
+#'   By default `NULL`, the 'word' or else the 'token' column.
+#'   Filter the rows first to keep only some parts of speech,
+#'   e.g. `dplyr::filter(tokens, upos == "NOUN")`.
+#' @param lexicon A sentiment dictionary (see Sentiment).
+#'   A named numeric vector of values for words,
+#'   or a data frame with a 'word' column and either a numeric 'value' column
+#'   or a 'sentiment' column of "positive" (+1) and "negative" (-1).
+#'   By default `NULL`, no sentiment.
+#' @return A `stocnet` object.
+#'   A two-mode network of units and terms,
+#'   or, with `from`, a one-mode directed network of speakers and terms.
+#' @family makes
+#' @seealso [to_mode()], [to_normalised()], [to_time()], [as_stocnet()]
+#' @examples
+#' speeches <- c(first = "Trade builds peace. Peace builds trade.",
+#'               second = "War ends trade.\n\nPeace needs work.")
+#' collect_text(speeches)
+#' collect_text(speeches, unit = "sentence", stopwords = c("needs"))
+#' collect_text(speeches, terms = c("peace", "war", "trade")) |>
+#'   to_mode("terms")
+#' play <- data.frame(speaker = c("Ann", "Bob", "Ann"),
+#'                    addressee = c("Bob", "Ann", "Cy"),
+#'                    text = c("Have you seen Cy?", "Cy left with Dee.",
+#'                             "Dee is lovely, Cy is awful."))
+#' cast <- list(Ann = "ann", Bob = "bob", Cy = "cy", Dee = "dee")
+#' collect_text(play, terms = cast, from = "speaker")
+#' collect_text(play, terms = cast, from = "speaker", to = "addressee",
+#'              lexicon = c(lovely = 1, awful = -2))
+#' @name make_text
+#' @export
+collect_text <- function(text, unit = "document", terms = NULL,
+                         stopwords = NULL, from = NULL, to = NULL,
+                         ties = c("counts", "tokens"), token = NULL,
+                         lexicon = NULL) {
+  ties <- match.arg(ties)
+  if (!is.null(to) && is.null(from))
+    snet_abort("{.arg to} needs {.arg from}: name the speaker as well as",
+               "the addressee.")
+  unit <- .text_unit(unit)
+  snet_progress_step("Reading the text")
+  docs <- .text_documents(text, token, from, to)
+  snet_progress_step("Splitting the text into units")
+  split <- .text_units(docs, unit)
+  units <- split$units
+  words <- split$words
+  if (length(words$word) == 0)
+    snet_warn("No words were found in {.arg text}.")
+  stopwords <- .text_stopwords(stopwords)
+  dict <- .text_dictionary(terms)
+  snet_progress_step("Matching terms")
+  found <- .text_match(words, dict, stopwords)
+  lexicon <- .text_lexicon(lexicon)
+  if (!is.null(lexicon))
+    units$sentiment <- .text_sentiment(words, lexicon, stopwords,
+                                       nrow(units))
+  info <- list(name = "Text network", source = "Empirical",
+               method = "Archival")
+  if (is.null(docs$from)) {
+    term_mode <- if (is.list(terms)) "characters" else "terms"
+    .text_twomode(info, units, found, dict, term_mode, ties)
+  } else .text_onemode(info, units, found, dict, ties, signed = !is.null(lexicon))
+}
+
+# Returns "document", "paragraph", "sentence", or a window size.
+.text_unit <- function(unit) {
+  if (is.numeric(unit)) {
+    if (length(unit) != 1 || is.na(unit) || unit < 1 || unit != round(unit))
+      snet_abort("A window {.arg unit} must be a single positive integer,",
+                 "the number of words in each window.")
+    return(as.integer(unit))
+  }
+  if (!is.character(unit) || length(unit) != 1)
+    snet_abort("{.arg unit} must be {.val document}, {.val paragraph},",
+               "{.val sentence}, or a window size.")
+  unit <- sub("s$", "", tolower(unit))
+  if (!unit %in% c("document", "paragraph", "sentence"))
+    snet_abort("{.arg unit} must be {.val document}, {.val paragraph},",
+               "{.val sentence}, or a window size, not {.val {unit}}.")
+  unit
+}
+
+.text_doc_cols <- c("doc_id", "document", "id")
+
+# Returns a list of the documents: their labels, attributes, speakers and
+# addressees, and either their texts or, for a token data frame, their tokens.
+.text_documents <- function(text, token, from, to) {
+  if (is.character(text)) {
+    labels <- names(text)
+    if (is.null(labels) || anyNA(labels) || !all(nzchar(labels)))
+      labels <- paste0("text", seq_along(text))
+    out <- list(label = make.unique(labels), text = unname(text),
+                attrs = NULL)
+    out$from <- .text_party(from, NULL, length(text), "from")
+    out$to <- .text_party(to, NULL, length(text), "to")
+    return(out)
+  }
+  if (!is.data.frame(text))
+    snet_abort("{.arg text} must be a character vector or a data frame,",
+               "not {.cls {class(text)}}.")
+  text <- as.data.frame(text, stringsAsFactors = FALSE)
+  id <- intersect(.text_doc_cols, names(text))[1]
+  if (is.null(token) && "text" %in% names(text)) {
+    labels <- if (is.na(id)) paste0("text", seq_len(nrow(text))) else
+      as.character(text[[id]])
+    keep <- setdiff(names(text), c("text", id, from, to))
+    return(list(label = make.unique(labels),
+                text = as.character(text$text),
+                attrs = text[keep],
+                from = .text_party(from, text, nrow(text), "from"),
+                to = .text_party(to, text, nrow(text), "to")))
+  }
+  if (is.null(token)) {
+    token <- intersect(c("word", "token"), names(text))[1]
+    if (is.na(token))
+      snet_abort("{.arg text} has no {.val text}, {.val word},",
+                 "or {.val token} column.",
+                 "i" = "Name the column of terms with {.arg token}.")
+  } else if (!token %in% names(text))
+    snet_abort("{.val {token}} is not a column of {.arg text}.")
+  if (is.na(id))
+    snet_abort("A data frame of tokens needs a column naming the document",
+               "of each token: {.val {(.text_doc_cols)}}.")
+  doc <- as.character(text[[id]])
+  label <- unique(doc)
+  first <- match(label, doc)
+  list(label = label,
+       tokens = data.frame(doc = match(doc, label),
+                           word = tolower(as.character(text[[token]])),
+                           paragraph = text$paragraph_id %||% NA,
+                           sentence = text$sentence_id %||% NA,
+                           stringsAsFactors = FALSE),
+       attrs = NULL,
+       from = .text_party(from, text, nrow(text), "from")[first],
+       to = .text_party(to, text, nrow(text), "to")[first])
+}
+
+# Returns the speakers (or addressees) as a character vector, from a column
+# name or a vector as long as the text.
+.text_party <- function(x, text, n, arg) {
+  if (is.null(x)) return(NULL)
+  if (!is.null(text) && is.character(x) && length(x) == 1 &&
+      x %in% names(text)) return(as.character(text[[x]]))
+  if (!is.null(text) && is.character(x) && length(x) == 1 && n != 1)
+    snet_abort("{.val {x}} is not a column of {.arg text}.")
+  if (length(x) != n)
+    snet_abort("{.arg {arg}} must be a column of {.arg text} or a vector",
+               "of {n} value{?s}, one for each document.")
+  as.character(x)
+}
+
+# Words are lowercased runs of letters and digits, joined by apostrophes.
+.text_words <- function(x) {
+  x <- tolower(enc2utf8(as.character(x)))
+  x[is.na(x)] <- ""
+  regmatches(x, gregexpr("[\\p{L}\\p{N}]+(?:['’][\\p{L}\\p{N}]+)*", x,
+                         perl = TRUE))
+}
+
+.text_split <- function(x, unit) {
+  x <- enc2utf8(as.character(x))
+  x[is.na(x)] <- ""
+  parts <- strsplit(x, "\n[[:blank:]]*\n", perl = TRUE)
+  if (unit == "sentence")
+    parts <- lapply(parts, function(p)
+      unlist(strsplit(p, "(?<=[.!?]|[.!?][\"'’”)])\\s+", perl = TRUE)))
+  lapply(parts, function(p) p[grepl("\\S", p)])
+}
+
+# Returns the units, one row each with its label, document, position, and
+# speakers, and the words, one row each with the unit it belongs to.
+.text_units <- function(docs, unit) {
+  n <- length(docs$label)
+  if (!is.null(docs$tokens)) {
+    tok <- docs$tokens
+    if (identical(unit, "document") || is.integer(unit)) {
+      piece <- tok$doc
+    } else {
+      col <- tok[[unit]]
+      if (all(is.na(col)))
+        snet_abort("A data frame of tokens needs a {.val {paste0(unit, '_id')}}",
+                   "column for {.val {unit}} units.")
+      piece <- match(paste(tok$doc, col), unique(paste(tok$doc, col)))
+    }
+    pdoc <- tok$doc[!duplicated(piece)]
+    words <- split(tok$word, factor(piece, levels = unique(piece)))
+  } else if (identical(unit, "document") || is.integer(unit)) {
+    pdoc <- seq_len(n)
+    words <- .text_words(docs$text)
+  } else {
+    parts <- .text_split(docs$text, unit)
+    pdoc <- rep(seq_len(n), lengths(parts))
+    words <- .text_words(unlist(parts))
+  }
+  words <- unname(words)
+  if (is.integer(unit)) {
+    # every run of `unit` consecutive words of a document is a window
+    starts <- lapply(lengths(words), function(k)
+      seq_len(max(1L, k - unit + 1L)))
+    pdoc <- rep(pdoc, lengths(starts))
+    words <- unlist(Map(function(w, s)
+      lapply(s, function(i) w[i:min(length(w), i + unit - 1L)])[seq_along(s)],
+      words, starts), recursive = FALSE)
+    words <- lapply(words, function(w) w[!is.na(w)])
+  }
+  within <- stats::ave(pdoc, pdoc, FUN = seq_along)
+  label <- if (identical(unit, "document")) docs$label[pdoc] else
+    paste(docs$label[pdoc], within, sep = ".")
+  units <- data.frame(label = label, stringsAsFactors = FALSE)
+  if (!identical(unit, "document")) units$document <- docs$label[pdoc]
+  if (!is.null(docs$attrs) && ncol(docs$attrs) > 0)
+    units <- cbind(units, docs$attrs[pdoc, , drop = FALSE])
+  # documents need not be in any order, but the parts of a document are
+  if (!identical(unit, "document")) units$time <- seq_along(pdoc)
+  units$from <- docs$from[pdoc]
+  units$to <- docs$to[pdoc]
+  units$mode <- if (is.integer(unit)) "windows" else paste0(unit, "s")
+  rownames(units) <- NULL
+  list(units = units,
+       words = data.frame(unit = rep(seq_along(words), lengths(words)),
+                          word = unlist(words) %||% character(0),
+                          stringsAsFactors = FALSE))
+}
+
+.text_stopwords <- function(stopwords) {
+  if (is.null(stopwords)) return(character(0))
+  if (is.data.frame(stopwords)) {
+    if (!"word" %in% names(stopwords))
+      snet_abort("A data frame of {.arg stopwords} needs a {.val word} column.")
+    stopwords <- stopwords$word
+  }
+  if (!is.character(stopwords))
+    snet_abort("{.arg stopwords} must be a character vector or a data frame",
+               "with a {.val word} column.")
+  unique(tolower(stopwords))
+}
+
+# Returns the dictionary as a data frame of aliases, each with the label of
+# its term and its words, or NULL where every word is a term.
+.text_dictionary <- function(terms) {
+  if (is.null(terms)) return(NULL)
+  if (is.list(terms)) {
+    if (is.null(names(terms)) || any(!nzchar(names(terms))))
+      snet_abort("A list of {.arg terms} must name each of its elements,",
+                 "e.g. {.code list(Harry = c(\"harry\", \"potter\"))}.")
+    label <- rep(names(terms), lengths(terms))
+    alias <- unlist(terms, use.names = FALSE)
+  } else if (is.character(terms)) {
+    label <- alias <- terms
+  } else snet_abort("{.arg terms} must be NULL, a character vector,",
+                    "or a named list of aliases.")
+  dict <- data.frame(label = as.character(label), stringsAsFactors = FALSE)
+  dict$words <- .text_words(alias)
+  dict <- dict[lengths(dict$words) > 0, ]
+  dict[!duplicated(vapply(dict$words, paste, character(1), collapse = " ")), ]
+}
+
+# Returns the terms found, one row for each use, with its unit and label.
+.text_match <- function(words, dict, stopwords) {
+  if (is.null(dict)) {
+    out <- words[!words$word %in% stopwords, ]
+    return(data.frame(unit = out$unit, term = out$word,
+                      stringsAsFactors = FALSE))
+  }
+  w <- words$word
+  u <- words$unit
+  n <- length(w)
+  hits <- lapply(seq_len(nrow(dict)), function(d) {
+    a <- dict$words[[d]]
+    m <- length(a)
+    if (n < m) return(NULL)
+    s <- seq_len(n - m + 1L)
+    ok <- rep(TRUE, length(s))
+    for (k in seq_len(m))
+      ok <- ok & w[s + k - 1L] == a[k] & u[s + k - 1L] == u[s]
+    s <- s[ok]
+    if (length(s) == 0) return(NULL)
+    data.frame(start = s, end = s + m - 1L, entry = d)
+  })
+  hits <- do.call(rbind, hits)
+  if (is.null(hits)) return(data.frame(unit = integer(0), term = character(0)))
+  # where matches overlap, the one that starts first, and then the longest,
+  # is taken, so that "harry potter" is not also a mention of "potter"
+  hits <- hits[order(hits$start, -(hits$end - hits$start), hits$entry), ]
+  if (any(hits$end > hits$start) || anyDuplicated(hits$start)) {
+    keep <- logical(nrow(hits))
+    last <- 0L
+    for (i in seq_len(nrow(hits))) {
+      if (hits$start[i] > last) {
+        keep[i] <- TRUE
+        last <- hits$end[i]
+      }
+    }
+    hits <- hits[keep, ]
+  }
+  out <- data.frame(unit = u[hits$start], term = dict$label[hits$entry],
+                    stringsAsFactors = FALSE)
+  out[!tolower(out$term) %in% stopwords, ]
+}
+
+# Returns a named numeric vector of the value of each word.
+.text_lexicon <- function(lexicon) {
+  if (is.null(lexicon)) return(NULL)
+  if (is.data.frame(lexicon)) {
+    if (!"word" %in% names(lexicon))
+      snet_abort("A data frame {.arg lexicon} needs a {.val word} column.")
+    if ("value" %in% names(lexicon) && is.numeric(lexicon$value)) {
+      value <- lexicon$value
+    } else if ("sentiment" %in% names(lexicon)) {
+      value <- c(positive = 1, negative = -1)[as.character(lexicon$sentiment)]
+    } else snet_abort("A data frame {.arg lexicon} needs a numeric",
+                      "{.val value} column or a {.val sentiment} column",
+                      "of {.val positive} and {.val negative}.")
+    lexicon <- stats::setNames(unname(value), lexicon$word)
+  }
+  if (!is.numeric(lexicon) || is.null(names(lexicon)))
+    snet_abort("{.arg lexicon} must be a named numeric vector or a data frame",
+               "with a {.val word} column.")
+  lexicon <- lexicon[!is.na(lexicon)]
+  names(lexicon) <- tolower(names(lexicon))
+  lexicon[!duplicated(names(lexicon))]
+}
+
+# Returns the score of each unit: the sum of the values of its words.
+.text_sentiment <- function(words, lexicon, stopwords, n) {
+  value <- unname(lexicon[words$word])
+  value[is.na(value) | words$word %in% stopwords] <- 0
+  out <- vapply(split(value, factor(words$unit, levels = seq_len(n))), sum,
+                numeric(1))
+  unname(out)
+}
+
+# Counts uses by the columns given, keeping the first row of each group.
+.text_count <- function(df, by) {
+  key <- do.call(paste, c(df[by], sep = "\r"))
+  first <- !duplicated(key)
+  out <- df[first, , drop = FALSE]
+  out$weight <- as.integer(table(factor(key, levels = key[first])))
+  out
+}
+
+# A two-mode network ties each unit to the terms it uses.
+.text_twomode <- function(info, units, found, dict, term_mode, ties) {
+  terms <- if (is.null(dict)) sort(unique(found$term), method = "radix") else
+    unique(dict$label)
+  unit_mode <- units$mode[1] %||% "documents"
+  nu <- nrow(units)
+  out <- data.frame(from = found$unit, to = nu + match(found$term, terms))
+  if (!is.null(units$time)) out$time <- units$time[found$unit]
+  out <- out[order(out$from, out$to), , drop = FALSE]
+  if (ties == "counts") out <- .text_count(out, c("from", "to"))
+  rownames(out) <- NULL
+  if (nu < 2) out$time <- NULL
+  units$from <- units$to <- NULL
+  nodes <- dplyr::bind_rows(units[c("label", "mode", setdiff(names(units),
+                                                             c("label", "mode", "time")))],
+                            data.frame(label = terms, mode = rep(term_mode,
+                                                                 length(terms)),
+                                       stringsAsFactors = FALSE))
+  info$directed <- FALSE
+  info$modes <- c(unit_mode, term_mode)
+  info$sender <- unit_mode
+  info$receiver <- term_mode
+  snet_info("Collected {length(terms)} term{?s} from {nu} unit{?s}.")
+  make_stocnet(info = info, nodes = nodes, ties = out)
+}
+
+# A one-mode network ties each speaker to what they mention, or to whom they
+# address, with what they mention recorded as 'about'.
+.text_onemode <- function(info, units, found, dict, ties, signed) {
+  gossip <- !is.null(units$to)
+  spoken <- !is.na(units$from)
+  if (gossip) spoken <- spoken & !is.na(units$to)
+  if (!all(spoken))
+    snet_info("Dropping {sum(!spoken)} unit{?s} without a speaker",
+              if (gossip) "or an addressee." else ".")
+  found <- found[spoken[found$unit], , drop = FALSE]
+  terms <- if (is.null(dict)) sort(unique(found$term), method = "radix") else
+    unique(dict$label)
+  labels <- unique(c(units$from[spoken], if (gossip) units$to[spoken],
+                     terms[terms %in% found$term]))
+  out <- data.frame(from = match(units$from[found$unit], labels))
+  if (gossip) {
+    out$to <- match(units$to[found$unit], labels)
+    out$about <- match(found$term, labels)
+  } else out$to <- match(found$term, labels)
+  if (!is.null(units$time)) out$time <- units$time[found$unit]
+  if (signed) out$sign <- ifelse(units$sentiment[found$unit] < 0, -1L, 1L)
+  out <- out[do.call(order, out[intersect(c("time", "from", "to", "about"),
+                                          names(out))]), , drop = FALSE]
+  if (ties == "counts") {
+    by <- setdiff(names(out), "sign")
+    out <- .text_count(out, c(by, if (signed) "sign"))
+    if (signed) out$weight <- out$weight * out$sign
+    out$sign <- NULL
+  } else if (signed) {
+    out$weight <- out$sign
+    out$sign <- NULL
+  }
+  rownames(out) <- NULL
+  if (nrow(units) < 2) out$time <- NULL
+  info$directed <- TRUE
+  if (signed) info$signed <- TRUE
+  snet_info("Collected {length(labels)} node{?s} from {nrow(units)} unit{?s}.")
+  make_stocnet(info = info, nodes = data.frame(label = labels,
+                                               stringsAsFactors = FALSE),
+               ties = out)
+}
+
+# Bibliography ####
+
+#' Making networks from bibliographic records
+#'
+#' @description
+#' `collect_bibliography()` creates a network from bibliographic records,
+#' such as an export from the Web of Science, Scopus, or OpenAlex.
+#' The result is one multimodal network of the works,
+#' their authors, their keywords, and their sources,
+#' in which the works also cite one another.
+#' The classic bibliometric networks, such as co-citation,
+#' bibliographic coupling, co-authorship, and co-word networks,
+#' are then projections or proximities of this network
+#' (see Recipes).
+#' @details
+#'   Only base R is used, so no bibliometric package is needed.
+#'   The records can come from:
+#'   - `bibliometrix::convert2df()`, a data frame with one record in each row
+#'   and the fields of the Web of Science as its columns:
+#'   'AU' (authors), 'CR' (cited references), 'DE' (author keywords),
+#'   'ID' (indexed keywords), 'SO' (source), 'PY' (year), 'DI' (DOI),
+#'   'TI' (title), and 'SR' (a short label);
+#'   - `openalexR::oa_fetch()`, a data frame of works with the columns
+#'   'id', 'display_name', 'authorships' (or 'author'), 'publication_year',
+#'   'doi', 'source_display_name' (or 'so'), 'referenced_works',
+#'   'keywords', and 'concepts' or 'topics';
+#'   - a BibTeX or BibLaTeX file, such as the BibTeX export of the
+#'   Web of Science, which holds the cited references of each record in its
+#'   'cited-references' field.
+#'   A file that Zotero exports holds no cited references,
+#'   so it gives works, authors, keywords, and sources, but no citations.
+#'   The editors of a work are its authors where it has no authors.
+#'   Records in other forms can be given as a data frame with the
+#'   columns of `{bibliometrix}`.
+#'
+#'   The network has four modes and four layers:
+#'
+#'   | Layer | From | To | Directed |
+#'   |:------|:-----|:---|:---------|
+#'   | "cites" | works | works | yes |
+#'   | "authored" | authors | works | no |
+#'   | "tagged" | works | keywords | no |
+#'   | "published" | works | sources | no |
+#'
+#'   A mode or layer with no nodes or ties is left out.
+#'   The works have a 'citations' column with the number of times
+#'   the database counts them as cited, in all the works it holds
+#'   ('TC' in `{bibliometrix}`, 'cited_by_count' in OpenAlex,
+#'   or 'times-cited' in BibTeX), where it gives one.
+#'   This is the global citation count.
+#'   The local citation count, how often the records cite a work,
+#'   is the indegree of the work in the "cites" layer.
+#'   Each "authored" tie has the position of its author among the authors
+#'   of the work in a 'position' column, 1 for the first author,
+#'   since some counts weight the first or last authors more.
+#'   Each tie has the publication year of its work as its 'time',
+#'   and for "cites" this is the year of the citing work.
+#'   Since a work that is published stays published, and a citation stays
+#'   made, the ties are events that increment the network,
+#'   so `to_time(.data, 2010)` gives the literature up to 2010.
+#' @section Cited works:
+#'   A cited reference becomes a tie to a work.
+#'   The reference is matched to a work in the records where possible:
+#'
+#'   1. by a normalised string of its first author, year, and source,
+#'   as the Web of Science writes references
+#'   (e.g. "GLANZEL W, 1996, SCIENTOMETRICS"),
+#'   where this string identifies one record
+#'   (the 'SR' column of `{bibliometrix}`, or else the same string made
+#'   from the first author, year, and source of the record);
+#'   2. else by its DOI, where both the reference and the record have one;
+#'   3. else by its OpenAlex identifier, for OpenAlex records.
+#'
+#'   A reference that matches no record is a work too,
+#'   since co-citation is about the works cited, most of which are not
+#'   in the records.
+#'   These works have `FALSE` in the 'recorded' column of the nodes,
+#'   so `filter_nodes(.data, recorded | is.na(recorded))` keeps only
+#'   the works in the records (and the other modes).
+#'   They are not inactive, since they hold ties.
+#'   References that are not matched to a record are one work
+#'   where they have the same normalised string of first author, year,
+#'   and source, as in `{bibliometrix}`, whether or not they give a DOI.
+#'   The 'doi' of such a work is the first DOI that its references give.
+#'   Two works of an author in the same year and source are therefore
+#'   one work, even where their DOIs differ,
+#'   and a work that is written differently in two references,
+#'   such as with another spelling of its author, is two works.
+#'   A reference that matches the record that cites it is another work,
+#'   since a work does not cite itself.
+#'   Scopus writes references in another order,
+#'   so its references are matched to records only by DOI.
+#' @section Recipes:
+#'   The classic networks come from the existing functions:
+#'
+#'   | Network | Recipe |
+#'   |:--------|:-------|
+#'   | citation | `to_layer(.data, "cites")` |
+#'   | co-citation | `to_proximity(to_layer(.data, "cites"), across = "columns")` |
+#'   | bibliographic coupling | `to_proximity(to_layer(.data, "cites"), across = "rows")` |
+#'   | co-authorship | `to_mode(.data, "authors", through = "works", similarity = "fractional")` |
+#'   | co-word | `to_mode(.data, "keywords", through = "works")` |
+#'   | authors and keywords | `to_twomode(.data, through = c("works", "sources"))` |
+#'
+#'   Co-citation ties two works that are cited by the same work,
+#'   and coupling ties two works that cite the same work,
+#'   in both cases weighted by the number of such works.
+#'   "fractional" counting shares each work among its authors,
+#'   so that a work of many authors does not dominate
+#'   (Perianes-Rodriguez, Waltman, and van Eck 2016);
+#'   use "count" for full counting.
+#'   See [to_mode()] for other similarities,
+#'   such as "association" strength.
+#' @param records The bibliographic records.
+#'   A data frame from `{bibliometrix}` or `{openalexR}`,
+#'   or the path to a BibTeX or BibLaTeX file (see Details).
+#' @param keywords Which keywords to collect.
+#'   One of "author" (the default), the keywords that the authors give
+#'   ('DE', or 'keywords' in BibTeX and OpenAlex),
+#'   "indexed", the keywords that the database adds
+#'   ('ID', 'keywords-plus' in BibTeX, or the concepts or topics of OpenAlex),
+#'   or "both".
+#'   Keywords are lowercased.
+#' @return A `stocnet` object.
+#'   A multimodal, multiplex network of works, authors, keywords,
+#'   and sources.
+#' @family makes
+#' @seealso [to_layer()], [to_proximity()], [to_mode()], [to_time()]
+#' @references
+#' Perianes-Rodriguez, Antonio, Ludo Waltman, and Nees Jan van Eck. 2016.
+#' "Constructing bibliometric networks: A comparison between full and
+#' fractional counting".
+#' _Journal of Informetrics_, 10(4): 1178-1195.
+#' \doi{10.1016/j.joi.2016.10.006}
+#' @examples
+#' records <- data.frame(
+#'   SR = c("SMITH J, 2001, SCIENTOMETRICS", "JONES K, 2003, SCIENTOMETRICS",
+#'          "LI X, 2005, J INFORMETR"),
+#'   AU = c("SMITH J;JONES K", "JONES K", "LI X;SMITH J"),
+#'   TI = c("Citations", "Coupling", "Co-words"),
+#'   PY = c(2001, 2003, 2005),
+#'   SO = c("SCIENTOMETRICS", "SCIENTOMETRICS", "J INFORMETR"),
+#'   DE = c("citation; network", "coupling; network", "network"),
+#'   CR = c("PRICE DJD, 1965, SCIENCE, V149, P510",
+#'          "SMITH J, 2001, SCIENTOMETRICS, V50, P1; PRICE DJD, 1965, SCIENCE",
+#'          "SMITH J, 2001, SCIENTOMETRICS; JONES K, 2003, SCIENTOMETRICS"))
+#' (bib <- collect_bibliography(records))
+#' to_layer(bib, "cites") |> to_proximity(across = "columns")
+#' to_mode(bib, "authors", through = "works", similarity = "fractional")
+#' @name make_bibliography
+#' @export
+collect_bibliography <- function(records,
+                                 keywords = c("author", "indexed", "both")) {
+  keywords <- match.arg(keywords)
+  snet_progress_step("Reading the records")
+  recs <- .bib_records(records, keywords)
+  if (length(recs$label) == 0)
+    snet_abort("No records were found in {.arg records}.")
+  snet_progress_step("Matching cited references to works")
+  works <- .bib_match(recs)
+  .bib_network(recs, works)
+}
+
+# Returns the records in one form: a list with, for each record, its label,
+# title, year, DOI, OpenAlex identifier, and source, and lists of its
+# authors, keywords, and references, and whether references are identifiers.
+.bib_records <- function(records, keywords) {
+  if (is.character(records) && length(records) == 1) {
+    if (!file.exists(records))
+      snet_abort("The file {.file {records}} does not exist.")
+    return(.bib_from_bibtex(.bib_parse(records), keywords))
+  }
+  if (!is.data.frame(records))
+    snet_abort("{.arg records} must be a data frame or the path to a",
+               "BibTeX file, not {.cls {class(records)}}.")
+  records <- as.data.frame(records, stringsAsFactors = FALSE)
+  if ("referenced_works" %in% names(records) ||
+      any(c("authorships", "publication_year") %in% names(records)))
+    return(.bib_from_openalex(records, keywords))
+  if ("AU" %in% names(records))
+    return(.bib_from_fields(records, keywords))
+  snet_abort("{.arg records} is not a data frame of bibliographic records.",
+             "i" = "Give the columns of {.pkg bibliometrix}, such as",
+             " " = "{.val AU}, {.val CR}, {.val PY}, and {.val SO},",
+             "i" = "or the columns of {.pkg openalexR}, such as",
+             " " = "{.val id} and {.val referenced_works}.")
+}
+
+# Returns a column as a character vector, or NAs where it is absent.
+.bib_col <- function(df, col, n = nrow(df)) {
+  if (!col %in% names(df)) return(rep(NA_character_, n))
+  x <- as.character(df[[col]])
+  x[!is.na(x) & !nzchar(trimws(x))] <- NA
+  x
+}
+
+# Splits each of a vector of fields into trimmed, non-empty items.
+.bib_split <- function(x, sep = ";") {
+  x <- as.character(x)
+  x[is.na(x)] <- ""
+  lapply(strsplit(x, sep, perl = TRUE), function(i) {
+    i <- trimws(gsub("\\s+", " ", i))
+    i[nzchar(i) & i != "NA"]
+  })
+}
+
+.bib_keywords <- function(author, indexed, keywords) {
+  out <- switch(keywords, author = author, indexed = indexed,
+                both = Map(c, author, indexed))
+  lapply(out, function(k) unique(tolower(k)))
+}
+
+# A label in the form the Web of Science gives cited references,
+# "AUTHOR, YEAR, SOURCE", for records that have no label of their own.
+.bib_label <- function(authors, year, source) {
+  first <- vapply(authors, function(a) if (length(a)) a[1] else NA_character_,
+                  character(1))
+  parts <- cbind(first, as.character(year), source)
+  out <- apply(parts, 1, function(p) paste(p[!is.na(p)], collapse = ", "))
+  out[!nzchar(out)] <- "work"
+  out
+}
+
+.bib_from_fields <- function(df, keywords) {
+  n <- nrow(df)
+  authors <- .bib_split(.bib_col(df, "AU"))
+  year <- suppressWarnings(as.integer(.bib_col(df, "PY")))
+  source <- trimws(.bib_col(df, "SO"))
+  label <- .bib_col(df, "SR")
+  label[is.na(label)] <- .bib_label(authors, year, source)[is.na(label)]
+  # bibliometrix reads "DOI;" for "DOI " in some exports
+  refs <- .bib_split(gsub("DOI;", "DOI ", .bib_col(df, "CR"), fixed = TRUE))
+  # some DOIs hold a semicolon, as in "...<1:AID-ASI1>3.0.CO;2-9", and the
+  # pieces they are split into are joined again, since every reference
+  # of the Web of Science separates its author and year with a comma
+  refs <- lapply(refs, function(r) {
+    if (length(r) < 2) return(r)
+    tail <- !grepl(",", r) & c(FALSE, rep(TRUE, length(r) - 1))
+    if (!any(tail)) return(r)
+    group <- cumsum(!tail)
+    unname(vapply(split(r, group), paste, character(1), collapse = ";"))
+  })
+  list(label = label, key = label, title = .bib_col(df, "TI"), year = year,
+       citations = .bib_count(.bib_col(df, "TC")),
+       doi = .bib_doi(.bib_col(df, "DI")), id = rep(NA_character_, n),
+       source = source, authors = authors,
+       keywords = .bib_keywords(.bib_split(.bib_col(df, "DE")),
+                                .bib_split(.bib_col(df, "ID")), keywords),
+       refs = refs, ids = FALSE)
+}
+
+# Returns the values of a column of a list column of data frames
+# (or vectors), one character vector for each record.
+.bib_nested <- function(x, cols) {
+  if (is.null(x)) return(NULL)
+  lapply(x, function(i) {
+    if (is.null(i) || (length(i) == 1 && is.atomic(i) && is.na(i)))
+      return(character(0))
+    if (is.data.frame(i)) {
+      col <- intersect(cols, names(i))[1]
+      if (is.na(col)) return(character(0))
+      if ("type" %in% names(i) && "topic" %in% i$type) i <- i[i$type == "topic", ]
+      return(as.character(i[[col]][!is.na(i[[col]])]))
+    }
+    as.character(unlist(i))
+  })
+}
+
+.bib_from_openalex <- function(df, keywords) {
+  n <- nrow(df)
+  none <- rep(list(character(0)), n)
+  authors <- .bib_nested(df$authorships, c("display_name", "au_display_name")) %||%
+    .bib_nested(df$author, c("au_display_name", "display_name")) %||% none
+  year <- suppressWarnings(as.integer(.bib_col(df, "publication_year")))
+  source <- .bib_col(df, "source_display_name")
+  if (all(is.na(source))) source <- .bib_col(df, "so")
+  title <- .bib_col(df, "display_name")
+  if (all(is.na(title))) title <- .bib_col(df, "title")
+  author_kw <- .bib_nested(df$keywords, c("display_name", "keyword")) %||% none
+  indexed_kw <- .bib_nested(df$concepts, "display_name") %||%
+    .bib_nested(df$topics, "display_name") %||% none
+  refs <- .bib_nested(df$referenced_works, "id") %||% none
+  list(label = .bib_label(authors, year, source),
+       key = rep(NA_character_, n), title = title, year = year,
+       citations = .bib_count(.bib_col(df, "cited_by_count")),
+       doi = .bib_doi(.bib_col(df, "doi")),
+       id = .bib_openalex_id(.bib_col(df, "id")), source = source,
+       authors = authors,
+       keywords = .bib_keywords(author_kw, indexed_kw, keywords),
+       refs = lapply(refs, .bib_openalex_id), ids = TRUE)
+}
+
+# Writes names as the Web of Science does in references, "LEE A" for
+# "Lee, Ann" or "Ann Lee".
+.bib_short_name <- function(x) {
+  if (length(x) == 0) return(x)
+  comma <- grepl(",", x, fixed = TRUE)
+  surname <- ifelse(comma, sub(",.*", "", x), sub(".*\\s", "", x))
+  given <- ifelse(comma, sub("^[^,]*,", "", x),
+                  ifelse(grepl("\\s", x), sub("\\s+\\S+$", "", x), ""))
+  initials <- vapply(strsplit(trimws(given), "[[:space:].-]+"), function(g)
+    paste(substr(g[nzchar(g)], 1, 1), collapse = ""), character(1))
+  trimws(toupper(paste(surname, initials)))
+}
+
+# Reads a count of citations, which some exports write as "12 times".
+.bib_count <- function(x) {
+  suppressWarnings(as.integer(sub("^\\D*(\\d+).*$", "\\1", x)))
+}
+
+.bib_openalex_id <- function(x) toupper(sub("^https?://openalex\\.org/", "", x))
+
+.bib_from_bibtex <- function(entries, keywords) {
+  field <- function(f) vapply(entries, function(e) {
+    v <- e[[f]]
+    if (is.null(v)) NA_character_ else v
+  }, character(1))
+  # an edited book has editors and no authors
+  people <- field("author")
+  people[is.na(people)] <- field("editor")[is.na(people)]
+  authors <- .bib_split(people, "\\s+and\\s+")
+  # BibLaTeX, as Zotero can export, gives a date and a journal title
+  year <- field("year")
+  year[is.na(year)] <- field("date")[is.na(year)]
+  year <- suppressWarnings(as.integer(sub(".*?(\\d{4}).*", "\\1", year)))
+  source <- field("journal")
+  for (f in c("journaltitle", "booktitle", "publisher", "school", "institution"))
+    source[is.na(source)] <- field(f)[is.na(source)]
+  refs <- field("cited-references")
+  refs[is.na(refs)] <- field("references")[is.na(refs)]
+  label <- vapply(entries, function(e) e$.key %||% NA_character_, character(1))
+  label[is.na(label)] <- .bib_label(authors, year, source)[is.na(label)]
+  list(label = label,
+       key = .bib_label(lapply(authors, .bib_short_name), year, source),
+       title = field("title"), year = year,
+       citations = .bib_count(field("times-cited")),
+       doi = .bib_doi(field("doi")), id = rep(NA_character_, length(entries)),
+       source = source, authors = authors,
+       keywords = .bib_keywords(.bib_split(field("keywords"), "[;,]"),
+                                .bib_split(field("keywords-plus"), "[;,]"),
+                                keywords),
+       refs = .bib_split(refs, "\n|;"), ids = FALSE)
+}
+
+# Reads a BibTeX file into a list of entries, each a named list of fields,
+# with the citation key as '.key'. Field names are lowercased, braces are
+# dropped, and white space is collapsed except for newlines.
+.bib_parse <- function(file) {
+  txt <- paste(readLines(file, warn = FALSE, encoding = "UTF-8"),
+               collapse = "\n")
+  ch <- strsplit(txt, "", fixed = TRUE)[[1]]
+  if (length(ch) == 0) return(list())
+  depth <- cumsum((ch == "{") - (ch == "}"))
+  at <- gregexpr("@[A-Za-z]+[[:space:]]*\\{", txt)[[1]]
+  if (at[1] == -1) return(list())
+  ends <- at + attr(at, "match.length") - 1L
+  types <- tolower(gsub("[@{[:space:]]", "", regmatches(txt, list(at))[[1]]))
+  entries <- list()
+  for (i in seq_along(at)) {
+    if (types[i] %in% c("comment", "string", "preamble")) next
+    open <- ends[i]
+    close <- which(depth[(open + 1L):length(ch)] == depth[open] - 1L)[1]
+    if (is.na(close)) next
+    body <- paste(ch[(open + 1L):(open + close - 1L)], collapse = "")
+    entries[[length(entries) + 1L]] <- .bib_parse_entry(body)
+  }
+  entries
+}
+
+.bib_parse_entry <- function(body) {
+  comma <- regexpr(",", body, fixed = TRUE)
+  if (comma == -1) return(list(.key = trimws(body)))
+  out <- list(.key = trimws(substr(body, 1, comma - 1)))
+  rest <- substr(body, comma + 1, nchar(body))
+  repeat {
+    m <- regexpr("^[[:space:],]*([A-Za-z][A-Za-z0-9_:.+-]*)[[:space:]]*=[[:space:]]*",
+                 rest, perl = TRUE)
+    if (m == -1) break
+    name <- tolower(gsub("[[:space:],=]", "", regmatches(rest, m)))
+    rest <- substr(rest, attr(m, "match.length") + 1, nchar(rest))
+    first <- substr(rest, 1, 1)
+    if (first %in% c("{", "\"")) {
+      ch <- strsplit(rest, "", fixed = TRUE)[[1]]
+      depth <- cumsum((ch == "{") - (ch == "}"))
+      end <- if (first == "{") which(depth == 0)[1] else
+        which(ch == "\"" & depth == 0 & seq_along(ch) > 1)[1]
+      if (is.na(end)) end <- length(ch)
+      value <- paste(ch[2:max(2, end - 1)], collapse = "")
+      if (end < 2) value <- ""
+      rest <- substr(rest, end + 1, nchar(rest))
+    } else {
+      end <- regexpr(",", rest, fixed = TRUE)
+      if (end == -1) end <- nchar(rest) + 1
+      value <- substr(rest, 1, end - 1)
+      rest <- substr(rest, end, nchar(rest))
+    }
+    value <- gsub("[{}]", "", value)
+    value <- gsub("[ \t\r]+", " ", value)
+    value <- trimws(gsub(" ?\n ?", "\n", value))
+    if (name != "cited-references" && name != "references")
+      value <- gsub("\n", " ", value)
+    out[[name]] <- value
+  }
+  out
+}
+
+# Returns DOIs in one form: lowercased, without a resolver, and without
+# trailing punctuation.
+.bib_doi <- function(x) {
+  x <- tolower(trimws(x))
+  x <- sub("^(https?://)?(dx\\.)?doi\\.org/", "", x)
+  x <- sub("^doi:?\\s*", "", x)
+  x <- sub("[.,;)]+$", "", x)
+  x[!grepl("^10\\.", x)] <- NA
+  x
+}
+
+# Returns the DOI that a cited reference names, if any.
+.bib_ref_doi <- function(refs) {
+  # a semicolon that is not followed by a space is part of the DOI
+  m <- regmatches(refs, regexpr("10\\.[0-9]{4,9}/(?:[^\\s,;]|;(?=[^\\s;]))+",
+                                refs, perl = TRUE), invert = NA)
+  .bib_doi(vapply(m, function(p) if (length(p) == 3) p[2] else NA_character_,
+                  character(1)))
+}
+
+# Normalises a reference or a label for matching: uppercase letters and
+# digits only, separated by single spaces.
+.bib_normalise <- function(x) {
+  x <- toupper(x)
+  x <- gsub("[^[:alnum:]]+", " ", x)
+  trimws(x)
+}
+
+# The "AUTHOR, YEAR, SOURCE" key of a Web of Science reference.
+.bib_ref_key <- function(refs) {
+  parts <- strsplit(refs, ",", fixed = TRUE)
+  out <- vapply(parts, function(p) paste(p[seq_len(min(3, length(p)))],
+                                         collapse = " "), character(1))
+  .bib_normalise(out)
+}
+
+# Returns the works: the records, then each cited work that matches no
+# record, with the work that each reference of each record cites.
+.bib_match <- function(recs) {
+  n <- length(recs$label)
+  ref <- unlist(recs$refs) %||% character(0)
+  citing <- rep(seq_len(n), lengths(recs$refs))
+  target <- rep(NA_integer_, length(ref))
+  if (isTRUE(recs$ids)) {
+    target <- match(ref, recs$id)
+    identity <- ref
+    doi <- rep(NA_character_, length(ref))
+  } else {
+    doi <- .bib_ref_doi(ref)
+    ref_key <- .bib_ref_key(ref)
+    # a cited work is named by its first author, year, and source, as in
+    # bibliometrix, whether or not a reference to it gives a DOI
+    key <- .bib_normalise(recs$key)
+    key[duplicated(key) | duplicated(key, fromLast = TRUE)] <- NA
+    target <- match(ref_key, key, incomparables = NA)
+    # the DOI matches only where the key does not, as for Scopus references
+    by_doi <- match(doi, recs$doi, incomparables = NA)
+    target[is.na(target)] <- by_doi[is.na(target)]
+    # a work does not cite itself, so a reference that matches the record
+    # that cites it is another work, such as another paper of the same
+    # author, year, and source
+    target[!is.na(target) & target == citing] <- NA
+    identity <- ref_key
+  }
+  # references to no record are works of their own, one for each identity
+  other <- is.na(target)
+  ids <- unique(identity[other])
+  target[other] <- n + match(identity[other], ids)
+  # the first reference with a DOI names a work, where it has one
+  first <- match(ids, identity[order(is.na(doi))])
+  first <- order(is.na(doi))[first]
+  cited <- ref[first]
+  if (isTRUE(recs$ids)) {
+    label <- cited
+    year <- rep(NA_integer_, length(ids))
+  } else {
+    parts <- strsplit(cited, ",", fixed = TRUE)
+    label <- vapply(parts, function(p)
+      paste(trimws(p[seq_len(min(3, length(p)))]), collapse = ", "),
+      character(1))
+    year <- vapply(parts, function(p) {
+      y <- if (length(p) > 1) trimws(p[2]) else NA_character_
+      if (!is.na(y) && grepl("^[0-9]{4}$", y)) as.integer(y) else NA_integer_
+    }, integer(1))
+  }
+  works <- data.frame(label = c(recs$label, label),
+                      title = c(recs$title, rep(NA_character_, length(ids))),
+                      year = c(recs$year, year),
+                      citations = c(recs$citations,
+                                    rep(NA_integer_, length(ids))),
+                      doi = c(recs$doi, doi[first]),
+                      reference = c(rep(NA_character_, n),
+                                    if (isTRUE(recs$ids)) rep(NA_character_,
+                                                              length(ids)) else cited),
+                      recorded = rep(c(TRUE, FALSE), c(n, length(ids))),
+                      stringsAsFactors = FALSE)
+  if (all(is.na(works$citations))) works$citations <- NULL
+  if (isTRUE(recs$ids)) works$openalex <- c(recs$id, ids)
+  # a work does not cite itself, and cites another work once
+  cites <- data.frame(from = citing, to = target)
+  cites <- cites[cites$from != cites$to & !duplicated(cites), , drop = FALSE]
+  matched <- sum(target[!other] <= n)
+  snet_info("Matched {matched} of {length(ref)} reference{?s} to records,",
+            "and {length(ids)} other cited work{?s}.")
+  list(works = works, cites = cites,
+       references = data.frame(citing = citing, cited = target))
+}
+
+# Builds the network of works, authors, keywords, and sources.
+.bib_network <- function(recs, works) {
+  n <- length(recs$label)
+  nodes <- works$works
+  nodes$label <- make.unique(nodes$label, sep = " ")
+  nodes$mode <- "works"
+  nw <- nrow(nodes)
+  incidence <- function(items, mode, layer, from_works) {
+    rec <- rep(seq_len(n), lengths(items))
+    item <- unlist(items) %||% character(0)
+    position <- unlist(lapply(lengths(items), seq_len)) %||% integer(0)
+    keep <- !duplicated(paste(rec, item, sep = "\r"))
+    rec <- rec[keep]
+    item <- item[keep]
+    labels <- unique(item)
+    list(nodes = data.frame(label = labels, mode = rep(mode, length(labels)),
+                            stringsAsFactors = FALSE),
+         rec = rec, item = match(item, labels), layer = layer,
+         from_works = from_works, position = position[keep])
+  }
+  parts <- list(incidence(recs$authors, "authors", "authored", FALSE),
+                incidence(recs$keywords, "keywords", "tagged", TRUE),
+                incidence(lapply(recs$source, function(s) s[!is.na(s)]),
+                          "sources", "published", TRUE))
+  parts <- parts[vapply(parts, function(p) nrow(p$nodes) > 0, logical(1))]
+  ties <- data.frame(from = works$cites$from, to = works$cites$to,
+                     layer = rep("cites", nrow(works$cites)),
+                     time = recs$year[works$cites$from],
+                     position = rep(NA_integer_, nrow(works$cites)))
+  offset <- nw
+  for (p in parts) {
+    other <- offset + p$item
+    ties <- rbind(ties, data.frame(
+      from = if (p$from_works) p$rec else other,
+      to = if (p$from_works) other else p$rec,
+      layer = rep(p$layer, length(p$rec)), time = recs$year[p$rec],
+      # the order of the authors of a work matters to some counts
+      position = if (p$layer == "authored") p$position else
+        rep(NA_integer_, length(p$rec))))
+    p$nodes$label <- make.unique(p$nodes$label, sep = " ")
+    nodes <- dplyr::bind_rows(nodes, p$nodes)
+    offset <- offset + nrow(p$nodes)
+  }
+  if (all(is.na(ties$time))) ties$time <- NULL
+  if (all(is.na(ties$position))) ties$position <- NULL
+  nodes <- nodes[c("label", "mode", setdiff(names(nodes), c("label", "mode")))]
+  layers <- unique(ties$layer)
+  modes <- unique(nodes$mode)
+  ends <- list(cites = c("works", "works"), authored = c("authors", "works"),
+               tagged = c("works", "keywords"), published = c("works", "sources"))[layers]
+  info <- list(name = "Bibliographic network", source = "Empirical",
+               method = "Archival", observation = "event",
+               modes = modes, layers = layers,
+               directed = stats::setNames(layers == "cites", layers),
+               sender = vapply(ends, `[`, character(1), 1),
+               receiver = vapply(ends, `[`, character(1), 2))
+  if (!is.null(ties$time)) info$update <- "increment"
+  snet_info("Collected {n} record{?s} and {nrow(works$works) - n} other",
+            "cited work{?s}.")
+  make_stocnet(info = info, nodes = nodes, ties = ties)
+}
+
+# Statements ####
+
+#' Making networks by coding texts
+#'
+#' @description
+#' `collect_statements()` creates a network by coding a text interactively.
+#' It shows each sentence (or paragraph, or document) of the text in turn,
+#' and asks which concepts it is about,
+#' who says so, and whether they agree or disagree.
+#' A unit can hold several statements, or none.
+#'
+#' Where the coder names who speaks, the result is a discourse network:
+#' a two-mode, signed network of speakers and concepts,
+#' in the form of `irps_nuclear`.
+#' Each statement is one tie from a speaker to a concept,
+#' with its sign, +1 (agreement) or -1 (disagreement), as its weight.
+#'
+#' Where the coder names no speaker, the tie is from the document itself,
+#' as in the qualitative coding of a literature review,
+#' where each abstract is coded for the topics it is about.
+#' Where the coder gives no sign, the tie has none.
+#' The result is then a two-mode network of documents and concepts,
+#' and `to_mode(.data, "concepts")` gives the concepts that the same
+#' documents are about.
+#'
+#' Coding can stop at any unit and continue later:
+#' pass the network that was coded so far as `.data`,
+#' and coding starts again after the last unit that holds a statement.
+#' A coder who is unsure can enter "?" to come back to a unit or a sign later.
+#' A unit skipped in this way is shown again at the end of the pass.
+#' Where it is still skipped, or coding stops first,
+#' the network records it in `info$uncoded`,
+#' and shows it again first where the network is given as `.data`.
+#' `info$uncoded` is removed once every unit is coded.
+#' @details
+#'   Paragraphs and sentences are found as in [collect_text()]:
+#'   paragraphs are separated by a blank line,
+#'   and sentences end with a full stop, a question mark, or an
+#'   exclamation mark that is followed by a space.
+#'
+#'   For each statement, enter:
+#'   1. the concept, as a name, or the number of a name in the roster
+#'   that is shown, or nothing (press \[Enter\]) to go to the next unit;
+#'   2. who says so, in the same way, or nothing for the document itself;
+#'   or "?" at either, to skip the rest of the unit and come back to it;
+#'   3. "+" (or "agree", "yes", "1") or "-" (or "disagree", "no", "-1")
+#'   for the sign, nothing for no sign, or "?" where the sign is unclear.
+#'
+#'   Where a name is part of names that are already known,
+#'   these names are shown, so that one of them can be chosen by its number.
+#'   Enter the same name again to add it as a new name.
+#'   Enter "q" at any prompt to stop coding and return the network
+#'   coded so far.
+#'
+#'   The roster holds the speakers and concepts given in `roster`,
+#'   those of `.data`, and those coded so far.
+#'   The names of a roster are numbered where it holds 20 names or fewer.
+#'
+#'   Each tie records the 'document' of its statement,
+#'   and the number of its 'sentence' or 'paragraph' in the document.
+#'   The 'date' (or 'time') of a document is the 'time' of its ties,
+#'   where `text` gives one.
+#'   Statements are events that add to the discourse,
+#'   so `to_time(.data, as.Date("2011-06-01"))` gives the discourse up to
+#'   that date.
+#'
+#'   Where some ties are signed and others not, the ties without a sign
+#'   have a missing weight, as do the ties of an unknown sign.
+#'   A tie of missing weight is present, but of unknown value.
+#'   So in a signed network given as `.data`,
+#'   every tie of missing weight is shown again to be coded,
+#'   with its unit where `text` holds it.
+#'   Enter "?" or nothing to leave the sign unknown.
+#'
+#'   A network given as `.data` is coded in this order:
+#'   first the units in `info$uncoded`, with the statements coded in them
+#'   already, then the ties of unknown sign,
+#'   then the units after the last one that holds a statement or is
+#'   still to code, and last, once more, the units skipped in this pass.
+#'   A unit still to code that is not in `text` is dropped, with a warning,
+#'   so give the same `text` each time.
+#'   Where both speakers and documents make statements,
+#'   the network has three modes: documents, speakers, and concepts.
+#' @section Coding after collecting text:
+#'   Coding by hand is slow, but the coder reads what a text means,
+#'   and not only the words it uses.
+#'   [collect_text()] is fast, and finds the words that a text uses.
+#'   The two can be used in sequence:
+#'   collect the terms of a text first,
+#'   and offer them to the coder as the roster of concepts,
+#'   so that the coder picks from the same names throughout.
+#'   A network in `roster` gives the nodes of its last mode as the concepts.
+#'
+#'   ```
+#'   terms <- collect_text(abstracts, terms = dictionary)
+#'   coded <- collect_statements(abstracts, unit = "document", roster = terms)
+#'   to_mode(coded, "concepts")
+#'   ```
+#' @section Recipes:
+#'   The ties of speakers who make the same statements
+#'   form a network of discourse coalitions.
+#'   [to_mode()] projects the statements onto the speakers,
+#'   with `similarity = "agreement"` counting the pairs of statements
+#'   in which two speakers agree about a concept,
+#'   `"disagreement"` the pairs in which they disagree,
+#'   and `"signed"` the difference.
+#'   A projection does not keep the time of the statements,
+#'   so take moving windows of the statements with [to_times()] first,
+#'   and project each window:
+#'
+#'   ```
+#'   dates <- seq(as.Date("2011-03-15"), as.Date("2011-06-15"), by = "month")
+#'   windows <- to_times(irps_nuclear, dates, window = 30)
+#'   coalitions <- lapply(windows, to_mode, "speakers", similarity = "agreement")
+#'   ```
+#'
+#'   Each window holds the statements of the 30 days up to its date.
+#' @param text The text to code, as one or more documents.
+#'   A character vector, each element of which is one document,
+#'   named by its names if it has any,
+#'   or a data frame with a 'text' column, each row of which is one document,
+#'   named by its 'doc_id', 'document', or 'id' column if it has one,
+#'   and dated by its 'date' or 'time' column if it has one.
+#' @param unit The unit of text to show at each step.
+#'   One of "sentence" (the default), "paragraph", or "document".
+#' @param roster The names of nodes to offer for each mode.
+#'   A list of two character vectors, the speakers and the concepts,
+#'   named by their modes or in that order.
+#'   One character vector, or a network such as from [collect_text()],
+#'   gives only the concepts.
+#'   By default `NULL`, only the nodes of `.data` and those coded so far.
+#' @param .data A network that is coded in part,
+#'   such as an earlier result of `collect_statements()`.
+#'   By default `NULL`, a new network.
+#' @return A `stocnet` object.
+#'   A two-mode network of speakers (or documents) and concepts,
+#'   signed where the coder gives signs.
+#' @family makes
+#' @seealso [collect_text()], [to_mode()], [to_times()]
+#' @examples
+#' dates <- seq(as.Date("2011-03-15"), as.Date("2011-06-15"), by = "month")
+#' windows <- to_times(irps_nuclear, dates, window = 30)
+#' lapply(windows, to_mode, "speakers", similarity = "agreement")
+#' \dontrun{
+#' speeches <- data.frame(doc_id = c("a", "b"),
+#'                        date = as.Date(c("2011-03-14", "2011-03-15")),
+#'                        text = c("Merkel wants a moratorium. Greens agree.",
+#'                                 "Industry rejects any exit."))
+#' coded <- collect_statements(speeches, roster = "nuclear exit")
+#' # stop with "q", then continue later
+#' coded <- collect_statements(speeches, .data = coded)
+#' }
+#' @name make_statements
+#' @export
+collect_statements <- function(text, unit = "sentence", roster = NULL,
+                               .data = NULL) {
+  # nocov start
+  snet_minor_info("Make sure you assign this function, e.g.",
+                  "{.code obj <- collect_statements(text)}")
+  unit <- .statement_unit(unit)
+  units <- .statement_units(text, unit)
+  coded <- .statement_coded(.data)
+  roster <- .statement_roster(roster, coded)
+  session <- .statement_session(units, coded, roster, unit, answer = readline)
+  .statement_network(session$found, session$coded, session$uncoded)
+  # nocov end
+}
+
+# Returns "sentence", "paragraph", or "document".
+.statement_unit <- function(unit) {
+  if (is.numeric(unit))
+    snet_abort("{.arg unit} must be {.val sentence}, {.val paragraph},",
+               "or {.val document}: windows of words are not coded by hand.")
+  .text_unit(unit)
+}
+
+# Returns the units of the text, one row each with its document,
+# its number in the document, its text, and the time of its document.
+.statement_units <- function(text, unit) {
+  docs <- .text_documents(text, NULL, NULL, NULL)
+  if (!is.null(docs$tokens))
+    snet_abort("{.arg text} must hold the texts in a {.val text} column,",
+               "not one token in each row.")
+  parts <- if (unit == "document")
+    lapply(docs$text, function(x) x[!is.na(x) & grepl("\\S", x)]) else
+      .text_split(docs$text, unit)
+  doc <- rep(seq_along(docs$label), lengths(parts))
+  if (length(doc) == 0)
+    snet_abort("No text was found in {.arg text}.")
+  out <- data.frame(document = docs$label[doc], stringsAsFactors = FALSE)
+  if (unit != "document") out[[unit]] <- stats::ave(doc, doc, FUN = seq_along)
+  out$text <- unlist(parts)
+  stamp <- c(intersect(c("date", "time"), names(docs$attrs)), NA)[1]
+  if (!is.na(stamp)) out$time <- docs$attrs[[stamp]][doc]
+  out
+}
+
+# Returns the statements of a network coded in part, as labels,
+# with its modes, nodes, and info.
+# A statement of a document has no speaker.
+.statement_coded <- function(.data) {
+  if (is.null(.data))
+    return(list(modes = c("speakers", "concepts"),
+                statements = NULL, nodes = NULL, info = NULL))
+  .data <- as_stocnet(.data)
+  nodes <- as.data.frame(.data$nodes, stringsAsFactors = FALSE)
+  all_modes <- .data$info$modes
+  if (is.null(nodes$mode) || length(all_modes) < 2)
+    snet_abort("{.arg .data} must be a two-mode network of speakers (or",
+               "documents) and concepts, such as {.code irps_nuclear}.")
+  concepts <- .data$info$receiver %||% all_modes[length(all_modes)]
+  senders <- setdiff(.data$info$sender %||% all_modes, concepts)
+  speakers <- c(setdiff(senders, "documents"), "speakers")[1]
+  modes <- c(speakers, concepts)
+  ties <- as.data.frame(.data$ties, stringsAsFactors = FALSE)
+  by_document <- nodes$mode[ties$from] == "documents"
+  ties$speaker <- ifelse(by_document, NA_character_, nodes$label[ties$from])
+  ties$concept <- nodes$label[ties$to]
+  if (is.null(ties$document) && any(by_document))
+    ties$document <- ifelse(by_document, nodes$label[ties$from], NA)
+  ties$from <- ties$to <- NULL
+  # in a signed network, a tie of missing weight has a sign still to code
+  ties$unknown <- if (is.null(ties$weight)) rep(FALSE, nrow(ties)) else
+    is.na(ties$weight)
+  list(modes = modes, statements = ties, nodes = nodes, info = .data$info,
+       uncoded = .data$info$uncoded,
+       speakers = nodes$label[nodes$mode == modes[1]],
+       concepts = nodes$label[nodes$mode == modes[2]])
+}
+
+# Returns the names to offer for each mode: those given and those of .data.
+.statement_roster <- function(roster, coded) {
+  if (is.null(roster)) roster <- list(NULL, NULL)
+  if (is_manynet(roster)) {
+    net <- as_stocnet(roster)
+    modes <- net$info$modes
+    roster <- list(NULL, if (length(modes) > 1)
+      net$nodes$label[net$nodes$mode == modes[length(modes)]] else
+        net$nodes$label)
+  }
+  if (is.character(roster)) roster <- list(NULL, roster)
+  if (!is.list(roster) || length(roster) != 2)
+    snet_abort("{.arg roster} must be a list of two character vectors,",
+               "the names of the speakers and of the concepts,",
+               "or a network of concepts.")
+  if (!is.null(names(roster)) && all(coded$modes %in% names(roster)))
+    roster <- roster[coded$modes]
+  list(speakers = unique(as.character(c(roster[[1]], coded$speakers))),
+       concepts = unique(as.character(c(roster[[2]], coded$concepts))))
+}
+
+# Returns the first unit that follows the last one with a statement,
+# or the last one still to code.
+.statement_start <- function(units, coded, unit) {
+  keys <- .statement_key(units, units)
+  done <- c(match(.statement_key(coded$statements, units), keys),
+            match(.statement_key(coded$uncoded, units), keys))
+  if (all(is.na(done))) 1L else max(done, na.rm = TRUE) + 1L
+}
+
+# Asks for the statements of the units in `which`, reading each answer with
+# `answer()`. Returns the statements, the units skipped with "?", the units not
+# reached where coding was stopped, and the roster with the names coded.
+# `known` holds statements coded before, which are shown with their unit.
+.statement_code <- function(units, which, roster, unit = "sentence",
+                            answer = readline, known = NULL) {
+  rows <- list()
+  stopped <- FALSE
+  skipped <- integer(0)
+  n <- nrow(units)
+  of_document <- if (unit == "document") "the document" else
+    paste("the document of this", unit)
+  keys <- .statement_key(units, units)
+  known_keys <- if (!is.null(known)) .statement_key(known, units)
+  done <- 0L
+  for (i in which) {
+    passage <- units$text[i]
+    document <- units$document[i]
+    snet_prompt("{tools::toTitleCase(unit)} {i} of {n} ({.val {document}}):")
+    snet_prompt("{.strong {passage}}")
+    before <- if (!is.null(known)) known[known_keys %in% keys[i], , drop = FALSE]
+    if (!is.null(before) && nrow(before) > 0) {
+      coded_before <- paste0(ifelse(is.na(before$speaker), "the document",
+                                    before$speaker), " - ", before$concept,
+                             ifelse(is.na(before$weight), "",
+                                    paste0(" (", sprintf("%+d", before$weight),
+                                           ")")), collapse = "; ")
+      snet_prompt("Coded already: {coded_before}")
+    }
+    repeat {
+      concept <- .statement_ask(paste("Which concept is this about?",
+                                      "[Enter] for the next", unit,
+                                      "or {.val ?} to come back to it,"),
+                                roster$concepts, answer)
+      if (concept == "q") stopped <- TRUE
+      if (concept == "?") skipped <- c(skipped, i)
+      if (concept %in% c("", "q", "?")) break
+      speaker <- .statement_ask(paste("Who says so? [Enter] for",
+                                      of_document,
+                                      "or {.val ?} to come back to it,"),
+                                roster$speakers, answer)
+      if (speaker == "q") stopped <- TRUE
+      if (speaker == "?") skipped <- c(skipped, i)
+      if (speaker %in% c("q", "?")) break
+      if (speaker == "") speaker <- NA_character_
+      who <- if (is.na(speaker)) "the document" else speaker
+      sign <- .statement_ask_sign(who, concept, answer)
+      if (identical(sign, "q")) {
+        stopped <- TRUE
+        break
+      }
+      row <- data.frame(speaker = speaker, concept = concept,
+                        weight = if (is.character(sign)) NA_integer_ else sign,
+                        unknown = identical(sign, "?"),
+                        document = document, stringsAsFactors = FALSE)
+      if (unit != "document") row[[unit]] <- units[[unit]][i]
+      if (!is.null(units$time)) row$time <- units$time[i]
+      rows[[length(rows) + 1]] <- row
+      if (!is.na(speaker))
+        roster$speakers <- unique(c(roster$speakers, speaker))
+      roster$concepts <- unique(c(roster$concepts, concept))
+    }
+    if (stopped) break
+    done <- done + 1L
+  }
+  if (stopped) snet_info("Stopped coding at {unit} {i} of {n}.")
+  # a unit where coding stopped is not coded to its end
+  unreached <- if (stopped) which[seq_along(which) > done] else integer(0)
+  list(statements = if (length(rows) > 0) do.call(rbind, rows),
+       skipped = unique(skipped), unreached = unreached,
+       stopped = stopped, roster = roster)
+}
+
+# Returns a key for each row of `df` that names its unit of `units`.
+.statement_key <- function(df, units) {
+  at <- intersect(c("document", "sentence", "paragraph"), names(units))
+  if (is.null(df) || !all(at %in% names(df))) return(rep(NA_character_, NROW(df)))
+  do.call(paste, c(unname(as.list(as.data.frame(df)[at])), sep = "\r"))
+}
+
+# Codes the units still to code first, then the unknown signs, then the units
+# after the last one coded, and then once more the units skipped in that pass.
+# Returns the statements found, those coded before, and the units still to code.
+.statement_session <- function(units, coded, roster, unit,
+                               answer = readline) {
+  keys <- .statement_key(units, units)
+  start <- .statement_start(units, coded, unit)
+  pending <- match(.statement_key(coded$uncoded, units), keys)
+  if (anyNA(pending))
+    snet_warn("{sum(is.na(pending))} unit{?s} still to code {?is/are} not in",
+              "{.arg text}, and {?is/are} dropped.")
+  pending <- sort(unique(pending[!is.na(pending)]))
+  found <- NULL
+  left <- integer(0)
+  stopped <- FALSE
+  code <- function(which, known) {
+    res <- .statement_code(units, which, roster, unit, answer, known = known)
+    roster <<- res$roster
+    found <<- rbind(found, res$statements)
+    stopped <<- res$stopped
+    res
+  }
+  if (length(pending) > 0) {
+    snet_info("Coding the {length(pending)} {unit}{?s} left to code before.")
+    res <- code(pending, coded$statements)
+    left <- c(left, res$skipped, res$unreached)
+  }
+  if (!stopped) {
+    again <- .statement_revisit(units, coded, unit, answer)
+    coded <- again$coded
+    stopped <- again$stopped
+  }
+  if (!stopped) {
+    if (start > 1)
+      snet_info("Continuing after {unit} {start - 1} of {nrow(units)}.")
+    res <- code(setdiff(seq_len(nrow(units))[seq_len(nrow(units)) >= start],
+                        pending), NULL)
+    skipped <- res$skipped
+    if (!stopped && length(skipped) > 0) {
+      snet_info("Coming back to the {length(skipped)} {unit}{?s} skipped.")
+      res <- code(skipped, found)
+      skipped <- c(res$skipped, res$unreached)
+    }
+    left <- c(left, skipped)
+  }
+  left <- sort(unique(left))
+  uncoded <- units[left, intersect(c("document", unit), names(units)),
+                   drop = FALSE]
+  rownames(uncoded) <- NULL
+  list(found = list(statements = found), coded = coded, uncoded = uncoded,
+       stopped = stopped)
+}
+
+# Asks for the sign of a statement, and returns +1, -1, NA for no sign,
+# "?" for an unknown sign, or "q" to stop.
+.statement_ask_sign <- function(who, concept, answer, again = FALSE) {
+  hint <- if (again) "[Enter] or {.val ?} to leave it unknown," else
+    "[Enter] for no sign, {.val ?} if unsure,"
+  repeat {
+    snet_prompt("Does {.val {who}} agree (+) or disagree (-)",
+                "with {.val {concept}}?", hint, "or {.val q} to stop.")
+    got <- trimws(answer())
+    if (is.na(got) || got == "q") return("q")
+    if (got == "?" || (again && got == "")) return("?")
+    if (got == "") return(NA_integer_)
+    sign <- .statement_sign(got)
+    if (!is.na(sign)) return(sign)
+  }
+}
+
+# Asks again for the signs that are unknown in a network coded in part,
+# and returns its statements with whether coding was stopped.
+.statement_revisit <- function(units, coded, unit, answer = readline) {
+  st <- coded$statements
+  todo <- which(st$unknown %in% TRUE)
+  stopped <- FALSE
+  if (length(todo) == 0) return(list(coded = coded, stopped = FALSE))
+  at <- intersect(c("document", unit), names(units))
+  key <- function(df) do.call(paste, unname(as.list(df[at])))
+  where <- if (all(at %in% names(st))) match(key(st), key(units)) else
+    rep(NA_integer_, nrow(st))
+  for (k in seq_along(todo)) {
+    j <- todo[k]
+    snet_prompt("Statement {k} of {length(todo)} with an unknown sign",
+                "({.val {st$document[j]}}):")
+    if (!is.na(where[j])) {
+      passage <- units$text[where[j]]
+      snet_prompt("{.strong {passage}}")
+    }
+    who <- if (is.na(st$speaker[j])) "the document" else st$speaker[j]
+    sign <- .statement_ask_sign(who, st$concept[j], answer, again = TRUE)
+    if (identical(sign, "q")) {
+      stopped <- TRUE
+      break
+    }
+    if (!identical(sign, "?")) {
+      st$weight[j] <- sign
+      st$unknown[j] <- FALSE
+    }
+  }
+  left <- sum(st$unknown %in% TRUE)
+  snet_info("{left} sign{?s} {?is/are} still unknown.")
+  coded$statements <- st
+  list(coded = coded, stopped = stopped)
+}
+
+# Asks for a name from a roster, and returns it, "" for none, or "q" to stop.
+.statement_ask <- function(question, roster, answer) {
+  numbered <- length(roster) > 0 && length(roster) <= 20
+  snet_prompt(question, "or {.val q} to stop.")
+  if (numbered) {
+    listed <- paste0(seq_along(roster), ": ", roster, collapse = "; ")
+    snet_prompt("{listed}")
+  }
+  last <- NULL
+  repeat {
+    got <- trimws(answer())
+    if (is.na(got) || got %in% c("", "q", "?"))
+      return(if (is.na(got)) "q" else got)
+    pick <- .statement_pick(got, roster, again = identical(got, last))
+    if (!is.null(pick$label)) return(pick$label)
+    last <- got
+    similar <- roster[pick$matches]
+    snet_prompt("Do you mean {.or {.val {similar}}}?",
+                "Enter its number, or {.val {got}} again to add it as new.")
+    listed <- paste0(pick$matches, ": ", similar, collapse = "; ")
+    snet_prompt("{listed}")
+  }
+}
+
+# Returns the name an answer picks from a roster: by its number, by its name
+# in any case, or as a new name where no name in the roster contains it
+# (or the answer is repeated). Otherwise returns the names that contain it.
+.statement_pick <- function(got, roster, again = FALSE) {
+  if (grepl("^[0-9]+$", got)) {
+    k <- as.integer(got)
+    if (k >= 1 && k <= length(roster)) return(list(label = roster[k]))
+  }
+  exact <- match(tolower(got), tolower(roster))
+  if (!is.na(exact)) return(list(label = roster[exact]))
+  similar <- which(grepl(tolower(got), tolower(roster), fixed = TRUE))
+  if (again || length(similar) == 0) return(list(label = got))
+  list(matches = similar)
+}
+
+# Returns +1 for agreement, -1 for disagreement, or NA.
+.statement_sign <- function(got) {
+  got <- tolower(trimws(got))
+  if (got %in% c("+", "+1", "1", "agree", "a", "yes", "y")) return(1L)
+  if (got %in% c("-", "-1", "disagree", "d", "no", "n")) return(-1L)
+  NA_integer_
+}
+
+# Returns the stocnet of the statements found and those coded before.
+# A statement without a speaker is a tie from its document.
+.statement_network <- function(found, coded, uncoded = NULL) {
+  modes <- coded$modes
+  statements <- dplyr::bind_rows(coded$statements, found$statements)
+  if (is.null(statements) || nrow(statements) == 0)
+    snet_abort("No statements were coded, so there is no network to return.")
+  old <- coded$nodes
+  by_document <- is.na(statements$speaker)
+  sender <- ifelse(by_document, statements$document, statements$speaker)
+  sender_mode <- ifelse(by_document, "documents", modes[1])
+  all_modes <- c(intersect(c("documents", modes[1]),
+                           c(sender_mode, old$mode)), modes[2])
+  labels <- lapply(all_modes, function(m)
+    unique(c(old$label[old$mode %in% m],
+             if (m == modes[2]) statements$concept else
+               sender[sender_mode == m])))
+  nodes <- data.frame(label = unlist(labels),
+                      mode = rep(all_modes, lengths(labels)),
+                      stringsAsFactors = FALSE)
+  if (!is.null(old)) {
+    extra <- old[match(paste(nodes$mode, nodes$label),
+                       paste(old$mode, old$label)),
+                 setdiff(names(old), c("label", "mode")), drop = FALSE]
+    nodes <- cbind(nodes, extra)
+    rownames(nodes) <- NULL
+  }
+  key <- paste(nodes$mode, nodes$label)
+  ties <- data.frame(from = match(paste(sender_mode, sender), key),
+                     to = match(paste(modes[2], statements$concept), key))
+  ties$time <- statements$time
+  unknown <- statements$unknown %in% TRUE
+  signed <- !all(is.na(statements$weight)) || any(unknown)
+  if (signed) {
+    ties$weight <- as.integer(statements$weight)
+    unsigned <- sum(is.na(ties$weight) & !unknown)
+    if (unsigned > 0)
+      snet_warn("{unsigned} tie{?s} {?has/have} no sign,",
+                "so {?its/their} weight is missing.")
+    if (any(unknown))
+      snet_info("{sum(unknown)} tie{?s} {?has/have} an unknown sign.",
+                "Give the network as {.arg .data} to code {?it/them} again.")
+  }
+  others <- setdiff(names(statements),
+                    c("speaker", "concept", "time", "weight", "unknown"))
+  ties <- cbind(ties, statements[others])
+  info <- coded$info %||%
+    list(name = if (all(by_document)) "Network of coded texts" else
+      "Discourse network", source = "Empirical", method = "Archival",
+      observation = "event")
+  info$directed <- FALSE
+  info$signed <- if (signed) TRUE
+  info$modes <- all_modes
+  info$sender <- setdiff(all_modes, modes[2])
+  info$receiver <- modes[2]
+  if (!is.null(ties$time)) info$update <- "increment"
+  # the units still to code are recorded until none is left
+  info$uncoded <- if (!is.null(uncoded) && nrow(uncoded) > 0)
+    dplyr::as_tibble(uncoded)
+  if (!is.null(info$uncoded))
+    snet_info("{nrow(info$uncoded)} unit{?s} {?is/are} still to code.",
+              "Give the network as {.arg .data} to code {?it/them}.")
+  snet_info("Collected {nrow(ties)} statement{?s} about",
+            "{length(labels[[length(labels)]])} concept{?s}.")
+  make_stocnet(info = info, nodes = nodes, ties = ties)
 }

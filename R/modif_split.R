@@ -9,7 +9,7 @@
 #'   attribute.
 #'   - `to_layers()` splits a multiplex network into its layers,
 #'   i.e. a list of uniplex networks, one per tie type.
-#'   Use `to_uniplex()`, or its alias `to_layer()`, to retain just one of them.
+#'   Use `to_layer()`, or its alias `to_layer()`, to retain just one of them.
 #'   - `to_reporters()` splits a cognitive social structure into the report
 #'   of each of its reporters, one network per reporter.
 #'   Use `to_reporter()` to retain just one of them,
@@ -187,7 +187,7 @@ to_subgraphs.network <- function(.data, attribute){
 #' @section `to_layers()`:
 #'   The layers of a multiplex network are held in a tie attribute,
 #'   `type` in tidygraph/igraph objects and `layer` in 'stocnet' objects.
-#'   Each layer is extracted by `to_uniplex()`, so that the layers returned
+#'   Each layer is extracted by `to_layer()`, so that the layers returned
 #'   here are the same networks as retrieving them one at a time,
 #'   and the returned list is named by the tie types found in the network.
 #'   Where a network holds no tie types it is already uniplex,
@@ -216,7 +216,7 @@ to_layers.tbl_graph <- function(.data){
     return(stats::setNames(list(.data), layer_names(.data)[1] %||% "ties"))
   }
   types <- unique(tie_attribute(.data, layer_attr))
-  stats::setNames(lapply(types, function(x) to_uniplex(.data, x)), types)
+  stats::setNames(lapply(types, function(x) to_layer(.data, x)), types)
 }
 
 #' @export
@@ -251,7 +251,7 @@ to_layers.data.frame <- function(.data){
 #'   own alters; see `to_egos()`.
 #' @examples
 #' to_reporters(as_stocnet(array(rbinom(27, 1, 0.5), c(3, 3, 3)),
-#'                         attribute = "by"))
+#'                         over = "by"))
 #' @export
 to_reporters <- function(.data) UseMethod("to_reporters")
 
@@ -264,7 +264,47 @@ to_reporters.default <- function(.data){
 to_reporters.array <- function(.data){
   # The third dimension of an array could hold anything, but this function
   # takes it to hold reporters, as its name says.
-  lapply(to_reporters.stocnet(as_stocnet(.data, attribute = "by")), as_matrix)
+  lapply(to_reporters.stocnet(as_stocnet(.data, over = "by")), as_matrix)
+}
+
+#' @rdname modif_split
+#' @section `to_targets()`:
+#'   Gossip names in 'about' the node each tie is about, as a cognitive social
+#'   structure names in 'by' the node that reported it.
+#'   `to_targets()` splits gossip into one network for each node, named by its
+#'   label, of the ties about that node, as `to_reporters()` splits reports.
+#'   Ties that are about no node are kept in every network.
+#'   `from_targets()` joins them again.
+#'   A network that names no target is returned as a list of length one.
+#' @examples
+#' to_targets(as_stocnet(array(rbinom(27, 1, 0.5), c(3, 3, 3)),
+#'                       over = "about"))
+#' @export
+to_targets <- function(.data) UseMethod("to_targets")
+
+#' @export
+to_targets.default <- function(.data){
+  lapply(to_targets.stocnet(as_stocnet(.data)), .as_class_of, .data)
+}
+
+#' @export
+to_targets.array <- function(.data){
+  # The third dimension of an array could hold anything, but this function
+  # takes it to hold targets, as its name says.
+  lapply(to_targets.stocnet(as_stocnet(.data, over = "about")), as_matrix)
+}
+
+#' @export
+to_targets.stocnet <- function(.data){
+  ties <- .data$ties
+  if(is.null(ties) || !"about" %in% names(ties) || all(is.na(ties$about))){
+    snet_info("This network names no target for its ties, so is one view.")
+    return(stats::setNames(list(.data), "ties"))
+  }
+  n <- as.numeric(net_nodes(.data))
+  out <- lapply(seq_len(n), function(t) .reporter_slice(.data, t, "about"))
+  names(out) <- .node_names_or_positions(.data)
+  out
 }
 
 #' @export
@@ -305,14 +345,15 @@ to_reporters.stocnet <- function(.data){
 
 # One reporter's view of the network: the ties it reported, the ties that no
 # node reported (such as a layer taken from records), and the ties it was
-# asked about but did not report on, as missing ties.
-.reporter_slice <- function(.data, r){
+# asked about but did not report on, as missing ties. With `col = "about"`,
+# this is instead the gossip about one target, in the same way.
+.reporter_slice <- function(.data, r, col = "by"){
   ties <- .data$ties
-  mine <- ties[ties$by %in% r | is.na(ties$by), setdiff(names(ties), "by"),
-               drop = FALSE]
+  mine <- ties[ties[[col]] %in% r | is.na(ties[[col]]),
+               setdiff(names(ties), col), drop = FALSE]
   missing <- as_missinglist(.data)
-  if(!is.null(missing) && "by" %in% names(missing)){
-    missing <- missing[missing$by %in% r, setdiff(names(missing), "by"),
+  if(!is.null(missing) && col %in% names(missing)){
+    missing <- missing[missing[[col]] %in% r, setdiff(names(missing), col),
                        drop = FALSE]
     if(nrow(missing)){
       missing <- .tidy_registry(missing)
@@ -327,7 +368,9 @@ to_reporters.stocnet <- function(.data){
                       changes = net$changes, globals = net$globals)
   out$info$transformations <- .data$info$transformations
   label <- .node_names_or_positions(.data)[r]
-  .record_exclusion(out, .data, paste("not reported by", label), "ties")
+  .record_exclusion(out, .data,
+                    paste(if(col == "by") "not reported by" else "not about",
+                          label), "ties")
 }
 
 # A network that is no longer a set of reports is no longer cognitive.
@@ -340,7 +383,7 @@ to_reporters.stocnet <- function(.data){
 
 #' @rdname modif_split
 #' @examples
-#'   to_components(to_uniplex(fict_marvel, "relationship"))
+#'   to_components(to_layer(fict_marvel, "relationship"))
 #'   # Strong decomposition of a directed network returns many small components,
 #'   # ordered here from largest to smallest, so just the largest is shown:
 #'   to_components(fict_starwars, connectivity = "strong")[[1]]
@@ -446,11 +489,12 @@ to_waves.tbl_graph <- function(.data, attribute = "wave", panels = NULL,
     times <- sort(unique(tie_attribute(.data, attribute)))
     if(!is.null(panels))
       times <- intersect(panels, times)
+    invariant <- .invariant_layers(.data)
     # The ties recorded as missing are scoped to the wave as the ties are,
     # so a node that did not report in one wave is not missing in another.
     waves <- lapply(times, function(t) {
       out <- .apply_changes_upto(.data, cl, t)
-      out <- filter_ties(out, !!as.name(attribute) == t)
+      out <- .wave_ties(out, attribute, t, invariant)
       .scope_missings(out, t)
     })
     names(waves) <- paste("Wave", times)
@@ -473,13 +517,15 @@ to_waves.tbl_graph <- function(.data, attribute = "wave", panels = NULL,
     wp <- sort(unique(tie_attribute(.data, attribute)))
     if(!is.null(panels))
       wp <- intersect(panels, wp)
+    # Cumulative waves already gather the ties of the first wave, which
+    # holds the layers that hold throughout, into every later wave.
+    invariant <- if(isTRUE(cumulative)) character(0) else
+      .invariant_layers(.data)
     if(length(wp) > 1) {
-      out <- lapply(wp, function(l){
-        filter_ties(.data, !!as.name(attribute) == l)
-      })
+      out <- lapply(wp, function(l) .wave_ties(.data, attribute, l, invariant))
       names(out) <- wp
     } else {
-      out <- filter_ties(.data, !!as.name(attribute) == wp)
+      out <- .wave_ties(.data, attribute, wp, invariant)
     }
     if (isTRUE(cumulative) && is.list(out) && !is_manynet(out)) {
       out <- .cumulative_ties(out, attribute)
@@ -551,6 +597,17 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL,
     out <- .cumulative_ties(out, attribute)
   }
   out
+}
+
+# The ties of one wave: those stamped with it, and those of a layer that
+# holds throughout, as `to_time()` carries them into every moment (#202).
+# Such a tie keeps its own stamp, so `from_waves()` can tell it apart.
+.wave_ties <- function(.data, attribute, wave, invariant = character(0)){
+  keep <- tie_attribute(.data, attribute) == wave
+  layer <- intersect(c("layer", "type"), net_tie_attributes(.data))[1]
+  if(length(invariant) && !is.na(layer))
+    keep <- keep | as.character(tie_attribute(.data, layer)) %in% invariant
+  .keep_ties_of(.data, which(keep))
 }
 
 # Applies to a network the changes recorded in its changelist up to and
@@ -651,24 +708,38 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL,
 #'   Unlike them, `to_times()` always returns a list, named by the moments and
 #'   ordered by them, even where the network records only one, so that
 #'   `net_times(.data)` and `length(to_times(.data))` always agree.
+#'
+#'   With a `window`, `to_times()` returns a moving window:
+#'   the ties recorded in the window up to each of the `times`
+#'   (or around each, with two widths),
+#'   weighted by the `kernel`, as [to_time()] describes.
+#'   Where the `times` are closer together than the window is wide,
+#'   the windows overlap, and a tie can be in more than one of them.
+#' @inheritParams modif_scope
 #' @examples
 #'   length(to_times(irps_wwi))
 #'   to_times(ison_tailorshop)
+#'   # A window of 30 days moved along in steps of a week:
+#'   weeks <- seq(as.Date("2011-03-15"), as.Date("2011-06-30"), by = "week")
+#'   to_times(irps_nuclear, weeks, window = 30)
 #' @export
-to_times <- function(.data, times = NULL) UseMethod("to_times")
+to_times <- function(.data, times = NULL, window = NULL,
+                     kernel = "uniform") UseMethod("to_times")
 
 #' @export
-to_times.default <- function(.data, times = NULL){
-  as_input(.data, to_times, times = times)
+to_times.default <- function(.data, times = NULL, window = NULL,
+                             kernel = "uniform"){
+  as_input(.data, to_times, times = times, window = window, kernel = kernel)
 }
 
-.to_times <- function(.data, times = NULL){
+.to_times <- function(.data, times = NULL, window = NULL, kernel = "uniform"){
   moments <- if(is.null(times)) .time_moments(.data) else times
   # A network that records no moment records itself at one, and is returned
   # as a list of that one, since the length of what this returns is what
   # `net_times()` counts.
   if(is.null(moments)) return(stats::setNames(list(.data), "1"))
-  out <- lapply(moments, function(t) to_time(.data, t))
+  out <- lapply(moments, function(t)
+    to_time(.data, t, window = window, kernel = kernel))
   names(out) <- as.character(moments)
   out
 }
@@ -680,8 +751,9 @@ to_times.tbl_graph <- .to_times
 to_times.stocnet <- .to_times
 
 #' @export
-to_times.igraph <- function(.data, times = NULL){
-  lapply(.to_times(as_tidygraph(.data), times), as_igraph)
+to_times.igraph <- function(.data, times = NULL, window = NULL,
+                            kernel = "uniform"){
+  lapply(.to_times(as_tidygraph(.data), times, window, kernel), as_igraph)
 }
 
 #' @rdname modif_split
@@ -737,6 +809,11 @@ to_slices.tbl_graph <- function(.data, attribute = "time", slice = NULL) {
   out
 }
 
+# A stocnet is sliced in place, since converting it to another class first
+# loses the declaration in its info that its weights are increments.
+#' @export
+to_slices.stocnet <- to_slices.tbl_graph
+
 # The state a network's ties have accumulated to at a moment: every row up to
 # and including it, summed where each row increments a tie's value and carried
 # forward where each states it afresh. A tie that has accumulated to zero is
@@ -747,8 +824,15 @@ to_slices.tbl_graph <- function(.data, attribute = "time", slice = NULL) {
 # asked for directly rather than through `is_weighted()`.
 .slice_at <- function(.data, attribute, tm){
   out <- filter_ties(.data, !!as.name(attribute) <= tm)
+  # A stocnet holds each increment in its 'weight' and declares in
+  # `info$update` that the weights add up, and keeps that declaration when it
+  # is converted to another class. Otherwise the increments are in an
+  # 'increment' column.
   if("increment" %in% net_tie_attributes(.data))
-    out <- summarise_ties(out, sum(increment))
+    out <- summarise_ties(out, sum(increment)) else
+      if(isTRUE(any(as_infolist(.data)$update == "increment")) &&
+         "weight" %in% net_tie_attributes(.data))
+        out <- summarise_ties(out, sum(weight))
   if("replace" %in% net_tie_attributes(.data))
     out <- summarise_ties(out, dplyr::last(replace))
   if("weight" %in% net_tie_attributes(out)) out <- filter_ties(out, weight != 0)

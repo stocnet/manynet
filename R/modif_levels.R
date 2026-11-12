@@ -15,6 +15,16 @@
 #'   It also reformats a hypergraph into a two-mode network,
 #'   in which each hyperedge is a node of the second mode,
 #'   and for this needs no mark.
+#'   With `through`, it projects a network of three or more modes
+#'   onto the two modes that `through` does not name.
+#'   Two nodes of these modes get a tie when they have ties
+#'   to the same node of `through`.
+#'   For example, in a network of authors, works, and keywords,
+#'   `to_twomode(.data, through = "works")` ties each author
+#'   to the keywords of their works.
+#'   The weight of the tie is the number of these works.
+#'   For valued ties, it adds the products of the two weights.
+#'   Other tie attributes, such as layers, are lost.
 #'   - `to_multilevel()` reformats two-mode network data into multimodal network data, 
 #'   which allows for more levels and ties within modes.
 #' 
@@ -76,17 +86,27 @@ to_onemode.igraph <- function(.data) {
 #' @rdname modif_levels
 #' @param mark A logical vector marking two types or modes.
 #'   By default "type".
+#' @param through For a network of three or more modes,
+#'   the modes to project through, as indices or names, as for `to_mode()`.
+#'   The result is a two-mode network of the two other modes.
+#'   Leave `mark` out when you give `through`.
 #' @importFrom igraph V
 #' @export
-to_twomode <- function(.data, mark) UseMethod("to_twomode")
+to_twomode <- function(.data, mark, through = NULL){
+  if(!is.null(through)) return(.twomode_through(.data, through))
+  # a network that is two-mode already is returned as it is
+  if(missing(mark) && is_twomode(.data) && !is_hypergraph(.data))
+    return(.data)
+  UseMethod("to_twomode")
+}
 
 #' @export
-to_twomode.default <- function(.data, mark){
+to_twomode.default <- function(.data, mark, through = NULL){
   as_input(.data, to_twomode, mark)
 }
 
 #' @export
-to_twomode.stocnet <- function(.data, mark){
+to_twomode.stocnet <- function(.data, mark, through = NULL){
   # A hypergraph needs no mark: its nodes are one mode and its hyperedges
   # become the other.
   if(missing(mark) && is_hypergraph(.data)){
@@ -98,7 +118,7 @@ to_twomode.stocnet <- function(.data, mark){
 }
 
 #' @export
-to_twomode.igraph <- function(.data, mark){
+to_twomode.igraph <- function(.data, mark, through = NULL){
   # An 'igraph' holds a hypergraph as a two-mode network already, so all that
   # tells the two apart is the mark that it is one.
   if(missing(mark) && is_hypergraph(.data))
@@ -108,12 +128,12 @@ to_twomode.igraph <- function(.data, mark){
 }
 
 #' @export
-to_twomode.tbl_graph <- function(.data, mark){
+to_twomode.tbl_graph <- function(.data, mark, through = NULL){
   as_tidygraph(to_twomode.igraph(.data, mark))
 }
 
 #' @export
-to_twomode.network <- function(.data, mark){
+to_twomode.network <- function(.data, mark, through = NULL){
   as_network(to_twomode(as_igraph(.data), mark), twomode = TRUE)
 }
 
@@ -164,3 +184,65 @@ to_multilevel.matrix <- function(.data) {
   out
 }
 
+# Projects a network of three or more modes through the modes of `through`,
+# so that the two modes left are tied where a node of one has a tie to a node
+# of `through` that has a tie to a node of the other. The weight of a tie
+# adds, over these nodes of `through`, the product of the two ties' weights,
+# which for binary ties is the number of such nodes.
+# The network is made a stocnet for this, as only it holds more than two
+# modes, and returned in the class it was given.
+.twomode_through <- function(.data, through){
+  if(!inherits(.data, "stocnet")){
+    out <- .twomode_through(as_stocnet(.data), through)
+    if(inherits(.data, "tbl_graph")) return(as_tidygraph(out))
+    if(inherits(.data, "igraph")) return(as_igraph(out))
+    if(inherits(.data, "network")) return(as_network(out, twomode = TRUE))
+    return(out)
+  }
+  if(is_hypergraph(.data))
+    snet_abort("{.arg through} works on ties between two nodes,",
+               "and this network holds hyperedges.")
+  nms <- mode_names(.data)
+  joined <- unique(nms[vapply(through, function(m) .infer_mode(.data, m),
+                              integer(1))])
+  kept <- setdiff(nms, joined)
+  if(length(kept) != 2)
+    snet_abort("{.arg through} must leave two modes,",
+               "but it leaves {length(kept)}: {phrase(kept)}.")
+  modes <- .data$nodes$mode
+  rows <- which(modes == kept[1])
+  cols <- which(modes == kept[2])
+  mids <- which(modes %in% joined)
+  ties <- .data$ties
+  value <- if("weight" %in% names(ties)) ties$weight else rep(1, nrow(ties))
+  # the summed weights of the ties between the nodes `a` and the nodes `b`,
+  # whichever way each tie is written
+  tally <- function(a, b){
+    out <- matrix(0, length(a), length(b))
+    for(ends in list(c("from", "to"), c("to", "from"))){
+      x <- ties[[ends[1]]]
+      y <- ties[[ends[2]]]
+      sel <- x %in% a & y %in% b
+      if(!any(sel)) next
+      cell <- (match(y[sel], b) - 1L) * length(a) + match(x[sel], a)
+      sums <- rowsum(as.numeric(value[sel]), cell)
+      at <- as.integer(rownames(sums))
+      out[at] <- out[at] + sums[, 1]
+    }
+    out
+  }
+  joint <- tally(rows, mids) %*% tally(mids, cols)
+  kept_nodes <- sort(c(rows, cols))
+  .data$info$modes <- kept
+  .data$info$sender <- .data$info$receiver <- NULL
+  out <- keep_nodes(.data, kept_nodes)
+  cells <- which(joint != 0, arr.ind = TRUE)
+  cells <- cells[order(cells[, 1], cells[, 2]), , drop = FALSE]
+  new_ties <- dplyr::tibble(from = match(rows[cells[, 1]], kept_nodes),
+                         to = match(cols[cells[, 2]], kept_nodes))
+  if(any(joint[cells] != 1)) new_ties$weight <- joint[cells]
+  out$ties <- new_ties
+  out$info <- .prune_layer_info(out$info, character(0))
+  out$info$directed <- NULL
+  validate_stocnet(out)
+}

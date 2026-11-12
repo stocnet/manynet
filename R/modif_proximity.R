@@ -1,6 +1,6 @@
 # Proximity ####
 
-#' Node proximity
+#' Modifying networks into node proximities
 #' @name modif_proximity
 #' @description
 #'   These functions construct a square, node-by-node matrix of how alike
@@ -80,7 +80,7 @@ NULL
 #' to_proximity(ison_adolescents, "jaccard")
 #' to_proximity(ison_southern_women, "ruzicka", across = "columns")
 #' @export
-to_proximity <- function(.data, similarity = .proj_measures,
+to_proximity <- function(.data, similarity = c(.proj_measures, .proj_rules),
                          across = c("rows", "columns", "both"),
                          dyad = NULL){
   # a two-mode network's profile is its biadjacency matrix, so there is no
@@ -92,7 +92,7 @@ to_proximity <- function(.data, similarity = .proj_measures,
 }
 
 #' @export
-to_proximity.default <- function(.data, similarity = .proj_measures,
+to_proximity.default <- function(.data, similarity = c(.proj_measures, .proj_rules),
                                  across = c("rows", "columns", "both"),
                                  dyad = NULL){
   as_input(.data, to_proximity, similarity = similarity,
@@ -100,7 +100,7 @@ to_proximity.default <- function(.data, similarity = .proj_measures,
 }
 
 #' @export
-to_proximity.stocnet <- function(.data, similarity = .proj_measures,
+to_proximity.stocnet <- function(.data, similarity = c(.proj_measures, .proj_rules),
                                  across = c("rows", "columns", "both"),
                                  dyad = NULL){
   # The tidygraph method is called directly rather than through `as_input()`,
@@ -110,14 +110,14 @@ to_proximity.stocnet <- function(.data, similarity = .proj_measures,
 }
 
 #' @export
-to_proximity.matrix <- function(.data, similarity = .proj_measures,
+to_proximity.matrix <- function(.data, similarity = c(.proj_measures, .proj_rules),
                                 across = c("rows", "columns", "both"),
                                 dyad = NULL){
   .proximity(.data, match.arg(similarity), match.arg(across), dyad)
 }
 
 #' @export
-to_proximity.igraph <- function(.data, similarity = .proj_measures,
+to_proximity.igraph <- function(.data, similarity = c(.proj_measures, .proj_rules),
                                 across = c("rows", "columns", "both"),
                                 dyad = NULL){
   as_igraph(to_proximity(as_matrix(.data), match.arg(similarity),
@@ -125,7 +125,7 @@ to_proximity.igraph <- function(.data, similarity = .proj_measures,
 }
 
 #' @export
-to_proximity.tbl_graph <- function(.data, similarity = .proj_measures,
+to_proximity.tbl_graph <- function(.data, similarity = c(.proj_measures, .proj_rules),
                                    across = c("rows", "columns", "both"),
                                    dyad = NULL){
   similarity <- match.arg(similarity)
@@ -145,7 +145,7 @@ to_proximity.tbl_graph <- function(.data, similarity = .proj_measures,
 }
 
 #' @export
-to_proximity.network <- function(.data, similarity = .proj_measures,
+to_proximity.network <- function(.data, similarity = c(.proj_measures, .proj_rules),
                                  across = c("rows", "columns", "both"),
                                  dyad = NULL){
   as_network(to_proximity(as_tidygraph(.data), match.arg(similarity),
@@ -153,7 +153,7 @@ to_proximity.network <- function(.data, similarity = .proj_measures,
 }
 
 #' @export
-to_proximity.data.frame <- function(.data, similarity = .proj_measures,
+to_proximity.data.frame <- function(.data, similarity = c(.proj_measures, .proj_rules),
                                     across = c("rows", "columns", "both"),
                                     dyad = NULL){
   as_edgelist(to_proximity(as_tidygraph(.data), match.arg(similarity),
@@ -165,6 +165,11 @@ to_proximity.data.frame <- function(.data, similarity = .proj_measures,
 .proximity <- function(A, similarity, across, dyad){
   # a two-mode network never reaches here, since the generic sends it to
   # `.proximity_twomode()`
+  if(similarity %in% .proj_rules)
+    snet_abort("{.val {similarity}} is a rule for projecting a two-mode",
+               "network, since it reads the ties to a second mode.",
+               "This network is one-mode, so choose another measure,",
+               "or project a two-mode network with {.fn to_mode}.")
   A <- as_matrix(A)
   dyad <- if(is.null(dyad)) .infer_dyad(A) else
     match.arg(dyad, c("exclude", "reciprocal", "complex", "include"))
@@ -232,7 +237,7 @@ to_proximity.data.frame <- function(.data, similarity = .proj_measures,
 # Mirrors the default that `to_correlation()` has always taken, so that the
 # two functions read a network's format the same way.
 .infer_dyad <- function(A){
-  if(is_complex(A)) "complex" else if(is_directed(A)) "reciprocal" else "exclude"
+  if(is_looped(A)) "complex" else if(is_directed(A)) "reciprocal" else "exclude"
 }
 
 # Which cells are compared depends on which pair is being compared. Most
@@ -481,7 +486,7 @@ to_correlation.matrix <- function(.data, method = NULL){
 }
 
 .cor_method <- function(.data){
-  if(is_twomode(.data)) "all" else if(is_complex(.data)) "complex" else
+  if(is_twomode(.data)) "all" else if(is_looped(.data)) "complex" else
     if(is_directed(.data)) "recip" else "diag"
 }
 

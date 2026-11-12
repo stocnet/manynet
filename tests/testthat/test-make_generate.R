@@ -8,7 +8,7 @@ test_that("random creation works", {
   expect_false(isTRUE(all.equal(generate_random(c(2,4),0.3), generate_random(c(2,4),0.3))))
   expect_error(generate_random(c(1,2,3)), "must be of length")
   # Bipartite graph
-  expect_s3_class(generate_random(ison_southern_women, 0.4), "igraph")
+  expect_s3_class(generate_random(ison_southern_women, 0.4), "stocnet")
   expect_true(is_twomode(generate_random(ison_southern_women, 0.4)))
 })
 
@@ -138,14 +138,14 @@ test_that("generate_utilities can be read as the ties nodes want", {
 })
 
 test_that("generate_smallworld() works", {
-  expect_s3_class(generate_smallworld(12, 0.025), "igraph")
-  expect_equal(igraph::vcount(generate_smallworld(12, 0.025)), 12)
-  expect_s3_class(generate_smallworld(c(6,6), 0.025), "igraph")
+  expect_s3_class(generate_smallworld(12, 0.025), "stocnet")
+  expect_equal(as.numeric(net_nodes(generate_smallworld(12, 0.025))), 12)
+  expect_true(is_twomode(generate_smallworld(c(6,6), 0.025)))
 })
 
 test_that("generate_scalefree() works", {
-  expect_s3_class(generate_scalefree(12, 0.025), "igraph")
-  expect_s3_class(generate_scalefree(c(6,6), 0.025), "igraph")
+  expect_s3_class(generate_scalefree(12, 0.025), "stocnet")
+  expect_true(is_twomode(generate_scalefree(c(6,6), 0.025)))
 })
 
 test_that("generate_degree works", {
@@ -565,4 +565,115 @@ test_that("generate_degree reads the modes of a stocnet", {
   out <- generate_degree(sw)
   expect_true(is_twomode(out))
   expect_equal(as.numeric(net_nodes(out)), as.numeric(net_nodes(sw)))
+})
+
+test_that("generate_degree keeps repeated ties in a two-mode network", {
+  # as where a text uses a term more than once: each tie is one token
+  tokens <- igraph::make_bipartite_graph(c(rep(FALSE, 3), rep(TRUE, 4)),
+    c(1,4, 1,4, 1,4, 1,5, 2,5, 2,5, 2,6, 3,7, 3,7, 3,4))
+  igraph::V(tokens)$name <- c("A", "B", "C", "w", "x", "y", "z")
+  tokens <- as_stocnet(tokens)
+  expect_true(is_disaggregated(tokens))
+  degs <- function(x) igraph::degree(as_igraph(x))
+  set.seed(1234)
+  for (p in c(1, 0.5)) {
+    for (i in 1:10) {
+      out <- generate_degree(tokens, p = p)
+      expect_true(is_twomode(out))
+      expect_equal(as.numeric(net_ties(out)), as.numeric(net_ties(tokens)))
+      # the degree of every node in both modes, with repeated ties counted
+      expect_equal(degs(out), degs(tokens), ignore_attr = TRUE)
+      expect_equal(node_is_mode(out), node_is_mode(tokens),
+                   ignore_attr = TRUE)
+    }
+  }
+  expect_equal(node_names(generate_degree(tokens, p = 0.5)),
+               node_names(tokens))
+})
+
+test_that("generate_degree keeps repeated ties in a one-mode network", {
+  repeated <- igraph::make_graph(c(1,2, 1,2, 2,3, 3,4, 1,4, 1,4),
+                                 directed = FALSE)
+  degs <- function(x) igraph::degree(as_igraph(x))
+  set.seed(1234)
+  for (p in c(1, 0.5))
+    expect_equal(degs(generate_degree(repeated, p = p)), degs(repeated),
+                 ignore_attr = TRUE)
+})
+
+test_that("generate_degree keeps tie weights and signs", {
+  set.seed(1234)
+  weighted <- igraph::sample_gnm(10, 20)
+  igraph::E(weighted)$weight <- 1:20
+  igraph::E(weighted)$sign <- rep(c(1, -1), 10)
+  degs <- function(x, mode = "all") igraph::degree(as_igraph(x), mode = mode)
+  for (p in c(1, 0.5)) {
+    out <- generate_degree(weighted, p = p)
+    expect_equal(degs(out), degs(weighted), ignore_attr = TRUE)
+    expect_true(is_weighted(out))
+    expect_true(is_signed(out))
+    expect_equal(sort(tie_weights(out)), 1:20, ignore_attr = TRUE)
+    expect_equal(sort(tie_signs(out)), sort(rep(c(1, -1), 10)),
+                 ignore_attr = TRUE)
+    expect_true(igraph::is_simple(as_igraph(out)))
+  }
+  # with few switches, most ties keep their weights in place
+  out <- generate_degree(weighted, p = 0.1)
+  start <- as_matrix(weighted)
+  expect_gt(sum(as_matrix(out) == start & start != 0), 15)
+  directed <- igraph::sample_gnm(10, 25, directed = TRUE)
+  igraph::E(directed)$weight <- seq_len(25) / 10
+  for (p in c(1, 0.5)) {
+    out <- generate_degree(directed, p = p)
+    expect_true(is_directed(out))
+    expect_equal(degs(out, "out"), degs(directed, "out"), ignore_attr = TRUE)
+    expect_equal(degs(out, "in"), degs(directed, "in"), ignore_attr = TRUE)
+    expect_equal(sort(tie_weights(out)), seq_len(25) / 10, ignore_attr = TRUE)
+  }
+  women <- as_stocnet(ison_southern_women) |> 
+    mutate_ties(weight = seq_len(net_ties(ison_southern_women)))
+  for (p in c(1, 0.5)) {
+    out <- generate_degree(women, p = p)
+    expect_true(is_twomode(out))
+    expect_equal(degs(out), degs(women), ignore_attr = TRUE)
+    expect_equal(sort(tie_weights(out)), seq_len(net_ties(women)),
+                 ignore_attr = TRUE)
+  }
+})
+
+test_that("generate_degree keeps the degrees in every layer", {
+  set.seed(1234)
+  # Eight of the sixteen nodes still hold all three layers, and the draw over
+  # them takes a hundredth of the time.
+  algebra <- delete_nodes(ison_algebra, 9:16)
+  start <- as_igraph(algebra)
+  col <- intersect(c("layer", "type"), igraph::edge_attr_names(start))[1]
+  layer_degs <- function(g, l, mode) {
+    col <- intersect(c("layer", "type"), igraph::edge_attr_names(g))[1]
+    ties <- which(igraph::edge_attr(g, col) == l)
+    igraph::degree(igraph::subgraph_from_edges(g, ties, delete.vertices = FALSE),
+                   mode = mode)
+  }
+  for (p in c(1, 0.5)) {
+    out <- as_igraph(generate_degree(algebra, p = p))
+    expect_true(is_multiplex(out))
+    for (l in unique(igraph::edge_attr(start, col))) {
+      for (mode in c("out", "in"))
+        expect_equal(layer_degs(out, l, mode), layer_degs(start, l, mode),
+                     ignore_attr = TRUE)
+    }
+    # the weights stay within their layer
+    expect_equal(sort(igraph::E(out)$weight), sort(igraph::E(start)$weight))
+  }
+  # and so in a two-mode network too
+  twomode <- igraph::make_bipartite_graph(c(rep(FALSE, 4), rep(TRUE, 5)),
+    c(1,5, 1,6, 2,6, 2,7, 3,8, 4,9, 1,7, 2,8, 3,9, 4,5))
+  igraph::E(twomode)$layer <- rep(c("a", "b"), each = 5)
+  for (p in c(1, 0.5)) {
+    out <- as_igraph(generate_degree(twomode, p = p))
+    expect_true(is_twomode(out))
+    for (l in c("a", "b"))
+      expect_equal(layer_degs(out, l, "all"), layer_degs(twomode, l, "all"),
+                   ignore_attr = TRUE)
+  }
 })

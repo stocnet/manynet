@@ -233,7 +233,7 @@ tie_lengths <- function(.data){
 
 #' @rdname measure_attributes_values
 #' @examples 
-#' tie_signs(to_uniplex(fict_marvel,"relationship"))
+#' tie_signs(to_layer(fict_marvel,"relationship"))
 #' @export
 tie_signs <- function(.data){
   if(.holds_hyperedges(.data))

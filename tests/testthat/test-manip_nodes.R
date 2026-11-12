@@ -10,12 +10,13 @@ test_that("delete_isolates removes nodes without ties", {
                as.numeric(net_ties(stranded)))
 })
 
+# Keeps the ties among Betty, Sue, Alice, Jane, and Pam, which leaves Dale,
+# Carol, and Tina as isolates.
 isolate <- ison_adolescents |>
-  activate(edges) |>
-  to_subgraph(from == 1:5)
+  filter_ties(from <= 3, to != 5)
 
 test_that("delete_isolates returns the class it was given", {
-  expect_length(delete_isolates(isolate), 5)
+  expect_equal(as.numeric(net_nodes(delete_isolates(isolate))), 5)
   expect_length(delete_isolates(as_igraph(isolate)), 5)
   expect_true(all(rowSums(delete_isolates(as_matrix(isolate))) >= 1))
   expect_length(delete_isolates(as_network(isolate)), 5)
@@ -155,6 +156,43 @@ test_that("filter_nodes empties a layer without error", {
   expect_no_error(validate_stocnet(out))
 })
 
+test_that("filter_nodes drops the modes and the ends of layers it empties", {
+  sn <- make_stocnet(
+    nodes = tibble::tibble(label = c("w1", "w2", "a1", "s1"),
+                           mode = c("works", "works", "authors", "sources")),
+    ties = tibble::tibble(from = c(1L, 3L, 1L), to = c(2L, 1L, 4L),
+                          layer = c("cites", "authored", "published")),
+    info = list(modes = c("works", "authors", "sources"),
+                layers = c("cites", "authored", "published"),
+                sender = c(cites = "works", authored = "authors",
+                           published = "works"),
+                receiver = c(cites = "works", authored = "works",
+                             published = "sources")))
+  out <- filter_nodes(sn, mode != "sources")
+  expect_equal(out$info$modes, c("works", "authors"))
+  expect_equal(out$info$layers, c("cites", "authored"))
+  expect_equal(out$info$sender, c(cites = "works", authored = "authors"))
+  expect_equal(out$info$receiver, c(cites = "works", authored = "works"))
+  expect_no_error(validate_stocnet(out))
+  # a network left with one mode has no senders or receivers
+  one <- filter_nodes(sn, mode == "works")
+  expect_equal(one$info$modes, "works")
+  expect_null(one$info$sender)
+  expect_null(one$info$receiver)
+})
+
+test_that("bind_node_attributes keeps the names of the modes", {
+  sn <- make_stocnet(
+    nodes = tibble::tibble(label = c("w1", "w2", "a1", "k1"),
+                           mode = c("works", "works", "authors", "keywords")),
+    ties = tibble::tibble(from = c(1L, 3L, 1L), to = c(2L, 1L, 4L)),
+    info = list(modes = c("works", "authors", "keywords")))
+  out <- as_stocnet(bind_node_attributes(as_tidygraph(create_empty(4)),
+                                         as_tidygraph(sn)))
+  expect_equal(out$nodes$mode, sn$nodes$mode)
+  expect_equal(out$info$modes, sn$info$modes)
+})
+
 test_that("dropping nodes drops and renumbers the missings (#173)", {
   sn <- as_stocnet(ison_adolescents)
   # two dyads the network could have observed and did not
@@ -206,20 +244,20 @@ test_that("a name added to a stocnet becomes its label", {
 
 test_that("deleting and arranging nodes keeps each report with its reporter", {
   arr <- css_array()
-  css <- as_stocnet(arr, attribute = "by")
+  css <- as_stocnet(arr, over = "by")
   # A is gone, and so are the reports A made and the ties to and from A
   expect_equal(as_matrix(delete_nodes(css, "A")), arr[-1, -1, -1])
   expect_equal(as_matrix(filter_nodes(css, label != "C")), arr[-3, -3, -3])
   expect_equal(as_matrix(arrange_nodes(css, dplyr::desc(label))), arr[4:1, 4:1, 4:1])
   # the node a piece of gossip is about is renumbered too
-  gossip <- as_stocnet(arr, attribute = "about")
+  gossip <- as_stocnet(arr, over = "about")
   expect_equal(as_matrix(delete_nodes(gossip, "B")), arr[-2, -2, -2])
 })
 
 test_that("arranging nodes keeps the ties recorded as missing", {
   arr <- css_array()
   arr["C", "A", "B"] <- NA
-  css <- as_stocnet(arr, attribute = "by")
+  css <- as_stocnet(arr, over = "by")
   expect_equal(nrow(css$missings), 1)
   arranged <- arrange_nodes(css, dplyr::desc(label))
   expect_equal(nrow(arranged$missings), 1)

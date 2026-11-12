@@ -498,15 +498,39 @@ test_that("a fixed tie is SIENA's structural one, there and back", {
   expect_true(all(back$weight == 1))
 })
 
-test_that("a structural zero from SIENA is read as no tie, with a warning", {
+test_that("a structural zero is SIENA's 10, there and back (#195)", {
   skip_if_not_installed("RSiena")
   a <- array(0, c(4, 4, 2))
   a[1, 2, ] <- 1; a[3, 4, ] <- 10
   d <- RSiena::sienaDataCreate(net = RSiena::sienaDependent(a, allowOnly = FALSE))
-  expect_warning(out <- as_stocnet(d), "structural zeros")
+  expect_no_warning(out <- as_stocnet(d))
+  # it is not a tie, and not a missing tie, but a fixed row of the missings
   expect_false(any(out$ties$from == 3 & out$ties$to == 4))
+  expect_equal(out$missings$from, c(3L, 3L))
+  expect_equal(out$missings$to, c(4L, 4L))
+  expect_true(all(out$missings$fixed))
+  expect_null(as_missinglist(out))
   # a layer without structural ones gets no 'fixed' column
   expect_false("fixed" %in% names(out$ties))
+  back <- as_siena(out)$depvars[[1]]
+  expect_equal(back[3, 4, ], c(10, 10))
+  expect_equal(back[1, 2, ], c(1, 1))
+})
+
+test_that("the structural zeros of an absent actor come from the composition", {
+  skip_if_not_installed("RSiena")
+  a <- array(0, c(4, 4, 3))
+  a[1, 2, ] <- 1; a[3, 4, ] <- 10
+  # the fourth actor leaves before the third wave
+  a[4, , 3] <- 10; a[, 4, 3] <- 10; diag(a[, , 3]) <- 0
+  cc <- RSiena::sienaCompositionChange(list(c(1, 3), c(1, 3), c(1, 3), c(1, 2.5)))
+  d <- RSiena::sienaDataCreate(net = RSiena::sienaDependent(a, allowOnly = FALSE), cc)
+  x <- as_stocnet(d)
+  # only the zeros that the composition does not imply are held as rows
+  expect_equal(x$missings$time, c(1L, 2L))
+  expect_equal(sum(.expand_fixed(x)$time == 3), 6)
+  arr <- as_siena(x)$depvars[[1]]
+  expect_equal(arr[3, 4, ], c(10, 10, 0))
 })
 
 test_that("a fixed tie keeps its mark through the other classes", {
@@ -520,14 +544,14 @@ test_that("a fixed tie keeps its mark through the other classes", {
 test_that("conversion of diff_model object works correctly", {
   skip_on_cran()
   skip_on_ci()
-  expect_warning(diff <- play_diffusion(ison_brandes, old_version = TRUE))
+  expect_warning(diff <- play_diffusion(ison_centrality, old_version = TRUE))
   tidy_diff <- as_tidygraph(diff)
-  expect_values(net_nodes(tidy_diff), net_nodes(ison_brandes))
-  expect_values(net_ties(tidy_diff), net_ties(ison_brandes))
+  expect_values(net_nodes(tidy_diff), net_nodes(ison_centrality))
+  expect_values(net_ties(tidy_diff), net_ties(ison_centrality))
   expect_values(net_nodes(tidy_diff), max(diff$I))
 })
 
-test_that("mnet objects printed correctly", {
+test_that("networks are described correctly", {
   expect_match(describe_network(ison_adolescents), "labelled, undirected")
   expect_match(describe_nodes(ison_adolescents), "8 adolescents")
   expect_match(describe_ties(ison_adolescents), "10 friendship")
@@ -618,7 +642,7 @@ test_that("coercing to a network keeps what the network knows about itself", {
 
 test_that("a cognitive social structure coerces to an array of every node", {
   arr <- css_array()
-  css <- as_stocnet(arr, attribute = "by")
+  css <- as_stocnet(arr, over = "by")
   expect_equal(as_matrix(css), arr)
   # the reporters are named in every class
   expect_setequal(as_edgelist(css)$by, c("A", "B", "C", "D"))
@@ -643,10 +667,10 @@ test_that("a cognitive social structure coerces to an array of every node", {
 
 test_that("an array coerces to a stocnet once it says what its slices hold", {
   arr <- css_array()
-  expect_error(as_stocnet(arr), "attribute")
-  expect_equal(as_matrix(as_stocnet(arr, attribute = "by")), arr)
-  expect_equal(as_matrix(as_stocnet(arr, attribute = "about")), arr)
-  expect_error(as_stocnet(arr[, , 1:3], attribute = "by"), "one slice for each")
+  expect_error(as_stocnet(arr), "over")
+  expect_equal(as_matrix(as_stocnet(arr, over = "by")), arr)
+  expect_equal(as_matrix(as_stocnet(arr, over = "about")), arr)
+  expect_error(as_stocnet(arr[, , 1:3], over = "by"), "one slice for each")
   # waves are assumed where the slices cannot be one for each node
   waves <- arr[, , 1:3]
   dimnames(waves)[[3]] <- c("1", "2", "3")
@@ -656,17 +680,17 @@ test_that("an array coerces to a stocnet once it says what its slices hold", {
     all(as_matrix(to_time(panel, w)) == waves[, , w]), logical(1))))
   layered <- waves
   dimnames(layered)[[3]] <- c("x", "y", "z")
-  multi <- as_stocnet(layered, attribute = "layer")
+  multi <- as_stocnet(layered, over = "layer")
   expect_equal(multi$info$layers, c("x", "y", "z"))
   for(layer in c("x", "y", "z"))
-    expect_equal(as_matrix(to_uniplex(multi, layer)), layered[, , layer])
+    expect_equal(as_matrix(to_layer(multi, layer)), layered[, , layer])
 })
 
 test_that("a node that did not report misses its whole report", {
   arr <- css_array()
   arr[, , "C"] <- NA
   diag(arr[, , "C"]) <- 0
-  css <- as_stocnet(arr, attribute = "by")
+  css <- as_stocnet(arr, over = "by")
   expect_equal(css$nodes$na, c(FALSE, FALSE, TRUE, FALSE))
   expect_null(css$missings)
   missing <- as_missinglist(css)
@@ -679,10 +703,10 @@ test_that("a node that did not report misses its whole report", {
 })
 
 test_that("a stocnet describes the third node its ties name", {
-  css <- as_stocnet(css_array(), attribute = "by")
+  css <- as_stocnet(css_array(), over = "by")
   expect_match(describe_network(css), "cognitive social structure$")
   expect_match(describe_ties(css), "from 4 reporters$")
-  gossip <- as_stocnet(css_array(), attribute = "about")
+  gossip <- as_stocnet(css_array(), over = "about")
   expect_match(describe_network(gossip), "gossip network$")
   expect_match(describe_ties(gossip), "about 4 targets$")
   expect_equal(describe_network(ison_adolescents), "A labelled, undirected network")
@@ -705,7 +729,7 @@ test_that("a silent reporter is found even where nobody reported a tie", {
   arr <- array(0, dim = c(3, 3, 3), dimnames = list(nodes, nodes, nodes))
   arr[, , "B"] <- NA
   diag(arr[, , "B"]) <- 0
-  css <- as_stocnet(arr, attribute = "by")
+  css <- as_stocnet(arr, over = "by")
   # only B did not report, and not every node whose ties are missing
   expect_equal(css$nodes$na, c(FALSE, TRUE, FALSE))
   expect_null(css$missings)
@@ -736,16 +760,16 @@ test_that("an array warns of a wave that holds no ties", {
   # Such a wave cannot be recorded, which is said rather than hidden
   lull <- array(0, dim = c(3, 3, 2))
   lull[1, 2, 1] <- 1
-  expect_warning(as_stocnet(lull, attribute = "time"), "no ties")
+  expect_warning(as_stocnet(lull, over = "time"), "no ties")
 })
 
 test_that("an array in which nobody reported a tie stays an array of reports", {
   nodes <- c("A", "B", "C")
   empty <- array(0, dim = c(3, 3, 3), dimnames = list(nodes, nodes, nodes))
-  css <- as_stocnet(empty, attribute = "by")
+  css <- as_stocnet(empty, over = "by")
   expect_true(is_cognitive(css))
   expect_equal(as_matrix(css), empty)
-  gossip <- as_stocnet(empty, attribute = "about")
+  gossip <- as_stocnet(empty, over = "about")
   expect_true(is_gossip(gossip))
   expect_equal(as_matrix(gossip), empty)
 })
@@ -792,11 +816,11 @@ test_that("an array of layers keeps the direction of each layer", {
                    dimnames = list(nodes, nodes, c("sym", "asym")))
   layered["a", "b", "sym"] <- layered["b", "a", "sym"] <- 1
   layered["a", "c", "asym"] <- 1
-  multi <- as_stocnet(layered, attribute = "layer")
+  multi <- as_stocnet(layered, over = "layer")
   expect_equal(multi$info$directed, c(sym = FALSE, asym = TRUE))
   expect_equal(sum(multi$ties$layer == "sym"), 1)
   for(layer in c("sym", "asym"))
-    expect_equal(as_matrix(to_uniplex(multi, layer)), layered[, , layer])
+    expect_equal(as_matrix(to_layer(multi, layer)), layered[, , layer])
 })
 
 test_that("a reporter column survives other names for the ends", {
@@ -857,7 +881,7 @@ test_that("from_reporters joins reports as the array route reads them", {
   expect_true(is_cognitive(css))
   # reports built on their own may be undirected, but the join is directed
   expect_equal(as_matrix(css), arr)
-  direct <- as_stocnet(arr, attribute = "by")
+  direct <- as_stocnet(arr, over = "by")
   sorted <- function(x) x$ties[do.call(order, x$ties), ]
   expect_equal(sorted(css), sorted(direct), ignore_attr = TRUE)
   expect_equal(css$nodes, direct$nodes)
@@ -951,14 +975,6 @@ test_that("to_directed orients two-mode ties from the first mode", {
   expect_true(all(!mode[match(el$from, labels)] & mode[match(el$to, labels)]))
   el <- as_edgelist(to_redirected(d))
   expect_true(all(mode[match(el$from, labels)] & !mode[match(el$to, labels)]))
-})
-
-test_that("the laterals are undirected two-mode networks", {
-  for (net in ison_laterals) {
-    expect_true(is_twomode(net))
-    expect_false(is_directed(net))
-    expect_false(is_directed(as_network(net)))
-  }
 })
 
 # Node vectors into dyadic matrices (#161) --------------------------------------
@@ -1057,4 +1073,133 @@ test_that("as_matrix() squares a two-mode 'stocnet' where asked", {
   # A one-mode network is square either way
   expect_equal(dim(as_matrix(ison_adolescents, twomode = FALSE)),
                dim(as_matrix(ison_adolescents)))
+})
+
+# Text matrices -------------------------------------------------------------------
+
+text_corpus <- c(a = "Trade builds peace. Peace builds trade!",
+                 b = "War ends trade.", c = "Peace needs work and trade")
+
+text_canon <- function(x) {
+  el <- as.data.frame(as_edgelist(x))
+  el <- el[order(el$from, el$to), ]
+  rownames(el) <- NULL
+  el
+}
+
+test_that("as_stocnet() reads a tm matrix without tm", {
+  # a 'simple_triplet_matrix' is a list, so it can be built by hand
+  dtm <- structure(list(i = c(1L, 1L, 2L), j = c(1L, 2L, 2L), v = c(2, 1, 3),
+                        nrow = 2L, ncol = 2L,
+                        dimnames = list(Docs = c("d1", "d2"),
+                                        Terms = c("peace", "war"))),
+                   class = c("DocumentTermMatrix", "simple_triplet_matrix"))
+  out <- as_stocnet(dtm)
+  expect_true(is_twomode(out))
+  expect_equal(out$info$modes, c("documents", "terms"))
+  expect_equal(as_edgelist(out)$weight, c(2, 1, 3))
+  expect_false("time" %in% names(out$ties))
+  tdm <- dtm
+  tdm[c("i", "j")] <- dtm[c("j", "i")]
+  tdm[c("nrow", "ncol")] <- dtm[c("ncol", "nrow")]
+  tdm$dimnames <- rev(dtm$dimnames)
+  class(tdm) <- c("TermDocumentMatrix", "simple_triplet_matrix")
+  expect_equal(as_stocnet(tdm), out)
+  expect_equal(node_labels(to_mode(out, "terms")), c("peace", "war"))
+})
+
+test_that("a tm matrix gives the network that collect_text() gives", {
+  skip_if_not_installed("tm")
+  corp <- tm::VCorpus(tm::VectorSource(unname(text_corpus)))
+  names(corp) <- names(text_corpus)
+  ctrl <- list(removePunctuation = TRUE, wordLengths = c(1, Inf))
+  ours <- collect_text(text_corpus)
+  dtm <- as_stocnet(tm::DocumentTermMatrix(corp, control = ctrl))
+  tdm <- as_stocnet(tm::TermDocumentMatrix(corp, control = ctrl))
+  expect_equal(text_canon(dtm), text_canon(ours))
+  expect_equal(text_canon(tdm), text_canon(ours))
+})
+
+test_that("a quanteda dfm gives the network that collect_text() gives", {
+  skip_if_not_installed("quanteda")
+  toks <- quanteda::tokens(quanteda::corpus(text_corpus,
+                                            docvars = data.frame(year = 1:3)),
+                           remove_punct = TRUE)
+  out <- as_stocnet(quanteda::dfm(toks))
+  expect_equal(text_canon(out), text_canon(collect_text(text_corpus)))
+  expect_equal(out$nodes$year[1:3], 1:3)
+  expect_equal(out$info$modes, c("documents", "terms"))
+})
+
+test_that("bibliometrix records are read as a network by every function", {
+  records <- data.frame(
+    SR = c("SMITH J, 2001, SCIENTOMETRICS", "JONES K, 2003, SCIENTOMETRICS"),
+    AU = c("SMITH J;JONES K", "JONES K"), PY = c(2001, 2003),
+    SO = "SCIENTOMETRICS", DE = c("NETWORK", "NETWORK; CITATION"),
+    TC = c(12, 3),
+    CR = c("PRICE DJD, 1965, SCIENCE", "SMITH J, 2001, SCIENTOMETRICS, V50, P1"))
+  class(records) <- c("bibliometrixDB", "data.frame")
+  out <- as_stocnet(records)
+  expect_equal(out, collect_bibliography(records))
+  expect_equal(out$nodes$citations[1:3], c(12L, 3L, NA))
+  expect_s3_class(as_igraph(records), "igraph")
+  expect_s3_class(as_tidygraph(records), "tbl_graph")
+  expect_equal(as_edgelist(records), as_edgelist(out))
+  # functions with a method for data frames read the records as a network
+  expect_equal(net_nodes(records), net_nodes(out))
+  expect_true(is_multiplex(records))
+  expect_false(is_twomode(records))
+  # and give back a stocnet, since the records cannot be rebuilt
+  expect_s3_class(to_layer(records, "cites"), "stocnet")
+  expect_s3_class(to_undirected(records), "stocnet")
+  expect_equal(as_matrix(to_mode(records, "authors", through = "works"))[
+    "SMITH J", "JONES K"], 1)
+})
+
+test_that("as_monan rebuilds the mobility data of MoNAn", {
+  skip_if_not_installed("MoNAn")
+  data("mobilityEdgelist", "orgRegion", "indSex", package = "MoNAn",
+       envir = environment())
+  n <- nrow(mobilityEdgelist)
+  k <- length(orgRegion)
+  net <- make_stocnet(
+    info = list(directed = FALSE, update = "replace"),
+    nodes = dplyr::tibble(label = c(paste0("p", 1:n), paste0("o", 1:k)),
+                          mode = rep(c("people", "places"), c(n, k)),
+                          sex = c(indSex, rep(NA, k)),
+                          region = c(rep(NA, n), orgRegion)),
+    ties = dplyr::tibble(from = rep(1:n, 2),
+                         to = n + c(mobilityEdgelist[, 1],
+                                    mobilityEdgelist[, 2]),
+                         time = rep(1:2, each = n)))
+  state <- as_monan(net)
+  expect_s3_class(state, "processState.monan")
+  expect_equal(state$dep.var, "moves")
+  expect_equal(unname(state$moves$data), unname(mobilityEdgelist + 0))
+  expect_equal(state$sex$data, indSex)
+  expect_equal(state$region$data, orgRegion)
+  expect_equal(length(state$places$ids), k)
+  # the moves are also the ties of the mobility network
+  expect_equal(as.numeric(net_ties(to_mobility(net))),
+               sum(mobilityEdgelist[, 1] != mobilityEdgelist[, 2]))
+})
+
+test_that("as_monan removes a place that no person holds", {
+  skip_if_not_installed("MoNAn")
+  net <- make_stocnet(
+    info = list(directed = FALSE, update = "replace"),
+    nodes = data.frame(label = c("Ann", "Bob", "X", "Y", "Z"),
+                       mode = rep(c("people", "places"), c(2, 3))),
+    ties = data.frame(from = c(1, 1, 2, 2), to = c(3, 4, 3, 3),
+                      time = c(1, 2, 1, 2)))
+  state <- as_monan(net)
+  expect_equal(length(state$places$ids), 2)
+  expect_equal(unname(state$moves$data), matrix(c(1, 1, 2, 1), 2))
+})
+
+test_that("a time column of an edgelist is not read as a weight", {
+  ties <- data.frame(from = c("A", "B", "C"), to = c("B", "C", "D"),
+                     time = c(0, 4, 8))
+  expect_equal(net_tie_attributes(as_tidygraph(ties)), "time")
+  expect_equal(as_stocnet(as_tidygraph(ties))$ties$time, c(0, 4, 8))
 })

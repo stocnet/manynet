@@ -195,7 +195,9 @@ layer_ties.stocnet <- function(.data){
 .layer_ties <- function(lnames, types, nt){
   if(is.null(lnames) || is.null(types)) return(as.integer(nt))
   utypes <- unique(types)
-  if(length(utypes) == length(lnames) && all(utypes %in% lnames)){
+  # a layer that has lost its ties, as at a moment before its first,
+  # holds none rather than the ties of the others
+  if(all(utypes %in% lnames)){
     as.integer(table(factor(types, levels = lnames)))
   } else as.integer(nt)
 }

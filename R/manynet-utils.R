@@ -19,6 +19,10 @@ available_methods <- function(fun_vctr) {
                                                  regexpr("\\.", utils::.S3methods(f)),
                                                  invert = TRUE))
   out <- out[lapply(out,length)>0]
+  # the methods for bibliographic records are registered for every function
+  # with a method for data frames, so they would only add a full column
+  out <- unlist(out, recursive = FALSE)
+  out <- out[vapply(out, function(m) m[2] != "bibliometrixDB", logical(1))]
   out <- t(as.data.frame(out))
   colnames(out) <- c("from","to")
   rownames(out) <- NULL
@@ -34,17 +38,6 @@ collect_functions <- function(pattern, package = "manynet"){
 }
 
 # Helper function for checking and downloading packages
-thisRequires <- function(pkgname){
-  if (!requireNamespace(pkgname, quietly = TRUE) & interactive()) {
-    if(utils::askYesNo(msg = paste("The", pkgname, 
-                                   "package is required to run this function. Would you like to install", pkgname, "from CRAN?"))) {
-      utils::install.packages(pkgname)
-    } else {
-      snet_abort(paste("Please install", pkgname, "from CRAN to run this function."))
-    }
-  }
-}
-
 interpolate <- function(values, positions, n, fill = NA) {
   out <- rep(fill, n) 
   out[positions] <- values
@@ -64,6 +57,9 @@ as_input <- function(.data, FUN, ...){
   # snet_minor_info("{.var {substitute(.data)}} is of class {.var {out_class}}.")
   if(out_class == "data.frame") out_class <- "edgelist"
   if(out_class == "tbl_graph") out_class <- "tidygraph"
+  # a class that a network cannot be coerced back to, such as bibliographic
+  # records, is given back as a stocnet
+  if(!exists(paste0("as_", out_class), mode = "function")) out_class <- "stocnet"
   
   fun_label <- as.character(substitute(FUN))   # capture symbol
   # The classes are tried in order of preference, and the first with a method

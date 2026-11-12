@@ -48,6 +48,10 @@ which \code{to_signed()} sets and \code{to_unsigned()} removes
 was collected or generated. See the Transformations section.
 Note that this records what has been done to the network,
 where "method" records how the network was collected or modelled.
+\item "uncoded" is a data frame of the units of text still to code,
+one row each with its 'document' and, where the unit is a part of a
+document, its 'sentence' or 'paragraph'.
+\code{collect_statements()} sets it, and removes it when all are coded.
 }
 
 If no arguments are used,
@@ -94,8 +98,8 @@ It holds a named list, one element for each of them:
 \item "projection" (4.3), which \code{to_mode1()}, \code{to_mode2()}, and
 \code{to_concepts()} set.
 \item "exclusion" (4.4), which the functions that drop nodes or ties set,
-such as \code{delete_isolates()}, \code{to_component()}, and \code{to_uniplex()}.
-\item "aggregation" (4.5), which \code{to_aggregated()}, \code{to_flat()},
+such as \code{delete_isolates()}, \code{to_component()}, and \code{to_layer()}.
+\item "aggregation" (4.5), which \code{to_aggregated()},
 \code{join_ties()}, and \code{to_blockmodel()} set.
 \item "imputation" (4.6), which \code{impute_ties()} and \code{impute_nodes()} set.
 }

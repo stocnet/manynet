@@ -2,16 +2,6 @@
 % Please edit documentation in R/manynet-defunct.R
 \name{defunct}
 \alias{defunct}
-\alias{pkg_data}
-\alias{network_nodes}
-\alias{network_ties}
-\alias{network_dims}
-\alias{network_dims.data.frame}
-\alias{network_dims.matrix}
-\alias{network_dims.igraph}
-\alias{network_dims.network}
-\alias{network_node_attributes}
-\alias{network_tie_attributes}
 \alias{node_mode}
 \alias{mutate_net}
 \alias{net_info}
@@ -170,31 +160,18 @@
 \alias{node_by_triad}
 \alias{na_to_zero}
 \alias{na_to_mean}
+\alias{play_segregation}
+\alias{play_learning}
 \alias{gather_changes}
 \alias{apply_changes}
 \alias{is_egonet}
+\alias{print.mnet}
+\alias{is_complex}
+\alias{to_simplex}
+\alias{to_uniplex}
+\alias{to_flat}
 \title{Functions that have been renamed, superseded, moved, or are no longer working}
 \usage{
-pkg_data(pkg = "manynet")
-
-network_nodes(.data)
-
-network_ties(.data)
-
-network_dims(.data)
-
-network_dims.data.frame(.data)
-
-network_dims.matrix(.data)
-
-network_dims.igraph(.data)
-
-network_dims.network(.data)
-
-network_node_attributes(.data)
-
-network_tie_attributes(.data)
-
 node_mode(.data)
 
 mutate_net(.data, ...)
@@ -511,21 +488,59 @@ na_to_zero(.data)
 
 na_to_mean(.data)
 
+play_segregation(
+  .data,
+  attribute,
+  heterophily = 0,
+  who_moves = c("ordered", "random", "most_dissatisfied"),
+  choice_function = c("satisficing", "optimising", "minimising"),
+  steps
+)
+
+play_learning(.data, beliefs, closeness = Inf, steps, epsilon = 5e-04)
+
 gather_changes(.data, time)
 
 apply_changes(.data, time)
 
 is_egonet(.data)
+
+\method{print}{mnet}(x, ..., n = 12)
+
+is_complex(.data)
+
+to_simplex(.data)
+
+to_uniplex(.data, layer, tie)
+
+to_flat(
+  .data,
+  rule = c("max", "min", "mean", "sum", "product"),
+  over = "layer"
+)
 }
 \arguments{
 \item{.data}{A manynet-consistent network.}
 
 \item{time}{A moment to gather the changes in force at.}
+
+\item{beliefs}{A vector of the opinions of the nodes at the start.}
+
+\item{closeness}{A threshold at which beliefs are too different to
+influence each other. By default \code{Inf}, i.e. there is no threshold.}
+
+\item{epsilon}{The maximum difference in beliefs accepted
+for convergence to a consensus.}
+
+\item{x}{A network of the 'mnet' class, saved by a version before 2.5.0.}
+
+\item{n}{Number of observations to print across all network components.}
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 Generally these functions have been superseded, renamed, and/or moved.
-Upon using them, a message is provided directing the user to the new function.
+Upon using them, a warning directs the user to the new function.
+A function that is only superseded still works without a warning
+for one minor release, since a released package may still call it.
 However, at this stage of package development,
 we generally clear older defunct functions at each minor release,
 and so you are strongly encouraged to use the new functions/names/syntax
@@ -533,26 +548,6 @@ wherever possible and update your scripts accordingly.
 }
 \section{Functions}{
 \itemize{
-\item \code{pkg_data()}: Deprecated on 2024-06-17.
-
-\item \code{network_nodes()}: Deprecated on 2024-06-20.
-
-\item \code{network_ties()}: Deprecated on 2024-06-20.
-
-\item \code{network_dims()}: Deprecated on 2024-06-20.
-
-\item \code{network_dims.data.frame()}: Deprecated on 2024-06-20.
-
-\item \code{network_dims.matrix()}: Deprecated on 2024-06-20.
-
-\item \code{network_dims.igraph()}: Deprecated on 2024-06-20.
-
-\item \code{network_dims.network()}: Deprecated on 2024-06-20.
-
-\item \code{network_node_attributes()}: Deprecated on 2024-06-20.
-
-\item \code{network_tie_attributes()}: Deprecated on 2024-06-20.
-
 \item \code{node_mode()}: Deprecated on 2026-03-22.
 
 \item \code{mutate_net()}: Deprecated on 2026-03-22.
@@ -869,11 +864,45 @@ wherever possible and update your scripts accordingly.
 
 \item \code{na_to_mean()}: Deprecated on 2026-08-18.
 
+\item \code{play_segregation()}: Deprecated on 2026-11-09.
+\code{play_segregation()} is now \code{play_mobility()},
+with \code{heterophily} renamed to \code{preference}.
+It gives the same results as before for a seed,
+and so does not move the occupant's other attributes.
+
+\item \code{play_learning()}: Deprecated on 2026-11-09.
+Use \code{play_opinion()}, whose \code{opinions}, \code{confidence}, and \code{tolerance}
+replace \code{beliefs}, \code{closeness}, and \code{epsilon}.
+A finite \code{closeness} plays the \code{"hegselmann_krause"} rule,
+and the result is the table that \code{as_opinion()} returns.
+
 \item \code{gather_changes()}: Deprecated on 2026-08-20.
 
 \item \code{apply_changes()}: Deprecated on 2026-08-20.
 
 \item \code{is_egonet()}: Deprecated on 2026-09-21.
 
+\item \code{is_complex()}: Superseded by \code{is_looped()} on 2026-11-12.
+This name gives a warning from 2.6.0.
+
+\item \code{to_simplex()}: Superseded by \code{to_unlooped()} on 2026-11-12.
+This name gives a warning from 2.6.0.
+
+\item \code{to_uniplex()}: Superseded by \code{to_layer()} on 2026-11-12.
+This name gives a warning from 2.6.0.
+
+\item \code{to_flat()}: Superseded by \code{to_aggregated()} on 2026-11-12,
+which combines layers by default and takes the \code{rule} third.
+This name gives a warning from 2.6.0.
+
 }}
+\section{The 'mnet' class}{
+
+Deprecated on 2026-11-08.
+manynet 2.5.0 no longer makes 'mnet' objects:
+\code{as_tidygraph()} returns a plain 'tbl_graph'.
+A network saved with the class still prints as before, with a warning;
+\code{as_stocnet()} converts it.
+}
+
 \keyword{internal}

@@ -9,7 +9,7 @@
 \usage{
 to_onemode(.data)
 
-to_twomode(.data, mark)
+to_twomode(.data, mark, through = NULL)
 
 to_multilevel(.data)
 }
@@ -26,6 +26,11 @@ to_multilevel(.data)
 
 \item{mark}{A logical vector marking two types or modes.
 By default "type".}
+
+\item{through}{For a network of three or more modes,
+the modes to project through, as indices or names, as for \code{to_mode()}.
+The result is a two-mode network of the two other modes.
+Leave \code{mark} out when you give \code{through}.}
 }
 \value{
 An object of the same class as the function was given,
@@ -45,6 +50,16 @@ using a mark to distinguish the two sets of nodes.
 It also reformats a hypergraph into a two-mode network,
 in which each hyperedge is a node of the second mode,
 and for this needs no mark.
+With \code{through}, it projects a network of three or more modes
+onto the two modes that \code{through} does not name.
+Two nodes of these modes get a tie when they have ties
+to the same node of \code{through}.
+For example, in a network of authors, works, and keywords,
+\code{to_twomode(.data, through = "works")} ties each author
+to the keywords of their works.
+The weight of the tie is the number of these works.
+For valued ties, it adds the products of the two weights.
+Other tie attributes, such as layers, are lost.
 \item \code{to_multilevel()} reformats two-mode network data into multimodal network data,
 which allows for more levels and ties within modes.
 }
@@ -79,12 +94,14 @@ Other modifications:
 \code{\link{modif_direction}},
 \code{\link{modif_from_parts}},
 \code{\link{modif_from_ternary}},
+\code{\link{modif_influence}},
 \code{\link{modif_labels}},
+\code{\link{modif_layers}},
+\code{\link{modif_loops}},
 \code{\link{modif_miss}},
 \code{\link{modif_motifs}},
 \code{\link{modif_paths}},
 \code{\link{modif_permutation}},
-\code{\link{modif_plexity}},
 \code{\link{modif_project}},
 \code{\link{modif_proximity}},
 \code{\link{modif_scope}},

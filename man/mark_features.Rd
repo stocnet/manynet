@@ -112,7 +112,7 @@ If the greatest common divisor is 1, the network is aperiodic.
 is_connected(ison_southern_women)
 is_connected(ison_algebra, connectivity = "weak")
 is_perfect_matching(ison_southern_women)
-is_eulerian(ison_brandes)
+is_eulerian(ison_centrality)
 is_acyclic(ison_algebra)
 is_aperiodic(ison_algebra)
 }

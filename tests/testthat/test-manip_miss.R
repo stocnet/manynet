@@ -12,8 +12,8 @@ test_that("missing values are imputed correctly",{
   expect_false(anyNA(impute_ties(missTest, "mean")))
   expect_false(anyNA(impute_ties(missTest2)))
   expect_false(anyNA(impute_ties(missTest2, "mean")))
-  expect_s3_class(impute_ties(missTest2), "tbl_graph")
-  expect_s3_class(impute_ties(missTest2, "mean"), "tbl_graph")
+  expect_s3_class(impute_ties(missTest2), class(missTest2)[1])
+  expect_s3_class(impute_ties(missTest2, "mean"), class(missTest2)[1])
 })
 
 test_that("every rule leaves nothing the network records as unobserved", {
@@ -32,7 +32,7 @@ test_that("the two parts of a tie's missingness are imputed separately", {
   # asking for the missing ties only must leave it alone
   untouched <- impute_ties(missTest2, "zero", which = "nonresponse")
   expect_true(anyNA(tie_weights(untouched)))
-  expect_equal(igraph::ecount(untouched), igraph::ecount(missTest2))
+  expect_equal(nrow(as_edgelist(untouched)), nrow(as_edgelist(missTest2)))
   # and asking for the incomplete ties only must leave the missing ties alone
   kept <- impute_ties(ison_classmates, "mean", which = "incomplete")
   expect_equal(net_tie_missing(kept), net_tie_missing(ison_classmates))
@@ -164,7 +164,8 @@ test_that("the zero rule sets missing weights to zero instead of deleting ties",
   # documentation and its own matrix and edgelist methods
   # counted over the ties the network holds, since `net_ties()` counts only
   # those it does not record as missing, and imputing them changes that
-  expect_equal(igraph::ecount(impute_ties(missTest2)), igraph::ecount(missTest2))
+  expect_equal(nrow(as_edgelist(impute_ties(missTest2))),
+               nrow(as_edgelist(missTest2)))
   expect_equal(sum(tie_weights(impute_ties(missTest2)) == 0),
                sum(is.na(tie_weights(missTest2))))
 })
@@ -207,7 +208,7 @@ test_that("binary networks are imputed rather than passed over", {
   # tested is.na() on the index, so it never imputed anything
   # a weight column holding only 0, 1, and NA records which ties are present
   # and not their values, so an NA there marks a missing tie
-  binary <- ison_adolescents |>
+  binary <- as_tidygraph(ison_adolescents) |>
     mutate_ties(weight = c(1, NA, 1, NA, 1, 1, 1, 1, 1, 1))
   set.seed(1234)
   out <- impute_ties(binary, "density")
@@ -215,8 +216,22 @@ test_that("binary networks are imputed rather than passed over", {
   expect_true(all(tie_weights(out) %in% c(0, 1)))
 })
 
+test_that("a stocnet's missing ties are imputed from its record of them", {
+  # A stocnet does not mark a missing tie with an NA weight, but lists it in
+  # its 'missings', which is where `as_stocnet()` puts the NA weights of a
+  # binary network.
+  binary <- as_stocnet(as_tidygraph(ison_adolescents) |>
+                         mutate_ties(weight = c(1, NA, 1, NA, 1, 1, 1, 1, 1, 1)))
+  expect_equal(nrow(as_missinglist(binary)), 2)
+  set.seed(1234)
+  out <- impute_ties(binary, "density")
+  expect_null(as_missinglist(out))
+  expect_gte(nrow(out$ties), 8)
+  expect_lte(nrow(out$ties), 10)
+})
+
 test_that("the drawn rules are reproducible given a seed", {
-  binary <- ison_adolescents |>
+  binary <- as_tidygraph(ison_adolescents) |>
     mutate_ties(weight = c(1, NA, 1, NA, 1, 1, 1, 1, 1, 1))
   set.seed(1234)
   first <- tie_weights(impute_ties(binary, "density"))
@@ -336,4 +351,72 @@ test_that("imputing as zero keeps a fixed tie", {
                                        weight = c(NA, NA, 1),
                                        fixed = c(TRUE, FALSE, FALSE)))
   expect_equal(impute_ties(st, "zero")$ties$weight, c(1, 0, 1))
+})
+
+# Structural zeros (#195) ####
+
+zero_panel <- function()
+  make_stocnet(nodes = data.frame(label = letters[1:4]),
+               ties = data.frame(from = c("a", "b"), to = c("b", "c"),
+                                 time = c(1, 2)),
+               missings = data.frame(from = c(3L, 1L), to = c(4L, 3L),
+                                     time = c(1, 2), fixed = c(TRUE, FALSE)),
+               info = list(directed = TRUE))
+
+test_that("a structural zero is held in the missings but is not missing", {
+  x <- zero_panel()
+  expect_equal(x$missings$fixed, c(FALSE, TRUE))
+  miss <- as_missinglist(x)
+  expect_equal(nrow(miss), 1)
+  expect_equal(c(miss$from, miss$to), c(1L, 3L))
+  expect_equal(nrow(.expand_fixed(x)), 1)
+  # the headings are messages from cli, so the tables are captured apart
+  expect_message(utils::capture.output(print(x)), "Structural zeros")
+})
+
+test_that("a structural zero cannot also be a tie or a missing tie", {
+  nodes <- data.frame(label = letters[1:3])
+  expect_error(make_stocnet(nodes = nodes,
+                            ties = data.frame(from = "a", to = "b"),
+                            missings = data.frame(from = 1L, to = 2L, fixed = TRUE),
+                            info = list(directed = TRUE)),
+               "cannot also be a tie")
+  x <- make_stocnet(nodes = nodes, ties = data.frame(from = "a", to = "b"),
+                    info = list(directed = TRUE))
+  x$missings <- dplyr::tibble(from = c(2L, 2L), to = c(3L, 3L),
+                              fixed = c(TRUE, FALSE))
+  expect_error(validate_stocnet(x), "cannot also be missing")
+})
+
+test_that("imputation fills the missing ties and keeps the structural zeros", {
+  out <- to_imputed(zero_panel())
+  expect_null(as_missinglist(out))
+  expect_equal(nrow(out$missings), 1)
+  expect_true(out$missings$fixed)
+})
+
+test_that("a structural zero survives the classes that can hold it", {
+  x <- zero_panel()
+  for(back in list(as_stocnet(as_igraph(x)), as_stocnet(as_tidygraph(x)))){
+    expect_equal(back$missings, x$missings)
+    expect_equal(nrow(as_missinglist(back)), 1)
+  }
+  expect_equal(nrow(as_missinglist(as_igraph(x))), 1)
+})
+
+test_that("a structural zero is scoped to its moment and joined back", {
+  x <- zero_panel()
+  expect_true(to_time(x, 1)$missings$fixed)
+  expect_null(as_missinglist(to_time(x, 1)))
+  back <- from_times(to_times(x))
+  expect_equal(back$missings$fixed, c(FALSE, TRUE))
+})
+
+test_that("the dyads of a node that has left are structural zeros", {
+  # a21 is not in the class from wave 3, and there are 25 others to tie to
+  zeros <- .expand_fixed(ison_classmates)
+  expect_equal(as.numeric(table(zeros$time)), c(50, 50))
+  expect_true(all(zeros$from == 21 | zeros$to == 21))
+  # those dyads are implied by 'active', and so are not held as rows
+  expect_null(ison_classmates$missings)
 })

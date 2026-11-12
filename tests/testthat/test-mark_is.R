@@ -129,8 +129,8 @@ test_that("layer_is_directed reports each layer of a mixed network", {
 })
 
 test_that("is_cognitive, is_egocentric, and is_gossip tell third nodes apart", {
-  css <- as_stocnet(css_array(), attribute = "by")
-  gossip <- as_stocnet(css_array(), attribute = "about")
+  css <- as_stocnet(css_array(), over = "by")
+  gossip <- as_stocnet(css_array(), over = "about")
   expect_true(is_cognitive(css))
   expect_false(is_egocentric(css))
   expect_false(is_gossip(css))
@@ -163,7 +163,7 @@ test_that("is_egocentric reads the design, or failing that the reports", {
   expect_false(is_cognitive(ego))
   # the network's own information outranks the reports
   expect_true(is_cognitive(mutate_info(ego, observation = "cognitive")))
-  expect_true(is_egocentric(mutate_info(as_stocnet(css_array(), attribute = "by"),
+  expect_true(is_egocentric(mutate_info(as_stocnet(css_array(), over = "by"),
                                         observation = "egocentric")))
   # a column that names no node marks nothing
   none <- make_stocnet(ties = data.frame(from = 1:2, to = 2:3, by = NA),
