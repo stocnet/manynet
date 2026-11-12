@@ -643,7 +643,10 @@ test_that("generate_degree keeps tie weights and signs", {
 
 test_that("generate_degree keeps the degrees in every layer", {
   set.seed(1234)
-  start <- as_igraph(ison_algebra)
+  # Eight of the sixteen nodes still hold all three layers, and the draw over
+  # them takes a hundredth of the time.
+  algebra <- delete_nodes(ison_algebra, 9:16)
+  start <- as_igraph(algebra)
   col <- intersect(c("layer", "type"), igraph::edge_attr_names(start))[1]
   layer_degs <- function(g, l, mode) {
     col <- intersect(c("layer", "type"), igraph::edge_attr_names(g))[1]
@@ -652,7 +655,7 @@ test_that("generate_degree keeps the degrees in every layer", {
                    mode = mode)
   }
   for (p in c(1, 0.5)) {
-    out <- as_igraph(generate_degree(ison_algebra, p = p))
+    out <- as_igraph(generate_degree(algebra, p = p))
     expect_true(is_multiplex(out))
     for (l in unique(igraph::edge_attr(start, col))) {
       for (mode in c("out", "in"))

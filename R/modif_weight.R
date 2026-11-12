@@ -45,7 +45,7 @@ NULL
 #'   which retains every tie but replaces its sign with its magnitude.
 #' @importFrom igraph delete_edges E delete_edge_attr
 #' @examples
-#' marvel <- to_uniplex(fict_marvel, "relationship")
+#' marvel <- to_layer(fict_marvel, "relationship")
 #' to_unsigned(marvel, "positive")
 #' to_unsigned(marvel, "both")
 #' @export

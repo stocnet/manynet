@@ -98,8 +98,8 @@ It holds a named list, one element for each of them:
 \item "projection" (4.3), which \code{to_mode1()}, \code{to_mode2()}, and
 \code{to_concepts()} set.
 \item "exclusion" (4.4), which the functions that drop nodes or ties set,
-such as \code{delete_isolates()}, \code{to_component()}, and \code{to_uniplex()}.
-\item "aggregation" (4.5), which \code{to_aggregated()}, \code{to_flat()},
+such as \code{delete_isolates()}, \code{to_component()}, and \code{to_layer()}.
+\item "aggregation" (4.5), which \code{to_aggregated()},
 \code{join_ties()}, and \code{to_blockmodel()} set.
 \item "imputation" (4.6), which \code{impute_ties()} and \code{impute_nodes()} set.
 }

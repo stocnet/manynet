@@ -78,7 +78,7 @@ The four symmetric relations are held once per dyad,
 and the info component records the directedness of each layer.
 Coercion to another class reciprocates those layers again,
 because an 'igraph' or 'network' object is directed or undirected as a
-whole. \code{to_uniplex()} returns an undirected network for a symmetric layer.
+whole. \code{to_layer()} returns an undirected network for a symmetric layer.
 
 All ties are weighted \code{1} or \code{-1} except \code{trades},
 which carries the observed count.

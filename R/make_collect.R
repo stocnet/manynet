@@ -155,7 +155,7 @@ q_yes <- function(msg = NULL){
 #'   defined in the directory by default.
 #'
 #'   Both return networks that can be scoped further using, for example,
-#'   [to_ego()], [to_uniplex()], [to_giant()], [delete_isolates()],
+#'   [to_ego()], [to_layer()], [to_giant()], [delete_isolates()],
 #'   [to_blockmodel()], or [to_subgraph()].
 #'
 #'   Each node of the network that `collect_cran()` returns has
@@ -180,12 +180,12 @@ q_yes <- function(msg = NULL){
 #' @return A `tidygraph` object representing the network of package dependencies
 #'   or function dependencies in a package.
 #' @importFrom utils available.packages contrib.url getParseData
-#' @name make_collect
+#' @name make_packages
 #' @family makes
-#' @seealso [to_ego()], [to_uniplex()], [delete_isolates()]
+#' @seealso [to_ego()], [to_layer()], [delete_isolates()]
 NULL
 
-#' @rdname make_collect
+#' @rdname make_packages
 #' @param pkg A character vector of one or more package names,
 #'   from which dependencies are collected.
 #'   By default "all", which collects the dependencies among all the packages
@@ -248,7 +248,7 @@ collect_cran <- function(pkg = "all",
     snet_info("Collected {net_nodes(out)} packages and {net_ties(out)}",
               "dependencies. Consider scoping this network with e.g.",
               "{.fn to_ego}, {.fn to_giant}, {.fn delete_isolates},",
-              "or {.fn to_uniplex}.")
+              "or {.fn to_layer}.")
   out
 }
 
@@ -330,7 +330,7 @@ collect_cran <- function(pkg = "all",
   as_tidygraph(igraph::induced_subgraph(.data, vs))
 }
 
-#' @rdname make_collect
+#' @rdname make_packages
 #' @param dir Character string with the path of the directory in which to
 #'   look for R scripts.
 #'   By default the current working directory.
@@ -1711,9 +1711,9 @@ collect_text <- function(text, unit = "document", terms = NULL,
 #'
 #'   | Network | Recipe |
 #'   |:--------|:-------|
-#'   | citation | `to_uniplex(.data, "cites")` |
-#'   | co-citation | `to_proximity(to_uniplex(.data, "cites"), across = "columns")` |
-#'   | bibliographic coupling | `to_proximity(to_uniplex(.data, "cites"), across = "rows")` |
+#'   | citation | `to_layer(.data, "cites")` |
+#'   | co-citation | `to_proximity(to_layer(.data, "cites"), across = "columns")` |
+#'   | bibliographic coupling | `to_proximity(to_layer(.data, "cites"), across = "rows")` |
 #'   | co-authorship | `to_mode(.data, "authors", through = "works", similarity = "fractional")` |
 #'   | co-word | `to_mode(.data, "keywords", through = "works")` |
 #'   | authors and keywords | `to_twomode(.data, through = c("works", "sources"))` |
@@ -1741,7 +1741,7 @@ collect_text <- function(text, unit = "document", terms = NULL,
 #'   A multimodal, multiplex network of works, authors, keywords,
 #'   and sources.
 #' @family makes
-#' @seealso [to_uniplex()], [to_proximity()], [to_mode()], [to_time()]
+#' @seealso [to_layer()], [to_proximity()], [to_mode()], [to_time()]
 #' @references
 #' Perianes-Rodriguez, Antonio, Ludo Waltman, and Nees Jan van Eck. 2016.
 #' "Constructing bibliometric networks: A comparison between full and
@@ -1761,7 +1761,7 @@ collect_text <- function(text, unit = "document", terms = NULL,
 #'          "SMITH J, 2001, SCIENTOMETRICS, V50, P1; PRICE DJD, 1965, SCIENCE",
 #'          "SMITH J, 2001, SCIENTOMETRICS; JONES K, 2003, SCIENTOMETRICS"))
 #' (bib <- collect_bibliography(records))
-#' to_uniplex(bib, "cites") |> to_proximity(across = "columns")
+#' to_layer(bib, "cites") |> to_proximity(across = "columns")
 #' to_mode(bib, "authors", through = "works", similarity = "fractional")
 #' @name make_bibliography
 #' @export

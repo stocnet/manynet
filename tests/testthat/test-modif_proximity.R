@@ -289,7 +289,7 @@ test_that("to_proximity keeps the names of three or more modes", {
                                     "tagged")),
     info = list(modes = c("works", "authors", "keywords"),
                 directed = c(cites = TRUE, authored = FALSE, tagged = FALSE)))
-  out <- to_proximity(to_uniplex(sn, "cites"), across = "columns")
+  out <- to_proximity(to_layer(sn, "cites"), across = "columns")
   expect_equal(out$nodes$mode, sn$nodes$mode)
   expect_equal(out$info$modes, sn$info$modes)
   # w2 and w3 are both cited by w1

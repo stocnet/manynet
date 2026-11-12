@@ -92,7 +92,7 @@
 #'   and the info component records the directedness of each layer.
 #'   Coercion to another class reciprocates those layers again,
 #'   because an 'igraph' or 'network' object is directed or undirected as a
-#'   whole. `to_uniplex()` returns an undirected network for a symmetric layer.
+#'   whole. `to_layer()` returns an undirected network for a symmetric layer.
 #'
 #'   All ties are weighted `1` or `-1` except `trades`,
 #'   which carries the observed count.

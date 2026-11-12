@@ -244,20 +244,20 @@ test_that("a name added to a stocnet becomes its label", {
 
 test_that("deleting and arranging nodes keeps each report with its reporter", {
   arr <- css_array()
-  css <- as_stocnet(arr, attribute = "by")
+  css <- as_stocnet(arr, over = "by")
   # A is gone, and so are the reports A made and the ties to and from A
   expect_equal(as_matrix(delete_nodes(css, "A")), arr[-1, -1, -1])
   expect_equal(as_matrix(filter_nodes(css, label != "C")), arr[-3, -3, -3])
   expect_equal(as_matrix(arrange_nodes(css, dplyr::desc(label))), arr[4:1, 4:1, 4:1])
   # the node a piece of gossip is about is renumbered too
-  gossip <- as_stocnet(arr, attribute = "about")
+  gossip <- as_stocnet(arr, over = "about")
   expect_equal(as_matrix(delete_nodes(gossip, "B")), arr[-2, -2, -2])
 })
 
 test_that("arranging nodes keeps the ties recorded as missing", {
   arr <- css_array()
   arr["C", "A", "B"] <- NA
-  css <- as_stocnet(arr, attribute = "by")
+  css <- as_stocnet(arr, over = "by")
   expect_equal(nrow(css$missings), 1)
   arranged <- arrange_nodes(css, dplyr::desc(label))
   expect_equal(nrow(arranged$missings), 1)

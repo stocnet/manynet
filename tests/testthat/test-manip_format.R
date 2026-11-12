@@ -38,30 +38,81 @@ uni <- as_tidygraph(create_filled(5))  |>
   mutate_ties(type = c(rep("friend",5), rep("enemy",5)),
               weight = rpois(10, lambda = 4))
 
-test_that("to_uniplex works", {
-  expect_true(is_uniplex(to_uniplex(uni, "friend")))
-  expect_length(to_uniplex(uni, "friend"), length(uni))
+test_that("to_layer works", {
+  expect_true(is_uniplex(to_layer(uni, "friend")))
+  expect_length(to_layer(uni, "friend"), length(uni))
   expect_false(is_multiplex(ison_southern_women))
   expect_false(is_multiplex(to_multilevel(ison_southern_women)))
-  expect_true(is_twomode(to_uniplex(fict_actually, "appearance")))
-  expect_false(is_twomode(to_uniplex(fict_actually, "romance")))
+  expect_true(is_twomode(to_layer(fict_actually, "appearance")))
+  expect_false(is_twomode(to_layer(fict_actually, "romance")))
 })
 
-test_that("to_uniplex handles networks without tie types", {
-  expect_equal(as_matrix(to_uniplex(create_ring(8), "friend")),
+test_that("is_uniplex is the opposite of is_multiplex (#182)", {
+  expect_false(is_uniplex(uni))
+  expect_true(is_uniplex(create_star(3)))
+  # loops and parallel ties no longer make a network not uniplex
+  expect_true(is_uniplex(ison_koenigsberg))
+  expect_true(is_uniplex(fict_lotr))
+})
+
+test_that("loops are added and removed (#182)", {
+  ring <- create_ring(4)
+  expect_false(is_looped(ring))
+  looped <- to_looped(ring)
+  expect_true(is_looped(looped))
+  expect_equal(as.numeric(net_ties(looped)), 8)
+  expect_equal(unname(diag(as_matrix(looped))), rep(1, 4))
+  expect_false(is_looped(to_unlooped(looped)))
+  # a node that has a loop already gets no second one
+  expect_equal(as.numeric(net_ties(to_looped(looped))), 8)
+  expect_equal(unname(diag(to_looped(as_matrix(ring)))), rep(1, 4))
+  expect_error(to_looped(ison_southern_women), "two-mode")
+})
+
+test_that("to_looped gives loops in each layer, to the nodes active then", {
+  out <- to_looped(ison_classmates)
+  loops <- out$ties[out$ties$from == out$ties$to, , drop = FALSE]
+  # a21 leaves the class at wave 3, so has no loop at waves 3 and 4
+  expect_false(any(loops$from == 21 & loops$time %in% 3:4))
+  expect_true(any(loops$from == 21 & loops$time == 1))
+  expect_setequal(unique(loops$layer), c("friends", "primary"))
+})
+
+test_that("is_simplified and to_simplified agree (#182)", {
+  expect_false(is_simplified(ison_koenigsberg))
+  expect_true(is_simplified(to_simplified(ison_koenigsberg)))
+  expect_false(is_simplified(fict_lotr))
+  expect_true(is_simplified(to_simplified(fict_lotr)))
+  # ties in different layers are not parallel, so the layers all stay
+  expect_true(is_simplified(ison_algebra))
+  expect_setequal(layer_names(to_simplified(ison_algebra)),
+                  layer_names(ison_algebra))
+})
+
+test_that("the superseded names work without a warning (#182)", {
+  expect_no_warning(expect_equal(is_complex(fict_lotr), is_looped(fict_lotr)))
+  expect_no_warning(expect_equal(to_simplex(fict_lotr), to_unlooped(fict_lotr)))
+  expect_no_warning(expect_equal(as_edgelist(to_uniplex(uni, "friend")),
+                                 as_edgelist(to_layer(uni, "friend"))))
+  expect_warning(snet_deprecated("old_name", "new_name"),
+                 class = "deprecatedWarning")
+})
+
+test_that("to_layer handles networks without tie types", {
+  expect_equal(as_matrix(to_layer(create_ring(8), "friend")),
                as_matrix(create_ring(8)))
-  expect_equal(as_matrix(to_uniplex(ison_southern_women, "participation")),
+  expect_equal(as_matrix(to_layer(ison_southern_women, "participation")),
                as_matrix(ison_southern_women))
 })
 
-test_that("to_uniplex reports the available tie types", {
-  expect_error(to_uniplex(uni, "nope"), "friend")
-  expect_error(to_uniplex(uni), "friend")
+test_that("to_layer reports the available tie types", {
+  expect_error(to_layer(uni, "nope"), "friend")
+  expect_error(to_layer(uni), "friend")
 })
 
-test_that("to_uniplex works where layers are held in a layer column", {
-  expect_equal(as_matrix(to_uniplex(as_stocnet(ison_algebra), "tasks")),
-               as_matrix(to_uniplex(ison_algebra, "tasks")))
+test_that("to_layer works where layers are held in a layer column", {
+  expect_equal(as_matrix(to_layer(as_stocnet(ison_algebra), "tasks")),
+               as_matrix(to_layer(ison_algebra, "tasks")))
 })
 
 test_that("to_reciprocated works",{
@@ -103,7 +154,7 @@ test_that("to_unsigned keeps every tie's magnitude where 'both' is asked for", {
   }
   # 'fict_marvel' holds its signs in a 'sign' attribute, where the ring holds
   # them as negative weights, so both representations are covered
-  marvel <- to_uniplex(fict_marvel, "relationship")
+  marvel <- to_layer(fict_marvel, "relationship")
   both <- to_unsigned(marvel, "both")
   expect_false(is_signed(both))
   expect_equal(as.numeric(net_ties(both)), as.numeric(net_ties(marvel)))

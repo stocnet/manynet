@@ -125,9 +125,9 @@ so its references are matched to records only by DOI.
 
 The classic networks come from the existing functions:\tabular{ll}{
    Network \tab Recipe \cr
-   citation \tab \code{to_uniplex(.data, "cites")} \cr
-   co-citation \tab \code{to_proximity(to_uniplex(.data, "cites"), across = "columns")} \cr
-   bibliographic coupling \tab \code{to_proximity(to_uniplex(.data, "cites"), across = "rows")} \cr
+   citation \tab \code{to_layer(.data, "cites")} \cr
+   co-citation \tab \code{to_proximity(to_layer(.data, "cites"), across = "columns")} \cr
+   bibliographic coupling \tab \code{to_proximity(to_layer(.data, "cites"), across = "rows")} \cr
    co-authorship \tab \code{to_mode(.data, "authors", through = "works", similarity = "fractional")} \cr
    co-word \tab \code{to_mode(.data, "keywords", through = "works")} \cr
    authors and keywords \tab \code{to_twomode(.data, through = c("works", "sources"))} \cr
@@ -158,7 +158,7 @@ records <- data.frame(
          "SMITH J, 2001, SCIENTOMETRICS, V50, P1; PRICE DJD, 1965, SCIENCE",
          "SMITH J, 2001, SCIENTOMETRICS; JONES K, 2003, SCIENTOMETRICS"))
 (bib <- collect_bibliography(records))
-to_uniplex(bib, "cites") |> to_proximity(across = "columns")
+to_layer(bib, "cites") |> to_proximity(across = "columns")
 to_mode(bib, "authors", through = "works", similarity = "fractional")
 }
 \references{
@@ -169,19 +169,19 @@ fractional counting".
 \doi{10.1016/j.joi.2016.10.006}
 }
 \seealso{
-\code{\link[=to_uniplex]{to_uniplex()}}, \code{\link[=to_proximity]{to_proximity()}}, \code{\link[=to_mode]{to_mode()}}, \code{\link[=to_time]{to_time()}}
+\code{\link[=to_layer]{to_layer()}}, \code{\link[=to_proximity]{to_proximity()}}, \code{\link[=to_mode]{to_mode()}}, \code{\link[=to_time]{to_time()}}
 
 Other makes:
 \code{\link[=as_diffusion]{as_diffusion()}},
 \code{\link[=as_mobility]{as_mobility()}},
 \code{\link[=as_opinion]{as_opinion()}},
-\code{\link{make_collect}},
 \code{\link{make_create}},
 \code{\link{make_ego}},
 \code{\link{make_emails}},
 \code{\link{make_explicit}},
 \code{\link{make_groups}},
 \code{\link{make_growth}},
+\code{\link{make_packages}},
 \code{\link{make_random}},
 \code{\link{make_read}},
 \code{\link{make_statements}},

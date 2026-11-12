@@ -107,7 +107,7 @@ These functions offer tools for splitting manynet-consistent objects
 attribute.
 \item \code{to_layers()} splits a multiplex network into its layers,
 i.e. a list of uniplex networks, one per tie type.
-Use \code{to_uniplex()}, or its alias \code{to_layer()}, to retain just one of them.
+Use \code{to_layer()}, or its alias \code{to_layer()}, to retain just one of them.
 \item \code{to_reporters()} splits a cognitive social structure into the report
 of each of its reporters, one network per reporter.
 Use \code{to_reporter()} to retain just one of them,
@@ -168,7 +168,7 @@ the windows overlap, and a tie can be in more than one of them.
 
 The layers of a multiplex network are held in a tie attribute,
 \code{type} in tidygraph/igraph objects and \code{layer} in 'stocnet' objects.
-Each layer is extracted by \code{to_uniplex()}, so that the layers returned
+Each layer is extracted by \code{to_layer()}, so that the layers returned
 here are the same networks as retrieving them one at a time,
 and the returned list is named by the tie types found in the network.
 Where a network holds no tie types it is already uniplex,
@@ -230,12 +230,13 @@ Other modifications:
 \code{\link{modif_from_ternary}},
 \code{\link{modif_influence}},
 \code{\link{modif_labels}},
+\code{\link{modif_layers}},
 \code{\link{modif_levels}},
+\code{\link{modif_loops}},
 \code{\link{modif_miss}},
 \code{\link{modif_motifs}},
 \code{\link{modif_paths}},
 \code{\link{modif_permutation}},
-\code{\link{modif_plexity}},
 \code{\link{modif_project}},
 \code{\link{modif_proximity}},
 \code{\link{modif_scope}},

@@ -11,8 +11,8 @@ comb <- from_layers(a = as_tidygraph(comb_a), b = as_tidygraph(comb_b))
 # from_layers() ---------------------------------------------------------------
 
 test_that("from_layers keeps the networks as layers", {
-  marriage <- to_uniplex(ison_florentine, "marriage")
-  business <- to_uniplex(ison_florentine, "business")
+  marriage <- to_layer(ison_florentine, "marriage")
+  business <- to_layer(ison_florentine, "business")
   out <- from_layers(marriage = marriage, business = business)
   expect_true(is_multiplex(out))
   expect_setequal(layer_names(out), c("marriage", "business"))
@@ -85,90 +85,91 @@ test_that("from_layers does not make an undirected network directed", {
   # make a tie recorded as A-B differ from the same tie recorded as B-A
   expect_false(is_directed(comb))
   shuffled <- comb_b[c(3, 1, 2), c(3, 1, 2)]
-  expect_equal(as_matrix(to_flat(from_layers(a = as_tidygraph(comb_a),
-                                              b = as_tidygraph(shuffled)), "sum")),
-               as_matrix(to_flat(comb, "sum")))
+  expect_equal(as_matrix(to_aggregated(from_layers(a = as_tidygraph(comb_a),
+                                                    b = as_tidygraph(shuffled)),
+                                        rule = "sum")),
+               as_matrix(to_aggregated(comb, rule = "sum")))
 })
 
-# to_flat() -------------------------------------------------------------------
+# to_aggregated() over layers -------------------------------------------------------------------
 
-test_that("to_flat reconciles tie values as each rule promises", {
-  expect_equal(as_matrix(to_flat(comb, "max"))[1, 2], 3)
-  expect_equal(as_matrix(to_flat(comb, "min"))[1, 2], 2)
-  expect_equal(as_matrix(to_flat(comb, "mean"))[1, 2], 2.5)
-  expect_equal(as_matrix(to_flat(comb, "sum"))[1, 2], 5)
-  expect_equal(as_matrix(to_flat(comb, "product"))[1, 2], 6)
+test_that("to_aggregated over layers reconciles tie values as each rule promises", {
+  expect_equal(as_matrix(to_aggregated(comb, rule = "max"))[1, 2], 3)
+  expect_equal(as_matrix(to_aggregated(comb, rule = "min"))[1, 2], 2)
+  expect_equal(as_matrix(to_aggregated(comb, rule = "mean"))[1, 2], 2.5)
+  expect_equal(as_matrix(to_aggregated(comb, rule = "sum"))[1, 2], 5)
+  expect_equal(as_matrix(to_aggregated(comb, rule = "product"))[1, 2], 6)
   # a dyad tied in only one layer is untied in the other
-  expect_equal(as_matrix(to_flat(comb, "min"))[1, 3], 0)
-  expect_equal(as_matrix(to_flat(comb, "product"))[1, 3], 0)
-  expect_equal(as_matrix(to_flat(comb, "max"))[1, 3], 1)
+  expect_equal(as_matrix(to_aggregated(comb, rule = "min"))[1, 3], 0)
+  expect_equal(as_matrix(to_aggregated(comb, rule = "product"))[1, 3], 0)
+  expect_equal(as_matrix(to_aggregated(comb, rule = "max"))[1, 3], 1)
 })
 
-test_that("to_flat matches nodes by name and over the union of node sets", {
+test_that("to_aggregated over layers matches nodes by name and over the union of node sets", {
   smaller <- comb_b[1:2, 1:2]
-  out <- suppressMessages(as_matrix(to_flat(from_layers(
-    a = as_tidygraph(comb_a), b = as_tidygraph(smaller)), "sum")))
+  out <- suppressMessages(as_matrix(to_aggregated(from_layers(
+    a = as_tidygraph(comb_a), b = as_tidygraph(smaller)), rule = "sum")))
   expect_equal(dim(out), c(3L, 3L))
   # nodes absent from the second network keep the first network's values
   expect_equal(out[1, 3], comb_a[1, 3])
   expect_equal(out[1, 2], comb_a[1, 2] + smaller[1, 2])
 })
 
-test_that("to_flat combines more than two layers", {
+test_that("to_aggregated over layers combines more than two layers", {
   # each of the law firm's 71 partners and associates may share up to three
   # of its three relationships with another
-  out <- to_flat(ison_lawfirm, rule = "sum")
+  out <- to_aggregated(ison_lawfirm, rule = "sum")
   expect_false(is_multiplex(out))
   expect_equal(sort(unique(tie_weights(out))), c(1, 2, 3))
   expect_equal(as.numeric(table(tie_weights(out))), c(824, 503, 247))
 })
 
-test_that("to_flat flattens what join_ties() produced", {
+test_that("to_aggregated over layers flattens what join_ties() produced", {
   # join_ties() marks each network's ties in a column of its own, rather than
   # naming the layers in one 'layer' column, so is_multiplex() does not see
-  # layers there, but to_flat() still flattens those columns
-  friends <- to_uniplex(as_tidygraph(ison_lawfirm), "friends")
-  advice <- to_uniplex(as_tidygraph(ison_lawfirm), "advice")
+  # layers there, but to_aggregated() still flattens those columns
+  friends <- to_layer(as_tidygraph(ison_lawfirm), "friends")
+  advice <- to_layer(as_tidygraph(ison_lawfirm), "advice")
   joined <- join_ties(friends, advice)
   expect_false(is_multiplex(joined))
-  expect_equal(as.numeric(net_ties(to_flat(joined, "min"))), 358)
+  expect_equal(as.numeric(net_ties(to_aggregated(joined, rule = "min"))), 358)
   # and the two ways of building a multiplex network flatten to the same thing
-  expect_equal(as.numeric(net_ties(to_flat(from_layers(friends = friends,
-                                                       advice = advice),
-                                           "min"))), 358)
+  expect_equal(as.numeric(net_ties(to_aggregated(from_layers(friends = friends,
+                                                             advice = advice),
+                                                 rule = "min"))), 358)
 })
 
-test_that("to_flat returns a network holding no layers unaltered", {
-  expect_equal(as_matrix(to_flat(ison_adolescents)),
+test_that("to_aggregated over layers returns a network holding no layers unaltered", {
+  expect_equal(as_matrix(to_aggregated(ison_adolescents)),
                as_matrix(ison_adolescents))
-  expect_equal(as_matrix(to_flat(comb_a)), comb_a)
+  expect_equal(as_matrix(to_aggregated(comb_a)), comb_a)
 })
 
-test_that("to_flat returns the class it was given", {
+test_that("to_aggregated over layers returns the class it was given", {
   flor <- ison_florentine
-  expect_s3_class(to_flat(flor, "sum"), "stocnet")
-  expect_s3_class(to_flat(as_tidygraph(flor), "sum"), "tbl_graph")
-  expect_true(inherits(to_flat(as_igraph(flor), "sum"), "igraph"))
+  expect_s3_class(to_aggregated(flor, rule = "sum"), "stocnet")
+  expect_s3_class(to_aggregated(as_tidygraph(flor), rule = "sum"), "tbl_graph")
+  expect_true(inherits(to_aggregated(as_igraph(flor), rule = "sum"), "igraph"))
   # a 'network' object cannot hold layers: as_network() drops them, so there
-  # is nothing left for to_flat() to combine by the time it is called
-  expect_s3_class(suppressWarnings(to_flat(as_network(flor), "sum")), "network")
+  # is nothing left for to_aggregated() to combine by the time it is called
+  expect_s3_class(suppressWarnings(to_aggregated(as_network(flor), rule = "sum")), "network")
 })
 
-test_that("to_flat records the rule used", {
+test_that("to_aggregated over layers records the rule used", {
   # GRAND item 4.5, recorded under the "aggregation" name of the transformations
-  expect_equal(as_infolist(to_flat(as_tidygraph(ison_florentine),
-                                           "sum"))$transformations$aggregation,
+  expect_equal(as_infolist(to_aggregated(as_tidygraph(ison_florentine),
+                                         rule = "sum"))$transformations$aggregation,
                "layers (sum)")
 })
 
-test_that("to_uniplex records the ties the other layers held", {
+test_that("to_layer records the ties the other layers held", {
   # GRAND item 4.4, recorded under the "exclusion" name of the transformations
-  out <- to_uniplex(ison_bankwiring, "friendship")
+  out <- to_layer(ison_bankwiring, "friendship")
   expect_match(as_infolist(out)$transformations$exclusion,
                "^layers other than 'friendship' \\([0-9]+ ties excluded\\)$")
 })
 
-test_that("to_flat does not treat a missing tie as untied", {
+test_that("to_aggregated over layers does not treat a missing tie as untied", {
   miss <- comb_a
   miss[1, 2] <- NA
   # a missing weight does not survive coercion to a graph, so the layers are
@@ -205,12 +206,12 @@ test_that("an undirected network keeps every layer undirected on a round trip", 
 })
 
 test_that("a node keeps its degree in an undirected layer across classes", {
-  friends <- to_uniplex(ison_bankwiring, "friendship")
+  friends <- to_layer(ison_bankwiring, "friendship")
   # nothing directed is left, so the layer is undirected again
   expect_false(is_directed(friends))
   expect_true(isSymmetric(as_matrix(friends)))
   expect_equal(igraph::ecount(as_igraph(friends)), nrow(friends$ties))
-  expect_equal(as_matrix(friends), as_matrix(to_uniplex(as_igraph(ison_bankwiring),
+  expect_equal(as_matrix(friends), as_matrix(to_layer(as_igraph(ison_bankwiring),
                                                         "friendship")))
 })
 
@@ -298,15 +299,15 @@ test_that("from_layers keeps a node's nonresponse to the layer it missed", {
 
 # to_aggregated() -------------------------------------------------------------
 
-test_that("to_flat is to_aggregated over layers", {
-  expect_equal(as_matrix(to_flat(comb, "sum")),
-               as_matrix(to_aggregated(comb, rule = "sum")))
+test_that("to_flat is a silent alias of to_aggregated over layers (#182)", {
+  expect_no_warning(flat <- to_flat(comb, "sum"))
+  expect_equal(as_matrix(flat), as_matrix(to_aggregated(comb, rule = "sum")))
   expect_equal(as_matrix(to_flat(ison_lawfirm, rule = "mean")),
                as_matrix(to_aggregated(ison_lawfirm, "layer", "mean")))
 })
 
 test_that("to_aggregated pools reports as each rule promises", {
-  css <- as_stocnet(css_array(), attribute = "by")
+  css <- as_stocnet(css_array(), over = "by")
   # A->B is reported by all four reporters, B->A and D->A by two, C->D by one
   expect_equal(as_matrix(to_aggregated(css, "by", "mean")),
                matrix(c(0, .5, 0, .5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, .25, 0),
@@ -322,7 +323,7 @@ test_that("to_aggregated pools reports as each rule promises", {
 })
 
 test_that("to_aggregated gives the locally aggregated structures", {
-  css <- as_stocnet(css_array(), attribute = "by")
+  css <- as_stocnet(css_array(), over = "by")
   mat <- function(...) as_matrix(to_aggregated(css, "by", ...))
   # the intersection keeps a tie that both of its ends report
   expect_equal(mat("min", "both")["B", "A"], 1)
@@ -342,7 +343,7 @@ test_that("to_aggregated gives the locally aggregated structures", {
 test_that("to_aggregated leaves a silent reporter out of the pool", {
   reports <- css_array()
   reports[, , "C"] <- NA
-  css <- as_stocnet(reports, attribute = "by")
+  css <- as_stocnet(reports, over = "by")
   out <- as_matrix(to_aggregated(css, "by", "mean"))
   expect_equal(out["B", "A"], 2/3)
   expect_equal(out["C", "D"], 0)
@@ -368,7 +369,7 @@ test_that("to_aggregated combines the moments of a panel", {
 })
 
 test_that("to_aggregated returns the class it was given", {
-  css <- as_stocnet(css_array(), attribute = "by")
+  css <- as_stocnet(css_array(), over = "by")
   expect_s3_class(to_aggregated(as_tidygraph(css), "by"), "tbl_graph")
   expect_true(inherits(to_aggregated(as_igraph(css), "by"), "igraph"))
   expect_error(to_aggregated(css, "reporter"), "over")
@@ -401,7 +402,7 @@ test_that("to_disaggregated keeps the sign of a negative weight", {
 })
 
 test_that("from_layers keeps the designs that only some layers declare", {
-  css <- as_stocnet(css_array(), attribute = "by")
+  css <- as_stocnet(css_array(), over = "by")
   plain <- as_stocnet(add_node_attribute(create_ring(4), "name", LETTERS[1:4]))
   joined <- from_layers(reports = css, ring = plain)
   expect_equal(joined$info$observation, c(reports = "cognitive"))

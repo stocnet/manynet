@@ -158,7 +158,7 @@ sends \eqn{i}. Where such a network is undirected, each tie is therefore
 split into two, and the network is returned directed.
 }
 \examples{
-marvel <- to_uniplex(fict_marvel, "relationship")
+marvel <- to_layer(fict_marvel, "relationship")
 to_unsigned(marvel, "positive")
 to_unsigned(marvel, "both")
 to_positive(marvel)
@@ -180,12 +180,13 @@ Other modifications:
 \code{\link{modif_from_ternary}},
 \code{\link{modif_influence}},
 \code{\link{modif_labels}},
+\code{\link{modif_layers}},
 \code{\link{modif_levels}},
+\code{\link{modif_loops}},
 \code{\link{modif_miss}},
 \code{\link{modif_motifs}},
 \code{\link{modif_paths}},
 \code{\link{modif_permutation}},
-\code{\link{modif_plexity}},
 \code{\link{modif_project}},
 \code{\link{modif_proximity}},
 \code{\link{modif_scope}},

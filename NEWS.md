@@ -155,9 +155,19 @@
 - Improved `from_layers()` on 'stocnet' objects
   - Fixed a network of one layer to take the name it is given in the call
   - Fixed layers renamed for a clash to be renamed in the info as well
+- Renamed the functions for loops and layers, one word for each meaning (closes #182)
+  - Renamed `to_simplex()` to `to_unlooped()`
+  - Renamed `to_uniplex()` to `to_layer()`, which was its alias
+  - Renamed `to_flat()` to `to_aggregated()`, which combines layers by default
+- Added `to_looped()` to give every node a loop, as a diagonal of ones
+- Added `to_simplified()` to remove loops and combine parallel ties by a rule
 
 ## Describing
 
+- Renamed `is_complex()` to `is_looped()`
+- Improved `is_uniplex()` to count layers only, as the opposite of `is_multiplex()`
+  - It asked `igraph::is_simple()` before, which is now `is_simplified()`
+- Added `is_simplified()` for a network without loops or parallel ties
 - Fixed `layer_ties()` to count a layer without ties as none
 - Added `snet_deprecated()` for the old name of a function, argument, or value
   - A "superseded" name still works without a warning, for one minor release

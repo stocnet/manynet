@@ -1,6 +1,6 @@
 # Proximity ####
 
-#' Node proximity
+#' Modifying networks into node proximities
 #' @name modif_proximity
 #' @description
 #'   These functions construct a square, node-by-node matrix of how alike
@@ -237,7 +237,7 @@ to_proximity.data.frame <- function(.data, similarity = c(.proj_measures, .proj_
 # Mirrors the default that `to_correlation()` has always taken, so that the
 # two functions read a network's format the same way.
 .infer_dyad <- function(A){
-  if(is_complex(A)) "complex" else if(is_directed(A)) "reciprocal" else "exclude"
+  if(is_looped(A)) "complex" else if(is_directed(A)) "reciprocal" else "exclude"
 }
 
 # Which cells are compared depends on which pair is being compared. Most
@@ -486,7 +486,7 @@ to_correlation.matrix <- function(.data, method = NULL){
 }
 
 .cor_method <- function(.data){
-  if(is_twomode(.data)) "all" else if(is_complex(.data)) "complex" else
+  if(is_twomode(.data)) "all" else if(is_looped(.data)) "complex" else
     if(is_directed(.data)) "recip" else "diag"
 }
 

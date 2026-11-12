@@ -56,8 +56,8 @@
 #'   - "projection" (4.3), which `to_mode1()`, `to_mode2()`, and
 #'   `to_concepts()` set.
 #'   - "exclusion" (4.4), which the functions that drop nodes or ties set,
-#'   such as `delete_isolates()`, `to_component()`, and `to_uniplex()`.
-#'   - "aggregation" (4.5), which `to_aggregated()`, `to_flat()`,
+#'   such as `delete_isolates()`, `to_component()`, and `to_layer()`.
+#'   - "aggregation" (4.5), which `to_aggregated()`,
 #'   `join_ties()`, and `to_blockmodel()` set.
 #'   - "imputation" (4.6), which `impute_ties()` and `impute_nodes()` set.
 #'

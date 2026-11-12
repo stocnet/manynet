@@ -5,7 +5,7 @@
 \alias{to_proximity}
 \alias{to_correlation}
 \alias{to_cosine}
-\title{Node proximity}
+\title{Modifying networks into node proximities}
 \usage{
 to_proximity(
   .data,
@@ -312,12 +312,13 @@ Other modifications:
 \code{\link{modif_from_ternary}},
 \code{\link{modif_influence}},
 \code{\link{modif_labels}},
+\code{\link{modif_layers}},
 \code{\link{modif_levels}},
+\code{\link{modif_loops}},
 \code{\link{modif_miss}},
 \code{\link{modif_motifs}},
 \code{\link{modif_paths}},
 \code{\link{modif_permutation}},
-\code{\link{modif_plexity}},
 \code{\link{modif_project}},
 \code{\link{modif_scope}},
 \code{\link{modif_split}},

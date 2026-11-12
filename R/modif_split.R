@@ -9,7 +9,7 @@
 #'   attribute.
 #'   - `to_layers()` splits a multiplex network into its layers,
 #'   i.e. a list of uniplex networks, one per tie type.
-#'   Use `to_uniplex()`, or its alias `to_layer()`, to retain just one of them.
+#'   Use `to_layer()`, or its alias `to_layer()`, to retain just one of them.
 #'   - `to_reporters()` splits a cognitive social structure into the report
 #'   of each of its reporters, one network per reporter.
 #'   Use `to_reporter()` to retain just one of them,
@@ -187,7 +187,7 @@ to_subgraphs.network <- function(.data, attribute){
 #' @section `to_layers()`:
 #'   The layers of a multiplex network are held in a tie attribute,
 #'   `type` in tidygraph/igraph objects and `layer` in 'stocnet' objects.
-#'   Each layer is extracted by `to_uniplex()`, so that the layers returned
+#'   Each layer is extracted by `to_layer()`, so that the layers returned
 #'   here are the same networks as retrieving them one at a time,
 #'   and the returned list is named by the tie types found in the network.
 #'   Where a network holds no tie types it is already uniplex,
@@ -216,7 +216,7 @@ to_layers.tbl_graph <- function(.data){
     return(stats::setNames(list(.data), layer_names(.data)[1] %||% "ties"))
   }
   types <- unique(tie_attribute(.data, layer_attr))
-  stats::setNames(lapply(types, function(x) to_uniplex(.data, x)), types)
+  stats::setNames(lapply(types, function(x) to_layer(.data, x)), types)
 }
 
 #' @export
@@ -251,7 +251,7 @@ to_layers.data.frame <- function(.data){
 #'   own alters; see `to_egos()`.
 #' @examples
 #' to_reporters(as_stocnet(array(rbinom(27, 1, 0.5), c(3, 3, 3)),
-#'                         attribute = "by"))
+#'                         over = "by"))
 #' @export
 to_reporters <- function(.data) UseMethod("to_reporters")
 
@@ -264,7 +264,7 @@ to_reporters.default <- function(.data){
 to_reporters.array <- function(.data){
   # The third dimension of an array could hold anything, but this function
   # takes it to hold reporters, as its name says.
-  lapply(to_reporters.stocnet(as_stocnet(.data, attribute = "by")), as_matrix)
+  lapply(to_reporters.stocnet(as_stocnet(.data, over = "by")), as_matrix)
 }
 
 #' @export
@@ -305,14 +305,15 @@ to_reporters.stocnet <- function(.data){
 
 # One reporter's view of the network: the ties it reported, the ties that no
 # node reported (such as a layer taken from records), and the ties it was
-# asked about but did not report on, as missing ties.
-.reporter_slice <- function(.data, r){
+# asked about but did not report on, as missing ties. With `col = "about"`,
+# this is instead the gossip about one target, in the same way.
+.reporter_slice <- function(.data, r, col = "by"){
   ties <- .data$ties
-  mine <- ties[ties$by %in% r | is.na(ties$by), setdiff(names(ties), "by"),
-               drop = FALSE]
+  mine <- ties[ties[[col]] %in% r | is.na(ties[[col]]),
+               setdiff(names(ties), col), drop = FALSE]
   missing <- as_missinglist(.data)
-  if(!is.null(missing) && "by" %in% names(missing)){
-    missing <- missing[missing$by %in% r, setdiff(names(missing), "by"),
+  if(!is.null(missing) && col %in% names(missing)){
+    missing <- missing[missing[[col]] %in% r, setdiff(names(missing), col),
                        drop = FALSE]
     if(nrow(missing)){
       missing <- .tidy_registry(missing)
@@ -327,7 +328,9 @@ to_reporters.stocnet <- function(.data){
                       changes = net$changes, globals = net$globals)
   out$info$transformations <- .data$info$transformations
   label <- .node_names_or_positions(.data)[r]
-  .record_exclusion(out, .data, paste("not reported by", label), "ties")
+  .record_exclusion(out, .data,
+                    paste(if(col == "by") "not reported by" else "not about",
+                          label), "ties")
 }
 
 # A network that is no longer a set of reports is no longer cognitive.
@@ -340,7 +343,7 @@ to_reporters.stocnet <- function(.data){
 
 #' @rdname modif_split
 #' @examples
-#'   to_components(to_uniplex(fict_marvel, "relationship"))
+#'   to_components(to_layer(fict_marvel, "relationship"))
 #'   # Strong decomposition of a directed network returns many small components,
 #'   # ordered here from largest to smallest, so just the largest is shown:
 #'   to_components(fict_starwars, connectivity = "strong")[[1]]

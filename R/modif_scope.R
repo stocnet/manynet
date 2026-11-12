@@ -261,7 +261,7 @@ to_wave <- to_time
 #' @param reporter Label or index of the node whose report on the network
 #'   is to be retained, in a cognitive social structure.
 #' @examples
-#' css <- as_stocnet(array(rbinom(27, 1, 0.5), c(3, 3, 3)), attribute = "by")
+#' css <- as_stocnet(array(rbinom(27, 1, 0.5), c(3, 3, 3)), over = "by")
 #' to_reporter(css, 2)
 #' @export
 to_reporter <- function(.data, reporter) UseMethod("to_reporter")
@@ -273,7 +273,7 @@ to_reporter.default <- function(.data, reporter){
 
 #' @export
 to_reporter.array <- function(.data, reporter){
-  as_matrix(to_reporter.stocnet(as_stocnet(.data, attribute = "by"), reporter))
+  as_matrix(to_reporter.stocnet(as_stocnet(.data, over = "by"), reporter))
 }
 
 #' @export

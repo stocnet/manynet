@@ -16,14 +16,14 @@ test_that("to_subgraphs returns one subgraph per value of the attribute", {
 })
 
 test_that("to_components works", {
-  expect_length(to_components(to_uniplex(fict_marvel,"relationship")), 4)
+  expect_length(to_components(to_layer(fict_marvel,"relationship")), 4)
   expect_length(to_components(ison_adolescents), 1)
   expect_s3_class(to_components(ison_adolescents)[[1]],
                   class(ison_adolescents)[1])
 })
 
 test_that("to_components is ordered from largest to smallest", {
-  sizes <- vapply(to_components(to_uniplex(fict_marvel,"relationship")),
+  sizes <- vapply(to_components(to_layer(fict_marvel,"relationship")),
                   function(x) c(net_nodes(x)), numeric(1))
   expect_equal(sizes, c(50, 1, 1, 1))
   expect_false(is.unsorted(rev(sizes)))
@@ -103,7 +103,7 @@ test_that("each wave holds the ties and nonresponse of that wave alone (#198, #2
   # In ison_classmates, a02 does not report in wave 2, and a16 and a19 do not
   # report in wave 3. a21 leaves the network in wave 3.
   friends <- function(x){
-    m <- as_matrix(to_uniplex(x, "friends"))
+    m <- as_matrix(to_layer(x, "friends"))
     diag(m) <- 0
     m
   }
@@ -325,7 +325,7 @@ test_that("to_waves and from_* agree with to_time on cross-sectional layers (#20
     expect_gt(layers(waves[[t]])[2], 0)
   }
   # The layer keeps its own stamp, and every wave keeps every node
-  expect_equal(unique(tie_attribute(to_uniplex(waves[[4]], "primary"), "time")), 1)
+  expect_equal(unique(tie_attribute(to_layer(waves[[4]], "primary"), "time")), 1)
   expect_equal(unname(vapply(waves, function(x) as.numeric(net_nodes(x)), 1)),
                rep(26, 4))
   # Joining the waves or the moments back gives each tie once, at its moment
@@ -448,7 +448,7 @@ test_that("joining matrices gives one matrix for parts and an array for stacks",
 })
 
 test_that("to_reporters splits a cognitive social structure into its reports", {
-  css <- as_stocnet(css_array(), attribute = "by")
+  css <- as_stocnet(css_array(), over = "by")
   reports <- to_reporters(css)
   expect_equal(names(reports), LETTERS[1:4])
   expect_false("by" %in% names(reports$B$ties))
@@ -463,7 +463,7 @@ test_that("to_reporters splits a cognitive social structure into its reports", {
 test_that("from_reporters reverses to_reporters, nonresponse and all", {
   reports <- css_array()
   reports[, , "C"] <- NA
-  css <- as_stocnet(reports, attribute = "by")
+  css <- as_stocnet(reports, over = "by")
   split <- to_reporters(css)
   expect_gt(nrow(as_missinglist(split$C)), 0)
   expect_null(as_missinglist(split$A))
@@ -519,4 +519,31 @@ test_that("to_times with a window gives moving, overlapping windows", {
                c(`1` = 0, `2` = 0, `3` = 0) +
                  cumsum(table(tie_attribute(ison_monks, "time"))[c("1", "2", "3")]),
                ignore_attr = TRUE)
+})
+
+test_that("to_targets and from_targets split and join gossip (#182)", {
+  gossip <- as_stocnet(css_array(), over = "about")
+  views <- to_targets(gossip)
+  expect_length(views, as.numeric(net_nodes(gossip)))
+  expect_false(any(vapply(views, function(v) "about" %in% names(v$ties),
+                          logical(1))))
+  back <- from_targets(views)
+  key <- function(x) sort(paste(x$ties$from, x$ties$to, x$ties$about))
+  expect_equal(key(back), key(gossip))
+  expect_length(to_targets(ison_adolescents), 1)
+  expect_length(to_targets(css_array()), dim(css_array())[3])
+})
+
+test_that("as_stocnet() reads the third dimension by its former name too", {
+  expect_no_warning(old <- as_stocnet(css_array(), attribute = "by"))
+  expect_equal(old, as_stocnet(css_array(), over = "by"))
+  expect_error(as_stocnet(css_array()), "over")
+})
+
+test_that("to_firsthand is the locally aggregated structure", {
+  css <- as_stocnet(css_array(), over = "by")
+  expect_equal(as_matrix(to_firsthand(css)),
+               as_matrix(to_aggregated(css, "by", "min", "both")))
+  expect_equal(as_matrix(to_firsthand(css, "max")),
+               as_matrix(to_aggregated(css, "by", "max", "both")))
 })

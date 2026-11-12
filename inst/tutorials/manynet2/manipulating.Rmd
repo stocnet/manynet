@@ -785,7 +785,7 @@ question("How many kinds of relationship does `ison_lawfirm` record?",
 ```
 
 Most analyses of multiplex networks proceed one layer at a time,
-and `to_uniplex()` extracts a single layer by name.
+and `to_layer()` extracts a single layer by name.
 **Extract the friendship layer from `ison_lawfirm`.**
 
 ```{r uniplex, exercise = TRUE, purl=FALSE}
@@ -793,11 +793,11 @@ and `to_uniplex()` extracts a single layer by name.
 ```
 
 ```{r uniplex-hint-1, purl=FALSE}
-# to_uniplex(_____, layer = "friends")
+# to_layer(_____, layer = "friends")
 ```
 
 ```{r uniplex-solution}
-to_uniplex(ison_lawfirm, "friends")
+to_layer(ison_lawfirm, "friends")
 ```
 
 To check your result: the friendship layer has 575 of the
@@ -805,10 +805,10 @@ original network's 2571 ties,
 and the printout no longer describes the network as multiplex.
 Note that the corresponding do-it-yourself route is
 `filter_ties(ison_lawfirm, type == "friends")` —
-`to_uniplex()` does this and additionally tidies up
+`to_layer()` does this and additionally tidies up
 the now-redundant type information.
 
-`to_uniplex()` works one layer at a time.
+`to_layer()` works one layer at a time.
 `to_layers()` splits a multiplex network into all of them at once,
 returning a named list with one network per layer,
 and `from_layers()` puts such a list back together again.
@@ -820,7 +820,7 @@ to_layers(ison_lawfirm)
 
 Sometimes you want a single network that keeps what _every_ layer records,
 rather than one layer or a list of them.
-`to_flat()` combines the layers dyad by dyad, according to a `rule`:
+`to_aggregated()` combines the layers dyad by dyad, according to a `rule`:
 "max" counts a tie in any layer as a tie,
 "min" keeps only the ties present in every layer,
 and "sum" adds the layers up.
@@ -832,11 +832,11 @@ relationships that pair holds.**
 ```
 
 ```{r flat-hint-1, purl=FALSE}
-# to_flat(_____, rule = "sum")
+# to_aggregated(_____, rule = "sum")
 ```
 
 ```{r flat-solution}
-to_flat(ison_lawfirm, rule = "sum")
+to_aggregated(ison_lawfirm, rule = "sum")
 ```
 
 To check your result: the flattened network is weighted,
@@ -846,14 +846,14 @@ and 824 pairs share one relationship, 503 share two, and 247 share all three.
 Give it two or more networks over the same nodes and it makes each one a layer,
 which is the other way to build a multiplex network:
 `join_ties()` marks where each tie came from, and `from_layers()` names layers.
-Either way, `to_flat()` then combines them.
+Either way, `to_aggregated()` then combines them.
 **Keep only the pairs who are both friends and advisors.**
 
 ```{r fromlayers, exercise = TRUE}
-friends <- to_uniplex(ison_lawfirm, "friends")
-advice <- to_uniplex(ison_lawfirm, "advice")
+friends <- to_layer(ison_lawfirm, "friends")
+advice <- to_layer(ison_lawfirm, "advice")
 from_layers(friends = friends, advice = advice)
-from_layers(friends = friends, advice = advice) |> to_flat(rule = "min")
+from_layers(friends = friends, advice = advice) |> to_aggregated(rule = "min")
 ```
 
 The last line keeps the 358 pairs tied in both layers.
@@ -891,11 +891,11 @@ or explore another multiplex network:
 <span class="callout-label">**In brief**:</span> `join_ties()` merges a second network's ties in as a new
 _type_, producing a multiplex network.
 `is_multiplex()` checks for multiple tie types and `layer_names()` lists them,
-while `to_uniplex(layer = )` extracts a single layer by name
+while `to_layer(layer = )` extracts a single layer by name
 (the do-it-yourself equivalent of `filter_ties(type == ...)`).
 `to_layers()` splits a network into all of its layers and
 `from_layers()` reassembles them, or joins networks collected separately
-as layers, while `to_flat()` combines the layers of any multiplex network
+as layers, while `to_aggregated()` combines the layers of any multiplex network
 into one relation by a `rule`.
 :::
 
@@ -1101,7 +1101,7 @@ Projection is not the only way between modes:
 Whatever you pick, `is_twomode()` should return `TRUE` before projection and
 `FALSE` after, and `is_weighted()` should return `TRUE` on the projection.
 (The fiction two-mode networks such as `fict_actually` are _multiplex_,
-so projecting them first needs a single tie type extracted with `to_uniplex()` —
+so projecting them first needs a single tie type extracted with `to_layer()` —
 you now know how!)
 
 ```{r modes-free, exercise = TRUE, purl=FALSE}
@@ -1652,7 +1652,7 @@ question("Filtering `fict_potter` to the Gryffindors keeps 25 of the 64 characte
   answer("They are kept, and recorded as missing",
          message = "Filtering removes them. A missing tie is one that was never observed."),
   answer("They become self-ties on the Gryffindors",
-         message = "Nothing is merged. `to_simplex()` is what removes self-ties."),
+         message = "Nothing is merged. `to_unlooped()` is what removes self-ties."),
   random_answer_order = TRUE,
   allow_retry = TRUE
 )
@@ -1705,13 +1705,13 @@ question("The stranded network holds 8 nodes, and `delete_isolates()` leaves 7. 
 ```
 
 A related cleaning task concerns `r gloss("loops","loop")` (self-ties):
-`to_simplex()` removes them,
+`to_unlooped()` removes them,
 turning a `r gloss("complex")` network into a `r gloss("simplex")` one.
 
 ::: {.callout}
 <span class="callout-label">**In brief**:</span> `filter_nodes()`/`filter_ties()` and `to_subgraph()`
 keep only the elements satisfying a condition,
-while `delete_isolates()`, `to_giant()`, and `to_simplex()` prune
+while `delete_isolates()`, `to_giant()`, and `to_unlooped()` prune
 stranded nodes, minor components, and self-ties —
 all taking a whole network and returning a narrower or cleaner one.
 :::
@@ -1849,14 +1849,14 @@ and `net_ties()` at each step that it did what you expected.
 
 ```{r wrapup-question, echo = FALSE, purl=FALSE}
 question("A colleague hands you a multiplex, directed network and wants the advice layer, undirected and without isolates. Which pipeline does this?",
-  answer("`to_uniplex(layer = \"advice\")`, then `to_undirected()`, then `delete_isolates()`",
+  answer("`to_layer(layer = \"advice\")`, then `to_undirected()`, then `delete_isolates()`",
          correct = TRUE,
          message = "Correct: extract the layer, reformat the direction, then prune whatever that leaves stranded. <img src='https://gifdb.com/images/high/standing-ovation-congratulations-doctor-chicago-med-mnr588ssjqckmmzc.gif' alt='gif of doctor getting standing ovation'/>"),
-  answer("`to_flat()`, then `to_undirected()`, then `delete_isolates()`",
-         message = "`to_flat()` combines every layer into one relation rather than picking out the advice layer."),
-  answer("`delete_isolates()`, then `to_uniplex(layer = \"advice\")`, then `to_undirected()`",
+  answer("`to_aggregated()`, then `to_undirected()`, then `delete_isolates()`",
+         message = "`to_aggregated()` combines every layer into one relation rather than picking out the advice layer."),
+  answer("`delete_isolates()`, then `to_layer(layer = \"advice\")`, then `to_undirected()`",
          message = "Pruning first is too early: dropping the other layers can strand further nodes."),
-  answer("`to_undirected()`, then `to_giant()`, then `to_uniplex(layer = \"advice\")`",
+  answer("`to_undirected()`, then `to_giant()`, then `to_layer(layer = \"advice\")`",
          message = "`to_giant()` drops minor components as well as isolates, which is more than was asked."),
   random_answer_order = TRUE,
   allow_retry = TRUE
@@ -1873,15 +1873,15 @@ Along the way, you have learned to use these functions:
 | `as_matrix()`, `node_attribute()`, `as_edgelist()` | look inside a network |
 | `add_nodes()`, `add_ties()`, `delete_nodes()`, `delete_ties()` | add/remove nodes and ties |
 | `filter_nodes()`, `filter_ties()`, `to_subgraph()` | keep elements satisfying a condition |
-| `delete_isolates()`, `to_giant()`/`to_component()`, `to_simplex()` | prune isolates, minor components, self-ties |
+| `delete_isolates()`, `to_giant()`/`to_component()`, `to_unlooped()` | prune isolates, minor components, self-ties |
 | `to_labelled()`, `to_unlabelled()` | name or anonymise nodes |
 | `mutate_nodes()`/`mutate_ties()`, `rename_nodes()`/`rename_ties()`, `delete_node_attribute()`/`delete_tie_attribute()` | add, change, rename, or delete attributes |
 | `to_undirected()`, `to_directed()`, `to_redirected()`, `to_reciprocated()`, `to_acyclic()` | reformat tie direction |
 | `to_unweighted()`, `to_weighted()` | binarise (around a `threshold`) or weight ties |
 | `to_unsigned(keep = )`, `to_signed()`, `tie_signs()` | split or create signed networks |
 | `join_ties()`, `bind_ties()`, `join_nodes()` | merge another network's ties or nodes in |
-| `to_uniplex(layer = )`, `layer_names()` | extract a layer from a multiplex network |
-| `to_layers()`, `from_layers()`, `to_flat(rule = )` | split a network into its layers, join networks as layers, or combine those layers into one relation |
+| `to_layer(layer = )`, `layer_names()` | extract a layer from a multiplex network |
+| `to_layers()`, `from_layers()`, `to_aggregated(rule = )` | split a network into its layers, join networks as layers, or combine those layers into one relation |
 | `to_mode1()`, `to_mode2()`, `to_onemode()`, `to_twomode()`, `to_multilevel()` | move between modes |
 | `to_proximity(similarity = )`, `to_correlation()`, `to_cosine()` | measure how alike a one-mode network's nodes are |
 | `net_times()`, `to_time()`, `to_times()`, `from_times()` | count, extract, and rejoin the moments of a network of any kind |

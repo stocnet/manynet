@@ -211,7 +211,7 @@ generate_degree <- function(n, p = 1, directed = FALSE,
       }
       ties <- .switch_ties(ties, switches, 
                            directed = is_twomode(.data) || is_directed(g),
-                           loops = is_complex(.data), repeats = repeats)
+                           loops = is_looped(.data), repeats = repeats)
       out <- igraph::delete_edges(g, igraph::E(g)) |> 
         igraph::add_edges(c(t(ties)), attr = attrs)
     }
@@ -235,7 +235,7 @@ generate_degree <- function(n, p = 1, directed = FALSE,
     out <- .shuffle_tie_attrs(out, attrs)
     out <- as_tidygraph(out) |> add_node_attribute("type", modes)
   } else {
-    method <- if (is_complex(.data) || repeats) method1 else method2
+    method <- if (is_looped(.data) || repeats) method1 else method2
     if (is_directed(.data)) 
       out <- igraph::sample_degseq(.node_deg(.data, direction = "out"), 
                                    .node_deg(.data, direction = "in"),

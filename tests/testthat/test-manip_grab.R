@@ -224,7 +224,7 @@ test_that("tie_attribute and node_attribute return every attribute where none is
 test_that("a mark inside filter_ties reads the filtered network", {
   # `filter_ties()` on an igraph object sets a tidygraph context, which names
   # a nearer network than any context an outer stocnet call has stored.
-  like <- to_uniplex(ison_monks, "like")
+  like <- to_layer(ison_monks, "like")
   seen <- NULL
   count_ties <- function() {
     seen <<- as.integer(net_ties(expect_ties()))
@@ -240,7 +240,7 @@ test_that("a mark inside filter_ties reads the filtered network", {
 })
 
 test_that("tie_is_parallel does not count reports by two reporters as parallel", {
-  css <- as_stocnet(css_array(), attribute = "by")
+  css <- as_stocnet(css_array(), over = "by")
   expect_false(any(tie_is_parallel(css)))
   expect_false(any(tie_is_parallel(as_igraph(css))))
   # the same report made twice by one reporter is parallel

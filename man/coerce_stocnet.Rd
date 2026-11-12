@@ -25,7 +25,7 @@ as_stocnet(.data, twomode = FALSE, ...)
   .data,
   twomode = FALSE,
   ...,
-  attribute = c("time", "by", "about", "layer")
+  over = c("time", "by", "about", "layer")
 )
 
 as_siena(.data, twomode = FALSE)
@@ -49,7 +49,8 @@ adjacency (one-mode/unipartite) networks.
 By default FALSE.}
 
 \item{...}{Further arguments passed to or from other methods,
-such as \code{attribute} for an array.}
+such as \code{over} for an array.
+\code{attribute} is the former name of \code{over}, and still works.}
 
 \item{compare}{For a node measure or a node membership, how the values of
 two nodes are compared to give the tie between them;
@@ -58,8 +59,9 @@ Comparing by "same" or "absdiff" gives an undirected network,
 and comparing by "diff", "sender", or "receiver" a directed one.
 A comparison of zero is no tie.}
 
-\item{attribute}{For a three-dimensional array, what its third dimension
-holds, which becomes a column of the ties:
+\item{over}{For a three-dimensional array, what its third dimension
+runs over, which becomes a column of the ties, as the \code{over} of
+\code{to_aggregated()} names the column it combines:
 "time" for the waves of a panel,
 "by" for the reporters of a cognitive social structure,
 "about" for the targets of gossip,

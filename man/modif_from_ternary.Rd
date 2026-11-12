@@ -113,11 +113,13 @@ ison_adolescents |>
   to_slices(slice = c(5,7)) |>
   from_slices()
 from_times(to_times(ison_tailorshop))
-marriage <- to_uniplex(ison_florentine, "marriage")
-business <- to_uniplex(ison_florentine, "business")
+marriage <- to_layer(ison_florentine, "marriage")
+business <- to_layer(ison_florentine, "business")
 from_layers(marriage = marriage, business = business)
 reports <- list(A = create_ring(4), B = create_star(4))
 from_reporters(lapply(reports, add_node_attribute, "name", LETTERS[1:4]))
+gossip <- as_stocnet(array(rbinom(27, 1, 0.5), c(3, 3, 3)), over = "about")
+from_targets(to_targets(gossip))
 }
 \seealso{
 Other modifications:
@@ -127,12 +129,13 @@ Other modifications:
 \code{\link{modif_from_parts}},
 \code{\link{modif_influence}},
 \code{\link{modif_labels}},
+\code{\link{modif_layers}},
 \code{\link{modif_levels}},
+\code{\link{modif_loops}},
 \code{\link{modif_miss}},
 \code{\link{modif_motifs}},
 \code{\link{modif_paths}},
 \code{\link{modif_permutation}},
-\code{\link{modif_plexity}},
 \code{\link{modif_project}},
 \code{\link{modif_proximity}},
 \code{\link{modif_scope}},

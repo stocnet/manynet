@@ -244,8 +244,8 @@ from_times <- function(netlist) {
 #' @param layer_names A character vector of names for the different network objects,
 #'   if not already named within the list.
 #' @examples
-#' marriage <- to_uniplex(ison_florentine, "marriage")
-#' business <- to_uniplex(ison_florentine, "business")
+#' marriage <- to_layer(ison_florentine, "marriage")
+#' business <- to_layer(ison_florentine, "business")
 #' from_layers(marriage = marriage, business = business)
 #' @export
 from_layers <- function(..., layer_names){
@@ -301,6 +301,29 @@ from_reporters <- function(netlist) {
     out$nodes$na <- !is.na(na) & na | seq_len(nrow(out$nodes)) %in% unreported
   }
   .as_class_of(out, netlist[[1]])
+}
+
+#' @rdname modif_from_ternary
+#' @details
+#'   `from_targets()` joins a list of networks, each of the gossip about one
+#'   node, into one network that names that node in 'about'.
+#'   It takes the target of each network from the names of the list,
+#'   as `from_reporters()` takes the reporter.
+#'   A node that is not in the list is about nothing, and is not missing,
+#'   since nobody had to gossip about it.
+#' @examples
+#' gossip <- as_stocnet(array(rbinom(27, 1, 0.5), c(3, 3, 3)), over = "about")
+#' from_targets(to_targets(gossip))
+#' @export
+from_targets <- function(netlist) {
+  if(!is.list(netlist) || !length(netlist) || is_manynet(netlist))
+    snet_abort("Please declare a list of networks, one for each target.")
+  # A network that names no target is one view, which `to_targets()` gives
+  # back as a list of that one network alone.
+  if(length(netlist) == 1 && identical(names(netlist), "ties"))
+    return(netlist[[1]])
+  if(.all_matrices(netlist)) return(.stack_matrices(netlist))
+  .as_class_of(.join_third(netlist, "about"), netlist[[1]])
 }
 
 # Helpers for joining ####

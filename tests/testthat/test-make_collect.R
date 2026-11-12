@@ -618,7 +618,7 @@ test_that("collect_bibliography() collects a multimodal network of records", {
 
 test_that("collect_bibliography() matches cited references to works", {
   out <- collect_bibliography(fixture_records)
-  el <- as_edgelist(to_uniplex(out, "cites"))
+  el <- as_edgelist(to_layer(out, "cites"))
   expect_equal(paste(el$from, el$to, sep = " > "),
                c("SMITH J, 2001, SCIENTOMETRICS > PRICE DJD, 1965, SCIENCE",
                  "JONES K, 2003, SCIENTOMETRICS > SMITH J, 2001, SCIENTOMETRICS",
@@ -654,7 +654,7 @@ test_that("collect_bibliography() records the position of each author", {
 
 test_that("collect_bibliography() gives the classic networks by recipe", {
   out <- collect_bibliography(fixture_records)
-  cites <- to_uniplex(out, "cites")
+  cites <- to_layer(out, "cites")
   cocit <- to_proximity(cites, across = "columns")
   expect_equal(bib_weight(cocit, "SMITH J, 2001, SCIENTOMETRICS",
                           "PRICE DJD, 1965, SCIENCE"), 2)
@@ -715,7 +715,7 @@ test_that("collect_bibliography() reads OpenAlex records", {
   expect_false("citations" %in% names(collect_bibliography(fixture_records)$nodes))
   expect_equal(works$recorded, c(TRUE, TRUE, FALSE))
   expect_equal(works$doi[1], "10.1000/a")
-  el <- as_edgelist(to_uniplex(out, "cites"))
+  el <- as_edgelist(to_layer(out, "cites"))
   expect_equal(el$to, c("W9", "Ann Lee, 2010, J One", "W9"))
   expect_equal(sum(out$nodes$mode == "keywords"), 2)
   indexed <- collect_bibliography(oa, keywords = "indexed")
@@ -750,7 +750,7 @@ test_that("collect_bibliography() reads BibTeX files", {
   expect_equal(works$recorded, c(TRUE, TRUE, FALSE, FALSE))
   expect_equal(out$nodes$label[out$nodes$mode == "sources"],
                c("J One", "Book Two"))
-  el <- as_edgelist(to_uniplex(out, "cites"))
+  el <- as_edgelist(to_layer(out, "cites"))
   # the second record cites the first by its author, year, and source
   expect_equal(el$to, c("PRICE DJD, 1965, SCIENCE",
                         "SMALL H, 1973, J AM SOC INFORM SCI",
@@ -797,12 +797,15 @@ test_that("collect_bibliography() errors informatively", {
 })
 
 test_that("collect_bibliography() counts as bibliometrix does", {
+  # A parity check against another package over some 4000 references, which
+  # takes several seconds, so it is left to the development checks.
+  skip_on_cran()
   skip_if_not_installed("bibliometrix")
   skip_if_not_installed("bibliometrixData")
   records <- get(utils::data("scientometrics", package = "bibliometrixData",
                              envir = environment()))
   out <- collect_bibliography(records)
-  cites <- to_uniplex(out, "cites")
+  cites <- to_layer(out, "cites")
   cocit <- as_matrix(to_proximity(cites, across = "columns"))
   coup <- as_matrix(to_proximity(cites, across = "rows"))
   theirs_cocit <- as.matrix(suppressWarnings(bibliometrix::biblioNetwork(

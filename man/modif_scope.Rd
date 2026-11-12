@@ -261,7 +261,7 @@ in \code{{netrics}}.
           kernel = "triangular")
   # The statements made in the 15 days either side of that day:
   to_time(irps_nuclear, as.Date("2011-04-01"), window = c(15, 15))
-css <- as_stocnet(array(rbinom(27, 1, 0.5), c(3, 3, 3)), attribute = "by")
+css <- as_stocnet(array(rbinom(27, 1, 0.5), c(3, 3, 3)), over = "by")
 to_reporter(css, 2)
   to_component(fict_greys, 2)
   to_component(fict_greys, "Miranda Bailey")
@@ -279,12 +279,13 @@ Other modifications:
 \code{\link{modif_from_ternary}},
 \code{\link{modif_influence}},
 \code{\link{modif_labels}},
+\code{\link{modif_layers}},
 \code{\link{modif_levels}},
+\code{\link{modif_loops}},
 \code{\link{modif_miss}},
 \code{\link{modif_motifs}},
 \code{\link{modif_paths}},
 \code{\link{modif_permutation}},
-\code{\link{modif_plexity}},
 \code{\link{modif_project}},
 \code{\link{modif_proximity}},
 \code{\link{modif_split}},
