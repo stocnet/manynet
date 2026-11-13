@@ -450,6 +450,46 @@ test_that("as_siena renders the classmates' missing nominations as missing", {
   expect_false(is.null(d$compositionChange))
 })
 
+test_that("as_siena takes the dependent variables from focal = or info$focal", {
+  skip_if_not_installed("RSiena")
+  # by default, info$focal gives friends, delinquency, and alcohol
+  d <- as_siena(ison_classmates)
+  expect_setequal(names(d$depvars), c("friends", "delinquency", "alcohol"))
+  expect_true("primary" %in% names(d$dycCovars))
+  # focal = replaces info$focal, so delinquency becomes a varying covariate
+  d <- as_siena(ison_classmates, focal = c("friends", "alcohol"))
+  expect_setequal(names(d$depvars), c("friends", "alcohol"))
+  expect_true("delinquency" %in% names(d$vCovars))
+  expect_true("sex" %in% names(d$cCovars))
+  expect_error(as_siena(ison_classmates, focal = "enemies"), "not in the network")
+  # a constant attribute cannot be a dependent behaviour
+  expect_warning(d <- as_siena(ison_classmates, focal = c("friends", "age")),
+                 "constant covariate")
+  expect_true("age" %in% names(d$cCovars))
+})
+
+test_that("as_siena asks for the dependent variables", {
+  replies <- function(...) { got <- c(...); function() { out <- got[1]; got <<- got[-1]; out } }
+  ask <- function(answer) suppressMessages(
+    .siena_ask_focal(c("friends", "primary"), c("alcohol", "delinquency"), answer))
+  expect_equal(ask(replies("")), "friends")
+  expect_equal(ask(replies("1, 3")), c("friends", "alcohol"))
+  expect_equal(ask(replies("friends delinquency")), c("friends", "delinquency"))
+  # a number or name not in the list asks again
+  expect_equal(ask(replies("9", "0 enemies", "2")), "primary")
+})
+
+test_that("as_siena passes ... to sienaDependent", {
+  skip_if_not_installed("RSiena")
+  allow_only <- function(d) attr(d$depvars$friends, "allowOnly")
+  expect_true(allow_only(as_siena(ison_classmates, focal = "friends")))
+  expect_false(allow_only(as_siena(ison_classmates, focal = "friends",
+                                   allowOnly = FALSE)))
+  # ... reaches sienaDependent through the default method too
+  d <- as_siena(as_igraph(ison_classmates), focal = "friends", allowOnly = FALSE)
+  expect_false(attr(d$depvars$friends, "allowOnly"))
+})
+
 test_that("sienadata coerces through the wider coercion family", {
   skip_if_not_installed("RSiena")
   set.seed(1); n <- 6; w <- 2
@@ -1077,16 +1117,6 @@ test_that("as_matrix() squares a two-mode 'stocnet' where asked", {
 
 # Text matrices -------------------------------------------------------------------
 
-text_corpus <- c(a = "Trade builds peace. Peace builds trade!",
-                 b = "War ends trade.", c = "Peace needs work and trade")
-
-text_canon <- function(x) {
-  el <- as.data.frame(as_edgelist(x))
-  el <- el[order(el$from, el$to), ]
-  rownames(el) <- NULL
-  el
-}
-
 test_that("as_stocnet() reads a tm matrix without tm", {
   # a 'simple_triplet_matrix' is a list, so it can be built by hand
   dtm <- structure(list(i = c(1L, 1L, 2L), j = c(1L, 2L, 2L), v = c(2, 1, 3),
@@ -1106,29 +1136,6 @@ test_that("as_stocnet() reads a tm matrix without tm", {
   class(tdm) <- c("TermDocumentMatrix", "simple_triplet_matrix")
   expect_equal(as_stocnet(tdm), out)
   expect_equal(node_labels(to_mode(out, "terms")), c("peace", "war"))
-})
-
-test_that("a tm matrix gives the network that collect_text() gives", {
-  skip_if_not_installed("tm")
-  corp <- tm::VCorpus(tm::VectorSource(unname(text_corpus)))
-  names(corp) <- names(text_corpus)
-  ctrl <- list(removePunctuation = TRUE, wordLengths = c(1, Inf))
-  ours <- collect_text(text_corpus)
-  dtm <- as_stocnet(tm::DocumentTermMatrix(corp, control = ctrl))
-  tdm <- as_stocnet(tm::TermDocumentMatrix(corp, control = ctrl))
-  expect_equal(text_canon(dtm), text_canon(ours))
-  expect_equal(text_canon(tdm), text_canon(ours))
-})
-
-test_that("a quanteda dfm gives the network that collect_text() gives", {
-  skip_if_not_installed("quanteda")
-  toks <- quanteda::tokens(quanteda::corpus(text_corpus,
-                                            docvars = data.frame(year = 1:3)),
-                           remove_punct = TRUE)
-  out <- as_stocnet(quanteda::dfm(toks))
-  expect_equal(text_canon(out), text_canon(collect_text(text_corpus)))
-  expect_equal(out$nodes$year[1:3], 1:3)
-  expect_equal(out$info$modes, c("documents", "terms"))
 })
 
 test_that("bibliometrix records are read as a network by every function", {

@@ -28,7 +28,7 @@ as_stocnet(.data, twomode = FALSE, ...)
   over = c("time", "by", "about", "layer")
 )
 
-as_siena(.data, twomode = FALSE)
+as_siena(.data, twomode = FALSE, focal = NULL, ...)
 
 as_monan(.data, layer = NULL, time1, time2)
 }
@@ -71,6 +71,12 @@ Where its third dimension is as long as the network has nodes,
 it could hold any of them, so this must be given.
 Otherwise it cannot hold reporters or targets, and "time" is assumed.}
 
+\item{focal}{A character vector of the names of the tie layers and
+node attributes that become dependent variables.
+By default, \code{as_siena()} uses the \code{focal} element of the information
+of the network.
+This argument replaces that element; it does not add to it.}
+
 \item{layer}{For a network of people and places with more than one layer
 of ties between people and places,
 the name of the layer that says where each person is.}
@@ -81,7 +87,8 @@ The defaults are the first and the last time of the network.}
 }
 \value{
 \code{as_stocnet()} returns a 'stocnet' object,
-\code{as_siena()} a 'sienadata' object,
+\code{as_siena()} a 'sienadata' object of \code{{RSiena}}
+(the data object for \code{RSiena::siena07()}, not one dependent variable),
 and \code{as_monan()} a 'processState.monan' object.
 }
 \description{
@@ -91,6 +98,8 @@ and from it into the data objects of the modelling packages:
 \item \code{as_stocnet()} coerces the object into a 'stocnet' object
 (see \code{\link[=make_stocnet]{make_stocnet()}}).
 \item \code{as_siena()} coerces the object into a \code{{RSiena}} 'sienadata' object.
+This object holds the dependent variables and the covariates together.
+See the section "SIENA" for which variables become dependent.
 \item \code{as_monan()} coerces a two-mode network of people and places
 into a \code{{MoNAn}} 'processState.monan' object.
 }
@@ -124,6 +133,38 @@ The records cannot be rebuilt from a network,
 so a function that would return the class it was given
 returns a 'stocnet' for them.
 \code{{bibliometrix}} does not need to be installed.
+}
+
+\section{SIENA}{
+
+\code{as_siena()} returns the data object of \code{{RSiena}} ('sienadata'),
+as \code{RSiena::sienaDataCreate()} gives it.
+It does not return one dependent variable.
+The object holds all the variables of the network,
+and each variable has one of these roles:
+\itemize{
+\item Each tie layer that \code{focal} names becomes a dependent network.
+\item Each node attribute that \code{focal} names becomes a dependent behaviour.
+The attribute must have a value at each wave, as changes.
+\item Each other tie layer becomes a dyadic covariate.
+The covariate is varying when the layer has ties at two or more waves,
+and constant when it has ties at one wave only or has no waves.
+\item Each other node attribute becomes a node covariate.
+The covariate is varying when the attribute has changes over the waves,
+and constant when it has no changes.
+\item A change of the 'active' status of a node becomes a composition change.
+}
+
+By default, \code{focal} is the \code{focal} element of the information
+of the network (see \code{\link[=mutate_info]{mutate_info()}}).
+When \code{focal} is empty in an interactive session,
+\code{as_siena()} asks which tie layers and attributes are dependent.
+When \code{focal} is empty in other sessions,
+the first tie layer becomes the dependent network
+and all node attributes become covariates.
+A dependent network must be binary and must have two or more waves.
+Arguments in \code{...} go to \code{RSiena::sienaDependent()} for each
+dependent variable, for example \code{allowOnly = FALSE}.
 }
 
 \section{Mobility}{

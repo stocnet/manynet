@@ -6,6 +6,8 @@
 #'   - `as_stocnet()` coerces the object into a 'stocnet' object
 #'   (see [make_stocnet()]).
 #'   - `as_siena()` coerces the object into a `{RSiena}` 'sienadata' object.
+#'   This object holds the dependent variables and the covariates together.
+#'   See the section "SIENA" for which variables become dependent.
 #'   - `as_monan()` coerces a two-mode network of people and places
 #'   into a `{MoNAn}` 'processState.monan' object.
 #'
@@ -20,7 +22,8 @@
 #' as_stocnet(test)
 #' @return
 #'   `as_stocnet()` returns a 'stocnet' object,
-#'   `as_siena()` a 'sienadata' object,
+#'   `as_siena()` a 'sienadata' object of `{RSiena}`
+#'   (the data object for `RSiena::siena07()`, not one dependent variable),
 #'   and `as_monan()` a 'processState.monan' object.
 NULL
 
@@ -675,20 +678,54 @@ as_stocnet.network <- function(.data,
 # RSiena ####
 
 #' @rdname coerce_stocnet
+#' @section SIENA:
+#'   `as_siena()` returns the data object of `{RSiena}` ('sienadata'),
+#'   as `RSiena::sienaDataCreate()` gives it.
+#'   It does not return one dependent variable.
+#'   The object holds all the variables of the network,
+#'   and each variable has one of these roles:
+#'
+#'   - Each tie layer that `focal` names becomes a dependent network.
+#'   - Each node attribute that `focal` names becomes a dependent behaviour.
+#'   The attribute must have a value at each wave, as changes.
+#'   - Each other tie layer becomes a dyadic covariate.
+#'   The covariate is varying when the layer has ties at two or more waves,
+#'   and constant when it has ties at one wave only or has no waves.
+#'   - Each other node attribute becomes a node covariate.
+#'   The covariate is varying when the attribute has changes over the waves,
+#'   and constant when it has no changes.
+#'   - A change of the 'active' status of a node becomes a composition change.
+#'
+#'   By default, `focal` is the `focal` element of the information
+#'   of the network (see [mutate_info()]).
+#'   When `focal` is empty in an interactive session,
+#'   `as_siena()` asks which tie layers and attributes are dependent.
+#'   When `focal` is empty in other sessions,
+#'   the first tie layer becomes the dependent network
+#'   and all node attributes become covariates.
+#'   A dependent network must be binary and must have two or more waves.
+#'   Arguments in `...` go to `RSiena::sienaDependent()` for each
+#'   dependent variable, for example `allowOnly = FALSE`.
+#' @param focal A character vector of the names of the tie layers and
+#'   node attributes that become dependent variables.
+#'   By default, `as_siena()` uses the `focal` element of the information
+#'   of the network.
+#'   This argument replaces that element; it does not add to it.
 #' @export
-as_siena <- function(.data,
-                     twomode = FALSE) UseMethod("as_siena")
+as_siena <- function(.data, twomode = FALSE,
+                     focal = NULL, ...) UseMethod("as_siena")
 
 #' @export
-as_siena.default <- function(.data, twomode = FALSE) {
+as_siena.default <- function(.data, twomode = FALSE, focal = NULL, ...) {
   # Any object that can be coerced to a 'stocnet' (igraph, tidygraph/mnet,
   # matrix, network, edgelist, ...) reaches SIENA through that richer path,
   # so that multiplex layers, waves, covariates, etc. are carried across.
-  as_siena(as_stocnet(.data, twomode = twomode), twomode = twomode)
+  as_siena(as_stocnet(.data, twomode = twomode), twomode = twomode,
+           focal = focal, ...)
 }
 
 #' @export
-as_siena.stocnet <- function(.data, twomode = FALSE) {
+as_siena.stocnet <- function(.data, twomode = FALSE, focal = NULL, ...) {
   snet_requires("RSiena")
   x <- .data
   # SIENA holds a missing tie as a missing cell of the array, which it imputes,
@@ -704,7 +741,29 @@ as_siena.stocnet <- function(.data, twomode = FALSE) {
   info <- x$info %||% list()
   smeta <- info$siena %||% list()
   svars <- smeta$vars %||% list()
-  focal <- info$focal %||% character(0)
+  tie_names <- if (is.null(x$ties) || !nrow(x$ties)) character(0) else
+    if ("layer" %in% names(x$ties)) unique(as.character(x$ties$layer)) else "network"
+  change_names <- setdiff(unique(as.character(x$changes$var)), c("active", "na"))
+  if (!is.null(focal)) {
+    if (!is.character(focal))
+      snet_abort("{.arg focal} must be a character vector of variable names.")
+    unknown <- setdiff(focal, c(tie_names, change_names, names(x$nodes)))
+    if (length(unknown))
+      snet_abort(c("{.arg focal} names variables that are not in the network.",
+                   "x" = "Not found: {.val {unknown}}."))
+  }
+  focal <- focal %||% info$focal %||% character(0)
+  # With no declared dependent, ask for one in an interactive session.
+  if (!length(focal) && length(tie_names) && interactive())
+    focal <- .siena_ask_focal(tie_names, change_names)
+  # Arguments for `RSiena::sienaDependent()`. Those in `...` take precedence
+  # over any recorded in info$siena$vars, which take precedence over defaults.
+  dep_dots <- list(...)
+  dependent <- function(arr, ..., meta) {
+    args <- utils::modifyList(list(allowOnly = meta$allowOnly %||% TRUE),
+                              dep_dots)
+    do.call(RSiena::sienaDependent, c(list(arr, ...), args))
+  }
   centered <- info$centered %||% logical(0)
   nodes <- x$nodes %||% dplyr::tibble(label = character(0))
   # Node sets (modes) ----
@@ -730,7 +789,11 @@ as_siena.stocnet <- function(.data, twomode = FALSE) {
     has_layer <- "layer" %in% names(x$ties)
     tie_layers <- if (has_layer) unique(as.character(x$ties$layer)) else "network"
     # With no declared dependent, treat the first tie layer as the dependent net.
-    if (!length(focal)) focal <- tie_layers[1]
+    if (!length(focal)) {
+      focal <- tie_layers[1]
+      snet_info(c("No {.arg focal} given, so the '{focal}' layer is the dependent network.",
+                  "i" = "Name the dependent variables with {.arg focal}."))
+    }
     for (L in tie_layers) {
       sub <- if (has_layer) x$ties[as.character(x$ties$layer) == L, , drop = FALSE] else x$ties
       meta <- svars[[L]]
@@ -752,10 +815,12 @@ as_siena.stocnet <- function(.data, twomode = FALSE) {
                        "x" = "but the '{L}' layer is valued or signed.",
                        "i" = "Dichotomise it first with `to_unweighted()`."))
         if (labelled) dimnames(arr) <- list(labs_of(ns[1]), labs_of(ns[length(ns)]), NULL)
-        objs[[L]] <- RSiena::sienaDependent(arr, type = type, nodeSet = ns,
-                                            allowOnly = meta$allowOnly %||% TRUE)
+        objs[[L]] <- dependent(arr, type = type, nodeSet = ns, meta = meta)
       } else { # dyadic covariate
-        has_time <- "time" %in% names(sub) && any(!is.na(sub$time))
+        # A layer observed at one wave only, such as a baseline relation, is
+        # constant. As a varying covariate, it would have no ties after period 1.
+        has_time <- "time" %in% names(sub) &&
+          length(unique(stats::na.omit(sub$time))) > 1
         if (has_time) {
           arr <- .siena_ties_to_array(sub, max(1, W - 1), sz_from, sz_to,
                                       off_from, off_to, onemode = FALSE)
@@ -764,7 +829,8 @@ as_siena.stocnet <- function(.data, twomode = FALSE) {
         } else {
           m <- .siena_ties_to_array(sub, 1, sz_from, sz_to, off_from, off_to,
                                     onemode = FALSE)[, , 1]
-          objs[[L]] <- RSiena::coDyadCovar(m, nodeSets = ns, centered = cent_of(L))
+          objs[[L]] <- RSiena::coDyadCovar(m, nodeSets = c(ns[1], ns[length(ns)]),
+                                           centered = cent_of(L))
         }
       }
     }
@@ -783,8 +849,8 @@ as_siena.stocnet <- function(.data, twomode = FALSE) {
     if (V %in% focal) { # behavioural dependent [n, 1, W]
       mat <- .siena_changes_to_matrix(x$changes, V, sz, off, W)
       arr <- array(mat, dim = c(sz, 1, W))
-      objs[[V]] <- RSiena::sienaDependent(arr, type = "behavior", nodeSet = ns[1],
-                                          allowOnly = svars[[V]]$allowOnly %||% TRUE)
+      objs[[V]] <- dependent(arr, type = "behavior", nodeSet = ns[1],
+                             meta = svars[[V]])
     } else { # varying covariate [n, W-1]
       mat <- .siena_changes_to_matrix(x$changes, V, sz, off, NULL)
       objs[[V]] <- RSiena::varCovar(mat, nodeSet = ns[1], centered = cent_of(V))
@@ -803,6 +869,9 @@ as_siena.stocnet <- function(.data, twomode = FALSE) {
     # SIENA covariates must be plain numeric vectors, so encode any categorical
     # attribute as numeric codes and strip stray attributes/classes.
     vals <- if (is.numeric(vals)) as.vector(vals) else as.numeric(as.factor(vals))
+    if (C %in% focal)
+      snet_warn(c("The '{C}' attribute has no changes over the waves,",
+                  "i" = "so it becomes a constant covariate and not a dependent behaviour."))
     if (all(is.na(vals))) {
       snet_info("Dropping the '{C}' attribute, since it holds no observed values.")
       next
@@ -1223,6 +1292,31 @@ as_stocnet.sienadata <- function(.data, twomode = FALSE, ...) {
   m <- attr(cov, "mean")
   if (isTRUE(attr(cov, "centered")) && !is.null(m)) vals <- vals + m
   vals
+}
+
+# Asks which tie layers and changing attributes are the dependent variables,
+# reading each answer with `answer()`. An empty answer takes the first layer.
+# An answer gives numbers or names, separated by commas or spaces.
+.siena_ask_focal <- function(layers, behaviours, answer = readline) {
+  roster <- c(layers, behaviours)
+  kind <- rep(c("network", "behaviour"), c(length(layers), length(behaviours)))
+  snet_prompt("Which variables are dependent in the SIENA data?")
+  listed <- paste0(seq_along(roster), ": ", roster, " (", kind, ")", collapse = "; ")
+  snet_prompt("{listed}")
+  snet_prompt("Enter their numbers or names, or press [Enter] for {.val {layers[1]}}.")
+  repeat {
+    got <- trimws(answer())
+    if (is.na(got) || !nzchar(got)) return(layers[1])
+    got <- strsplit(got, "[,[:space:]]+")[[1]]
+    picks <- vapply(got, function(g) {
+      if (!grepl("^[0-9]+$", g)) return(g)
+      k <- as.integer(g)
+      if (k >= 1 && k <= length(roster)) roster[k] else NA_character_
+    }, character(1), USE.NAMES = FALSE)
+    bad <- got[is.na(picks) | !picks %in% roster]
+    if (!length(bad)) return(unique(picks))
+    snet_prompt("{.val {bad}} {?is/are} not in the list. Try again.")
+  }
 }
 
 # Treat a 'wave' column as the canonical 'time' column.

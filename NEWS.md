@@ -111,7 +111,12 @@
 - Fixed `as_igraph()` and `as_tidygraph()` reading edgelist `time` column as weights
 - Renamed `attribute=`to `over=` in `as_stocnet.array()`
 - Improved `as_stocnet.sienadata()` to read SIENA's 10 as a structural zero, not as a non-tie
-- Improved `as_siena.stocnet()` to write a structural zero as SIENA's 10
+- Improved `as_siena.stocnet()`
+  - Writes structural zeros as SIENA's 10
+  - Added `focal=` to name the dependent variables, in place of `info$focal`
+  - When no `focal` and session interactive, presents user with options in the console
+  - Fixed a tie layer at one wave only to be a constant dyadic covariate
+  - Added `...` for `RSiena::sienaDependent()`, for example `allowOnly = FALSE`
 
 ## Manipulating
 
