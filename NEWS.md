@@ -180,6 +180,12 @@
 - Added `snet_requires()` for a package that a function needs
   - Aborts with the command to install it where it is missing, also in a script
 
+## Glossary
+
+- Added glossary entries for diffusion and opinion models
+  - 'cascade', 'voter', 'stubbornness', 'wisdom of crowds', and 'zealot'
+  - 'balance', 'bounded confidence', 'periodic'
+
 ## Data
 
 - Converted the last single 'mnet' datasets to 'stocnet' objects (closes #186)
