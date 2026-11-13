@@ -136,14 +136,24 @@ is_acyclic.igraph <- function(.data){
 #'   Aperiodicity is a necessary condition for the existence of a 
 #'   unique stationary distribution in Markov chains, and thus is 
 #'   an important property for the analysis of dynamic processes on networks.
-#'   The function `is_aperiodic()` tests for aperiodicity by finding 
-#'   all simple paths from each node back to itself, and then 
-#'   calculating the greatest common divisor of the lengths of these paths. 
-#'   If the greatest common divisor is 1, the network is aperiodic.
-#' @param max_path_length Maximum path length considered.
-#'   If negative, paths of all lengths are considered.
-#'   By default 4, to avoid potentially very long computation times.
-#' @source https://stackoverflow.com/questions/55091438/r-igraph-find-all-cycles
+#'   The function `is_aperiodic()` finds the period of the network,
+#'   the greatest common divisor of the lengths of all its cycles.
+#'   If the period is 1, the network is aperiodic.
+#'
+#'   Each cycle lies inside one strongly connected component.
+#'   In each component, the nodes are numbered by their distance from one node,
+#'   and the period of the component is the greatest common divisor of
+#'   `level[i] + 1 - level[j]` over the ties from i to j inside it
+#'   (Jarvis and Shier 1996).
+#'   This is exact, and takes time in proportion to the number of ties.
+#'   An undirected tie is a cycle of two, so an undirected network is
+#'   aperiodic where it has a cycle of odd length.
+#'   A self-tie is a cycle of length one, as a state that can stay where it is
+#'   in a Markov chain, so a network with a self-tie is aperiodic.
+#'   In an opinion model, a self-tie is a self-weight (see [to_influence()]).
+#'   A network with no cycle counts as aperiodic.
+#' @param max_path_length Deprecated, and no longer used,
+#'   since the period is now found exactly.
 #' @references
 #' ## On aperiodicity
 #' Jarvis, J.P, and D.R. Shier. 1996.
@@ -152,67 +162,63 @@ is_acyclic.igraph <- function(.data){
 #' CRC Press.
 #' @examples 
 #' is_aperiodic(ison_algebra)
+#' is_aperiodic(create_ring(31))
 #' @export
-is_aperiodic <- function(.data, max_path_length = 4) UseMethod("is_aperiodic")
+is_aperiodic <- function(.data, max_path_length) UseMethod("is_aperiodic")
 
 #' @export
-is_aperiodic.default <- function(.data, max_path_length = 4) {
-  is_aperiodic(as_igraph(.data), max_path_length = max_path_length)
+is_aperiodic.default <- function(.data, max_path_length) {
+  if(!missing(max_path_length))
+    snet_deprecated("max_path_length", type = "argument",
+                    msg = paste("{.arg max_path_length} is deprecated, and no longer",
+                                "used: the period is now found exactly."))
+  is_aperiodic(as_igraph(.data))
 }
 
 #' @export
-is_aperiodic.igraph <- function(.data, max_path_length = 4){
-  # snet_requires("minMSE") # >80x faster than e.g. cheapr::gcd()
+is_aperiodic.igraph <- function(.data, max_path_length){
+  if(!missing(max_path_length))
+    snet_deprecated("max_path_length", type = "argument",
+                    msg = paste("{.arg max_path_length} is deprecated, and no longer",
+                                "used: the period is now found exactly."))
   if(is_twomode(.data)) return(FALSE)
-  snet_info("Obtaining paths no greater than {max_path_length}.")
-  # A cycle closes a path of at most `max_path_length` ties with one more, and
-  # a negative length leaves the paths unbounded, so that no simple cycle can
-  # be longer than the network has nodes.
-  longest <- if(max_path_length < 0) igraph::vcount(.data) else
-    max_path_length + 1
-  out <- .closed_walk_lengths(.data, longest)
-  snet_info("Finding greatest common divisor of all paths.")
-  out <- unique(sort(out))
-  if(!length(out)){
-    # No cycles at all, so there is no period to divide; following the
-    # Markov-chain convention, treat a graph with no return paths as aperiodic
-    # rather than returning the NA the gcd loop would otherwise produce.
-    snet_info("No cycles found within {max_path_length} steps; treating as aperiodic.")
-    return(TRUE)
-  }
-  # the first two lengths give way to their divisor, until one is left
-  while(out[1]!=1 && length(out)>1){
-    out <- c(.gcd(out[1], out[2]), out[-(1:2)])
-  }
-  as.logical(out[1]==1)
+  period <- .network_period(.data)
+  # No cycles at all, so there is no period to divide; following the
+  # Markov-chain convention, a network with no return paths is aperiodic.
+  is.na(period) || period == 1
 }
 
-# The lengths, from two up to `longest`, of the closed walks in a network.
-# Every closed walk is made of cycles no longer than itself, and every cycle
-# is a closed walk, so the walks up to a length share their greatest common
-# divisor with the simple cycles up to that length. Self-ties close no cycle
-# through another node, and are set aside. The walks are extended one tie at
-# a time, and kept only as the pairs of nodes they start and end at, which
-# are as many as the cells of the matching power of the adjacency matrix.
-.closed_walk_lengths <- function(.data, longest){
+# The greatest common divisor of the lengths of the cycles of a network,
+# or NA where it has no cycle. A self-tie is a cycle of length one, so it
+# makes the period 1, as in a Markov chain. Each cycle lies inside one strongly connected
+# component. In each, the nodes are numbered by their distance from a root,
+# and every tie i -> j inside it gives level[i] + 1 - level[j], a multiple of
+# the period, while the ties of a breadth-first tree give 0; the greatest
+# common divisor of these is the period of the component.
+.network_period <- function(.data){
   n <- igraph::vcount(.data)
   el <- igraph::as_edgelist(.data, names = FALSE)
+  if(any(el[, 1] == el[, 2])) return(1)
   if(!igraph::is_directed(.data)) el <- rbind(el, el[, 2:1, drop = FALSE])
-  el <- unique(el[el[, 1] != el[, 2], , drop = FALSE])
-  onward <- split(el[, 2], factor(el[, 1], levels = seq_len(n)))
-  from <- el[, 1]
-  to <- el[, 2]
-  out <- integer(0)
-  for(k in seq_len(longest)[-1]){
-    from <- rep(from, lengths(onward)[to])
-    to <- unlist(onward[to], use.names = FALSE)
-    keep <- !duplicated((from - 1) * n + to)
-    from <- from[keep]
-    to <- to[keep]
-    if(!length(from)) break
-    if(any(from == to)) out <- c(out, k)
+  el <- unique(el)
+  if(!nrow(el)) return(NA_real_)
+  g <- igraph::graph_from_edgelist(el, directed = TRUE)
+  g <- igraph::add_vertices(g, max(0, n - igraph::vcount(g)))
+  comp <- igraph::components(g, mode = "strong")$membership
+  inside <- comp[el[, 1]] == comp[el[, 2]]
+  if(!any(inside)) return(NA_real_)
+  el <- el[inside, , drop = FALSE]
+  roots <- unique(comp[el[, 1]])
+  level <- rep(NA_real_, n)
+  for(r in roots){
+    root <- which(comp == r)[1]
+    d <- igraph::distances(g, v = root, mode = "out")[1, ]
+    level[comp == r] <- d[comp == r]
   }
-  out
+  diffs <- unique(abs(level[el[, 1]] + 1 - level[el[, 2]]))
+  diffs <- diffs[diffs > 0]
+  if(!length(diffs)) return(NA_real_)
+  Reduce(.gcd, diffs)
 }
 
 .gcd <- function(x, y){
