@@ -315,41 +315,41 @@ test_that("the exposure kernel agrees with the old exposure", {
                signed = irps_wwi)
   for(net in nets){
     mark <- c(1, 3)
-    expect_equal(c(manynet:::.node_exposure(net, mark)), old_exposure(net, mark),
+    expect_equal(c(.node_exposure(net, mark)), old_exposure(net, mark),
                  ignore_attr = TRUE)
   }
 })
 
 test_that("two-mode exposure goes through co-affiliation or direct ties", {
   two <- ison_southern_women
-  mat <- manynet:::.exposure_matrix(two)
+  mat <- .exposure_matrix(two)
   n1 <- nrow(mat)
   # marks in one mode expose the nodes of that mode that share an event
   shared <- c(mat[, mat[1, ] != 0, drop = FALSE] %*% rep(1, sum(mat[1, ] != 0))) > 0
   shared[1] <- FALSE
-  expo <- c(manynet:::.node_exposure(two, 1))
+  expo <- c(.node_exposure(two, 1))
   expect_equal(expo[seq_len(n1)] > 0, shared, ignore_attr = TRUE)
   expect_true(all(expo[-seq_len(n1)] == 0))
   # marks in both modes expose the nodes that they are tied to
-  both <- c(manynet:::.node_exposure(two, c(1, n1 + 1)))
+  both <- c(.node_exposure(two, c(1, n1 + 1)))
   expect_equal(both[n1 + 2], as.numeric(mat[1, 2] != 0), ignore_attr = TRUE)
 })
 
 test_that("exposure follows the direction of the ties", {
   chain <- create_explicit(A -+ B, B -+ C)
   mat <- as_matrix(chain)
-  expect_equal(manynet:::.exposure_kernel(mat, 2, "in"), c(0, 0, 1))
-  expect_equal(manynet:::.exposure_kernel(mat, 2, "out"), c(1, 0, 0))
-  expect_equal(manynet:::.exposure_kernel(mat, 2, "all"), c(1, 0, 1))
+  expect_equal(.exposure_kernel(mat, 2, "in"), c(0, 0, 1))
+  expect_equal(.exposure_kernel(mat, 2, "out"), c(1, 0, 0))
+  expect_equal(.exposure_kernel(mat, 2, "all"), c(1, 0, 1))
   # only the nodes that an infected node sends ties to are exposed
-  expect_equal(c(manynet:::.node_is_exposed(chain, 2)), c(FALSE, FALSE, TRUE),
+  expect_equal(c(.node_is_exposed(chain, 2)), c(FALSE, FALSE, TRUE),
                ignore_attr = TRUE)
 })
 
 test_that("a cognitive social structure exposes as its aggregated structure", {
   css <- ison_hightech
   agg <- to_aggregated(css, over = "by", rule = "min", reporters = "both")
-  expect_equal(manynet:::.exposure_matrix(css), manynet:::.exposure_matrix(agg))
+  expect_equal(.exposure_matrix(css), .exposure_matrix(agg))
   expect_equal(as.data.frame(as_diffusion(css)), as.data.frame(as_diffusion(agg)))
   set.seed(9); on_css <- play_diffusion(css, steps = 3)
   set.seed(9); on_agg <- play_diffusion(agg, steps = 3)
@@ -359,7 +359,7 @@ test_that("a cognitive social structure exposes as its aggregated structure", {
 test_that("missing ties count as absent for exposure", {
   mat <- matrix(c(0, NA, 1, NA, 0, 0, 1, 0, 0), 3)
   net <- as_tidygraph(mat)
-  expect_false(anyNA(manynet:::.exposure_matrix(net)))
+  expect_false(anyNA(.exposure_matrix(net)))
 })
 
 # Time and composition (phase 3) ####
@@ -388,14 +388,14 @@ test_that("play_diffusion uses the ties of each wave of a panel", {
 })
 
 test_that("waves at times 0, 4 and 8 give four steps for each wave", {
-  timeline <- manynet:::.diffusion_contacts(timed_chain(), 0, 11)
+  timeline <- .diffusion_contacts(timed_chain(), 0, 11)
   expect_equal(timeline$times, c(0, 4, 8))
   expect_length(timeline$contacts, 3)
   waves <- vapply(0:11, function(t)
-    manynet:::.diffusion_wave(timeline, t, 0), numeric(1))
+    .diffusion_wave(timeline, t, 0), numeric(1))
   expect_equal(waves, rep(1:3, each = 4))
   # after the last wave, the last wave stays in force
-  expect_equal(manynet:::.diffusion_wave(timeline, 20, 0), 3)
+  expect_equal(.diffusion_wave(timeline, 20, 0), 3)
 })
 
 test_that("a list of networks is a panel only with the same nodes", {
@@ -507,9 +507,24 @@ test_that("data that change in time run for their whole period", {
   expect_equal(max(as.numeric(as_changelist(played)$time)), 9)
   # a list of three waves gives three steps
   three <- list(contacts = list(1, 2, 3), times = NULL)
-  expect_equal(manynet:::.diffusion_period(three, NULL, create_ring(3),
+  expect_equal(.diffusion_period(three, NULL, create_ring(3),
                                            "diffusion", 0, 3), 3)
   # the dates of the changes of ison_southern_women set the period
   ch <- as_changelist(play_diffusion(ison_southern_women))
   expect_equal(max(ch$time), as.Date("1936-11-21"))
+})
+
+test_that("as_diffusion() does not count inactive nodes", {
+  net <- mutate_nodes(create_ring(6), active = c(TRUE, TRUE, TRUE, TRUE, FALSE, FALSE))
+  events <- data.frame(time = c(0, 1), node = c(1, 2), var = "diffusion", value = "I")
+  report <- as_diffusion(bind_changes(net, events))
+  expect_equal(report$n, c(4, 4))
+  expect_equal(report$S, c(3, 2))
+  expect_equal(report$I, c(1, 2))
+  # a node that becomes active later is counted from then
+  events <- rbind(events, data.frame(time = 1, node = 5, var = "active", value = TRUE))
+  net <- bind_changes(net, events)
+  report <- as_diffusion(net)
+  expect_equal(report$n, c(4, 5))
+  expect_equal(report$S, c(3, 3))
 })

@@ -167,7 +167,7 @@ q_yes <- function(msg = NULL){
 #'   so use `package_version()` to compare versions.
 #'   For example, the highest `min_r` in the network that
 #'   `collect_cran("manynet")` returns is the minimum version of R that
-#'   {manynet} needs, together with all the packages that it depends upon.
+#'   `{manynet}` needs, together with all the packages that it depends upon.
 #'
 #'   `collect_cran()` relies on `utils::available.packages()`,
 #'   which caches the repository index for an hour by default.
@@ -1360,7 +1360,7 @@ collect_text <- function(text, unit = "document", terms = NULL,
 .text_words <- function(x) {
   x <- tolower(enc2utf8(as.character(x)))
   x[is.na(x)] <- ""
-  regmatches(x, gregexpr("[\\p{L}\\p{N}]+(?:['’][\\p{L}\\p{N}]+)*", x,
+  regmatches(x, gregexpr("[\\p{L}\\p{N}]+(?:['\u2019][\\p{L}\\p{N}]+)*", x,
                          perl = TRUE))
 }
 
@@ -1370,7 +1370,7 @@ collect_text <- function(text, unit = "document", terms = NULL,
   parts <- strsplit(x, "\n[[:blank:]]*\n", perl = TRUE)
   if (unit == "sentence")
     parts <- lapply(parts, function(p)
-      unlist(strsplit(p, "(?<=[.!?]|[.!?][\"'’”)])\\s+", perl = TRUE)))
+      unlist(strsplit(p, "(?<=[.!?]|[.!?][\"'\u2019\u201d)])\\s+", perl = TRUE)))
   lapply(parts, function(p) p[grepl("\\S", p)])
 }
 
@@ -2138,7 +2138,7 @@ collect_bibliography <- function(records,
   incidence <- function(items, mode, layer, from_works) {
     rec <- rep(seq_len(n), lengths(items))
     item <- unlist(items) %||% character(0)
-    position <- unlist(lapply(lengths(items), seq_len)) %||% integer(0)
+    position <- sequence(lengths(items))
     keep <- !duplicated(paste(rec, item, sep = "\r"))
     rec <- rec[keep]
     item <- item[keep]

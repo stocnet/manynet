@@ -430,6 +430,9 @@ and `test-coercion.R` tests all four `R/coerce_*.R` files.
 `tests/testthat/helper-manynet.R` defines the shared fixtures and helpers used across
 tests, and `tests/testthat/helper-functional.R` the family-sweeping machinery.
 Test fixtures (Pajek, UCINET, GraphML, xlsx, etc.) live under `tests/testthat/sheets/`.
+A check against another package that manynet does not itself use
+(such as `{bibliometrix}`, `{tm}` or `{quanteda}`) goes in `development/parity-checks.R`,
+not in `tests/`, so that the package does not suggest it only for a test.
 
 `testthat` edition 3 with parallel execution is configured in `DESCRIPTION`
 (`Config/testthat/parallel: true`);

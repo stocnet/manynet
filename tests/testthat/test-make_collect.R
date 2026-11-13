@@ -796,65 +796,6 @@ test_that("collect_bibliography() errors informatively", {
   expect_error(collect_bibliography(fixture_records[0, ]), "No records")
 })
 
-test_that("collect_bibliography() counts as bibliometrix does", {
-  # A parity check against another package over some 4000 references, which
-  # takes several seconds, so it is left to the development checks.
-  skip_on_cran()
-  skip_if_not_installed("bibliometrix")
-  skip_if_not_installed("bibliometrixData")
-  records <- get(utils::data("scientometrics", package = "bibliometrixData",
-                             envir = environment()))
-  out <- collect_bibliography(records)
-  cites <- to_layer(out, "cites")
-  cocit <- as_matrix(to_proximity(cites, across = "columns"))
-  coup <- as_matrix(to_proximity(cites, across = "rows"))
-  theirs_cocit <- as.matrix(suppressWarnings(bibliometrix::biblioNetwork(
-    records, "co-citation", "references", shortlabel = FALSE)))
-  theirs_coup <- as.matrix(suppressWarnings(bibliometrix::biblioNetwork(
-    records, "coupling", "references", shortlabel = FALSE)))
-  # bibliometrix names a cited work by its reference up to its volume or DOI,
-  # where manynet keeps works of different DOIs apart, so the counts are
-  # compared for the references that both name in the same way
-  recs <- .bib_records(records, "author")
-  refs <- .bib_match(recs)$references
-  string <- gsub("[,;]", " ", gsub("\\).*", ")", unlist(recs$refs)))
-  cut <- regexpr("V[0-9]|DOI ", string)
-  string[cut > 0] <- substr(string[cut > 0], 1, cut[cut > 0] - 1)
-  string <- gsub("\\s+", " ", string)
-  map <- unique(data.frame(string = string, work = refs$cited))
-  same <- !map$string %in% map$string[duplicated(map$string)] &
-    !map$work %in% map$work[duplicated(map$work)] &
-    map$string %in% colnames(theirs_cocit)
-  map <- map[same, ]
-  expect_gt(nrow(map), 4000)
-  labels <- out$nodes$label[map$work]
-  ours <- cocit[labels, labels]
-  theirs <- theirs_cocit[map$string, map$string]
-  diag(ours) <- diag(theirs) <- 0
-  expect_equal(unname(ours), unname(theirs))
-  # coupling, for the records whose references are all named in the same way
-  whole <- which(tapply(refs$cited %in% map$work, refs$citing,
-                        all))
-  expect_gt(length(whole), 20)
-  ours <- coup[out$nodes$label[whole], out$nodes$label[whole]]
-  theirs <- theirs_coup[whole, whole]
-  diag(ours) <- diag(theirs) <- 0
-  expect_equal(unname(ours), unname(theirs))
-  # co-authorship and co-word counts are the same throughout
-  theirs <- as.matrix(bibliometrix::biblioNetwork(records, "collaboration",
-                                                   "authors"))
-  ours <- as_matrix(to_mode(out, "authors", through = "works"))
-  diag(theirs) <- 0
-  expect_equal(unname(ours[rownames(theirs), colnames(theirs)]),
-               unname(theirs))
-  theirs <- as.matrix(bibliometrix::biblioNetwork(records, "co-occurrences",
-                                                   "author_keywords"))
-  ours <- as_matrix(to_mode(out, "keywords", through = "works"))
-  diag(theirs) <- 0
-  keywords <- tolower(rownames(theirs))
-  expect_equal(unname(ours[keywords, keywords]), unname(theirs))
-})
-
 # collect_statements() ####
 
 # Returns a function that gives the answers one at a time, then NA.

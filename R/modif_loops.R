@@ -200,6 +200,8 @@ to_looped.stocnet <- function(.data) {
 }
 
 #' @rdname modif_loops
+#' @param rule How the values of parallel ties are combined into one tie:
+#'   "max" (the default), "min", "mean", "sum", or "product".
 #' @examples
 #' to_simplified(ison_koenigsberg)
 #' @export

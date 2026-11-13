@@ -96,7 +96,7 @@ This version is a character string,
 so use \code{package_version()} to compare versions.
 For example, the highest \code{min_r} in the network that
 \code{collect_cran("manynet")} returns is the minimum version of R that
-{manynet} needs, together with all the packages that it depends upon.
+\code{{manynet}} needs, together with all the packages that it depends upon.
 
 \code{collect_cran()} relies on \code{utils::available.packages()},
 which caches the repository index for an hour by default.

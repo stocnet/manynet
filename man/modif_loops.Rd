@@ -26,6 +26,9 @@ to_simplified(.data, rule = c("max", "min", "mean", "sum", "product"))
 \item network \code{network}, from the \code{{network}} package
 \item tidygraph \code{tbl_graph}, from the \code{{tidygraph}} package
 }}
+
+\item{rule}{How the values of parallel ties are combined into one tie:
+"max" (the default), "min", "mean", "sum", or "product".}
 }
 \value{
 An object of the same class as the function was given,

@@ -103,6 +103,7 @@
   - Added `attribute=` to name the attribute, by default "diffusion"
   - Fixed the counts of E with `latency` and of S with waning on an 'igraph'
   - Added the nodes that die from `fatality=` to D, and not to their last value
+  - Fixed counting the inactive nodes as S; `n` counts the active nodes at each step
 - Added `as_monan()` to coerce a network of people and places for 'MoNAn'
   - Also takes a network of places with an `occupant` record of moves
 - Added `as_opinion()` to read a record of opinions as an 'opinionModel'

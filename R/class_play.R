@@ -54,6 +54,8 @@ summary.diff_model <- function(object, ...) {
 #'   A node that dies, as from `fatality`, becomes inactive,
 #'   and is counted in the value of D (and `D_new`) from then on,
 #'   and not in the value it held when it died.
+#'   Any other node that is not `active` is not counted,
+#'   and `n` counts the nodes that are counted at each step.
 #'   The table keeps the name of the attribute in `attr(, "attribute")`,
 #'   and the roles of its values in `attr(, "compartments")`,
 #'   where these are known.
@@ -131,6 +133,7 @@ as_diffusion.stocnet <- as_diffusion.tbl_graph
   # The deaths are changes of `active`, so they are read before the changes
   # are kept to those of the attribute.
   deaths <- .diffusion_deaths(events)
+  presence <- .diffusion_presence_changes(events)
   events <- .diffusion_events(events, attribute)
   n <- c(net_nodes(.data))
   comps <- .net_compartments(.data)
@@ -165,6 +168,11 @@ as_diffusion.stocnet <- as_diffusion.tbl_graph
   }
   # a missing state starts as susceptible, as in `play_diffusion()`
   if(!is.null(comps$S)) state[is.na(state) & !exclude] <- comps$S[1]
+  # An inactive node is not at risk and does not transmit in `play_diffusion()`,
+  # so it is not counted, unless it died and is counted in the value of D.
+  active <- if("active" %in% net_node_attributes(.data))
+    as.logical(node_attribute(.data, "active")) else rep(TRUE, length(state))
+  active[is.na(active)] <- TRUE
   # the diffusion starts at the start of the network, or its first change
   begin <- min(c(.network_start(.data), events$time, deaths$time))
   end <- max(c(begin, events$time, deaths$time))
@@ -177,13 +185,18 @@ as_diffusion.stocnet <- as_diffusion.tbl_graph
   counts <- matrix(0, length(times), length(values))
   news <- matrix(0, length(times), length(values))
   exposed <- rep(0, length(times))
+  present <- rep(n, length(times))
   for(i in seq_along(times)){
     now <- events[events$time == times[i], , drop = FALSE]
     if(nrow(now)) state[now$node] <- now$value
+    moved <- presence[presence$time == times[i], , drop = FALSE]
+    if(nrow(moved)) active[moved$node] <- moved$value
     # a node that dies leaves its value for the value of D
     died <- deaths$node[deaths$time == times[i]]
     if(length(died)) state[died] <- dead
-    counts[i, ] <- vapply(values, function(v) sum(state %in% v), numeric(1))
+    counted <- !exclude & (active | (!is.null(dead) & state %in% dead))
+    present[i] <- sum(counted)
+    counts[i, ] <- vapply(values, function(v) sum(state[counted] %in% v), numeric(1))
     news[i, ] <- vapply(values, function(v) sum(now$value %in% v), numeric(1))
     if(length(died)) news[i, values == dead] <- news[i, values == dead] +
       length(died)
@@ -191,11 +204,11 @@ as_diffusion.stocnet <- as_diffusion.tbl_graph
       infected <- which(state %in% infectious)
       expos <- if(is_twomode(.data)) c(.node_is_exposed(.data, infected)) else
         .exposure_kernel(mat, infected, weighted = FALSE) > 0
-      expos[state %in% c(recovered, dead) | exclude] <- FALSE
+      expos[state %in% c(recovered, dead) | !counted] <- FALSE
       exposed[i] <- sum(expos)
     }
   }
-  report <- dplyr::tibble(time = times, n = n)
+  report <- dplyr::tibble(time = times, n = present)
   for(j in seq_along(values)){
     v <- as.character(values[j])
     report[[v]] <- as.integer(counts[, j])
@@ -222,6 +235,18 @@ as_diffusion.stocnet <- as_diffusion.tbl_graph
   died <- died[order(died$time), , drop = FALSE]
   died <- died[!duplicated(died$node), , drop = FALSE]
   data.frame(time = died$time, node = died$node)
+}
+
+# The changes of `active` at each time, as logical values.
+.diffusion_presence_changes <- function(events){
+  none <- data.frame(time = numeric(0), node = integer(0), value = logical(0))
+  if(is.null(events)) return(none)
+  events <- as.data.frame(events)
+  if(!all(c("time", "node", "var", "value") %in% names(events))) return(none)
+  moved <- events[events$var == "active", , drop = FALSE]
+  if(!nrow(moved)) return(none)
+  data.frame(time = moved$time, node = moved$node,
+             value = as.logical(as.character(.unlist_values(moved$value))))
 }
 
 # The compartments that a network keeps: in `info` for a stocnet, and as a

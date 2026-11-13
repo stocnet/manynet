@@ -184,6 +184,8 @@ and \code{s} counts the susceptible nodes that are exposed.
 A node that dies, as from \code{fatality}, becomes inactive,
 and is counted in the value of D (and \code{D_new}) from then on,
 and not in the value it held when it died.
+Any other node that is not \code{active} is not counted,
+and \code{n} counts the nodes that are counted at each step.
 The table keeps the name of the attribute in \code{attr(, "attribute")},
 and the roles of its values in \code{attr(, "compartments")},
 where these are known.

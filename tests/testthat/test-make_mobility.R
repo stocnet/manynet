@@ -86,19 +86,19 @@ test_that("play_mobility takes a function as preference", {
 })
 
 test_that("play_mobility moves occupants in the order of a function's scores", {
-  skip_if_not_installed("netrics")
+  degree <- function(.data) igraph::degree(as_igraph(.data))
   # Node 5 is the hub, then nodes 3 and 4 have two ties each
   places <- as_stocnet(data.frame(from = c(5, 5, 5, 5, 5, 4),
                                   to = c(1, 2, 3, 4, 6, 3)))
   places <- add_node_attribute(places, "person", c(LETTERS[1:5], NA))
   unhappy <- function(.data, node) -1
   first <- last_move(play_mobility(places, "person", preference = unhappy,
-                         who_moves = netrics::node_by_degree,
+                         who_moves = degree,
                          choice_function = "optimising", steps = 1))
   expect_identical(node_attribute(first, "person"),
                    c("A", "B", "C", "D", NA, "E"))
   second <- last_move(play_mobility(places, "person", preference = unhappy,
-                          who_moves = netrics::node_by_degree,
+                          who_moves = degree,
                           choice_function = "optimising", steps = 2))
   expect_identical(node_attribute(second, "person"),
                    c("A", "B", NA, "D", "C", "E"))

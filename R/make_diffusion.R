@@ -1083,7 +1083,7 @@ make_transitions <- function(transitions = NULL, values = NULL,
     return(.data)
   }
   out <- igraph::delete_graph_attr(as_igraph(.data), "changes")
-  if(is_tidygraph(.data)) as_tidygraph(out) else out
+  if(inherits(.data, "tbl_graph")) as_tidygraph(out) else out
 }
 
 # The matrix in force at `time`: the latest moment at or before it,
