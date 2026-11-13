@@ -16,6 +16,13 @@
 #'   A node that sends no tie listens only to itself,
 #'   and so gets a self-weight of 1.
 #'
+#'   A negative tie is a tie of repulsion: the node moves away from the
+#'   opinion of the node it is tied to, towards the opposite opinion.
+#'   Its weight in W is negative, and the absolute weights of the ties
+#'   that each node sends sum to 1, as in the model of Altafini (2013).
+#'   Opposite opinions are opposite signs, so the opinions should then be
+#'   on a scale centred on 0, such as from -1 to 1.
+#'
 #'   Unlike the `as_*()` group of functions,
 #'   this function returns the same class as it is given.
 #'   For a matrix, it returns W itself.
@@ -33,15 +40,24 @@
 #'   normalised so that the ties each node sends sum to 1.
 #'   Self-loops are kept as self-weights.
 #'   Otherwise the name of a numeric tie attribute to weigh the ties by,
-#'   or a row-stochastic matrix with one row and column for each node,
-#'   which is used as it is.
+#'   or a matrix with one row and column for each node,
+#'   whose absolute values sum to 1 in each row, which is used as it is.
+#'   A negative value is a tie of repulsion.
 #' @returns A directed, weighted network of the same class,
 #'   whose tie weights are the influence matrix W.
+#' @references
+#' ## On signed influence
+#' Altafini, Claudio. 2013.
+#' "Consensus problems on networks with antagonistic interactions",
+#' _IEEE Transactions on Automatic Control_, 58(4): 935-946.
+#' \doi{10.1109/TAC.2012.2224251}
 #' @family ties
 #' @template fam_modif
 #' @examples
 #' to_influence(ison_adolescents)
 #' as_matrix(to_influence(ison_adolescents))
+#' # A negative tie repels
+#' as_matrix(to_influence(irps_wwi))
 #' @export
 to_influence <- function(.data, weights = NULL) UseMethod("to_influence")
 
@@ -106,10 +122,11 @@ to_influence.stocnet <- function(.data, weights = NULL){
     if(!is.numeric(weights) || any(dim(weights) != n))
       snet_abort("A {.arg weights} matrix must be numeric, with one row and",
                  "one column for each of the {n} nodes in the network.")
-    if(anyNA(weights) || any(weights < 0))
-      snet_abort("A {.arg weights} matrix must have no missing or negative values.")
-    if(any(abs(rowSums(weights) - 1) > sqrt(.Machine$double.eps)))
-      snet_abort("Each row of a {.arg weights} matrix must sum to 1.",
+    if(anyNA(weights))
+      snet_abort("A {.arg weights} matrix must have no missing values.")
+    if(any(abs(rowSums(abs(weights)) - 1) > sqrt(.Machine$double.eps)))
+      snet_abort("The absolute values in each row of a {.arg weights} matrix",
+                 "must sum to 1.",
                  "Please normalise it, or give the ties and use {.fn to_influence}.")
     W <- weights
   } else {
@@ -131,11 +148,9 @@ to_influence.stocnet <- function(.data, weights = NULL){
                        "so it cannot yet be made from hyperedges or reports.")
     A <- matrix(as.numeric(A), nrow(A), ncol(A), dimnames = dimnames(A))
     A[is.na(A)] <- 0
-    if(any(A < 0))
-      snet_unavailable("An influence matrix cannot yet be made from",
-                       "negative ties.",
-                       "Please keep the positive ties first, with {.fn to_positive}.")
-    sums <- rowSums(A)
+    # A negative tie repels, so each node divides its attention by the
+    # absolute weights of its ties (Altafini 2013)
+    sums <- rowSums(abs(A))
     # A node that listens to no one keeps its own opinion
     alone <- sums == 0
     A[cbind(which(alone), which(alone))] <- 1

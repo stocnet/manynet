@@ -35,6 +35,32 @@ test_that("a node that listens to no one listens only to itself", {
 
 test_that("to_influence() explains what it cannot use", {
   expect_error(to_influence(ison_southern_women), "one-mode")
+})
+
+test_that("a negative tie repels, and the absolute weights sum to 1", {
   signed <- add_tie_attribute(create_ring(4), "weight", c(1, -1, 1, 1))
-  expect_error(to_influence(signed), "negative")
+  W <- to_influence(as_matrix(signed))
+  expect_equal(rowSums(abs(W)), rep(1, 4))
+  expect_equal(W[2, 3], -0.5)
+  expect_equal(W[3, 2], -0.5)
+  expect_error(to_influence(as_matrix(signed), W * 2), "absolute")
+  expect_equal(to_influence(as_matrix(signed), W), W)
+})
+
+test_that("play_opinion() splits a balanced signed network into two camps", {
+  # positive ties inside two camps, and negative ties between them
+  camps <- rep(1:2, each = 3)
+  A <- ifelse(outer(camps, camps, "=="), 1, -1)
+  diag(A) <- 0
+  net <- play_opinion(A, c(1, 0.5, 0, 0.2, -0.4, 0.1), steps = 200)
+  end <- unlist(tail(as_opinion(net), 1))
+  expect_equal(end[1:3], rep(end[1], 3), tolerance = 0.01, ignore_attr = TRUE)
+  expect_equal(end[4:6], rep(-end[1], 3), tolerance = 0.01, ignore_attr = TRUE)
+  expect_gt(abs(end[1]), 0.05)
+  # one tie that breaks the balance pulls everyone to 0
+  A[1, 2] <- A[2, 1] <- -1
+  net <- play_opinion(A, c(1, 0.5, 0, 0.2, -0.4, 0.1), steps = 500)
+  expect_equal(unlist(tail(as_opinion(net), 1)), rep(0, 6),
+               tolerance = 0.01, ignore_attr = TRUE)
+  expect_error(play_opinion(A, rep(0, 6), rule = "deffuant"), "negative")
 })

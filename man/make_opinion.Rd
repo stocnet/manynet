@@ -68,8 +68,9 @@ with their weights where the network is weighted,
 normalised so that the ties each node sends sum to 1.
 Self-loops are kept as self-weights.
 Otherwise the name of a numeric tie attribute to weigh the ties by,
-or a row-stochastic matrix with one row and column for each node,
-which is used as it is.}
+or a matrix with one row and column for each node,
+whose absolute values sum to 1 in each row, which is used as it is.
+A negative value is a tie of repulsion.}
 
 \item{steps}{The largest number of steps to play.
 By default the number of nodes in the network.}
@@ -135,6 +136,20 @@ many more \code{steps} than the others.
 Where \code{opinions} hold several issues,
 the distance between two nodes' opinions is the Euclidean distance
 across the issues.
+}
+
+\section{Repulsion}{
+
+A negative tie from i to j means that i moves away from the opinion of j,
+towards the opposite opinion (Altafini 2013).
+See \code{\link[=to_influence]{to_influence()}} for how such ties are weighed.
+Opposite opinions are opposite signs, so give the opinions on a scale
+centred on 0, such as from -1 to 1.
+Where the network is structurally balanced, with only negative ties
+between two camps, the opinions split into two camps of the same size
+and opposite signs.
+Where it is not balanced, the opinions are pulled towards 0.
+Only the \code{"degroot"} rule can yet use negative ties.
 }
 
 \section{Self-weight and stubbornness}{
@@ -222,6 +237,11 @@ Golub, Benjamin, and Matthew O. Jackson 2010.
 "Naive learning in social networks and the wisdom of crowds",
 \emph{American Economic Journal}, 2(1): 112-49.
 \doi{10.1257/mic.2.1.112}
+
+Altafini, Claudio. 2013.
+"Consensus problems on networks with antagonistic interactions",
+\emph{IEEE Transactions on Automatic Control}, 58(4): 935-946.
+\doi{10.1109/TAC.2012.2224251}
 
 Hegselmann, Rainer, and Ulrich Krause. 2002.
 "Opinion dynamics and bounded confidence: Models, analysis and simulation",

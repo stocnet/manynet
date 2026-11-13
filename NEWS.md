@@ -65,6 +65,7 @@
   - Renamed `closeness=` to `confidence=`, for the bounded-confidence rules only
   - Renamed `epsilon=` to `tolerance=`
   - Added `weights=` to weigh influence by a tie attribute or by a matrix
+  - Added repulsion along negative ties for the "degroot" rule (Altafini)
 - Renamed `play_segregation()` to `play_mobility()`, after the mechanism
   - Renamed `heterophily=` to `preference=`, which can also be a function
   - `who_moves=` and `choice_function=` can also be functions that score nodes
@@ -123,6 +124,7 @@
 ## Modifying
 
 - Added `to_influence()` for the row-stochastic influence matrix of a network
+  - A negative tie repels; the absolute weights of each row sum to 1
 - Added `to_mobility()` for a network of places with one tie for each move
   - Also takes a network of places with an `occupant` record of moves
 - Improved `to_mode()` with new measures and with `through`

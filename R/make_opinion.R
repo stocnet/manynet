@@ -46,6 +46,18 @@
 #'   the distance between two nodes' opinions is the Euclidean distance
 #'   across the issues.
 #'
+#' @section Repulsion:
+#'   A negative tie from i to j means that i moves away from the opinion of j,
+#'   towards the opposite opinion (Altafini 2013).
+#'   See [to_influence()] for how such ties are weighed.
+#'   Opposite opinions are opposite signs, so give the opinions on a scale
+#'   centred on 0, such as from -1 to 1.
+#'   Where the network is structurally balanced, with only negative ties
+#'   between two camps, the opinions split into two camps of the same size
+#'   and opposite signs.
+#'   Where it is not balanced, the opinions are pulled towards 0.
+#'   Only the `"degroot"` rule can yet use negative ties.
+#'
 #' @section Self-weight and stubbornness:
 #'   Two quantities decide how much a node holds on to its own opinion:
 #'
@@ -164,6 +176,11 @@
 #' _American Economic Journal_, 2(1): 112-49.
 #' \doi{10.1257/mic.2.1.112}
 #'
+#' Altafini, Claudio. 2013.
+#' "Consensus problems on networks with antagonistic interactions",
+#' _IEEE Transactions on Automatic Control_, 58(4): 935-946.
+#' \doi{10.1109/TAC.2012.2224251}
+#'
 #' Hegselmann, Rainer, and Ulrich Krause. 2002.
 #' "Opinion dynamics and bounded confidence: Models, analysis and simulation",
 #' _Journal of Artificial Societies and Social Simulation_, 5(3).
@@ -222,6 +239,10 @@ play_opinion <- function(.data,
   s <- .opinion_stubbornness(.data, stubbornness, n)
   W <- .influence_matrix(.data, weights)
   dimnames(W) <- NULL
+  if(rule != "degroot" && any(W < 0))
+    snet_unavailable("The rule {.val {rule}} cannot yet use negative ties.",
+                     "Please use {.code rule = \"degroot\"} for repulsion,",
+                     "or keep the positive ties first, with {.fn to_positive}.")
 
   x0 <- start$x
   x <- x0

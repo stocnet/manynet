@@ -24,8 +24,9 @@ with their weights where the network is weighted,
 normalised so that the ties each node sends sum to 1.
 Self-loops are kept as self-weights.
 Otherwise the name of a numeric tie attribute to weigh the ties by,
-or a row-stochastic matrix with one row and column for each node,
-which is used as it is.}
+or a matrix with one row and column for each node,
+whose absolute values sum to 1 in each row, which is used as it is.
+A negative value is a tie of repulsion.}
 }
 \value{
 A directed, weighted network of the same class,
@@ -51,6 +52,13 @@ of weight 1 gives that node a self-weight of 2/3.
 A node that sends no tie listens only to itself,
 and so gets a self-weight of 1.
 
+A negative tie is a tie of repulsion: the node moves away from the
+opinion of the node it is tied to, towards the opposite opinion.
+Its weight in W is negative, and the absolute weights of the ties
+that each node sends sum to 1, as in the model of Altafini (2013).
+Opposite opinions are opposite signs, so the opinions should then be
+on a scale centred on 0, such as from -1 to 1.
+
 Unlike the \verb{as_*()} group of functions,
 this function returns the same class as it is given.
 For a matrix, it returns W itself.
@@ -66,6 +74,17 @@ to_influence       *      *      *       *         *
 \examples{
 to_influence(ison_adolescents)
 as_matrix(to_influence(ison_adolescents))
+# A negative tie repels
+as_matrix(to_influence(irps_wwi))
+}
+\references{
+\subsection{On signed influence}{
+
+Altafini, Claudio. 2013.
+"Consensus problems on networks with antagonistic interactions",
+\emph{IEEE Transactions on Automatic Control}, 58(4): 935-946.
+\doi{10.1109/TAC.2012.2224251}
+}
 }
 \seealso{
 Other ties:
