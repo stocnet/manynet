@@ -790,7 +790,7 @@ play_learning <- function(.data,
   # A stocnet holds the record whatever the class given, as a matrix cannot
   out <- .play_opinion(as_stocnet(.data), beliefs, rule, stubbornness = 0,
                        confidence = closeness, weights = NULL, steps = steps,
-                       tolerance = epsilon, record = 0)
+                       tolerance = epsilon, record = 0, own = FALSE)
   as_opinion(out, "opinions")
 }
 

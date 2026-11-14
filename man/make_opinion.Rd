@@ -118,8 +118,13 @@ opinions of the nodes they listen to, weighted by the influence matrix W
 This is deterministic.
 On a connected network with no stubbornness, it reaches a consensus.
 \item \code{"hegselmann_krause"}: all nodes at once take the weighted average of
-the opinions of only those nodes they listen to whose opinions are
-within \code{confidence} of their own (Hegselmann and Krause 2002).
+their own opinion and the opinions of only those nodes they listen to
+whose opinions are within \code{confidence} of their own
+(Hegselmann and Krause 2002).
+As in that model, a node always counts its own opinion:
+with its self-weight where the network has a self-tie,
+or else with the weight of its average tie,
+so that on an unweighted network every opinion it counts has the same weight.
 This is deterministic, and opinions can settle into several clusters.
 \item \code{"deffuant"}: at each step, one node is drawn at random,
 and it draws one of the nodes it listens to, in proportion to W.
@@ -190,6 +195,35 @@ With self-weights alone, disagreement lasts only where two or more nodes
 are fully stubborn, or where the network is not connected.
 With \code{stubbornness}, disagreement lasts also where every node is only
 partly stubborn.
+}
+
+\section{Assumptions}{
+
+The models make these assumptions, which an analysis may need to state:
+\itemize{
+\item \strong{Time is in discrete steps.}
+For \code{"degroot"} and \code{"hegselmann_krause"}, all nodes update at once,
+from the opinions at the start of the step (synchronous updates).
+For \code{"deffuant"}, one pair meets at each step (asynchronous updates).
+\item \strong{Ties carry influence along their direction.}
+A tie from i to j means that i listens to j.
+Each row of W divides the absolute tie weights of a node by their sum,
+so a node with more ties gives less weight to each (see \code{\link[=to_influence]{to_influence()}}).
+The layers of a multiplex network are first combined into one matrix,
+as \code{\link[=as_matrix]{as_matrix()}} combines them.
+\item \strong{A node does not listen to itself} under \code{"degroot"} and \code{"deffuant"},
+unless the network gives it a self-tie.
+This is why a periodic network, such as a ring of an even length,
+can swing for ever (see \code{\link[=is_aperiodic]{is_aperiodic()}}).
+Under \code{"hegselmann_krause"}, a node always counts its own opinion.
+\item \strong{Stubbornness pulls towards the first opinion}, not the current one,
+and it does not change during the run.
+\item \strong{The network does not change} during the run,
+and the opinions do not change the ties.
+\item \strong{The run stops} when no opinion moves by \code{tolerance} in a step,
+so the last row is near, but not exactly at, the opinions at the end.
+\code{netrics::node_by_opinion()} gives these exactly, where they exist.
+}
 }
 
 \section{The record}{

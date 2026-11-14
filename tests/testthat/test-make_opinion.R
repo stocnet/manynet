@@ -126,6 +126,21 @@ test_that("stubbornness can be the name of a node attribute", {
 
 # Rules ####
 
+test_that("hegselmann_krause counts the node's own opinion", {
+  # Two nodes within confidence meet at their mean in one step,
+  # rather than swapping their opinions
+  pair <- create_explicit(A-B)
+  out <- as_opinion(play_opinion(pair, c(0, 0.1), "hegselmann_krause",
+                                 confidence = 1, steps = 1))
+  expect_equal(unname(unlist(out[nrow(out), ])), c(0.05, 0.05))
+  # A self-tie is the weight it is given
+  loop <- igraph::make_graph(c(1,2, 1,1), directed = FALSE)
+  igraph::E(loop)$weight <- c(1, 3)
+  out <- as_opinion(play_opinion(loop, c(0, 1), "hegselmann_krause",
+                                 confidence = 2, steps = 1))
+  expect_equal(unname(unlist(out[nrow(out), ])), c(0.25, 0.5))
+})
+
 test_that("hegselmann_krause is deterministic, and deffuant repeats by seed", {
   set.seed(1)
   x <- stats::runif(net_nodes(ison_networkers))

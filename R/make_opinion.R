@@ -28,8 +28,13 @@
 #'   This is deterministic.
 #'   On a connected network with no stubbornness, it reaches a consensus.
 #'   - `"hegselmann_krause"`: all nodes at once take the weighted average of
-#'   the opinions of only those nodes they listen to whose opinions are
-#'   within `confidence` of their own (Hegselmann and Krause 2002).
+#'   their own opinion and the opinions of only those nodes they listen to
+#'   whose opinions are within `confidence` of their own
+#'   (Hegselmann and Krause 2002).
+#'   As in that model, a node always counts its own opinion:
+#'   with its self-weight where the network has a self-tie,
+#'   or else with the weight of its average tie,
+#'   so that on an unweighted network every opinion it counts has the same weight.
 #'   This is deterministic, and opinions can settle into several clusters.
 #'   - `"deffuant"`: at each step, one node is drawn at random,
 #'   and it draws one of the nodes it listens to, in proportion to W.
@@ -94,6 +99,32 @@
 #'   are fully stubborn, or where the network is not connected.
 #'   With `stubbornness`, disagreement lasts also where every node is only
 #'   partly stubborn.
+#'
+#' @section Assumptions:
+#'   The models make these assumptions, which an analysis may need to state:
+#'
+#'   - __Time is in discrete steps.__
+#'   For `"degroot"` and `"hegselmann_krause"`, all nodes update at once,
+#'   from the opinions at the start of the step (synchronous updates).
+#'   For `"deffuant"`, one pair meets at each step (asynchronous updates).
+#'   - __Ties carry influence along their direction.__
+#'   A tie from i to j means that i listens to j.
+#'   Each row of W divides the absolute tie weights of a node by their sum,
+#'   so a node with more ties gives less weight to each (see [to_influence()]).
+#'   The layers of a multiplex network are first combined into one matrix,
+#'   as [as_matrix()] combines them.
+#'   - __A node does not listen to itself__ under `"degroot"` and `"deffuant"`,
+#'   unless the network gives it a self-tie.
+#'   This is why a periodic network, such as a ring of an even length,
+#'   can swing for ever (see [is_aperiodic()]).
+#'   Under `"hegselmann_krause"`, a node always counts its own opinion.
+#'   - __Stubbornness pulls towards the first opinion__, not the current one,
+#'   and it does not change during the run.
+#'   - __The network does not change__ during the run,
+#'   and the opinions do not change the ties.
+#'   - __The run stops__ when no opinion moves by `tolerance` in a step,
+#'   so the last row is near, but not exactly at, the opinions at the end.
+#'   `netrics::node_by_opinion()` gives these exactly, where they exist.
 #'
 #' @section The record:
 #'   `play_opinion()` returns the network it was given,
@@ -221,8 +252,12 @@ play_opinion <- function(.data,
 # `record` is the smallest change that gets a row in the record. It is
 # `tolerance` for `play_opinion()`, and 0 for `play_learning()`, whose table
 # shows every change, however small.
+# `own = FALSE` leaves the node's own opinion out of "hegselmann_krause",
+# as `play_learning()` did before 2.5.0, so that its old calls give the
+# same values.
 .play_opinion <- function(.data, opinions, rule, stubbornness, confidence,
-                          weights, steps, tolerance, record = tolerance){
+                          weights, steps, tolerance, record = tolerance,
+                          own = TRUE){
   if(!is.numeric(confidence) || length(confidence) != 1 ||
      is.na(confidence) || confidence < 0)
     snet_abort("{.arg confidence} must be a single number of 0 or more.")
@@ -271,9 +306,19 @@ play_opinion <- function(.data,
     } else {
       M <- W
       if(rule == "hegselmann_krause" && is.finite(confidence)){
-        M <- W * (as.matrix(stats::dist(x)) <= confidence)
+        # As in Hegselmann and Krause (2002), a node counts its own opinion,
+        # which is always inside its confidence: with its self-weight where
+        # the network gives one, or else with the weight of its average tie.
+        M <- W
+        add <- own & diag(M) == 0
+        if(any(add)){
+          ties <- M[add, , drop = FALSE]
+          diag(M)[add] <- rowSums(ties) / pmax(rowSums(ties > 0), 1)
+        }
+        M <- M * (as.matrix(stats::dist(x)) <= confidence)
         sums <- rowSums(M)
-        # A node that listens to no one inside its confidence keeps its opinion
+        # Without its own opinion, a node that listens to no one inside its
+        # confidence keeps its opinion
         alone <- sums == 0
         M[cbind(which(alone), which(alone))] <- 1
         sums[alone] <- 1

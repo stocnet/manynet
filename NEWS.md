@@ -66,6 +66,7 @@
   - Renamed `epsilon=` to `tolerance=`
   - Added `weights=` to weigh influence by a tie attribute or by a matrix
   - Added repulsion along negative ties for the "degroot" rule (Altafini)
+  - Fixed "hegselmann_krause" to count each node's own opinion
 - Renamed `play_segregation()` to `play_mobility()`, after the mechanism
   - Renamed `heterophily=` to `preference=`, which can also be a function
   - `who_moves=` and `choice_function=` can also be functions that score nodes
