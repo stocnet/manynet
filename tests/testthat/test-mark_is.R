@@ -261,9 +261,16 @@ test_that("is_aperiodic() reads the greatest common divisor of cycle lengths", {
   expect_true(is_aperiodic(ring(six, 1,1)))
   expect_true(is_aperiodic(igraph::make_graph(c(1,2, 2,3, 3,4, 4,1, 2,2),
                                               directed = FALSE)))
-  # each component has its own period, and they share their divisor
+  # each component has its own period, and every one must be 1
   expect_false(is_aperiodic(ring(1,2, 2,1, 3,4, 4,5, 5,6, 6,3)))
-  expect_true(is_aperiodic(ring(1,2, 2,3, 3,1, 4,5, 5,4)))
+  # cycles of 2 and 3 in different components share no divisor,
+  # but each component is periodic
+  expect_false(is_aperiodic(ring(1,2, 2,1, 3,4, 4,5, 5,3)))
+  # a self-tie makes only its own component aperiodic
+  expect_false(is_aperiodic(ring(1,2, 2,1, 3,4, 4,3, 3,3)))
+  expect_true(is_aperiodic(ring(1,2, 2,1, 1,1, 3,4, 4,3, 3,3)))
+  # a component with no cycle has no period
+  expect_true(is_aperiodic(ring(1,2, 2,3, 3,1, 3,4, 4,1, 4,5)))
 })
 
 test_that("is_aperiodic() deprecates max_path_length", {

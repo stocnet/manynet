@@ -146,10 +146,15 @@ is_acyclic.igraph <- function(.data){
 #'   `level[i] + 1 - level[j]` over the ties from i to j inside it
 #'   (Jarvis and Shier 1996).
 #'   This is exact, and takes time in proportion to the number of ties.
+#'   The network is aperiodic where every component with a cycle has
+#'   a period of 1, as a Markov chain is aperiodic where every class is.
+#'   So two components with cycles of 2 and of 3 are each periodic,
+#'   and the network is not aperiodic, although the lengths 2 and 3
+#'   have no common divisor.
 #'   An undirected tie is a cycle of two, so an undirected network is
 #'   aperiodic where it has a cycle of odd length.
 #'   A self-tie is a cycle of length one, as a state that can stay where it is
-#'   in a Markov chain, so a network with a self-tie is aperiodic.
+#'   in a Markov chain, so a component with a self-tie is aperiodic.
 #'   In an opinion model, a self-tie is a self-weight (see [to_influence()]).
 #'   A network with no cycle counts as aperiodic.
 #' @param max_path_length Deprecated, and no longer used,
@@ -182,23 +187,24 @@ is_aperiodic.igraph <- function(.data, max_path_length){
                     msg = paste("{.arg max_path_length} is deprecated, and no longer",
                                 "used: the period is now found exactly."))
   if(is_twomode(.data)) return(FALSE)
-  period <- .network_period(.data)
+  periods <- .network_period(.data)
   # No cycles at all, so there is no period to divide; following the
   # Markov-chain convention, a network with no return paths is aperiodic.
-  is.na(period) || period == 1
+  # Otherwise every component with a cycle must have a period of 1.
+  all(is.na(periods) | periods == 1)
 }
 
-# The greatest common divisor of the lengths of the cycles of a network,
-# or NA where it has no cycle. A self-tie is a cycle of length one, so it
-# makes the period 1, as in a Markov chain. Each cycle lies inside one strongly connected
-# component. In each, the nodes are numbered by their distance from a root,
-# and every tie i -> j inside it gives level[i] + 1 - level[j], a multiple of
-# the period, while the ties of a breadth-first tree give 0; the greatest
-# common divisor of these is the period of the component.
+# The period of each strongly connected component that has a cycle: the
+# greatest common divisor of the lengths of its cycles. NA where no component
+# has a cycle. A self-tie is a cycle of length one, so it makes the period
+# of its component 1, as in a Markov chain. In each component, the nodes are
+# numbered by their distance from a root, and every tie i -> j inside it
+# gives level[i] + 1 - level[j], a multiple of the period, while the ties of
+# a breadth-first tree give 0; the greatest common divisor of these is the
+# period of the component.
 .network_period <- function(.data){
   n <- igraph::vcount(.data)
   el <- igraph::as_edgelist(.data, names = FALSE)
-  if(any(el[, 1] == el[, 2])) return(1)
   if(!igraph::is_directed(.data)) el <- rbind(el, el[, 2:1, drop = FALSE])
   el <- unique(el)
   if(!nrow(el)) return(NA_real_)
@@ -208,17 +214,18 @@ is_aperiodic.igraph <- function(.data, max_path_length){
   inside <- comp[el[, 1]] == comp[el[, 2]]
   if(!any(inside)) return(NA_real_)
   el <- el[inside, , drop = FALSE]
-  roots <- unique(comp[el[, 1]])
   level <- rep(NA_real_, n)
-  for(r in roots){
+  for(r in unique(comp[el[, 1]])){
     root <- which(comp == r)[1]
     d <- igraph::distances(g, v = root, mode = "out")[1, ]
     level[comp == r] <- d[comp == r]
   }
-  diffs <- unique(abs(level[el[, 1]] + 1 - level[el[, 2]]))
-  diffs <- diffs[diffs > 0]
-  if(!length(diffs)) return(NA_real_)
-  Reduce(.gcd, diffs)
+  diffs <- abs(level[el[, 1]] + 1 - level[el[, 2]])
+  periods <- tapply(diffs, comp[el[, 1]], function(x){
+    x <- unique(x[x > 0])
+    if(length(x)) Reduce(.gcd, x) else NA_real_
+  })
+  stats::setNames(as.numeric(periods), names(periods))
 }
 
 .gcd <- function(x, y){

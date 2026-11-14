@@ -108,10 +108,15 @@ and the period of the component is the greatest common divisor of
 \code{level[i] + 1 - level[j]} over the ties from i to j inside it
 (Jarvis and Shier 1996).
 This is exact, and takes time in proportion to the number of ties.
+The network is aperiodic where every component with a cycle has
+a period of 1, as a Markov chain is aperiodic where every class is.
+So two components with cycles of 2 and of 3 are each periodic,
+and the network is not aperiodic, although the lengths 2 and 3
+have no common divisor.
 An undirected tie is a cycle of two, so an undirected network is
 aperiodic where it has a cycle of odd length.
 A self-tie is a cycle of length one, as a state that can stay where it is
-in a Markov chain, so a network with a self-tie is aperiodic.
+in a Markov chain, so a component with a self-tie is aperiodic.
 In an opinion model, a self-tie is a self-weight (see \code{\link[=to_influence]{to_influence()}}).
 A network with no cycle counts as aperiodic.
 }

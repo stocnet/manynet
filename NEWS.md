@@ -181,7 +181,7 @@
 - Added `is_simplified()` for a network without loops or parallel ties
 - Fixed `layer_ties()` to count a layer without ties as none
 - Fixed `is_aperiodic()` to find the period exactly
-  - A self-tie is a cycle of length one, so it makes the network aperiodic
+  - A self-tie is a cycle of length one, so it makes its component aperiodic
 - Added `snet_deprecated()` for the old name of a function, argument, or value
   - A "superseded" name still works without a warning, for one minor release
   - A "deprecated" name warns with the class `.Deprecated()` gives
