@@ -195,6 +195,7 @@
 - Added glossary entries for diffusion and opinion models
   - 'cascade', 'voter', 'stubbornness', 'wisdom of crowds', and 'zealot'
   - 'balance', 'bounded confidence', 'periodic'
+  - 'adopter category', 'exposure', 'long tie', and 'tipping point'
 
 ## Data
 
