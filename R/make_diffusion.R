@@ -22,14 +22,17 @@
 #' (the number of the position of each node in the network that should serve as a seed) 
 #' or as a logical vector where TRUE is interpreted as already infected.
 #' 
-#' `thresholds` can be set such that adoption/infection requires more than one
+#' `threshold` can be set such that adoption/infection requires more than one
 #' (the default) contact already being infected.
 #' This parameter also accepts a vector so that thresholds can vary.
-#' 
-#' Complex diffusion is where the `thresholds` are defined less than one.
-#' In this case, the thresholds are interpreted as proportional.
-#' That is, the threshold to adoption/infection is defined by the
-#' proportion of the node's contacts infected.
+#' A threshold of 1 gives a _simple_ contagion, which one contact can pass on.
+#' A threshold of 2 or more gives a _complex_ contagion (Centola and Macy 2007),
+#' which needs several contacts to reinforce one another.
+#'
+#' A `threshold` less than one is a _fractional_ threshold:
+#' the share of the node's contacts that must be infected.
+#' A fractional threshold is not always complex:
+#' a threshold of 0.1 on a node with five contacts needs only one of them.
 #' 
 #' Nodes that cannot be infected can be indicated as `immune`
 #' with a logical vector or index, similar to how `seeds` are identified.
@@ -47,7 +50,7 @@
 #' Whether nodes move from S to I depends on whether they are exposed
 #' to the infection, for instance through a contact,
 #' the `transmissibility` of the disease,
-#' and their `thresholds` to the disease.
+#' and their `threshold` to the disease.
 #' 
 #' Another common model is the SIR model.
 #' Here nodes move from S to I, as above, but additionally they can
@@ -63,10 +66,10 @@
 #' and the node will return immediately to the Susceptible (S) compartment.
 #' 
 #' Lastly, these functions also offer the possibility of specifying
-#' a latency period in which nodes have been infected but are not yet infectious.
-#' Where `latency > 0`, an additional Exposed (E) compartment is introduced
-#' that governs the probability that a node moves from this E compartment
-#' to infectiousness (I).
+#' a latent period in which nodes have been infected but are not yet infectious.
+#' Where `onset < 1`, an additional Exposed (E) compartment is introduced,
+#' and `onset` is the probability that a node moves from this E compartment
+#' to infectiousness (I) at each step.
 #' This can be used in in SEI, SEIS, SEIR, and SEIRS models.
 #' @section Start state:
 #'
@@ -99,7 +102,7 @@
 #' the values of the attribute, for example
 #' `compartments = c(S = "unaware", I = "adopter")`.
 #' Only the roles that the model uses must be given:
-#' S and I always, R for `recovery` or `immune`, E for `latency`,
+#' S and I always, R for `recovery` or `immune`, E for `onset`,
 #' and D for `fatality`.
 #' Several values can share a role, as in
 #' `compartments = list(S = c("Conservative", "Moderate"), I = "Liberal")`.
@@ -178,6 +181,32 @@
 #' A node that dies (D) becomes inactive in the record.
 #'
 #' A 'stocnet' keeps the table of transitions in `info$transitions`.
+#' @section Assumptions:
+#'
+#' The models make these assumptions, which an analysis may need to state:
+#'
+#' - __Time is in discrete steps__, and all nodes update at once,
+#'   from the states at the start of the step (synchronous updates).
+#' - __Each argument after `...` is a chance per step__,
+#'   such as `transmissibility` or `recovery`.
+#'   So the mean time in a state is \eqn{1/p} steps, from a geometric
+#'   distribution, and the chance does not change with the time spent in it.
+#' - __Exposure follows the ties__ in `direction`.
+#'   An unweighted tie counts each infected contact once.
+#'   A weighted or signed tie adds its weight, and a fractional threshold
+#'   divides by the sum of the weights.
+#'   The layers of a multiplex network are combined first,
+#'   as [as_matrix()] combines them.
+#' - __A threshold gates a fixed chance.__
+#'   Under `"threshold"` exposure, a node over its threshold adopts with the
+#'   same chance however far over it is.
+#'   Use `exposure = "cascade"` in `transitions` for a chance from each
+#'   contact.
+#' - __Nodes do not decide__: no node adopts because of what it expects
+#'   others to do, and no node changes its ties in response to the diffusion.
+#' - __A node with `active = FALSE` is out of the model__:
+#'   it is not at risk and does not transmit.
+#'
 #' @section Arguments that set the model:
 #'
 #' The arguments after `...` are shortcuts that set the default model.
@@ -219,18 +248,19 @@
 #'   `"out"` counts the ties that it sends to infected nodes,
 #'   and `"all"` counts both.
 #'   On an undirected network, the three are the same.
-#' @param thresholds A numeric vector indicating the thresholds
+#' @param threshold A numeric vector indicating the threshold
 #'   each node has. By default 1.
 #'   A single number means a generic threshold;
 #'   for thresholds that vary among the population please use a vector
 #'   the length of the number of nodes in the network.
 #'   If 1 or larger, the threshold is interpreted as a simple count
 #'   of the number of contacts/exposures sufficient for infection.
-#'   If less than 1, the threshold is interpreted as complex,
-#'   where the threshold concerns the proportion of contacts.
+#'   If less than 1, the threshold is fractional:
+#'   the proportion of contacts that must be infected.
+#'   The name of a numeric node attribute is also accepted.
 #' @param prevalence How much the share of infected nodes in the whole
 #'   network lowers each node's threshold, from 0 to 1.
-#'   The threshold becomes `thresholds * (1 - prevalence * share)`,
+#'   The threshold becomes `threshold * (1 - prevalence * share)`,
 #'   where `share` is the share of the live nodes that are infected
 #'   at the start of the step.
 #'   By default 0, which means that there is no global mechanism.
@@ -252,13 +282,15 @@
 #'   four days to recover, then \eqn{\gamma = 0.25}.
 #'   By default 0, which means there is no recovery (i.e. an SI model).
 #'   Anything higher results in an SIR model.
-#' @param latency The probability that those who have been exposed
-#'   stay exposed (not yet infectious) at a step, \eqn{\sigma} or \eqn{\kappa}.
-#'   An exposed node becomes infectious at a later step.
+#' @param onset The probability that an exposed node
+#'   (infected, but not yet infectious) becomes infectious at a step,
+#'   \eqn{\sigma}.
 #'   For example, if exposed individuals take, on average,
-#'   four days to become infectious, then \eqn{\sigma = 0.75} (1/1-0.75 = 1/0.25 = 4).
-#'   By default 0, which means those exposed become immediately infectious (i.e. an SI model).
-#'   Anything higher results in e.g. a SEI model.
+#'   four days to become infectious, then \eqn{\sigma = 0.25},
+#'   as for `recovery`.
+#'   By default 1, which means those exposed become immediately infectious,
+#'   and there is no exposed compartment (i.e. an SI model).
+#'   Anything lower results in e.g. a SEI model.
 #' @param waning The probability those who are recovered
 #'   become susceptible again, \eqn{\xi}.
 #'   For example, if recovered individuals take, on average,
@@ -266,6 +298,10 @@
 #'   By default 0, which means any recovered individuals retain lifelong immunity (i.e. an SIR model).
 #'   Anything higher results in e.g. a SIRS model.
 #'   \eqn{\xi = 1} would mean there is no period of immunity, e.g. an SIS model.
+#' @param thresholds,latency Deprecated.
+#'   Use `threshold` (the name of the column in `transitions`, and of the
+#'   argument in `netrics::node_by_contagion()`)
+#'   and `onset = 1 - latency` instead.
 #' @param fatality The probability those who are infected
 #'   are removed from the network, \eqn{\alpha}.
 #'   Note that fatality is distinct from a natural mortality rate.
@@ -285,6 +321,12 @@
 #'   If `steps = Inf` then the diffusion process will continue until
 #'   a step in which no node changes state,
 #'   after the last wave and the last change to `active`.
+#' @references
+#' ## On simple and complex contagion
+#' Centola, Damon, and Michael Macy. 2007.
+#' "Complex contagions and the weakness of long ties",
+#' _American Journal of Sociology_, 113(3): 702-734.
+#' \doi{10.1086/521848}
 #' @family makes
 #' @family models
 #' @family diffusion
@@ -320,14 +362,16 @@ play_diffusion <- function(.data,
                            direction = c("in", "out", "all"),
                            prevalence = 0,
                            background = 0,
-                           thresholds = 1,
+                           threshold = 1,
                            transmissibility = 1,
-                           latency = 0,
+                           onset = 1,
                            recovery = 0,
                            waning = 0,
                            fatality = 0,
                            immune = NULL,
-                           old_version = FALSE) {
+                           old_version = FALSE,
+                           thresholds,
+                           latency) {
   choices <- setdiff(names(formals(play_diffusion)), c(".data", "..."))
   .check_dots_empty(list(...), choices, "play_diffusion")
   # R matches part of a name to the arguments before `...`,
@@ -337,6 +381,17 @@ play_diffusion <- function(.data,
   if(length(partial))
     .check_dots_empty(stats::setNames(as.list(partial), partial), choices,
                       "play_diffusion")
+  if(!missing(thresholds)){
+    snet_deprecated("thresholds", "threshold", type = "argument")
+    if(missing(threshold)) threshold <- thresholds
+  }
+  if(!missing(latency)){
+    snet_deprecated("latency", "onset", type = "argument",
+                    why = paste("{.arg onset} is the chance to leave the exposed state",
+                                "at a step, as {.arg recovery} is for the infected state,",
+                                "so {.code onset = 1 - latency}."))
+    if(missing(onset)) onset <- 1 - .chance_check(latency, "latency")
+  }
   seeds_given <- !missing(seeds)
   # A number or a logical vector in the second position is the old
   # positional `seeds`, before `attribute` took that position.
@@ -367,8 +422,8 @@ play_diffusion <- function(.data,
   steps_given <- !missing(steps)
 
   # The model ####
-  shortcuts <- c("prevalence", "background", "thresholds", "transmissibility",
-                 "latency", "recovery", "waning", "fatality")
+  shortcuts <- c("prevalence", "background", "threshold", "transmissibility",
+                 "onset", "recovery", "waning", "fatality", "thresholds", "latency")
   env <- environment()
   table_given <- !is.null(transitions)
   if(table_given){
@@ -397,15 +452,15 @@ play_diffusion <- function(.data,
                             exclude = affiliation$exclude)
   comps <- begin$compartments
   if(!table_given){
-    .diffusion_roles_needed(comps, recovery = recovery, latency = latency,
+    .diffusion_roles_needed(comps, recovery = recovery, onset = onset,
                             fatality = fatality, waning = waning,
                             immune = begin$recovered)
     transitions <- make_transitions(compartments = comps,
                                     transmissibility = transmissibility,
-                                    recovery = recovery, latency = latency,
+                                    recovery = recovery, onset = onset,
                                     waning = waning, fatality = fatality,
                                     background = background,
-                                    thresholds = thresholds,
+                                    threshold = threshold,
                                     prevalence = prevalence)
     begin$dead_value <- if(any(fatality > 0)) comps$D[1] else NULL
   } else {
@@ -503,24 +558,24 @@ play_diffusion <- function(.data,
 # in the first value of each role in `compartments`.
 make_transitions <- function(transitions = NULL, values = NULL,
                              compartments = NULL, transmissibility = 1,
-                             recovery = 0, latency = 0, waning = 0,
-                             fatality = 0, background = 0, thresholds = 1,
+                             recovery = 0, onset = 1, waning = 0,
+                             fatality = 0, background = 0, threshold = 1,
                              prevalence = 0){
   if(is.null(transitions)){
     if(is.null(compartments)) compartments <- .diffusion_compartments(NULL, character(0))
     role <- function(r) as.character(compartments[[r]][1])
-    infect_to <- if(any(latency > 0)) role("E") else role("I")
+    infect_to <- if(any(onset < 1)) role("E") else role("I")
     rows <- list(list(from = role("S"), to = infect_to,
                       rate = .chance_hazard(transmissibility, "transmissibility"),
                       source = role("I"), exposure = "threshold",
-                      threshold = thresholds, prevalence = prevalence))
+                      threshold = threshold, prevalence = prevalence))
     add <- function(chance, arg, from, to)
       if(any(chance > 0)) rows[[length(rows) + 1]] <<-
         list(from = role(from), to = to, rate = .chance_hazard(chance, arg),
              source = NULL, exposure = NA_character_, threshold = NA,
              prevalence = NA_real_)
     add(background, "background", "S", infect_to)
-    if(any(latency > 0)) add(1 - latency, "latency", "E", role("I"))
+    if(any(onset < 1)) add(onset, "onset", "E", role("I"))
     add(recovery, "recovery", "I", role("R"))
     add(fatality, "fatality", "I", role("D"))
     add(waning, "waning", "R", role("S"))
@@ -619,9 +674,14 @@ make_transitions <- function(transitions = NULL, values = NULL,
 
 # A chance per step becomes a hazard per step; a chance of 1 is certain.
 .chance_hazard <- function(chance, arg){
+  -log1p(-.chance_check(chance, arg))
+}
+
+# Stops where a chance is not between 0 and 1.
+.chance_check <- function(chance, arg){
   if(!is.numeric(chance) || anyNA(chance) || any(chance < 0 | chance > 1))
     snet_abort("{.arg {arg}} must be a chance between 0 and 1.")
-  -log1p(-chance)
+  chance
 }
 
 # The values that a table of transitions uses.
@@ -1188,14 +1248,14 @@ make_transitions <- function(transitions = NULL, values = NULL,
 }
 
 # Stops where an argument needs a role that the compartments do not define.
-.diffusion_roles_needed <- function(comps, recovery = 0, latency = 0,
+.diffusion_roles_needed <- function(comps, recovery = 0, onset = 1,
                                     fatality = 0, waning = 0, immune = NULL){
   needs <- c(S = TRUE, I = TRUE,
              R = any(recovery > 0) || length(immune) > 0,
-             E = any(latency > 0),
+             E = any(onset < 1),
              D = any(fatality > 0))
   why <- c(S = "every model", I = "every model",
-           R = "{.arg recovery} or {.arg immune}", E = "{.arg latency}",
+           R = "{.arg recovery} or {.arg immune}", E = "{.arg onset}",
            D = "{.arg fatality}")
   for(role in names(needs)[needs]){
     if(!role %in% names(comps))

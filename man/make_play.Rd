@@ -20,14 +20,16 @@ play_diffusion(
   direction = c("in", "out", "all"),
   prevalence = 0,
   background = 0,
-  thresholds = 1,
+  threshold = 1,
   transmissibility = 1,
-  latency = 0,
+  onset = 1,
   recovery = 0,
   waning = 0,
   fatality = 0,
   immune = NULL,
-  old_version = FALSE
+  old_version = FALSE,
+  thresholds,
+  latency
 )
 }
 \arguments{
@@ -100,7 +102,7 @@ On an undirected network, the three are the same.}
 
 \item{prevalence}{How much the share of infected nodes in the whole
 network lowers each node's threshold, from 0 to 1.
-The threshold becomes \code{thresholds * (1 - prevalence * share)},
+The threshold becomes \code{threshold * (1 - prevalence * share)},
 where \code{share} is the share of the live nodes that are infected
 at the start of the step.
 By default 0, which means that there is no global mechanism.}
@@ -112,15 +114,16 @@ This is similar to the coefficient of innovation in the Bass model.
 By default 0, which means that a node is infected only through
 its contacts.}
 
-\item{thresholds}{A numeric vector indicating the thresholds
+\item{threshold}{A numeric vector indicating the threshold
 each node has. By default 1.
 A single number means a generic threshold;
 for thresholds that vary among the population please use a vector
 the length of the number of nodes in the network.
 If 1 or larger, the threshold is interpreted as a simple count
 of the number of contacts/exposures sufficient for infection.
-If less than 1, the threshold is interpreted as complex,
-where the threshold concerns the proportion of contacts.}
+If less than 1, the threshold is fractional:
+the proportion of contacts that must be infected.
+The name of a numeric node attribute is also accepted.}
 
 \item{transmissibility}{The transmission rate probability,
 \eqn{\beta}.
@@ -129,13 +132,15 @@ or exceeded will become infected.
 Anything lower means a correspondingly lower probability of adoption,
 even when the threshold is met or exceeded.}
 
-\item{latency}{The probability that those who have been exposed
-stay exposed (not yet infectious) at a step, \eqn{\sigma} or \eqn{\kappa}.
-An exposed node becomes infectious at a later step.
+\item{onset}{The probability that an exposed node
+(infected, but not yet infectious) becomes infectious at a step,
+\eqn{\sigma}.
 For example, if exposed individuals take, on average,
-four days to become infectious, then \eqn{\sigma = 0.75} (1/1-0.75 = 1/0.25 = 4).
-By default 0, which means those exposed become immediately infectious (i.e. an SI model).
-Anything higher results in e.g. a SEI model.}
+four days to become infectious, then \eqn{\sigma = 0.25},
+as for \code{recovery}.
+By default 1, which means those exposed become immediately infectious,
+and there is no exposed compartment (i.e. an SI model).
+Anything lower results in e.g. a SEI model.}
 
 \item{recovery}{The probability those who are infected
 recover, \eqn{\gamma}.
@@ -171,6 +176,11 @@ with the old version of this function, that would return a special
 object.
 The new version adds the diffusion event record as changes to the
 original network.}
+
+\item{thresholds, latency}{Deprecated.
+Use \code{threshold} (the name of the column in \code{transitions}, and of the
+argument in \code{netrics::node_by_contagion()})
+and \code{onset = 1 - latency} instead.}
 }
 \value{
 \code{as_diffusion()} returns a 'diffusionModel' object
@@ -214,14 +224,17 @@ These \code{seeds} can be specified by a vector index
 (the number of the position of each node in the network that should serve as a seed)
 or as a logical vector where TRUE is interpreted as already infected.
 
-\code{thresholds} can be set such that adoption/infection requires more than one
+\code{threshold} can be set such that adoption/infection requires more than one
 (the default) contact already being infected.
 This parameter also accepts a vector so that thresholds can vary.
+A threshold of 1 gives a \emph{simple} contagion, which one contact can pass on.
+A threshold of 2 or more gives a \emph{complex} contagion (Centola and Macy 2007),
+which needs several contacts to reinforce one another.
 
-Complex diffusion is where the \code{thresholds} are defined less than one.
-In this case, the thresholds are interpreted as proportional.
-That is, the threshold to adoption/infection is defined by the
-proportion of the node's contacts infected.
+A \code{threshold} less than one is a \emph{fractional} threshold:
+the share of the node's contacts that must be infected.
+A fractional threshold is not always complex:
+a threshold of 0.1 on a node with five contacts needs only one of them.
 
 Nodes that cannot be infected can be indicated as \code{immune}
 with a logical vector or index, similar to how \code{seeds} are identified.
@@ -242,7 +255,7 @@ Infected (I) category.
 Whether nodes move from S to I depends on whether they are exposed
 to the infection, for instance through a contact,
 the \code{transmissibility} of the disease,
-and their \code{thresholds} to the disease.
+and their \code{threshold} to the disease.
 
 Another common model is the SIR model.
 Here nodes move from S to I, as above, but additionally they can
@@ -258,10 +271,10 @@ Where \code{recover > 0} and \code{waning = 1}, the Recovery (R) state will be s
 and the node will return immediately to the Susceptible (S) compartment.
 
 Lastly, these functions also offer the possibility of specifying
-a latency period in which nodes have been infected but are not yet infectious.
-Where \code{latency > 0}, an additional Exposed (E) compartment is introduced
-that governs the probability that a node moves from this E compartment
-to infectiousness (I).
+a latent period in which nodes have been infected but are not yet infectious.
+Where \code{onset < 1}, an additional Exposed (E) compartment is introduced,
+and \code{onset} is the probability that a node moves from this E compartment
+to infectiousness (I) at each step.
 This can be used in in SEI, SEIS, SEIR, and SEIRS models.
 }
 
@@ -298,7 +311,7 @@ because the attribute already holds the start state.
 the values of the attribute, for example
 \code{compartments = c(S = "unaware", I = "adopter")}.
 Only the roles that the model uses must be given:
-S and I always, R for \code{recovery} or \code{immune}, E for \code{latency},
+S and I always, R for \code{recovery} or \code{immune}, E for \code{onset},
 and D for \code{fatality}.
 Several values can share a role, as in
 \code{compartments = list(S = c("Conservative", "Moderate"), I = "Liberal")}.
@@ -386,6 +399,35 @@ A node that dies (D) becomes inactive in the record.
 A 'stocnet' keeps the table of transitions in \code{info$transitions}.
 }
 
+\section{Assumptions}{
+
+
+The models make these assumptions, which an analysis may need to state:
+\itemize{
+\item \strong{Time is in discrete steps}, and all nodes update at once,
+from the states at the start of the step (synchronous updates).
+\item \strong{Each argument after \code{...} is a chance per step},
+such as \code{transmissibility} or \code{recovery}.
+So the mean time in a state is \eqn{1/p} steps, from a geometric
+distribution, and the chance does not change with the time spent in it.
+\item \strong{Exposure follows the ties} in \code{direction}.
+An unweighted tie counts each infected contact once.
+A weighted or signed tie adds its weight, and a fractional threshold
+divides by the sum of the weights.
+The layers of a multiplex network are combined first,
+as \code{\link[=as_matrix]{as_matrix()}} combines them.
+\item \strong{A threshold gates a fixed chance.}
+Under \code{"threshold"} exposure, a node over its threshold adopts with the
+same chance however far over it is.
+Use \code{exposure = "cascade"} in \code{transitions} for a chance from each
+contact.
+\item \strong{Nodes do not decide}: no node adopts because of what it expects
+others to do, and no node changes its ties in response to the diffusion.
+\item \strong{A node with \code{active = FALSE} is out of the model}:
+it is not at risk and does not transmit.
+}
+}
+
 \section{Arguments that set the model}{
 
 
@@ -412,6 +454,15 @@ with the nearest argument name.
   play_diffusion(ison_lawfirm, "status", steps = 5,
                  transitions = data.frame(from = "associate", to = "partner",
                                           rate = 0.1))
+}
+\references{
+\subsection{On simple and complex contagion}{
+
+Centola, Damon, and Michael Macy. 2007.
+"Complex contagions and the weakness of long ties",
+\emph{American Journal of Sociology}, 113(3): 702-734.
+\doi{10.1086/521848}
+}
 }
 \seealso{
 Other makes:

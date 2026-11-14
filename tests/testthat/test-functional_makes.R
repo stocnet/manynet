@@ -123,10 +123,10 @@ test_that("play_diffusion() records a diffusion on the network", {
   expect_true("diffusion" %in% net_node_attributes(out))
 })
 
-test_that("play_diffusion() variants run (latency, recovery, immunity)", {
+test_that("play_diffusion() variants run (onset, recovery, immunity)", {
   set.seed(1234)
   net <- create_ring(8)
-  for (args in list(list(latency = 0.5), list(recovery = 0.5),
+  for (args in list(list(onset = 0.5), list(recovery = 0.5),
                     list(immune = 2), list(prevalence = 0.25))) {
     out <- run_or_skip(do.call(play_diffusion,
                                c(list(net, seeds = 1, steps = 5), args)),

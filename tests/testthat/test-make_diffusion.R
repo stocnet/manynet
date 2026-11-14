@@ -7,7 +7,7 @@ test_that("play_diffusion works for named networks", {
 })
 
 test_that("play_diffusion works for named networks with latency", {
-  expect_warning(named_SEI <- play_diffusion(ison_adolescents, latency = 1, old_version = TRUE))
+  expect_warning(named_SEI <- play_diffusion(ison_adolescents, onset = 0, old_version = TRUE))
   expect_equal(named_SEI$S + named_SEI$E + named_SEI$I, named_SEI$n)
   expect_equal(summary(named_SEI)$t[1], 0)
   expect_equal(summary(named_SEI)$nodes[1:4], c(1,2,NA,NA))
@@ -497,7 +497,7 @@ test_that("a multilevel network diffuses along all its ties", {
 
 test_that("infected nodes are not infected again", {
   # a threshold of 0, as an isolate gets from a fractional threshold
-  ch <- as_changelist(play_diffusion(create_ring(10), thresholds = 0))
+  ch <- as_changelist(play_diffusion(create_ring(10), threshold = 0))
   expect_false(anyDuplicated(ch$node[ch$value == "I"]) > 0)
 })
 
@@ -527,4 +527,23 @@ test_that("as_diffusion() does not count inactive nodes", {
   report <- as_diffusion(net)
   expect_equal(report$n, c(4, 5))
   expect_equal(report$S, c(3, 3))
+})
+
+test_that("play_diffusion() deprecates thresholds and latency", {
+  set.seed(1)
+  expect_warning(old <- play_diffusion(create_ring(8), seeds = 1:2, thresholds = 2,
+                                       steps = 3),
+                 class = "deprecatedWarning")
+  set.seed(1)
+  expect_equal(old, play_diffusion(create_ring(8), seeds = 1:2, threshold = 2,
+                                   steps = 3))
+  # onset is the chance to leave the exposed state, so onset = 1 - latency
+  set.seed(2)
+  expect_warning(old <- play_diffusion(create_ring(8), latency = 0.75, steps = 5),
+                 class = "deprecatedWarning")
+  set.seed(2)
+  expect_equal(old, play_diffusion(create_ring(8), onset = 0.25, steps = 5))
+  # an onset of 1 needs no exposed state
+  expect_false("E" %in% as_changelist(play_diffusion(create_ring(8), onset = 1,
+                                                     steps = 5))$value)
 })

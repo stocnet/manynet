@@ -41,6 +41,8 @@
       - `rate` is a hazard, the name of a node attribute, or a function
       - `exposure` is "threshold", "cascade", or "voter"
     - Fixed `prevalence=` lowers each threshold by the share infected in the network
+    - Renamed `thresholds=` to `threshold=`
+    - Renamed `latency=` to `onset=`
   - Improved data shape handling
     - Missing states start as S, and missing ties count as absent
     - Inactive nodes are not at risk and do not transmit, also as `active` changes

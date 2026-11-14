@@ -20,7 +20,7 @@ test_that("old-argument calls give the old behaviour statistically", {
   expect_like_before(list(transmissibility = 0.3), 59.02, 14.46, 2.41, 0.80)
   expect_like_before(list(transmissibility = 0.1, background = 0.05),
                      52.97, 14.70, 3.05, 0.58)
-  expect_like_before(list(seeds = 1:6, transmissibility = 0.4, thresholds = 2),
+  expect_like_before(list(seeds = 1:6, transmissibility = 0.4, threshold = 2),
                      46.67, 14.65, 4.47, 0.69)
   expect_like_before(list(transmissibility = 0.3, recovery = 0.2),
                      33.80, 5.91, 21.45, 4.27)
@@ -74,7 +74,7 @@ test_that("the shortcuts compile into the default table", {
   expect_equal(sir$to, c("I", "R"))
   expect_equal(unlist(sir$rate), -log(1 - c(0.3, 0.1)))
   expect_equal(sir$source, list("I", NULL))
-  seir <- make_transitions(transmissibility = 1, latency = 0.5, background = 0.1)
+  seir <- make_transitions(transmissibility = 1, onset = 0.5, background = 0.1)
   expect_equal(seir$to, c("E", "E", "I"))
   expect_equal(seir$rate[[1]], Inf)
   expect_output(print(seir), "threshold")
@@ -185,10 +185,10 @@ test_that("the trial: background adds to the contagion", {
 test_that("prevalence lowers the threshold", {
   # nodes 7 and 10 have one infected contact, and need two
   net <- create_ring(10)
-  none <- play_diffusion(net, seeds = 1:6, thresholds = 2, steps = 1)
+  none <- play_diffusion(net, seeds = 1:6, threshold = 2, steps = 1)
   expect_equal(nrow(as_changelist(none)), 6)
   # with 60% infected, the threshold falls to 2 * (1 - 0.6) = 0.8
-  some <- play_diffusion(net, seeds = 1:6, thresholds = 2, prevalence = 1,
+  some <- play_diffusion(net, seeds = 1:6, threshold = 2, prevalence = 1,
                          steps = 1)
   changes <- as_changelist(some)
   expect_setequal(changes$node[changes$time == 1], c(7, 10))
