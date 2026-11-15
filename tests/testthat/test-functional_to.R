@@ -18,7 +18,6 @@ to_argmakers <- list(
   to_subgraphs  = function(net) list(attribute = "group"),
   to_time       = function(net) list(time = 1),
   to_wave       = function(net) list(time = 1),
-  to_uniplex    = function(net) list(layer = layer_names(net)[1]),
   to_layer      = function(net) list(layer = layer_names(net)[1]),
   to_reporter   = function(net) list(reporter = 1)
 )
@@ -42,9 +41,10 @@ to_invariants <- list(
   # These default to weak components, so weak connectivity is what they promise.
   to_giant      = function(o) is_connected(o, "weak"),
   to_component  = function(o) is_connected(o, "weak"),
-  to_simplex    = function(o) !is_complex(o),
-  to_uniplex    = function(o) !is_multiplex(o),
-  to_flat       = function(o) !is_multiplex(o),
+  to_unlooped   = function(o) !is_looped(o),
+  to_looped     = function(o) is_looped(o),
+  to_simplified = function(o) is_simplified(o),
+  to_layer      = function(o) !is_multiplex(o),
   to_aggregated = function(o) !is_multiplex(o),
   to_disaggregated = function(o) !is_weighted(o),
   to_reporter   = function(o) !is_cognitive(o),

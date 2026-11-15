@@ -41,7 +41,11 @@ rename_changes(.data, ...)
 \item{changes}{A data frame containing the changes to be added.
 This should have columns \code{time}, \code{node} (labelled),
 \code{var} (referencing an existing nodal attribute),
-and \code{value} (which can be of any class).}
+and \code{value} (which can be of any class).
+A categorical variable that is not yet among the nodal attributes,
+such as the state of a diffusion, is added to the nodes,
+with all nodes starting as "S"
+(or the first value of S in \verb{compartments =}, given through \code{...}).}
 
 \item{var}{A character string specifying the nodal variable to which the changes apply,
 if not already specified in the \code{changes} data frame. This is only used

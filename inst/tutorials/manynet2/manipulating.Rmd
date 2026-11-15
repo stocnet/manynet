@@ -89,7 +89,7 @@ because it tells you whether your nodes will survive the operation intact.
 
 By the end of this tutorial, you should be able to:
 
-- [ ] &nbsp; Examine and subset a network with the `[`, `[[`, and `$` operators
+- [ ] &nbsp; Examine a network's nodes, ties, and adjacency matrix
 - [ ] &nbsp; Label, unlabel, and relabel a network's nodes
 - [ ] &nbsp; Change a network's direction, weights, and signs, rescale its tie
   values, and know why you might
@@ -114,50 +114,35 @@ but you can always browse the full list with `table_data()`.
 
 ## Operating on networks
 
-Before changing anything, it helps to know how to look inside a network object,
-and this same syntax turns out to offer a do-it-yourself alternative
-to many of the named functions we meet later.
-Because the data in the `{manynet}` package are either igraph objects at their core,
-or stocnet data,
-we can query (and manipulate) them using the same `[`, `[[`, and `$` operators
-used for matrices, lists, and data frames elsewhere in R.
-**Run the following code and inspect the two outputs.**
+Before changing anything, it helps to know how to look inside a network object.
+A network holds its nodes and its ties as two tables,
+and it can also be shown as an adjacency matrix.
+**Run the following code and inspect the three outputs.**
 
 ```{r examine-recall, exercise = TRUE}
-ison_adolescents[1:3, 1:3]
-ison_adolescents[[2]]
+as_matrix(ison_adolescents)[1:3, 1:3]
+node_attribute(ison_adolescents, "label")
+as_edgelist(ison_adolescents)
 ```
 
 The first line returns the corner of the network's adjacency matrix,
 where a `1` indicates a tie between the row node and the column node
-and a `.` indicates no tie (because this is a sparse matrix representation;
-a 'normal' matrix representation would represent absence of a tie as a 0).
-The second line returns the second node's `r gloss("neighborhood")`:
-the set of nodes to which it is tied.
+and a `0` indicates no tie.
+The second line returns the labels of the nodes,
+and `node_attribute()` returns any other nodal attribute in the same way.
+The third line returns the ties as pairs of nodes,
+one row for each tie.
 
-The `$` operator extracts a named attribute,
-whether it belongs to the nodes, the ties, or the network itself.
-`{manynet}` is set to try and autocomplete the attribute name for you,
-so you can type `ison_adolescents$` and then hit the Tab key to see the available attributes.
-^[Note though that for igraph/tidygraph objects, since the internal list elements
-are not named, the autocomplete necessarily braces the attribute names in backticks.
-This is not the case for stocnet objects, which are named lists.]
-
-```{r examine-dollar, exercise = TRUE}
-ison_adolescents$name
-```
-
-The same operators can also be used to _assign_ new values.
+The functions that change a network return the changed network,
+so you assign the result to keep it.
 Here the first line removes all of the first node's ties,
 and the second adds a new nodal attribute
-(the vector is 8 values long, matching the 8 nodes,
-which is how `{manynet}` knows it belongs to the nodes):
+(the vector is 8 values long, one value for each of the 8 nodes):
 
 ```{r examine-assign, exercise = TRUE}
-test <- ison_adolescents
-test[1, ] <- FALSE
-test$smoker <- c(TRUE, FALSE, FALSE, TRUE, FALSE, TRUE, TRUE, FALSE)
-test[1:3, 1:3]
+test <- filter_ties(ison_adolescents, from != 1, to != 1)
+test <- mutate_nodes(test, smoker = c(TRUE, FALSE, FALSE, TRUE, FALSE, TRUE, TRUE, FALSE))
+as_matrix(test)[1:3, 1:3]
 test
 ```
 
@@ -165,51 +150,45 @@ Note that because this is an undirected network,
 removing the tie from node 1 to node 2 means there is also now no reciprocal tie
 from node 2 to node 1.
 
-Throughout this tutorial, keep this assignment syntax in mind:
-many of the named functions we meet have an assignment equivalent,
-and we will point these out as we go.
-The named functions are usually clearer and safer
-(they check and update the network's type for you),
-but the operators are handy for quick, surgical changes.
+Throughout this tutorial, keep in mind that each function returns a new network,
+and leaves the network you gave it as it was.
 
 ```{r operators-question, echo = FALSE, purl=FALSE}
-question("What does `ison_adolescents[[2]]` return?",
-  answer("The set of nodes that the second node is tied to",
+question("Which of these returns the ties of `ison_adolescents` as pairs of nodes?",
+  answer("`as_edgelist(ison_adolescents)`",
          correct = TRUE,
-         message = "Correct: `[[` returns a node's neighbourhood. Gloves on: you are ready to operate. <img src='https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExeWY3dTI5c3V6cDg5aHIzd2d0dG9xeXprN3cwdm01ZDd5Zms4Z2h6biZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/REHnG6v0yICy6l9QT2/giphy.gif' alt='gif of doctor getting ready'/>"),
-  answer("The second row of the adjacency matrix",
-         message = "That is what `ison_adolescents[2, ]` returns."),
-  answer("The second nodal attribute",
-         message = "`$` extracts an attribute by name, as in `ison_adolescents$name`."),
-  answer("The second tie of the network",
-         message = "`[[` indexes nodes, not ties."),
+         message = "Correct: an edgelist has one row for each tie. Gloves on: you are ready to operate. <img src='https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExeWY3dTI5c3V6cDg5aHIzd2d0dG9xeXprN3cwdm01ZDd5Zms4Z2h6biZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/REHnG6v0yICy6l9QT2/giphy.gif' alt='gif of doctor getting ready'/>"),
+  answer("`as_matrix(ison_adolescents)`",
+         message = "That returns the adjacency matrix, with one row and one column for each node."),
+  answer("`node_attribute(ison_adolescents, 'label')`",
+         message = "That returns the labels of the nodes."),
+  answer("`mutate_nodes(ison_adolescents)`",
+         message = "`mutate_nodes()` adds or changes nodal attributes."),
   random_answer_order = TRUE,
   allow_retry = TRUE
 )
 ```
 
 ```{r assign-question, echo = FALSE, purl=FALSE}
-question("After `test[1, ] <- FALSE`, how many ties does the first node have?",
+question("After `filter_ties(ison_adolescents, from != 1, to != 1)`, how many ties does the first node have?",
   answer("None, in either direction",
          correct = TRUE,
          message = "Correct: the network is undirected, so the ties to that node go too. <img src='https://media3.giphy.com/media/VDY6QaBBCfsDpb2Esd/giphy.gif' alt='gif of surgeon fistbumping'/>"),
   answer("None sent, but the ties received remain",
-         message = "That would hold in a directed network. Here the matrix is symmetric, so both go."),
-  answer("The same as before, because `FALSE` is not `0`",
-         message = "`FALSE` counts as 0 here, so the ties are removed."),
+         message = "In an undirected network, `from` and `to` are only the order of the two nodes, so both conditions remove the node's ties."),
+  answer("The same as before, because `filter_ties()` only keeps ties",
+         message = "Keeping only the ties that meet the conditions removes the others."),
   answer("One to each of the other nodes",
-         message = "Assigning `FALSE` removes ties rather than adding them."),
+         message = "Filtering removes ties rather than adding them."),
   random_answer_order = TRUE,
   allow_retry = TRUE
 )
 ```
 
 ::: {.callout}
-<span class="callout-label">**In brief**:</span> For igraph/tidygraph objects, 
-`[` indexes a network like its adjacency matrix,
-`[[` returns a node's neighbourhood,
-and `$` gets or sets a named node, tie, or network attribute.
-All three can be used with `<-` to modify a network directly.
+<span class="callout-label">**In brief**:</span> `as_matrix()`, `node_attribute()`,
+and `as_edgelist()` show what a network holds,
+and functions such as `filter_ties()` and `mutate_nodes()` return a changed network.
 :::
 
 ## Nodal properties
@@ -219,7 +198,7 @@ All three can be used with `<-` to modify a network directly.
 <span class="page-toc-link" onclick="document.getElementById('section-labels').scrollIntoView({behavior:'auto',block:'start'});">Labels</span> ·
 <span class="page-toc-link" onclick="document.getElementById('section-attributes').scrollIntoView({behavior:'auto',block:'start'});">Attributes</span></span>
 
-The previous page showed how to _read_ a network with operators.
+The previous page showed how to _read_ a network.
 Now we start changing it, one element at a time,
 beginning with the nodes:
 which nodes are present (adding and removing them),
@@ -258,12 +237,10 @@ especially when discussing what we are seeing with others ---
 node 1 is not the same as node 2, and so on ---
 we want to give the nodes names.
 
-The assignment equivalent sets the names directly:
-`net$label <- letters[1:8]` relabels an 8-node network,
-because a value with one entry per node is stored as a nodal attribute,
-and `label` is the reserved attribute for labels.
-
-we can use `to_labelled()` to assign (random) names to the nodes.
+Labels can be set directly:
+`mutate_nodes(net, label = letters[1:8])` relabels an 8-node network,
+because `label` is the reserved attribute for labels.
+Or we can use `to_labelled()` to assign (random) names to the nodes.
 The function allows your chosen labels to be added, of course,
 but if called without further arguments it assigns random (U.S.) children's names.
 **Check whether `ison_algebra` is labelled, and then label it randomly.**
@@ -283,7 +260,7 @@ ison_algebra |> to_labelled()
 ```
 
 To check your result: the printout should now say _labelled_,
-and the nodes table should have gained a `name` column
+and the nodes table should have gained a `label` column
 of alphabetically ordered first names.
 Since these names are random, they are useful for _telling nodes apart_,
 not for identifying real people.
@@ -291,7 +268,7 @@ Did you notice how the names are drawn in alphabetic sequence?
 
 The reverse operation, `to_unlabelled()`, strips all names from a network.
 This is a one-step anonymiser.
-**Anonymise `ison_adolescents`, and then relabel it with letters using `$`.**
+**Anonymise `ison_adolescents`, and then relabel it with letters using `mutate_nodes()`.**
 
 ```{r anonymise, exercise = TRUE, purl=FALSE}
 
@@ -300,17 +277,14 @@ This is a one-step anonymiser.
 ```{r anonymise-hint-1, purl=FALSE}
 # Two separate steps:
 # to_unlabelled(_____)
-# Then assign to a copy and relabel:
-# test <- ison_adolescents
-# test$name <- _____
+# Then relabel the anonymised network:
+# mutate_nodes(_____, label = _____)
 # (letters[1:8] gives the first eight lowercase letters)
 ```
 
 ```{r anonymise-solution}
 to_unlabelled(ison_adolescents)
-test <- ison_adolescents
-test$name <- letters[1:8]
-test
+to_unlabelled(ison_adolescents) |> mutate_nodes(label = letters[1:8])
 ```
 
 Note that `to_unlabelled()` removes the identifying labels
@@ -593,10 +567,7 @@ question("Thresholding `ison_networkers` at 100 leaves 32 ties. What else change
 
 Going the other way, `to_weighted()` adds a weight attribute,
 and weights can also be assigned directly:
-`mutate_ties(net, weight = ...)` (the general tie-attribute tool from just above)
-or the operator shorthand `net$weight <- ...`,
-which works because a value with one entry per tie
-is stored as a tie attribute.
+`mutate_ties(net, weight = ...)`, the general tie-attribute tool from just above.
 
 Weights are often easier to read once they are put in proportion.
 `to_normalised()` rescales each tie against the other ties of the same node,
@@ -814,7 +785,7 @@ question("How many kinds of relationship does `ison_lawfirm` record?",
 ```
 
 Most analyses of multiplex networks proceed one layer at a time,
-and `to_uniplex()` extracts a single layer by name.
+and `to_layer()` extracts a single layer by name.
 **Extract the friendship layer from `ison_lawfirm`.**
 
 ```{r uniplex, exercise = TRUE, purl=FALSE}
@@ -822,11 +793,11 @@ and `to_uniplex()` extracts a single layer by name.
 ```
 
 ```{r uniplex-hint-1, purl=FALSE}
-# to_uniplex(_____, layer = "friends")
+# to_layer(_____, layer = "friends")
 ```
 
 ```{r uniplex-solution}
-to_uniplex(ison_lawfirm, "friends")
+to_layer(ison_lawfirm, "friends")
 ```
 
 To check your result: the friendship layer has 575 of the
@@ -834,10 +805,10 @@ original network's 2571 ties,
 and the printout no longer describes the network as multiplex.
 Note that the corresponding do-it-yourself route is
 `filter_ties(ison_lawfirm, type == "friends")` —
-`to_uniplex()` does this and additionally tidies up
+`to_layer()` does this and additionally tidies up
 the now-redundant type information.
 
-`to_uniplex()` works one layer at a time.
+`to_layer()` works one layer at a time.
 `to_layers()` splits a multiplex network into all of them at once,
 returning a named list with one network per layer,
 and `from_layers()` puts such a list back together again.
@@ -849,7 +820,7 @@ to_layers(ison_lawfirm)
 
 Sometimes you want a single network that keeps what _every_ layer records,
 rather than one layer or a list of them.
-`to_flat()` combines the layers dyad by dyad, according to a `rule`:
+`to_aggregated()` combines the layers dyad by dyad, according to a `rule`:
 "max" counts a tie in any layer as a tie,
 "min" keeps only the ties present in every layer,
 and "sum" adds the layers up.
@@ -861,11 +832,11 @@ relationships that pair holds.**
 ```
 
 ```{r flat-hint-1, purl=FALSE}
-# to_flat(_____, rule = "sum")
+# to_aggregated(_____, rule = "sum")
 ```
 
 ```{r flat-solution}
-to_flat(ison_lawfirm, rule = "sum")
+to_aggregated(ison_lawfirm, rule = "sum")
 ```
 
 To check your result: the flattened network is weighted,
@@ -875,14 +846,14 @@ and 824 pairs share one relationship, 503 share two, and 247 share all three.
 Give it two or more networks over the same nodes and it makes each one a layer,
 which is the other way to build a multiplex network:
 `join_ties()` marks where each tie came from, and `from_layers()` names layers.
-Either way, `to_flat()` then combines them.
+Either way, `to_aggregated()` then combines them.
 **Keep only the pairs who are both friends and advisors.**
 
 ```{r fromlayers, exercise = TRUE}
-friends <- to_uniplex(ison_lawfirm, "friends")
-advice <- to_uniplex(ison_lawfirm, "advice")
+friends <- to_layer(ison_lawfirm, "friends")
+advice <- to_layer(ison_lawfirm, "advice")
 from_layers(friends = friends, advice = advice)
-from_layers(friends = friends, advice = advice) |> to_flat(rule = "min")
+from_layers(friends = friends, advice = advice) |> to_aggregated(rule = "min")
 ```
 
 The last line keeps the 358 pairs tied in both layers.
@@ -920,11 +891,11 @@ or explore another multiplex network:
 <span class="callout-label">**In brief**:</span> `join_ties()` merges a second network's ties in as a new
 _type_, producing a multiplex network.
 `is_multiplex()` checks for multiple tie types and `layer_names()` lists them,
-while `to_uniplex(layer = )` extracts a single layer by name
+while `to_layer(layer = )` extracts a single layer by name
 (the do-it-yourself equivalent of `filter_ties(type == ...)`).
 `to_layers()` splits a network into all of its layers and
 `from_layers()` reassembles them, or joins networks collected separately
-as layers, while `to_flat()` combines the layers of any multiplex network
+as layers, while `to_aggregated()` combines the layers of any multiplex network
 into one relation by a `rule`.
 :::
 
@@ -1130,7 +1101,7 @@ Projection is not the only way between modes:
 Whatever you pick, `is_twomode()` should return `TRUE` before projection and
 `FALSE` after, and `is_weighted()` should return `TRUE` on the projection.
 (The fiction two-mode networks such as `fict_actually` are _multiplex_,
-so projecting them first needs a single tie type extracted with `to_uniplex()` —
+so projecting them first needs a single tie type extracted with `to_layer()` —
 you now know how!)
 
 ```{r modes-free, exercise = TRUE, purl=FALSE}
@@ -1681,7 +1652,7 @@ question("Filtering `fict_potter` to the Gryffindors keeps 25 of the 64 characte
   answer("They are kept, and recorded as missing",
          message = "Filtering removes them. A missing tie is one that was never observed."),
   answer("They become self-ties on the Gryffindors",
-         message = "Nothing is merged. `to_simplex()` is what removes self-ties."),
+         message = "Nothing is merged. `to_unlooped()` is what removes self-ties."),
   random_answer_order = TRUE,
   allow_retry = TRUE
 )
@@ -1734,13 +1705,13 @@ question("The stranded network holds 8 nodes, and `delete_isolates()` leaves 7. 
 ```
 
 A related cleaning task concerns `r gloss("loops","loop")` (self-ties):
-`to_simplex()` removes them,
+`to_unlooped()` removes them,
 turning a `r gloss("complex")` network into a `r gloss("simplex")` one.
 
 ::: {.callout}
 <span class="callout-label">**In brief**:</span> `filter_nodes()`/`filter_ties()` and `to_subgraph()`
 keep only the elements satisfying a condition,
-while `delete_isolates()`, `to_giant()`, and `to_simplex()` prune
+while `delete_isolates()`, `to_giant()`, and `to_unlooped()` prune
 stranded nodes, minor components, and self-ties —
 all taking a whole network and returning a narrower or cleaner one.
 :::
@@ -1878,14 +1849,14 @@ and `net_ties()` at each step that it did what you expected.
 
 ```{r wrapup-question, echo = FALSE, purl=FALSE}
 question("A colleague hands you a multiplex, directed network and wants the advice layer, undirected and without isolates. Which pipeline does this?",
-  answer("`to_uniplex(layer = \"advice\")`, then `to_undirected()`, then `delete_isolates()`",
+  answer("`to_layer(layer = \"advice\")`, then `to_undirected()`, then `delete_isolates()`",
          correct = TRUE,
          message = "Correct: extract the layer, reformat the direction, then prune whatever that leaves stranded. <img src='https://gifdb.com/images/high/standing-ovation-congratulations-doctor-chicago-med-mnr588ssjqckmmzc.gif' alt='gif of doctor getting standing ovation'/>"),
-  answer("`to_flat()`, then `to_undirected()`, then `delete_isolates()`",
-         message = "`to_flat()` combines every layer into one relation rather than picking out the advice layer."),
-  answer("`delete_isolates()`, then `to_uniplex(layer = \"advice\")`, then `to_undirected()`",
+  answer("`to_aggregated()`, then `to_undirected()`, then `delete_isolates()`",
+         message = "`to_aggregated()` combines every layer into one relation rather than picking out the advice layer."),
+  answer("`delete_isolates()`, then `to_layer(layer = \"advice\")`, then `to_undirected()`",
          message = "Pruning first is too early: dropping the other layers can strand further nodes."),
-  answer("`to_undirected()`, then `to_giant()`, then `to_uniplex(layer = \"advice\")`",
+  answer("`to_undirected()`, then `to_giant()`, then `to_layer(layer = \"advice\")`",
          message = "`to_giant()` drops minor components as well as isolates, which is more than was asked."),
   random_answer_order = TRUE,
   allow_retry = TRUE
@@ -1899,18 +1870,18 @@ Along the way, you have learned to use these functions:
 
 | Function | What it does |
 |---|---|
-| `[`, `[[`, `$` | examine and assign into a network directly |
+| `as_matrix()`, `node_attribute()`, `as_edgelist()` | look inside a network |
 | `add_nodes()`, `add_ties()`, `delete_nodes()`, `delete_ties()` | add/remove nodes and ties |
 | `filter_nodes()`, `filter_ties()`, `to_subgraph()` | keep elements satisfying a condition |
-| `delete_isolates()`, `to_giant()`/`to_component()`, `to_simplex()` | prune isolates, minor components, self-ties |
+| `delete_isolates()`, `to_giant()`/`to_component()`, `to_unlooped()` | prune isolates, minor components, self-ties |
 | `to_labelled()`, `to_unlabelled()` | name or anonymise nodes |
 | `mutate_nodes()`/`mutate_ties()`, `rename_nodes()`/`rename_ties()`, `delete_node_attribute()`/`delete_tie_attribute()` | add, change, rename, or delete attributes |
 | `to_undirected()`, `to_directed()`, `to_redirected()`, `to_reciprocated()`, `to_acyclic()` | reformat tie direction |
 | `to_unweighted()`, `to_weighted()` | binarise (around a `threshold`) or weight ties |
 | `to_unsigned(keep = )`, `to_signed()`, `tie_signs()` | split or create signed networks |
 | `join_ties()`, `bind_ties()`, `join_nodes()` | merge another network's ties or nodes in |
-| `to_uniplex(layer = )`, `layer_names()` | extract a layer from a multiplex network |
-| `to_layers()`, `from_layers()`, `to_flat(rule = )` | split a network into its layers, join networks as layers, or combine those layers into one relation |
+| `to_layer(layer = )`, `layer_names()` | extract a layer from a multiplex network |
+| `to_layers()`, `from_layers()`, `to_aggregated(rule = )` | split a network into its layers, join networks as layers, or combine those layers into one relation |
 | `to_mode1()`, `to_mode2()`, `to_onemode()`, `to_twomode()`, `to_multilevel()` | move between modes |
 | `to_proximity(similarity = )`, `to_correlation()`, `to_cosine()` | measure how alike a one-mode network's nodes are |
 | `net_times()`, `to_time()`, `to_times()`, `from_times()` | count, extract, and rejoin the moments of a network of any kind |

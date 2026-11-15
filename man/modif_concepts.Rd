@@ -26,11 +26,12 @@ Functions that split a network return a list of such objects.
 \description{
 \code{to_concepts()} projects a network into its concept lattice,
 also known as its Galois lattice.
-Each node of the lattice is a concept:
-a set of nodes together with the set of affiliations they all share,
-where neither set can grow without the other shrinking.
-Each tie points from a concept to a concept directly beneath it,
-one that holds fewer nodes but more shared affiliations.
+Each node of the lattice is a concept.
+A concept is a set of nodes and the set of affiliations
+that all these nodes share.
+One set cannot get larger unless the other set gets smaller.
+Each tie goes from a concept to a concept directly below it.
+The lower concept has fewer nodes, but more shared affiliations.
 }
 \details{
 Not all functions have methods available for all object classes.
@@ -40,58 +41,60 @@ Below are the currently implemented S3 methods:
 to_concepts          *       *      *      *       *       *         *
 }\if{html}{\out{</div>}}
 
-In a two-mode network, the first node set (e.g. the rows) supplies the
-concepts' members, their \emph{extent},
-and the second node set (e.g. the columns) their shared affiliations,
-their \emph{intent}.
-The lattice is read from top to bottom.
-The concept at the top holds every node of the first set,
-and those affiliations, if any, that all of them share.
-The concept at the bottom holds every affiliation,
-and those nodes, if any, that have all of them.
-Moving down the lattice, each concept holds fewer nodes,
-who share more affiliations.
-Two nodes are in a concept together exactly where they share every one of
-its affiliations, and so the lattice records every membership of the
-original network.
+In a two-mode network, the nodes of the first mode (for example the rows)
+are the members of the concepts.
+This set is the \emph{extent}.
+The nodes of the second mode (for example the columns)
+are the shared affiliations.
+This set is the \emph{intent}.
 
-A one-mode network is treated as the incidence of its nodes on their
-out-neighbours.
-Each concept is then a set of nodes together with every node
-that all of them send ties to,
-a maximal biclique of senders and receivers.
+Read the lattice from top to bottom.
+The top concept has all the nodes of the first mode,
+and the affiliations that all of them share, if there are any.
+The bottom concept has all the affiliations,
+and the nodes that have all of them, if there are any.
+Lower concepts have fewer nodes, which share more affiliations.
+Two nodes are in a concept together only when they share
+all its affiliations.
+So the lattice keeps all the ties of the original network.
 
-A valued or signed network is dichotomised first,
-so that every positive value counts as a tie,
+For a one-mode network, each node is affiliated to the nodes
+that it sends ties to.
+Each concept is then a set of nodes,
+and all the nodes that each of them sends ties to.
+This is a maximal biclique of senders and receivers.
+
+A valued or signed network is changed to binary data first,
 with a warning.
+Each positive value is then a tie.
 }
 \section{Labels}{
 
-Each concept is named with a "reduced" label,
-listing only those nodes and affiliations that first appear at it.
-A node of the first set is named at the lowest concept whose extent
-holds it, and it is in the extent of every concept above that one too.
-An affiliation, written in braces, is named at the highest concept whose
-intent holds it, and it is in the intent of every concept below that one.
-A concept at which nothing first appears is named "C" and its position,
-counting from the top.
-Each label thus appears exactly once,
-and the full sets are kept in the \code{extent} and \code{intent} node attributes,
-with their sizes in \code{extent_size} and \code{intent_size}.
+Each concept has a "reduced" label.
+The label shows only the nodes and affiliations
+that first appear at that concept.
+A node of the first mode is named at the lowest concept that has it.
+It is also in all the concepts above that concept.
+An affiliation, in braces, is named at the highest concept that has it.
+It is also in all the concepts below that concept.
+A concept where nothing first appears is named "C"
+and its position from the top.
+So each label appears only once.
+The full sets are in the \code{extent} and \code{intent} node attributes,
+and their sizes are in \code{extent_size} and \code{intent_size}.
 }
 
 \section{Projection without loss}{
 
-Projecting a two-mode network with \code{to_mode1()} or \code{to_mode2()} records
-how much two nodes share,
-but not what they share or with whom else they share it.
+\code{to_mode1()} and \code{to_mode2()} record how much two nodes share.
+They do not record what the two nodes share,
+or who else shares it.
 The concept lattice keeps both.
-Freeman and White (1993) propose it for this reason,
+For this reason, Freeman and White (1993) propose the lattice,
 and Freeman (2003) uses it to find the groups among the Southern Women.
-It grows quickly with the density of the network, however,
-and a lattice of more than a few dozen concepts is hard to read.
-Where a network has more than 1000 concepts,
-the function warns about this.
+But the lattice gets large quickly in a dense network,
+and a lattice of more than some dozens of concepts is hard to read.
+When a network has more than 1000 concepts, the function gives a warning.
 }
 
 \examples{
@@ -131,13 +134,15 @@ Other modifications:
 \code{\link{modif_direction}},
 \code{\link{modif_from_parts}},
 \code{\link{modif_from_ternary}},
+\code{\link{modif_influence}},
 \code{\link{modif_labels}},
+\code{\link{modif_layers}},
 \code{\link{modif_levels}},
+\code{\link{modif_loops}},
 \code{\link{modif_miss}},
 \code{\link{modif_motifs}},
 \code{\link{modif_paths}},
 \code{\link{modif_permutation}},
-\code{\link{modif_plexity}},
 \code{\link{modif_project}},
 \code{\link{modif_proximity}},
 \code{\link{modif_scope}},

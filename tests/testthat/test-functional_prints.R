@@ -20,27 +20,28 @@ measure_header_of <- function(x) {
     trimws(out[1]) else NA_character_
 }
 
-test_that("print.mnet() prints all network components", {
+test_that("print() prints all network components", {
   for (d in list(ison_adolescents, ison_southern_women, ison_algebra,
                  fict_starwars)) {
-    expect_no_error(expect_prints(d, "mnet"))
+    expect_no_error(expect_prints(d, "stocnet"))
   }
   expect_no_error(capture.output(print_all(ison_adolescents)))
 })
 
-test_that("mnet $-accessors get and set attributes", {
-  net <- ison_adolescents
-  expect_type(net$name, "character")
-  expect_length(net$name, as.numeric(net_nodes(net)))
-  net$tst <- seq_len(as.numeric(net_nodes(net)))
-  expect_identical(net$tst, seq_len(as.numeric(net_nodes(net))))
-  net$tie_tst <- seq_len(as.numeric(net_ties(net)))
-  expect_identical(net$tie_tst, seq_len(as.numeric(net_ties(net))))
-  net$glob <- "hello"
-  expect_identical(net$glob, "hello")
-  expect_error(net$absent, "No attribute")
-  expect_error(net$oops <- 1:3, "Length")
-  expect_type(net$"node$name", "character")
+test_that("as_tidygraph() gives a plain tbl_graph", {
+  # The 'mnet' class was removed in manynet 2.5.0; a network saved with it
+  # loses it on coercion.
+  net <- as_tidygraph(ison_adolescents)
+  expect_equal(class(net), c("tbl_graph", "igraph"))
+  old <- structure(net, class = c("mnet", class(net)))
+  expect_equal(class(as_tidygraph(old)), c("tbl_graph", "igraph"))
+})
+
+test_that("print.mnet() is deprecated but still prints", {
+  old <- as_tidygraph(ison_adolescents)
+  class(old) <- c("mnet", class(old))
+  expect_warning(out <- capture.output(print(old)), "deprecated")
+  expect_true(any(grepl("A tibble", out)))
 })
 
 test_that("print.stocnet() prints stocnet objects", {

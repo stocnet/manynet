@@ -1,6 +1,6 @@
 # Permuting ####
 
-#' Network permutation
+#' Modifying networks by permutation
 #' @name modif_permutation
 #' @description 
 #'   `to_permuted()` permutes the network using a Fisher-Yates shuffle 

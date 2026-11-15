@@ -74,11 +74,6 @@ A \code{stocnet} object is returned,
 which can be coerced into other types of objects
 using \code{as_edgelist()}, \code{as_matrix()},
 \code{as_tidygraph()}, \code{as_igraph()}, or \code{as_network()}.
-\code{create_ring()}, \code{create_lattice()},
-\code{generate_random()}, \code{generate_smallworld()}, and
-\code{generate_scalefree()} return a \code{tbl_graph} or \code{igraph} object for now,
-since the released versions of the packages built on this one expect
-one from them.
 
 By default, most networks are created as undirected.
 This can be overruled with the argument \code{directed = TRUE}.
@@ -159,16 +154,20 @@ Leskovec, Jure, Jon Kleinberg, and Christos Faloutsos. 2007.
 }
 \seealso{
 Other makes:
-\code{\link{make_collect}},
+\code{\link[=as_diffusion]{as_diffusion()}},
+\code{\link[=as_mobility]{as_mobility()}},
+\code{\link[=as_opinion]{as_opinion()}},
+\code{\link{make_bibliography}},
 \code{\link{make_create}},
 \code{\link{make_ego}},
 \code{\link{make_emails}},
 \code{\link{make_explicit}},
 \code{\link{make_groups}},
-\code{\link{make_learning}},
-\code{\link{make_play}},
+\code{\link{make_packages}},
 \code{\link{make_random}},
 \code{\link{make_read}},
+\code{\link{make_statements}},
+\code{\link{make_text}},
 \code{\link{make_write}}
 }
 \concept{makes}

@@ -13,7 +13,7 @@ alive_functions <- function(pattern) {
   keep <- vapply(fns, function(f) {
     fun <- get(f, envir = asNamespace("manynet"))
     is.function(fun) &&
-      !grepl("Deprecated|Defunct|fn_moved",
+      !grepl("Deprecated|Defunct|fn_moved|snet_deprecated|snet_moved",
              paste(deparse(body(fun)), collapse = " "))
   }, logical(1))
   fns[keep]
@@ -39,7 +39,7 @@ run_or_skip <- function(expr, fn, fixture) {
 
 
 # Standard grid of fixture networks covering the main formats manynet
-# functions are expected to handle. All are tidygraph/mnet objects;
+# functions are expected to handle. All are tidygraph objects;
 # class coverage is handled separately via class_versions().
 func_fixtures <- local({
   set.seed(1234)
@@ -54,7 +54,7 @@ func_fixtures <- local({
     attributed   = add_node_attribute(create_ring(8), "group",
                                       rep(c("A", "B"), each = 4)),
     multiplex    = ison_algebra,
-    # A network with loops, so that to_simplex() and is_complex() are put to
+    # A network with loops, so that to_unlooped() and is_looped() are put to
     # work rather than passed a network that is already simple.
     complex      = fict_lotr,
     longitudinal = fict_starwars,
@@ -71,7 +71,7 @@ func_fixtures <- local({
       reports <- array(stats::rbinom(6^3, 1, 0.3), dim = c(6, 6, 6),
                        dimnames = list(nodes, nodes, nodes))
       for(o in 1:6) diag(reports[, , o]) <- 0
-      as_tidygraph(as_stocnet(reports, attribute = "by"))
+      as_tidygraph(as_stocnet(reports, over = "by"))
     })
   )
 })

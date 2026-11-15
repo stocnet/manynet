@@ -3,29 +3,29 @@
 \docType{data}
 \name{ison_physicians}
 \alias{ison_physicians}
-\title{Four multiplex one-mode physician diffusion data (Coleman, Katz, and Menzel, 1966)}
+\title{Multiplex one-mode physician diffusion data (Coleman, Katz, and Menzel, 1966)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> $Peoria
-#> # A multiplex, directed network of 117 nodes and 147 friendship arcs, 242
-#> advice arcs, and 154 discussion arcs
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Medical innovation --------------------------------------------------------
+#> # A multiplex, directed network of 246 nodes and 310 friendship arcs, 480
+#> advice arcs, and 309 discussion arcs
 #> 
 #> -- Nodes
-#> # A tibble: 117 x 12
-#>   adoption specialty    conferences journals practice   community patients
-#>      <dbl> <chr>        <chr>          <dbl> <chr>      <chr>     <chr>   
-#> 1        1 Pediatrician Specialty          9 1920..1929 20+yrs    101-150 
-#> 2       12 GP           None               5 1945..     -1yr      76-100  
-#> 3        8 Internist    General            7 1935..1939 10-20yrs  76-100  
-#> 4        9 GP           General            6 1940..1944 5-10yrs   51-75   
-#> 5        9 GP           General            4 1935..1939 10-20yrs  51-75   
-#> 6       10 Internist    None               7 1930..1934 10-20yrs  101-150 
-#> # i 111 more rows
-#> # i 5 more variables: doc_freetime <dbl>, doc_discuss <dbl>, doc_friends <dbl>,
-#> #   doc_club <dbl>, doc_proximity <chr>
+#> # A tibble: 246 x 13
+#>   adoption specialty   conferences journals practice community patients freetime
+#>      <dbl> <chr>       <chr>          <dbl> <chr>    <chr>     <chr>       <dbl>
+#> 1        1 Pediatrici~ Specialty          9 1920..1~ 20+yrs    101-150       0  
+#> 2       12 GP          None               5 1945..   -1yr      76-100        1  
+#> 3        8 Internist   General            7 1935..1~ 10-20yrs  76-100        1  
+#> 4        9 GP          General            6 1940..1~ 5-10yrs   51-75         0  
+#> 5        9 GP          General            4 1935..1~ 10-20yrs  51-75         0  
+#> 6       10 Internist   None               7 1930..1~ 10-20yrs  101-150       0.5
+#> # i 240 more rows
+#> # i 5 more variables: discussions <dbl>, friends <dbl>, clubs <dbl>,
+#> #   proximity <chr>, city <chr>
 #> 
 #> -- Ties
-#> # A tibble: 543 x 3
-#>    from    to type      
+#> # A tibble: 1,099 x 3
+#>    from    to layer     
 #>   <int> <int> <chr>     
 #> 1     1     8 friendship
 #> 2     1    58 friendship
@@ -33,100 +33,7 @@
 #> 4     1    90 advice    
 #> 5     1   110 advice    
 #> 6     1   112 friendship
-#> # i 537 more rows
-#> 
-#> 
-#> $Bloomington
-#> # A multiplex, directed network of 50 nodes and 60 friendship arcs, 57
-#> discussion arcs, and 94 advice arcs
-#> 
-#> -- Nodes
-#> # A tibble: 50 x 12
-#>   adoption specialty conferences journals practice   community patients
-#>      <dbl> <chr>     <chr>          <dbl> <chr>      <chr>     <chr>   
-#> 1       98 Internist Specialty          8 1930..1934 10-20yrs  101-150 
-#> 2        1 GP        General            3 1945..     5-10yrs   76-100  
-#> 3       98 GP        Specialty          4 1930..1934 10-20yrs  101-150 
-#> 4        7 Internist None               3 1945..     -1yr      26-50   
-#> 5        6 Internist General            9 1935..1939 5-10yrs   76-100  
-#> 6        1 GP        Specialty          5 1935..1939 10-20yrs  101-150 
-#> # i 44 more rows
-#> # i 5 more variables: doc_freetime <dbl>, doc_discuss <dbl>, doc_friends <dbl>,
-#> #   doc_club <dbl>, doc_proximity <chr>
-#> 
-#> -- Ties
-#> # A tibble: 211 x 3
-#>    from    to type      
-#>   <int> <int> <chr>     
-#> 1     1     3 friendship
-#> 2     1    10 discussion
-#> 3     1    24 advice    
-#> 4     1    44 advice    
-#> 5     2     4 advice    
-#> 6     2     6 advice    
-#> # i 205 more rows
-#> 
-#> 
-#> $Quincy
-#> # A multiplex, directed network of 44 nodes and 70 advice arcs, 52 discussion
-#> arcs, and 52 friendship arcs
-#> 
-#> -- Nodes
-#> # A tibble: 44 x 12
-#>   adoption specialty conferences journals practice   community patients
-#>      <dbl> <chr>     <chr>          <dbl> <chr>      <chr>     <chr>   
-#> 1        2 Internist None               6 1935..1939 10-20yrs  151+    
-#> 2       18 GP        General            3 1920..1929 20+yrs    151+    
-#> 3       18 Internist None               5 1945..     -1yr      -25     
-#> 4        4 GP        General            3 1930..1934 20+yrs    151+    
-#> 5       18 GP        Specialty          4 1935..1939 10-20yrs  151+    
-#> 6        5 Internist General            5 ..1919     20+yrs    51-75   
-#> # i 38 more rows
-#> # i 5 more variables: doc_freetime <dbl>, doc_discuss <dbl>, doc_friends <dbl>,
-#> #   doc_club <dbl>, doc_proximity <chr>
-#> 
-#> -- Ties
-#> # A tibble: 174 x 3
-#>    from    to type      
-#>   <int> <int> <chr>     
-#> 1     1     8 advice    
-#> 2     1     9 advice    
-#> 3     1    10 discussion
-#> 4     1    13 friendship
-#> 5     1    15 advice    
-#> 6     1    22 discussion
-#> # i 168 more rows
-#> 
-#> 
-#> $Galesburg
-#> # A multiplex, directed network of 35 nodes and 74 advice arcs, 46 discussion
-#> arcs, and 51 friendship arcs
-#> 
-#> -- Nodes
-#> # A tibble: 35 x 12
-#>   adoption specialty conferences journals practice   community patients
-#>      <dbl> <chr>     <chr>          <dbl> <chr>      <chr>     <chr>   
-#> 1       18 GP        General            4 1935..1939 5-10yrs   101-150 
-#> 2       18 GP        None               4 1935..1939 -1yr      151+    
-#> 3        4 GP        General            6 1945..     2-5yrs    51-75   
-#> 4        5 GP        None               4 1935..1939 10-20yrs  101-150 
-#> 5        8 Internist General            6 1935..1939 5-10yrs   151+    
-#> 6        4 Internist Specialty          8 ..1919     20+yrs    76-100  
-#> # i 29 more rows
-#> # i 5 more variables: doc_freetime <dbl>, doc_discuss <dbl>, doc_friends <dbl>,
-#> #   doc_club <dbl>, doc_proximity <chr>
-#> 
-#> -- Ties
-#> # A tibble: 171 x 3
-#>    from    to type      
-#>   <int> <int> <chr>     
-#> 1     1     5 advice    
-#> 2     1     6 advice    
-#> 3     1    20 discussion
-#> 4     1    23 discussion
-#> 5     1    30 friendship
-#> 6     1    31 friendship
-#> # i 165 more rows
+#> # i 1,093 more rows
 #> 
 }\if{html}{\out{</div>}}
 }
@@ -141,7 +48,11 @@ Ron Burt prepared this data from
 Coleman, Katz and Menzel's 1966 study on medical innovation.
 They had collected data from physicians in four towns in Illinois:
 Peoria, Bloomington, Quincy and Galesburg.
-These four networks are held as separate networks in a list.
+The four cities are held in one network, with each physician's \code{city}
+as a node attribute.
+No physician is in two cities, so there are no ties between cities.
+\code{to_subgraphs(ison_physicians, "city")} returns the four networks.
+Before version 2.5.0, this dataset was a list of the four networks.
 
 Coleman, Katz and Menzel were concerned with the impact of network ties
 on the physicians' adoption of a new drug, tetracycline.
@@ -163,19 +74,30 @@ Additional questions and records of prescriptions provided additional informatio
 \item \code{conferences} attended
 (those that attended "Specialty" conferences presumably also attended "General" conferences)
 \item regular subscriptions to medical \code{journals}
-\item \code{free_time} spent associating with doctors
-\item \code{discussions} on medical matters when with other doctors sociallyy
-\item memberships in \code{clubs} with other doctores
-\item number of top 3 \code{friends} that are doctors
+\item \code{freetime} spent associating with doctors
+\item \code{discussions}, discussions on medical matters when with other doctors socially
+\item \code{clubs}, memberships in clubs with other doctors
+\item \code{friends}, the number of top 3 friends that are doctors
 \item time practicing in current \code{community}
 \item \code{patients} load (ordinal)
-\item physical \code{proximity} to other physicians (in building/sharing office)
+\item \code{proximity}, the physical proximity to other physicians (in building/sharing office)
 \item medical \code{specialty} (GP/Internist/Pediatrician/Other)
+\item the \code{city} where the physician practised
 }
+
+The physicians were interviewed with structured interviews
+15 months after the drug was released.
+The month of adoption comes from the prescription records of
+the local pharmacies, not from the interviews.
 }
 \references{
 Coleman, James, Elihu Katz, and Herbert Menzel. 1966.
 \emph{Medical innovation: A diffusion study}.
 Indianapolis: The Bobbs-Merrill Company.
+
+Coleman, James, Elihu Katz, and Herbert Menzel. 1957.
+"The diffusion of an innovation among physicians".
+\emph{Sociometry} 20(4): 253-270.
+\doi{10.2307/2785979}
 }
 \keyword{datasets}

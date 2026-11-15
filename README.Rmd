@@ -308,8 +308,8 @@ e.g. from directed to undirected via `to_undirected()`.
 <img src="https://www.jameshollway.com/post/manynet/README-directed_egs-1.png" alt="Graphs illustrating modification of a network's directedness"/>
 
 ```{r directed_egs, echo = FALSE, dpi = 300, fig.height=3, warning=FALSE, message=FALSE, eval=FALSE}
-graphr(to_directed(ison_brandes)) + ggtitle("Directed", subtitle = "to_directed(ison_brandes)") + 
-    graphr(to_undirected(ison_brandes)) + ggtitle("Undirected", subtitle = "to_undirected(ison_brandes)")
+graphr(to_directed(ison_centrality)) + ggtitle("Directed", subtitle = "to_directed(ison_centrality)") + 
+    graphr(to_undirected(ison_centrality)) + ggtitle("Undirected", subtitle = "to_undirected(ison_centrality)")
 ```
 
 See also `r list_functions("^to_.*ed$")`.

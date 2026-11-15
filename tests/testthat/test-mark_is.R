@@ -129,8 +129,8 @@ test_that("layer_is_directed reports each layer of a mixed network", {
 })
 
 test_that("is_cognitive, is_egocentric, and is_gossip tell third nodes apart", {
-  css <- as_stocnet(css_array(), attribute = "by")
-  gossip <- as_stocnet(css_array(), attribute = "about")
+  css <- as_stocnet(css_array(), over = "by")
+  gossip <- as_stocnet(css_array(), over = "about")
   expect_true(is_cognitive(css))
   expect_false(is_egocentric(css))
   expect_false(is_gossip(css))
@@ -163,7 +163,7 @@ test_that("is_egocentric reads the design, or failing that the reports", {
   expect_false(is_cognitive(ego))
   # the network's own information outranks the reports
   expect_true(is_cognitive(mutate_info(ego, observation = "cognitive")))
-  expect_true(is_egocentric(mutate_info(as_stocnet(css_array(), attribute = "by"),
+  expect_true(is_egocentric(mutate_info(as_stocnet(css_array(), over = "by"),
                                         observation = "egocentric")))
   # a column that names no node marks nothing
   none <- make_stocnet(ties = data.frame(from = 1:2, to = 2:3, by = NA),
@@ -242,20 +242,40 @@ test_that("is_spatial marks a network whose nodes have positions", {
 test_that("is_aperiodic() reads the greatest common divisor of cycle lengths", {
   ring <- function(...) igraph::make_graph(c(...), directed = TRUE)
   six <- c(1,2, 2,3, 3,4, 4,5, 5,6, 6,1)
-  expect_false(suppressMessages(is_aperiodic(ring(six), 8)))
-  # no cycle within the paths considered counts as aperiodic
-  expect_true(suppressMessages(is_aperiodic(ring(six))))
+  expect_false(is_aperiodic(ring(six)))
   # cycles of three and six share a divisor of three
-  expect_false(suppressMessages(is_aperiodic(ring(six, 3,1), 8)))
+  expect_false(is_aperiodic(ring(six, 3,1)))
   # cycles of three and four share none
-  four <- ring(1,2, 2,3, 3,1, 3,4, 4,1)
-  expect_true(suppressMessages(is_aperiodic(four)))
-  expect_false(suppressMessages(is_aperiodic(four, 2)))
-  expect_true(suppressMessages(
-    is_aperiodic(ring(1,2, 2,3, 3,4, 4,5, 5,1, 3,1), -1)))
+  expect_true(is_aperiodic(ring(1,2, 2,3, 3,1, 3,4, 4,1)))
+  expect_true(is_aperiodic(ring(1,2, 2,3, 3,4, 4,5, 5,1, 3,1)))
+  # a long cycle counts, however long
+  expect_false(is_aperiodic(create_ring(31, directed = TRUE)))
   # an undirected tie is a cycle of two, so only an odd cycle makes it aperiodic
-  expect_false(suppressMessages(is_aperiodic(create_explicit(A-B, B-C))))
-  expect_true(suppressMessages(is_aperiodic(create_ring(3))))
+  expect_false(is_aperiodic(create_explicit(A-B, B-C)))
+  expect_true(is_aperiodic(create_ring(3)))
+  expect_true(is_aperiodic(create_ring(31)))
+  expect_false(is_aperiodic(create_ring(32)))
+  # a network with no cycle counts as aperiodic
+  expect_true(is_aperiodic(ring(1,2, 2,3)))
+  # a self-tie is a cycle of length one, as in a Markov chain
+  expect_true(is_aperiodic(ring(six, 1,1)))
+  expect_true(is_aperiodic(igraph::make_graph(c(1,2, 2,3, 3,4, 4,1, 2,2),
+                                              directed = FALSE)))
+  # each component has its own period, and every one must be 1
+  expect_false(is_aperiodic(ring(1,2, 2,1, 3,4, 4,5, 5,6, 6,3)))
+  # cycles of 2 and 3 in different components share no divisor,
+  # but each component is periodic
+  expect_false(is_aperiodic(ring(1,2, 2,1, 3,4, 4,5, 5,3)))
+  # a self-tie makes only its own component aperiodic
+  expect_false(is_aperiodic(ring(1,2, 2,1, 3,4, 4,3, 3,3)))
+  expect_true(is_aperiodic(ring(1,2, 2,1, 1,1, 3,4, 4,3, 3,3)))
+  # a component with no cycle has no period
+  expect_true(is_aperiodic(ring(1,2, 2,3, 3,1, 3,4, 4,1, 4,5)))
+})
+
+test_that("is_aperiodic() deprecates max_path_length", {
+  expect_warning(is_aperiodic(create_ring(3), max_path_length = 4),
+                 class = "deprecatedWarning")
 })
 
 test_that("is_multiplex gives the same answer in every class", {

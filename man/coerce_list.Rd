@@ -168,6 +168,7 @@ as_missinglist(ison_classmates)
 \seealso{
 Other coercions:
 \code{\link{coerce_graph}},
-\code{\link{coerce_matrix}}
+\code{\link{coerce_matrix}},
+\code{\link{coerce_stocnet}}
 }
 \concept{coercions}

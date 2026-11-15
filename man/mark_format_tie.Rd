@@ -5,10 +5,11 @@
 \alias{is_weighted}
 \alias{is_directed}
 \alias{is_signed}
-\alias{is_complex}
+\alias{is_looped}
 \alias{is_multiplex}
 \alias{is_disaggregated}
 \alias{is_uniplex}
+\alias{is_simplified}
 \title{Marking networks tie formats}
 \usage{
 is_weighted(.data)
@@ -17,13 +18,15 @@ is_directed(.data)
 
 is_signed(.data)
 
-is_complex(.data)
+is_looped(.data)
 
 is_multiplex(.data)
 
 is_disaggregated(.data)
 
 is_uniplex(.data)
+
+is_simplified(.data)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -61,14 +64,20 @@ than 'names' or 'type'.
 or negative.
 This is the case where the ties have a 'sign' attribute,
 and also where they are weighted and any of those weights are negative.
-\item \code{is_complex()} marks networks TRUE if any ties are loops,
+\item \code{is_looped()} marks networks TRUE if any ties are loops,
 with the sender and receiver being the same node.
 \item \code{is_multiplex()} marks networks TRUE if it contains multiple types
 of ties, such that there can be multiple ties between the same
 sender and receiver.
 This is the case where the ties have a 'layer' (or 'type') attribute.
 Other tie attributes, such as a covariate, do not make a network multiplex.
-\item \code{is_uniplex()} marks networks TRUE if it is neither complex nor multiplex.
+\item \code{is_uniplex()} marks networks TRUE if they are not multiplex,
+that is, if their ties are in one layer or in none.
+\item \code{is_simplified()} marks networks TRUE if no tie is a loop and no ties
+are parallel, as \code{tie_is_parallel()} marks them.
+Ties in different layers, at different moments, or from different
+reporters are not parallel, so a multiplex network can be simplified.
+\code{to_simplified()} makes a network so.
 \item \code{is_disaggregated()} marks networks TRUE if any of their ties are
 parallel, as \code{tie_is_parallel()} marks them, so that
 \code{to_aggregated(over = NULL)} can combine them.
@@ -81,20 +90,22 @@ Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods for these functions:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{                  data.frame default igraph list matrix network stocnet
-is_complex                 *       *      *    *      *       *       *
 is_directed                *       *      *           *       *       *
 is_disaggregated                   *                                   
+is_looped                  *       *      *    *      *       *       *
 is_multiplex               *       *      *           *       *       *
 is_signed                  *       *      *           *       *       *
-is_uniplex                         *      *                            
+is_simplified                      *                                   
+is_uniplex                         *                                   
 is_weighted                *       *      *           *       *       *
 layer_is_directed                  *      *                           *
                   tbl_graph
-is_complex                *
 is_directed               *
 is_disaggregated           
+is_looped                 *
 is_multiplex              *
 is_signed                 *
+is_simplified              
 is_uniplex                 
 is_weighted               *
 layer_is_directed          
@@ -110,10 +121,13 @@ is_weighted(create_tree(3))
 is_directed(create_tree(2))
 is_directed(create_tree(2, directed = TRUE))
 is_signed(create_lattice(3))
-is_complex(create_lattice(4))
+is_looped(create_lattice(4))
 is_multiplex(create_filled(c(3,3)))
 is_disaggregated(ison_koenigsberg)
 is_uniplex(create_star(3))
+is_uniplex(ison_algebra)
+is_simplified(ison_koenigsberg)
+is_simplified(to_simplified(ison_koenigsberg))
 }
 \seealso{
 Other marks:

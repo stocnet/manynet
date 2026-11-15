@@ -8,6 +8,7 @@
 \alias{from_layers}
 \alias{from_ties}
 \alias{from_reporters}
+\alias{from_targets}
 \title{Joining networks along a third dimension}
 \usage{
 from_waves(netlist)
@@ -21,6 +22,8 @@ from_layers(..., layer_names)
 from_ties(..., layer_names)
 
 from_reporters(netlist)
+
+from_targets(netlist)
 }
 \arguments{
 \item{netlist}{A list of network, igraph, tidygraph, matrix, or edgelist
@@ -101,6 +104,13 @@ the nodes in order.
 A node that is not in the list did not report, and so is marked as missing.
 A list of matrices is stacked into an array of one slice per node,
 with \code{NA} in the slice for each non-reporting node.
+
+\code{from_targets()} joins a list of networks, each of the gossip about one
+node, into one network that names that node in 'about'.
+It takes the target of each network from the names of the list,
+as \code{from_reporters()} takes the reporter.
+A node that is not in the list is about nothing, and is not missing,
+since nobody had to gossip about it.
 }
 \examples{
 ison_adolescents |>
@@ -113,11 +123,13 @@ ison_adolescents |>
   to_slices(slice = c(5,7)) |>
   from_slices()
 from_times(to_times(ison_tailorshop))
-marriage <- to_uniplex(ison_florentine, "marriage")
-business <- to_uniplex(ison_florentine, "business")
+marriage <- to_layer(ison_florentine, "marriage")
+business <- to_layer(ison_florentine, "business")
 from_layers(marriage = marriage, business = business)
 reports <- list(A = create_ring(4), B = create_star(4))
 from_reporters(lapply(reports, add_node_attribute, "name", LETTERS[1:4]))
+gossip <- as_stocnet(array(rbinom(27, 1, 0.5), c(3, 3, 3)), over = "about")
+from_targets(to_targets(gossip))
 }
 \seealso{
 Other modifications:
@@ -125,13 +137,15 @@ Other modifications:
 \code{\link{modif_concepts}},
 \code{\link{modif_direction}},
 \code{\link{modif_from_parts}},
+\code{\link{modif_influence}},
 \code{\link{modif_labels}},
+\code{\link{modif_layers}},
 \code{\link{modif_levels}},
+\code{\link{modif_loops}},
 \code{\link{modif_miss}},
 \code{\link{modif_motifs}},
 \code{\link{modif_paths}},
 \code{\link{modif_permutation}},
-\code{\link{modif_plexity}},
 \code{\link{modif_project}},
 \code{\link{modif_proximity}},
 \code{\link{modif_scope}},

@@ -107,6 +107,7 @@ as_matrix(node_attribute(ison_lawfirm, "age"), compare = "diff")[1:5, 1:5]
 \seealso{
 Other coercions:
 \code{\link{coerce_graph}},
-\code{\link{coerce_list}}
+\code{\link{coerce_list}},
+\code{\link{coerce_stocnet}}
 }
 \concept{coercions}

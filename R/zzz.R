@@ -1,4 +1,8 @@
 # nocov start
+.onLoad <- function(libname, pkgname) {
+  .register_record_methods(asNamespace(pkgname))
+}
+
 #' @importFrom cli cli_div cli_inform cli_end
 .onAttach <- function(...) {
 

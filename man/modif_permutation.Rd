@@ -3,7 +3,7 @@
 \name{modif_permutation}
 \alias{modif_permutation}
 \alias{to_permuted}
-\title{Network permutation}
+\title{Modifying networks by permutation}
 \usage{
 to_permuted(.data, with_attr = TRUE)
 }
@@ -39,12 +39,14 @@ Other modifications:
 \code{\link{modif_direction}},
 \code{\link{modif_from_parts}},
 \code{\link{modif_from_ternary}},
+\code{\link{modif_influence}},
 \code{\link{modif_labels}},
+\code{\link{modif_layers}},
 \code{\link{modif_levels}},
+\code{\link{modif_loops}},
 \code{\link{modif_miss}},
 \code{\link{modif_motifs}},
 \code{\link{modif_paths}},
-\code{\link{modif_plexity}},
 \code{\link{modif_project}},
 \code{\link{modif_proximity}},
 \code{\link{modif_scope}},

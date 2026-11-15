@@ -30,16 +30,20 @@ See the example for a demonstration.
 }
 \seealso{
 Other makes:
-\code{\link{make_collect}},
+\code{\link[=as_diffusion]{as_diffusion()}},
+\code{\link[=as_mobility]{as_mobility()}},
+\code{\link[=as_opinion]{as_opinion()}},
+\code{\link{make_bibliography}},
 \code{\link{make_create}},
 \code{\link{make_ego}},
 \code{\link{make_emails}},
 \code{\link{make_groups}},
 \code{\link{make_growth}},
-\code{\link{make_learning}},
-\code{\link{make_play}},
+\code{\link{make_packages}},
 \code{\link{make_random}},
 \code{\link{make_read}},
+\code{\link{make_statements}},
+\code{\link{make_text}},
 \code{\link{make_write}}
 }
 \concept{makes}

@@ -138,13 +138,9 @@ delete_isolates.tbl_graph <- function(.data) {
 
 #' @export
 delete_isolates.list <- function(.data) {
-  nodes <- NULL
-  # Delete edges not present vertices in each list
-  lapply(.data, function(x) {
-    x |> tidygraph::activate(nodes) |>
-      dplyr::filter(!tidygraph::node_is_isolated()) |>
-      .record_exclusion(x, "isolates", "nodes")
-  })
+  # Each network goes to the method for its own class, so that a list of
+  # stocnets is not handed to tidygraph.
+  lapply(.data, delete_isolates)
 }
 
 #' @export
@@ -303,6 +299,9 @@ keep_nodes <- function(.data, kept){
     .prune_layer_info(.data$info,
                       intersect(.data$info$layers, unique(out_ties$layer)))
   } else .data$info
+  # Dropping nodes can drop every node of a mode too.
+  if("mode" %in% names(out_nodes))
+    out_info <- .prune_mode_info(out_info, unique(out_nodes$mode))
 
   make_stocnet(nodes = out_nodes, ties = out_ties, changes = out_changes,
                globals = .data$globals, missings = out_missings, info = out_info)
@@ -713,6 +712,13 @@ bind_node_attributes <- function(.data, object2){
     out <- igraph::set_vertex_attr(out, a, 
                                    value = igraph::vertex_attr(object2, a))
   }
+  # The modes of a network are named in a graph attribute and not in the
+  # 'type' or 'lvl' attribute of its nodes, so the names go with the modes,
+  # or else the modes would be named by their numbers
+  modes <- igraph::graph_attr(object2, "modes")
+  if(!is.null(modes) &&
+     any(c("type", "lvl") %in% igraph::vertex_attr_names(object2)))
+    out <- igraph::set_graph_attr(out, "modes", modes)
   as_tidygraph(out)
 }
 

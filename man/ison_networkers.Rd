@@ -10,7 +10,7 @@
 #> 
 #> -- Nodes
 #> # A tibble: 32 x 3
-#>   name               Discipline   Citations
+#>   label              Discipline   Citations
 #>   <chr>              <chr>            <dbl>
 #> 1 Lin Freeman        Sociology           19
 #> 2 Doug White         Anthropology         3
@@ -43,8 +43,10 @@ data(ison_networkers)
 \description{
 A directed, simple, named, weighted graph with 32 nodes and 440
 edges. Nodes are academics and edges illustrate the communication patterns
-on an Electronic Information Exchange System among them. Node attributes
-include the number of citations (\code{Citations}) and the discipline of the
+on an Electronic Information Exchange System among them.
+The 32 nodes are the participants who completed the study,
+which asked about their acquaintances in January and September 1978.
+Node attributes include the number of citations (\code{Citations}) and the discipline of the
 researchers (\code{Discipline}). Edge weights illustrate the number of emails
 sent from one academic to another over the studied time period.
 }

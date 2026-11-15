@@ -14,9 +14,9 @@
 \usage{
 to_ego(.data, node, max_dist = 1, min_dist = 0, direction = c("out", "in"))
 
-to_time(.data, time = NULL)
+to_time(.data, time = NULL, window = NULL, kernel = "uniform")
 
-to_wave(.data, time = NULL)
+to_wave(.data, time = NULL, window = NULL, kernel = "uniform")
 
 to_reporter(.data, reporter)
 
@@ -57,6 +57,23 @@ By default "all".}
 A moment beyond the last one the network records reverts to the last,
 except in an interval network, which is defined between the moments it
 records as well as at them.}
+
+\item{window}{The width of a window of the moments up to \code{time}, or
+\code{NULL} (the default) for no window.
+Two widths, \code{c(before, after)}, give a window that also reaches past
+\code{time}, so that \code{c(15, 15)} gives a window centred on \code{time}.
+A width is in the units of the moments the network records:
+waves, years, or days where the moments are dates
+(or seconds where they are date-times).
+A \code{difftime}, such as \code{as.difftime(30, units = "days")}, is also accepted.}
+
+\item{kernel}{How each tie in a \code{window} is weighted by its distance
+from \code{time}.
+\code{"uniform"} (the default) weights every tie in the window the same,
+and so leaves the ties as they are.
+\code{"triangular"}, \code{"epanechnikov"}, and \code{"gaussian"} give a tie less weight
+the further it is from \code{time}.
+Only used with a \code{window}.}
 
 \item{reporter}{Label or index of the node whose report on the network
 is to be retained, in a cognitive social structure.}
@@ -174,6 +191,51 @@ the network declares it "cross-sectional", or where it records that layer
 at a single moment while another layer spans several.
 }
 
+\section{Windows}{
+
+A \code{window} asks for a third thing: not the state of the network at a
+moment, but the ties recorded in a period that ends at it.
+A \code{window} of width \eqn{w} holds the ties recorded after
+\code{time - w} and up to and including \code{time}, so it looks back only,
+and never holds a tie recorded after \code{time}.
+In a panel, \code{window = 1} holds the wave at \code{time},
+and \code{window = 2} that wave and the one before it.
+An infinite window, \code{window = Inf}, holds every tie recorded up to \code{time}.
+
+Two widths, \code{window = c(before, after)}, also hold the ties recorded
+after \code{time} and up to and including \code{time + after}.
+With equal widths the window is centred on \code{time}, a smoother that
+describes the network around a moment without a lag.
+But a network so made holds ties that were recorded after \code{time},
+so do not use it where the network at \code{time} must only know its past,
+as a predictor in a model does.
+
+A window holds its ties whatever \code{info$update} declares:
+the ties are neither accumulated nor carried forward,
+and each row in the window stays a tie of its own,
+so a pair recorded twice in the window is tied twice.
+As without a window, the 'time' stamp is dropped from the result,
+since the network that is returned no longer varies in time,
+and \code{time} is not reverted to the last moment the network records.
+
+An interval tie is in the window where its interval overlaps the window,
+and its distance from \code{time} is the distance from \code{time} to the nearest
+moment of its interval, so a tie active at \code{time} is at no distance.
+
+A \code{kernel} other than "uniform" multiplies the tie's 'weight'
+by the kernel value, or gives an unweighted tie the kernel value as its
+'weight'. Where \eqn{u} is the distance of the tie from \code{time} over the
+width of the window on that side of \code{time}, the kernel values are
+\eqn{1 - u} ("triangular"), \eqn{1 - u^2} ("epanechnikov"), and
+\eqn{\exp(-2u^2)} ("gaussian", which puts the far edge of the window at
+two standard deviations).
+Each kernel is 1 at \code{time}, so a tie at \code{time} keeps its weight,
+and in an infinite window every tie keeps its weight.
+A tie that the kernel weights at zero, at the far edge of a triangular or
+epanechnikov window, is dropped.
+A layer that holds throughout is carried in with its weight unchanged.
+}
+
 \section{\code{to_blockmodel()}}{
 
 Reduced graphs provide summary representations of network structures
@@ -193,7 +255,13 @@ in \code{{netrics}}.
   to_time(irps_wwi, 1901)
   # The state an event network had accumulated to by a given day:
   to_time(irps_nuclear, as.Date("2011-04-01"))
-css <- as_stocnet(array(rbinom(27, 1, 0.5), c(3, 3, 3)), attribute = "by")
+  # The statements made in the 30 days up to that day,
+  # weighted down the longer ago they were made:
+  to_time(irps_nuclear, as.Date("2011-04-01"), window = 30,
+          kernel = "triangular")
+  # The statements made in the 15 days either side of that day:
+  to_time(irps_nuclear, as.Date("2011-04-01"), window = c(15, 15))
+css <- as_stocnet(array(rbinom(27, 1, 0.5), c(3, 3, 3)), over = "by")
 to_reporter(css, 2)
   to_component(fict_greys, 2)
   to_component(fict_greys, "Miranda Bailey")
@@ -209,13 +277,15 @@ Other modifications:
 \code{\link{modif_direction}},
 \code{\link{modif_from_parts}},
 \code{\link{modif_from_ternary}},
+\code{\link{modif_influence}},
 \code{\link{modif_labels}},
+\code{\link{modif_layers}},
 \code{\link{modif_levels}},
+\code{\link{modif_loops}},
 \code{\link{modif_miss}},
 \code{\link{modif_motifs}},
 \code{\link{modif_paths}},
 \code{\link{modif_permutation}},
-\code{\link{modif_plexity}},
 \code{\link{modif_project}},
 \code{\link{modif_proximity}},
 \code{\link{modif_split}},

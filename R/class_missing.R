@@ -9,6 +9,77 @@
 # `.expand_missing()` derives the ties from those records, which is what
 # `as_missinglist()` returns, and `.compress_missing()` derives the records
 # from the ties, which is what coercion into a stocnet does.
+#
+# A structural zero is a dyad fixed at no tie by design, as SIENA's `10` is.
+# It is not a tie and is not a missing tie either, so it is held in `missings`
+# as a row with `fixed = TRUE`, as a tie fixed by design is a tie with
+# `fixed = TRUE`. Most structural zeros are the dyads of a node that is not in
+# the network at that moment, so these are derived from 'active' and not held
+# as rows, as the missing ties of a node are derived from 'na'.
+# `.expand_fixed()` returns them all, and `.missing_registry()` and
+# `.expand_missing()` never return them.
+
+# Which rows of a dyad table are fixed by design.
+.fixed_rows <- function(tab){
+  if(is.null(tab) || !nrow(tab)) return(logical(0))
+  if(is.null(tab[["fixed"]])) return(rep(FALSE, nrow(tab)))
+  !is.na(tab$fixed) & tab$fixed
+}
+
+# The structural zeros that a network holds as rows, as a table of dyads in the
+# form `.missing_registry()` gives.
+.fixed_registry <- function(.data){
+  reg <- .data$missings
+  if(is.null(reg) || !nrow(reg)) return(NULL)
+  reg <- dplyr::as_tibble(reg[.fixed_rows(reg), , drop = FALSE])
+  if(!nrow(reg)) return(NULL)
+  if(is.null(reg[["layer"]])) reg$layer <- NA_character_
+  if(is.null(reg[["time"]])) reg$time <- NA
+  reg[intersect(c("from", "to", "layer", "time", "by", "about"), names(reg))]
+}
+
+# The structural zeros of a network: those it holds as rows, and the dyads of
+# each node that is not in the network at a moment it records. Such a dyad
+# could not be a tie, since one of its nodes was not there, and it is not
+# missing either, since there was nothing there to miss.
+.expand_fixed <- function(.data){
+  empty <- dplyr::tibble(from = integer(0), to = integer(0),
+                         layer = character(0), time = numeric(0))
+  if(is.null(.data$nodes) || as.numeric(net_nodes(.data)) == 0) return(empty)
+  times <- .stocnet_times(.data)
+  act_state <- .node_state(.data, "active", times, default = TRUE)
+  occasions <- .stocnet_occasions(.data)
+  rows <- lapply(seq_len(nrow(occasions)), function(o){
+    layer <- occasions$layer[[o]]; time <- occasions$time[[o]]
+    at <- if(is.na(time)) 1L else match(time, times)
+    gone <- which(!act_state[, at])
+    if(!length(gone)) return(NULL)
+    directed <- layer_is_directed(.data, layer)
+    everyone <- rep(TRUE, nrow(act_state))
+    pairs <- dplyr::bind_rows(lapply(gone, function(node){
+      alters <- .stocnet_alters(.data, node, everyone)
+      if(!length(alters)) return(NULL)
+      out <- dplyr::tibble(from = as.integer(node), to = as.integer(alters))
+      # A two-mode network sends its ties from the first mode, and a directed
+      # one could have sent them either way.
+      back <- dplyr::tibble(from = out$to, to = out$from)
+      if(is_twomode(.data)){
+        first <- .data$nodes$mode[[1]]
+        if(.data$nodes$mode[[node]] != first) out <- back
+      } else if(directed) out <- dplyr::bind_rows(out, back)
+      out
+    }))
+    if(!nrow(pairs)) return(NULL)
+    pairs$layer <- layer; pairs$time <- time
+    if(!directed) pairs <- pairs[!duplicated(.undirected_key(pairs)), ,
+                                 drop = FALSE]
+    pairs
+  })
+  out <- dplyr::bind_rows(dplyr::bind_rows(rows), .fixed_registry(.data))
+  if(!nrow(out)) return(empty)
+  out <- out[!duplicated(.tie_key(out)), , drop = FALSE]
+  out[!.tie_key(out) %in% .tie_key(.data$ties), , drop = FALSE]
+}
 
 # The moments a network records, or NA where it records none.
 .stocnet_times <- function(.data){
@@ -212,10 +283,12 @@
 }
 
 # The registry of missing ties that no node's nonresponse implies.
+# A structural zero is held in the same component but is not missing.
 .missing_registry <- function(.data){
   reg <- .data$missings
   if(is.null(reg) || !nrow(reg)) return(NULL)
-  reg <- dplyr::as_tibble(reg)
+  reg <- dplyr::as_tibble(reg[!.fixed_rows(reg), , drop = FALSE])
+  if(!nrow(reg)) return(NULL)
   if(is.null(reg[["layer"]])) reg$layer <- NA_character_
   if(is.null(reg[["time"]])) reg$time <- NA
   reg[intersect(c("from", "to", "layer", "time", "by", "about"), names(reg))]
@@ -247,7 +320,18 @@
   # The list of ties is the authority here, so any records the object already
   # carries are cleared and rebuilt rather than added to.
   x <- .clear_missing(x)
-  if(is.null(missing) || !nrow(missing)) return(x)
+  x$missings <- NULL
+  # The structural zeros in the list are not missing, so they are set apart
+  # and held as they are, apart from those that 'active' already implies.
+  zeros <- if(!is.null(missing) && nrow(missing))
+    missing[.fixed_rows(missing), , drop = FALSE] else NULL
+  if(!is.null(zeros)){
+    missing <- missing[!.fixed_rows(missing), , drop = FALSE]
+    missing$fixed <- NULL
+    zeros <- .uncovered_zeros(x, zeros)
+  }
+  if(is.null(missing) || !nrow(missing))
+    return(.hold_zeros(x, NULL, zeros))
   if(is.null(missing[["layer"]])) missing$layer <- NA_character_
   if(is.null(missing[["time"]])) missing$time <- NA
   times <- .stocnet_times(x)
@@ -310,7 +394,31 @@
     missing <- missing[keep, , drop = FALSE]
     x <- .record_nonresponse(x, found, times)
   }
-  x$missings <- if(nrow(missing)) .tidy_registry(missing) else NULL
+  .hold_zeros(x, if(nrow(missing)) missing else NULL, zeros)
+}
+
+# The structural zeros that 'active' does not already imply.
+.uncovered_zeros <- function(x, zeros){
+  if(is.null(zeros) || !nrow(zeros)) return(NULL)
+  zeros <- dplyr::as_tibble(zeros)
+  zeros$fixed <- NULL
+  derived <- .expand_fixed(x)
+  if(is.null(zeros[["layer"]])) zeros$layer <- NA_character_
+  if(is.null(zeros[["time"]])) zeros$time <- NA
+  zeros <- zeros[!duplicated(.tie_key(zeros)), , drop = FALSE]
+  zeros <- zeros[!.tie_key(zeros) %in% .tie_key(derived), , drop = FALSE]
+  if(nrow(zeros)) zeros else NULL
+}
+
+# The registry rebuilt from the missing ties left over and the structural
+# zeros, each structural zero marked as fixed.
+.hold_zeros <- function(x, missing, zeros){
+  if(!is.null(zeros) && nrow(zeros)){
+    zeros$fixed <- TRUE
+    if(!is.null(missing) && nrow(missing)) missing$fixed <- FALSE
+  }
+  out <- dplyr::bind_rows(missing, zeros)
+  x$missings <- if(nrow(out)) .tidy_registry(out) else NULL
   x
 }
 
@@ -388,9 +496,12 @@
 # Clear the records of what a network did not observe, whether because those
 # ties have been imputed and so are missing no longer, or because the records
 # are about to be rebuilt from a list of the ties themselves.
+# A structural zero was not missed, so it stays.
 .clear_missing <- function(.data){
   .data$nodes$na <- NULL
-  .data$missings <- NULL
+  reg <- .data$missings
+  .data$missings <- if(!is.null(reg) && any(.fixed_rows(reg)))
+    reg[.fixed_rows(reg), , drop = FALSE] else NULL
   chg <- .data$changes
   if(!is.null(chg) && nrow(chg)){
     chg <- chg[as.character(chg$var) != "na", , drop = FALSE]

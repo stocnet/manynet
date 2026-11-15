@@ -10,7 +10,7 @@
 #> 
 #> -- Nodes
 #> # A tibble: 8 x 1
-#>   name 
+#>   label
 #>   <chr>
 #> 1 Betty
 #> 2 Sue  

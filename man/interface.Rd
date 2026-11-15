@@ -8,6 +8,9 @@
 \alias{snet_abort}
 \alias{snet_success}
 \alias{snet_prompt}
+\alias{snet_deprecated}
+\alias{snet_moved}
+\alias{snet_requires}
 \alias{snet_unavailable}
 \title{Console command line interface}
 \usage{
@@ -23,6 +26,33 @@ snet_success(..., .envir = parent.frame())
 
 snet_prompt(..., .envir = parent.frame())
 
+snet_deprecated(
+  old,
+  new,
+  stage = c("deprecated", "superseded", "defunct"),
+  type = c("function", "argument", "value"),
+  why = NULL,
+  msg = NULL,
+  .envir = parent.frame()
+)
+
+snet_moved(
+  old,
+  new,
+  new_pkg = "netrics",
+  version = NULL,
+  old_pkg = "manynet",
+  stage = c("defunct", "deprecated"),
+  .envir = parent.frame()
+)
+
+snet_requires(
+  pkg,
+  why = "to run this function",
+  ask = interactive(),
+  .envir = parent.frame()
+)
+
 snet_unavailable(..., .envir = parent.frame())
 }
 \arguments{
@@ -32,6 +62,41 @@ pasted together.}
 
 \item{.envir}{This argument is just to inherit the parent frame in the
 (likely) event that the function is used within another function.}
+
+\item{old, new}{The old name of a function, argument, or value,
+and the name that replaces it.}
+
+\item{stage}{How far the old name is on its way out:
+\itemize{
+\item \code{"superseded"} still works without a word, since a released package
+that cannot yet be released again may use it.
+It is reported only under the \code{'debug'} verbosity.
+\item \code{"deprecated"} still works, but warns whatever the verbosity, with the
+class \code{"deprecatedWarning"} that \code{\link[base:.Deprecated]{base::.Deprecated()}} gives,
+so that the warning can be caught or silenced as that one can.
+\item \code{"defunct"} no longer works, and aborts with the class
+\code{"defunctError"} that \code{\link[base:.Defunct]{base::.Defunct()}} gives.
+}}
+
+\item{type}{What the old name names: a \code{"function"}, an \code{"argument"},
+or a \code{"value"} of an argument.}
+
+\item{why}{An optional sentence saying why the name changed,
+or how to get the same result with the new one.}
+
+\item{msg}{A message to give instead of the one built from \code{old} and \code{new}.}
+
+\item{new_pkg, old_pkg}{The package that a function moved to,
+and the package it moved from.}
+
+\item{version}{The version of \code{old_pkg} in which the function moved.}
+
+\item{pkg}{The name of a package that a function needs,
+usually one the package only suggests.}
+
+\item{ask}{Whether to offer to install the package where it is missing.
+By default this is offered only in an interactive session,
+since a script would stall on the question.}
 }
 \description{
 These functions wrap \code{{cli}} functions and elements
@@ -47,6 +112,11 @@ run on and return a wrong answer instead of an explanation:
 \item \code{snet_unavailable()} for a feature that is not yet available.
 \item \code{snet_warn()} for a result the user should not trust without reading,
 such as a value that is dropped or a name that does not match.
+\item \code{snet_deprecated()} for an old name of a function, argument, or value.
+An old name that is only superseded is reported as \code{snet_minor_info()}.
+\item \code{snet_moved()} for a function that moved to another package.
+\item \code{snet_requires()} for a package that a function needs and that is not
+installed.
 }
 
 A call that only reports is silenced under the default verbosity:
@@ -60,6 +130,16 @@ such as which column it renamed.
 }
 
 \code{snet_prompt()} asks the user something, so it always shows.
+}
+\details{
+\code{snet_moved()} tells the user that a function moved to another package,
+and how to install that package where it is missing.
+By default it then aborts, since the old name is defunct.
+With \code{stage = "deprecated"} it warns instead, so that a shim can go on to
+call the function in its new package.
+
+\code{snet_requires()} checks that a package is installed before a function
+uses it, and aborts with the command to install it where it is not.
 }
 \section{Verbosity}{
 

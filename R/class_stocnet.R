@@ -1,6 +1,9 @@
 #' Multilevel, multiplex, multimodal, signed, dynamic or longitudinal changing networks
 #' @name make_stocnet
 #' @description
+#'   A 'stocnet' can hold multilevel, multiplex, multimodal, signed,
+#'   and dynamic or longitudinal changing networks in one object.
+#'
 #'   The 'stocnet' class of network object is a list of six elements:
 #'   nodes, ties, (nodal) changes, globals, missings,
 #'   and info metadata about the network as a whole.
@@ -113,6 +116,7 @@
 #'   Where a layer's ties name who reported them,
 #'   a non-responsive node instead missed its whole report of that layer.
 #'   See [as_missinglist()].
+#'   - 'occupant' should be a character vector naming the occupant of each place, with `NA` for an empty place, as [play_mobility()] records it.
 #' @section Changes:
 #'   There are several required names for the columns of the changes component of a stocnet object (if one is included).
 #'   - 'time' can be an integer (e.g. for a wave) or date (e.g. POSIXct or mdate) vector of the times at which changes occur.
@@ -165,8 +169,8 @@
 #'   - 'fixed' should be a logical vector marking the ties that are present
 #'   by design, and so not free to vary, such as SIENA's structural ones (`11`).
 #'   A fixed tie is never missing and is never removed by imputation.
-#'   Structural zeros, dyads fixed at no tie, are not held yet,
-#'   so a fixed tie cannot have a weight of 0.
+#'   A fixed tie cannot have a weight of 0, since a dyad fixed at no tie
+#'   is a structural zero, which the missings component holds.
 #'   - 'time' should be a numeric, character, or date vector of the moment at
 #'   which each tie was recorded.
 #'   - 'begin' and 'end' should instead give the interval over which each tie
@@ -261,6 +265,12 @@
 #'   - 'from' and 'to' must be integer vectors of the nodes at each end
 #'   - 'layer' and 'time' should name the layer and moment the tie was missing
 #'   from, where the network records them.
+#'   - 'fixed' should be a logical vector marking the rows that are
+#'   structural zeros, such as SIENA's `10`: dyads fixed at no tie by design.
+#'   A structural zero is neither a tie nor a missing tie, so
+#'   [as_missinglist()] does not return it and imputation never fills it.
+#'   The dyads of a node that is not in the network at a moment, as 'active'
+#'   records, are structural zeros too, and are not listed here.
 #'
 #'   Since most missing tie data is a node that did not report,
 #'   this component is usually NULL.
@@ -468,6 +478,10 @@ index_ties <- function(.data, component = "ties"){
   out
 }
 
+is_grand <- function(.data){
+  !is.null(igraph::graph_attr(.data, "grand"))
+}
+
 # Hyperedges ####
 
 # A hyperedge is a tie among any number of nodes, held as one row of the ties
@@ -581,8 +595,15 @@ index_changes <- function(.data){
   x
 }
 
+# Printing ####
+
 #' @rdname make_stocnet
-#' @inheritParams make_mnet
+#' @param x A network object.
+#' @param ... Other arguments passed to or from other methods.
+#' @param n Number of observations to print across all network components,
+#'   i.e. nodes, changes, and ties.
+#'   By default 12.
+#'   `print_all()` prints them all.
 #' @export
 print.stocnet <- function(x, ..., n = 12) {
   arg_list <- list(...)
@@ -606,6 +627,14 @@ print.stocnet <- function(x, ..., n = 12) {
     cli::cli_par()
     cli_div(theme = list(.emph = list(color = "#4576B5")))
     cli::cli_text("{.emph {trans_header}{trans_desc}}")
+    cli::cli_end()
+  }
+  # coding that is not finished is shown, so that it is not forgotten
+  if(!is.null(x$info$uncoded) && nrow(x$info$uncoded) > 0){
+    k <- nrow(x$info$uncoded)
+    cli::cli_par()
+    cli_div(theme = list(.emph = list(color = "#4576B5")))
+    cli::cli_text("{.emph # {k} unit{?s} of text still to code}")
     cli::cli_end()
   }
   top <- x$nodes
@@ -639,10 +668,18 @@ print.stocnet <- function(x, ..., n = 12) {
     cli::cli_end()
   }
   if(!is.null(x$missings) && ncol(x$missings) >0){
-    cli::cli_par()
-    cli::cli_h3("Missings")
-    print(dplyr::as_tibble(x$missings), n = n)
-    cli::cli_end()
+    # A structural zero is held among the missings, but it is not missing,
+    # so the two are printed apart.
+    fixed <- .fixed_rows(x$missings)
+    for(part in c("Missings", "Structural zeros")){
+      rows <- x$missings[if(part == "Missings") !fixed else fixed, , drop = FALSE]
+      if(!nrow(rows)) next
+      rows$fixed <- NULL
+      cli::cli_par()
+      cli::cli_h3(part)
+      print(dplyr::as_tibble(rows), n = n)
+      cli::cli_end()
+    }
   }
   if (!is.null(bottom) && ncol(bottom)>0){
     # cli::cli_par()
@@ -721,4 +758,10 @@ pillar_shaft.value <- function(x, ...) {
     paste0(value_text, type_label),
     align = "right"
   )
+}
+
+#' @rdname make_stocnet
+#' @export
+print_all <- function(x, ...) {
+  print(x, n = Inf)
 }

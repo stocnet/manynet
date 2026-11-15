@@ -441,7 +441,11 @@ as_missinglist.stocnet <- function(.data) {
 #' @export
 as_missinglist.igraph <- function(.data) {
   out <- igraph::graph_attr(.data, "missings")
-  if(is.null(out) || !nrow(out)) NULL else dplyr::as_tibble(out)
+  if(is.null(out) || !nrow(out)) return(NULL)
+  # The structural zeros travel in the same table, but are not missing.
+  out <- out[!.fixed_rows(out), , drop = FALSE]
+  out$fixed <- NULL
+  if(!nrow(out)) NULL else dplyr::as_tibble(out)
 }
 
 #' @export

@@ -66,7 +66,7 @@ To read the lengths as weights, or the reverse, use for example
 \examples{
 tie_weights(to_mode1(ison_southern_women))
 tie_lengths(mutate_ties(create_ring(4), length = c(1, 2.5, 1, 2.5)))
-tie_signs(to_uniplex(fict_marvel,"relationship"))
+tie_signs(to_layer(fict_marvel,"relationship"))
 }
 \seealso{
 \link{measure_attributes_ties} for the other attributes of ties.

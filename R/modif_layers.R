@@ -1,138 +1,92 @@
-# Simplifying ####
+# Layers ####
 
-#' Modifying network complexity
-#' @name modif_plexity
+#' Modifying network layers
+#' @name modif_layers
 #' @description
-#'   These functions reformat manynet-consistent data.
-#' 
-#'   - `to_anti()` reformats network data into its complement, where only ties _not_ present in the original network
-#'   are included in the new network.
-#'   - `to_simplex()` reformats complex network data, containing loops, to simplex network data, without any loops.
-#'   Parallel ties are kept, since a second tie between two nodes is not a
-#'   loop; `tie_is_parallel()` marks them.
-#'   - `to_uniplex()` reformats multiplex network data to a single type of tie.
-#'   `to_layer()` is an alias, using the layer-based vocabulary of
-#'   `layer_names()`, `net_layers()`, and `to_layers()`.
+#'   These functions reduce or combine the layers of a network,
+#'   or the other tie columns that divide its ties:
+#'   the reports of its reporters, the gossip about each target,
+#'   and its moments.
+#'
+#'   - `to_layer()` reduces a multiplex network to one of its layers.
 #'   Use `to_layers()` to split a network into all of its layers at once.
 #'   - `to_aggregated()` combines the ties of a network that differ only in
 #'   one tie column, dyad by dyad, according to a rule:
 #'   its layers, the reports of its reporters, the gossip about each target,
 #'   or its moments. It can also combine parallel ties.
-#'   Where `to_uniplex()` selects one layer and discards the rest,
+#'   Where `to_layer()` selects one layer and discards the rest,
 #'   `to_aggregated()` retains what every layer records.
-#'   `to_flat()` is an alias that combines layers, and takes the `rule` as
-#'   its second argument.
+#'   - `to_firsthand()` keeps, for each dyad of a cognitive social structure,
+#'   only the reports of the two nodes in it.
+#'   - `to_consensus()` keeps the ties of a cognitive social structure that at
+#'   least a share of its reporters report.
 #'   - `to_disaggregated()` turns tie weights back into that many parallel
 #'   ties, reversing `to_aggregated(over = NULL, rule = "sum")`.
-#' 
+#'
 #'   If the format condition is not met,
-#'   for example `to_undirected()` is used on a network that is already undirected,
+#'   for example `to_layer()` is used on a network that holds no layers,
 #'   the network data is returned unaltered.
-#'   No warning is given so that these functions can be used to ensure conformance.
-#'   
+#'
 #'   Unlike the `as_*()` group of functions,
 #'   these functions always return the same class as they are given,
 #'   only transforming these objects' properties.
 #' @details
 #'   Not all functions have methods available for all object classes.
 #'   Below are the currently implemented S3 methods:
-#'  
+#'
 #'   ```{r, echo = FALSE, comment=""}
-#'   available_methods(collect_functions("to_.*(anti|plex|layer$|flat$|aggregated$)"))
+#'   available_methods(collect_functions("to_(layer|aggregated|firsthand|disaggregated)$"))
 #'   ```
 #' @template param_data
 #' @template fam_modif
 NULL
 
-#' @rdname modif_plexity
-#' @importFrom igraph complementer
+#' @rdname modif_layers
+#' @section Firsthand reports:
+#'   `to_firsthand()` keeps, for each dyad of a cognitive social structure,
+#'   only the reports of the two nodes in it.
+#'   These reports are firsthand: each node reports a tie it is part of,
+#'   where its report about the ties of others is secondhand.
+#'   This is the locally aggregated structure of Krackhardt (1987):
+#'   a tie from i to j where both i and j report it
+#'   (`rule = "min"`, the intersection), or where either of them does
+#'   (`rule = "max"`, the union).
+#'   It is `to_aggregated(over = "by", reporters = "both")` by another name.
 #' @examples
-#' to_anti(ison_southern_women)
+#' css <- as_stocnet(array(rbinom(27, 1, 0.5), c(3, 3, 3)), over = "by")
+#' to_firsthand(css)
 #' @export
-to_anti <- function(.data) UseMethod("to_anti")
-
-#' @export
-to_anti.default <- function(.data) {
-  as_input(.data, to_anti)
+to_firsthand <- function(.data, rule = c("min", "max")) {
+  to_aggregated(.data, over = "by", rule = match.arg(rule),
+                reporters = "both")
 }
 
+#' @rdname modif_layers
+#' @param threshold The share of the reporters that must report a tie for the
+#'   consensus to hold it, above 0 and at most 1.
+#'   By default 0.5, so that a tie is held where at least half of the
+#'   reporters report it, and `1` holds only the ties that all of them report.
+#' @section Consensus structures:
+#'   `to_consensus()` gives the consensus structure of Krackhardt (1987):
+#'   a tie from i to j where at least the `threshold` share of the reporters
+#'   report it.
+#'   Where `to_firsthand()` asks only i and j, this asks every reporter, so a
+#'   tie can be held that its own two nodes do not report.
+#'   A reporter that did not report is left out of the share,
+#'   as `to_aggregated()` leaves it out.
+#'   It is `to_aggregated(over = "by", rule = "mean")` followed by
+#'   `to_unweighted(threshold = threshold)`.
+#' @examples
+#' to_consensus(css)
+#' to_consensus(css, threshold = 1)
 #' @export
-to_anti.matrix <- function(.data){
-  matrix(1, nrow(.data), ncol(.data)) - .data
-}
-
-#' @export
-to_anti.data.frame <- function(.data){
-  as_edgelist.matrix(to_anti.matrix(as_matrix(.data)))
-}
-
-#' @export
-to_anti.igraph <- function(.data){
-  if(is_twomode(.data)){
-    as_igraph(to_anti.matrix(as_matrix(.data)))
-  } else {
-    igraph::complementer(as_igraph(.data), 
-                         loops = is_complex(.data))
-  }
-}
-
-#' @export
-to_anti.tbl_graph <- function(.data){
-  if(is_twomode(.data)){
-    as_tidygraph(to_anti.matrix(as_matrix(.data)))
-  } else {
-    as_tidygraph(igraph::complementer(as_igraph(.data), 
-                                      loops = is_complex(.data)))
-  }
-}
-
-#' @rdname modif_plexity
-#' @importFrom igraph simplify
-#' @export
-to_simplex <- function(.data) UseMethod("to_simplex")
-
-#' @export
-to_simplex.default <- function(.data) {
-  as_input(.data, to_simplex)
-}
-
-#' @export
-to_simplex.igraph <- function(.data) {
-  # Only the loops are removed. A second tie between two nodes is not a loop,
-  # and may be a second record, a second observation, or a second report.
-  igraph::simplify(.data, remove.multiple = FALSE, remove.loops = TRUE)
-}
-
-#' @export
-to_simplex.stocnet <- function(.data) {
-  if(is.null(.data$ties) || nrow(.data$ties) == 0) return(.data)
-  ties <- .data$ties
-  # Only the loops are removed, as in every other method.
-  # a hyperedge names no node in either column, and is no loop
-  keep_ties(.data, which(is.na(ties$from) | ties$from != ties$to)) |>
-    .record_exclusion(.data, "loops", "ties")
-}
-
-#' @export
-to_simplex.tbl_graph <- function(.data) {
-  # the record is written here rather than in the igraph method because
-  # `.record_transformation()` returns a 'tbl_graph', which would change what
-  # the igraph method gives back to the methods that delegate to it
-  as_tidygraph(to_simplex(as_igraph(.data))) |>
-    .record_exclusion(.data, "loops", "ties")
-}
-
-#' @export
-to_simplex.matrix <- function(.data) {
-  out <- .data
-  diag(out) <- 0
-  out
-}
-
-#' @export
-to_simplex.data.frame <- function(.data) {
-  out <- .data[.data$from != .data$to,]
-  out
+to_consensus <- function(.data, threshold = 0.5) {
+  if(!is.numeric(threshold) || length(threshold) != 1 || is.na(threshold) ||
+     threshold <= 0 || threshold > 1)
+    snet_abort("{.arg threshold} must be one share of the reporters,",
+               "above 0 and at most 1.")
+  to_unweighted(to_aggregated(.data, over = "by", rule = "mean"),
+                threshold = threshold)
 }
 
 # Layers are held in a 'type' tie attribute in tidygraph/igraph objects and in
@@ -144,7 +98,7 @@ to_simplex.data.frame <- function(.data) {
   intersect(c("type", "layer"), net_tie_attributes(.data))[1]
 }
 
-#' @rdname modif_plexity
+#' @rdname modif_layers
 #' @param layer Character string naming one of the layers, or tie types,
 #'   in the network, i.e. one of those returned by `layer_names()`,
 #'   to which the network should be reduced.
@@ -154,25 +108,25 @@ to_simplex.data.frame <- function(.data) {
 #' @examples
 #' as_tidygraph(create_filled(5)) |>
 #'   mutate_ties(type = sample(c("friend", "enemy"), 10, replace = TRUE)) |>
-#'   to_uniplex("friend")
+#'   to_layer("friend")
 #' @export
-to_uniplex <- function(.data, layer, tie) UseMethod("to_uniplex")
+to_layer <- function(.data, layer, tie) UseMethod("to_layer")
 
 #' @export
-to_uniplex.default <- function(.data, layer, tie) {
+to_layer.default <- function(.data, layer, tie) {
   # `tie` was the name of this argument until version 2.3.0, when it was
   # renamed to agree with `to_layers()`, `from_layers()`, and `layer_names()`
   if(missing(layer) && !missing(tie)){
-    snet_warn("The {.arg tie} argument is now called {.arg layer}.")
+    snet_deprecated("tie", "layer", type = "argument")
     layer <- tie
   } else if(missing(layer)) layer <- NULL
-  as_input(.data, to_uniplex, layer = layer)
+  as_input(.data, to_layer, layer = layer)
 }
 
 #' @export
-to_uniplex.tbl_graph <- function(.data, layer, tie){
+to_layer.tbl_graph <- function(.data, layer, tie){
   if(missing(layer) && !missing(tie)){
-    snet_warn("The {.arg tie} argument is now called {.arg layer}.")
+    snet_deprecated("tie", "layer", type = "argument")
     layer <- tie
   } else if(missing(layer)) layer <- NULL
   layer_attr <- .layer_attribute(.data)
@@ -225,7 +179,7 @@ to_uniplex.tbl_graph <- function(.data, layer, tie){
   tidygraph::activate(out, "nodes")
 }
 
-# Reduce the per-layer info to the one layer that `to_uniplex()` retains.
+# Reduce the per-layer info to the one layer that `to_layer()` retains.
 # Without this, 'layers' and the named 'directed'/'observation'/'update'
 # vectors keep describing layers that are no longer in the network, which
 # `validate_stocnet()` rejects once the result is coerced back to a stocnet.
@@ -245,11 +199,8 @@ to_uniplex.tbl_graph <- function(.data, layer, tie){
   out
 }
 
-#' @rdname modif_plexity
-#' @export
-to_layer <- to_uniplex
 
-#' @rdname modif_plexity
+#' @rdname modif_layers
 #' @param over The tie column over which ties are combined, one of
 #'   the columns that `as_stocnet()` takes from the third dimension of an
 #'   array:
@@ -279,7 +230,7 @@ to_layer <- to_uniplex
 #'   and "sum" how many of them do.
 #'   A consensus structure is therefore
 #'   `to_aggregated(.data, over = "by", rule = "mean")` followed by
-#'   `to_unweighted(threshold = 0.5)`.
+#'   `to_unweighted(threshold = 0.5)`, which `to_consensus()` does.
 #'   A reporter that did not report is left out of the reports that are
 #'   combined, rather than making every tie missing, and a tie is missing
 #'   only where none of the reporters it is pooled over reported it.
@@ -306,7 +257,7 @@ to_aggregated.default <- function(.data, over = "layer",
   rule <- match.arg(rule)
   reporters <- match.arg(reporters)
   .check_over(over)
-  # Layers are combined as `to_flat()` combined them before there was anything
+  # Layers are combined as `to_flat()` once combined them, before there was anything
   # else to combine over, which goes through a tbl_graph. The other columns
   # are held most plainly in a stocnet's ties.
   out <- if(identical(over, "layer"))
@@ -364,16 +315,8 @@ to_aggregated.stocnet <- function(.data, over = "layer",
   .aggregate_ties(.data, over, rule, reporters)
 }
 
-#' @rdname modif_plexity
-#' @export
-to_flat <- function(.data, rule = c("max","min","mean","sum","product"),
-                    over = "layer") {
-  # `to_flat()` took the rule as its second argument before it could combine
-  # over anything but layers, so it keeps it there.
-  to_aggregated(.data, over = over, rule = match.arg(rule))
-}
 
-#' @rdname modif_plexity
+#' @rdname modif_layers
 #' @section Disaggregating:
 #'   `to_disaggregated()` turns each tie of weight w into w parallel ties,
 #'   and so reverses `to_aggregated(over = NULL, rule = "sum")`.
@@ -460,7 +403,7 @@ to_disaggregated.stocnet <- function(.data) {
 
 # Reconciles networks' tie values into a single value per dyad, cell by cell,
 # and returns the result in the class of the first network given. This is the
-# engine behind `to_flat()`, which combines one network's layers, and
+# engine behind `to_aggregated(over = "layer")`, which combines one network's layers, and
 # `join_ties(rule = )`, which combines two networks.
 .combine_networks <- function(netlist, rule){
   first <- netlist[[1]]

@@ -278,7 +278,7 @@ choose whichever appeals, or find your own with `table_data()`:
 | Classic (small, easy) | Fiction (moderate) | Real-world (larger) |
 |---|---|---|
 | `ison_adolescents` (8 nodes) | `fict_lotr` (36 nodes) | `irps_usgeo` (50 nodes) |
-| `ison_brandes` (11 nodes) | `fict_greys` (53 nodes) | `irps_books` (105 nodes) |
+| `ison_centrality` (11 nodes) | `fict_greys` (53 nodes) | `irps_books` (105 nodes) |
 
 
 Whichever you choose, the printout has the same shape you saw above:

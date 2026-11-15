@@ -136,8 +136,8 @@ test_that("tree creation works", {
 })
 
 test_that("create lattice works", {
-  expect_s3_class(create_lattice(4), "igraph")
-  expect_equal(igraph::vcount(create_lattice(5)), 5)
+  expect_s3_class(create_lattice(4), "stocnet")
+  expect_equal(as.numeric(net_nodes(create_lattice(5))), 5)
   expect_false(is_directed(create_lattice(6)))
   expect_true(is_directed(create_lattice(6, directed = TRUE)))
   square <- as_igraph(create_lattice(16, width = 4))
@@ -169,6 +169,23 @@ test_that("component creation works", {
   expect_equal(unname(as_matrix(create_components(c(2,4)))),
                matrix(c(1,0,1,0,0,1,0,1),2,4))
   expect_error(create_components(c(5,5,5)), "single integer")
+})
+
+test_that("create_core reads a logical mark as the nodes of the core", {
+  # the nodes marked TRUE are the core, which ties to every other node
+  mark <- c(TRUE, TRUE, FALSE, FALSE, FALSE, FALSE)
+  expect_equal(rowSums(as_matrix(create_core(6, mark = mark))),
+               c(5, 5, 2, 2, 2, 2), ignore_attr = TRUE)
+  # as `generate_core()` reads it, so that the two agree where nothing is
+  # left to chance
+  expect_equal(as_matrix(create_core(6, mark = mark)),
+               as_matrix(generate_core(6, p = 1, mark = mark)))
+  twomode <- as_matrix(create_core(c(2, 3), mark = c(TRUE, FALSE,
+                                                     TRUE, FALSE, FALSE)))
+  expect_equal(twomode, matrix(c(1, 1, 1, 0, 1, 0), 2, 3), ignore_attr = TRUE)
+  # the default, and a mark of two groups, are read as they were
+  expect_equal(as_matrix(create_core(6, mark = c(1, 1, 1, 2, 2, 2))),
+               as_matrix(create_core(6)))
 })
 
 test_that("core-periphery creation works", {

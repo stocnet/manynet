@@ -14,7 +14,9 @@
 #'   such as the path-based measures, for which a negative tie is hostility
 #'   rather than a channel.
 #'   - `to_normalised()` rescales tie weights relative to the other ties of the
-#'   same node, so that a value reads as a share rather than a count.
+#'   same node, so that a value reads as a share rather than a count,
+#'   or weights the ties of a two-mode network of documents and terms by
+#'   term frequency-inverse document frequency.
 #' 
 #'   If the format condition is not met,
 #'   for example `to_undirected()` is used on a network that is already undirected,
@@ -43,7 +45,7 @@ NULL
 #'   which retains every tie but replaces its sign with its magnitude.
 #' @importFrom igraph delete_edges E delete_edge_attr
 #' @examples
-#' marvel <- to_uniplex(fict_marvel, "relationship")
+#' marvel <- to_layer(fict_marvel, "relationship")
 #' to_unsigned(marvel, "positive")
 #' to_unsigned(marvel, "both")
 #' @export
@@ -360,6 +362,17 @@ to_weighted.network <- function(.data, measure = NULL){
 #'   those tied, so that 1 marks a tie of typical strength.
 #'   - "sum" divides by the total of them, so that they add to 1 and each reads
 #'   as the share of the node's ties that goes to that partner.
+#'   - "tfidf" weights the ties of a two-mode network of documents and terms
+#'   by term frequency-inverse document frequency.
+#'   Each tie is divided by the total of its document's ties, its term
+#'   frequency, and multiplied by \eqn{\log(N/n_t)}, where \eqn{N} is the
+#'   number of documents and \eqn{n_t} the number of documents tied to the
+#'   term. A term that every document uses thus weighs 0, and a term that
+#'   few documents use weighs more. This is the definition of
+#'   `tidytext::bind_tf_idf()`. The documents are the rows, the first mode,
+#'   unless `across = "columns"`, which makes them the columns.
+#'   Only a two-mode network has documents and terms, so a one-mode network
+#'   gives an error.
 #'
 #'   Missing values propagate rather than being ignored,
 #'   so that a node with an unobserved tie has all its values unobserved.
@@ -377,28 +390,33 @@ to_weighted.network <- function(.data, measure = NULL){
 #' @examples
 #' to_normalised(ison_networkers, rule = "sum", across = "rows")
 #' @export
-to_normalised <- function(.data, rule = c("max", "mean", "sum"),
-                          across = c("both", "rows",
-                                     "columns")) UseMethod("to_normalised")
+to_normalised <- function(.data, rule = c("max", "mean", "sum", "tfidf"),
+                          across = c("both", "rows", "columns")){
+  if(identical(match.arg(rule), "tfidf") && !is_twomode(.data))
+    snet_abort("The {.val tfidf} rule weights the ties between documents and",
+               "terms, which are the two modes of a two-mode network.",
+               "This network is one-mode, so choose another {.arg rule}.")
+  UseMethod("to_normalised")
+}
 
 #' @rdname modif_weight
 #' @export
 to_normalized <- to_normalised
 
 #' @export
-to_normalised.default <- function(.data, rule = c("max", "mean", "sum"),
+to_normalised.default <- function(.data, rule = c("max", "mean", "sum", "tfidf"),
                                   across = c("both", "rows", "columns")){
   as_input(.data, to_normalised, rule = rule, across = across)
 }
 
 #' @export
-to_normalised.matrix <- function(.data, rule = c("max", "mean", "sum"),
+to_normalised.matrix <- function(.data, rule = c("max", "mean", "sum", "tfidf"),
                                  across = c("both", "rows", "columns")){
   .normalise_matrix(.data, match.arg(rule), match.arg(across))
 }
 
 #' @export
-to_normalised.tbl_graph <- function(.data, rule = c("max", "mean", "sum"),
+to_normalised.tbl_graph <- function(.data, rule = c("max", "mean", "sum", "tfidf"),
                                     across = c("both", "rows", "columns")){
   rule <- match.arg(rule)
   across <- match.arg(across)
@@ -416,30 +434,30 @@ to_normalised.tbl_graph <- function(.data, rule = c("max", "mean", "sum"),
   # than the network being rebuilt from the matrix, so that node attributes and
   # everything recorded about the network survive.
   out <- mutate_ties(out, weight = mat[.normalise_index(out, mat)])
-  .record_transformation(out, "normalisation", paste(rule, "across", across))
+  .record_transformation(out, "normalisation", .normalise_label(rule, across))
 }
 
 #' @export
-to_normalised.igraph <- function(.data, rule = c("max", "mean", "sum"),
+to_normalised.igraph <- function(.data, rule = c("max", "mean", "sum", "tfidf"),
                                  across = c("both", "rows", "columns")){
   as_igraph(to_normalised(as_tidygraph(.data), rule = rule, across = across))
 }
 
 #' @export
-to_normalised.network <- function(.data, rule = c("max", "mean", "sum"),
+to_normalised.network <- function(.data, rule = c("max", "mean", "sum", "tfidf"),
                                   across = c("both", "rows", "columns")){
   as_network(to_normalised(as_tidygraph(.data), rule = rule, across = across))
 }
 
 #' @export
-to_normalised.data.frame <- function(.data, rule = c("max", "mean", "sum"),
+to_normalised.data.frame <- function(.data, rule = c("max", "mean", "sum", "tfidf"),
                                      across = c("both", "rows", "columns")){
   if(!is_edgelist(.data)) snet_abort("Not an edgelist")
   as_edgelist(to_normalised(as_tidygraph(.data), rule = rule, across = across))
 }
 
 #' @export
-to_normalised.stocnet <- function(.data, rule = c("max", "mean", "sum"),
+to_normalised.stocnet <- function(.data, rule = c("max", "mean", "sum", "tfidf"),
                                   across = c("both", "rows", "columns")){
   rule <- match.arg(rule)
   across <- match.arg(across)
@@ -460,7 +478,7 @@ to_normalised.stocnet <- function(.data, rule = c("max", "mean", "sum"),
   }
   mat <- .normalise_matrix(as_matrix(out), rule, across)
   out$ties$weight <- mat[.normalise_index(out, mat)]
-  .record_transformation(out, "normalisation", paste(rule, "across", across))
+  .record_transformation(out, "normalisation", .normalise_label(rule, across))
 }
 
 # Whether rescaling this network across this margin makes it asymmetric while
@@ -496,7 +514,29 @@ to_normalised.stocnet <- function(.data, rule = c("max", "mean", "sum"),
   is.nan(x) | is.infinite(x) | (!is.na(x) & x == 0)
 }
 
+# How the transformation is recorded. The "tfidf" rule reads `across` as
+# where the documents are, and "both" leaves them in the rows.
+.normalise_label <- function(rule, across){
+  if(rule == "tfidf")
+    paste("tfidf, with documents in the",
+          if(across == "columns") "columns" else "rows") else
+    paste(rule, "across", across)
+}
+
+# Term frequency-inverse document frequency, with the documents in the rows,
+# or in the columns where `across` says so. A document with no terms keeps its
+# zeroes, as does a term in no document.
+.tfidf_matrix <- function(mat, across){
+  if(across == "columns") return(t(.tfidf_matrix(t(mat), "rows")))
+  totals <- rowSums(mat)
+  totals[!is.na(totals) & totals == 0] <- 1
+  documents <- colSums(mat != 0)
+  idf <- ifelse(documents > 0, log(nrow(mat)/documents), 0)
+  sweep(mat / totals, 2, idf, `*`)
+}
+
 .normalise_matrix <- function(mat, rule, across){
+  if(rule == "tfidf") return(.tfidf_matrix(mat, across))
   rows <- .normalise_denominators(mat, rule)
   cols <- .normalise_denominators(t(mat), rule)
   denom <- switch(across,

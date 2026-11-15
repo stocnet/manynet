@@ -80,7 +80,6 @@ reference:
       Functions for deterministically creating and stochastically generating 
       directed and undirected, one-mode and two-mode networks.
     contents:
-      - make_mnet
       - make_stocnet
       - make_explicit
       - make_create
@@ -93,7 +92,7 @@ reference:
       - starts_with("collect_")
   - subtitle: "Playing"
     desc: |
-      Functions for simulating diffusion or learning processes,
+      Functions for simulating diffusion, opinion, or mobility processes,
       i.e. nodal change, upon networks.
     contents:
       - starts_with("play_")
@@ -146,8 +145,10 @@ reference:
     contents:
       - modif_direction
       - modif_weight
+      - modif_influence
       - modif_labels
-      - modif_plexity
+      - modif_loops
+      - modif_layers
   - subtitle: "Transforming"
     desc: |
       Functions for transforming networks, which may change the network's dimensions.
@@ -169,18 +170,19 @@ reference:
       - modif_concepts
   - subtitle: "Converting"
     desc: |
-      Functions for permuting networks or constructing a network
-      from how alike another network's nodes are.
+      Functions for permuting networks, constructing a network
+      from how alike another network's nodes are,
+      or listing the motifs a network can contain.
     contents:
       - modif_permutation
       - modif_proximity
+      - modif_motifs
   - subtitle: "Splits"
     desc: |
       Functions for splitting networks into a list of networks,
       or (re)joining a list of networks into a single network.
     contents:
       - modif_split
-      - modif_motifs
       - starts_with("from_")
   - subtitle: "Missing"
     desc: |
@@ -226,16 +228,22 @@ reference:
     contents:
       - measure_attributes_values
       - starts_with("tie_is_")
-    
-  - title: "Practicing"
   - subtitle: "Interface"
     desc: |
-      Functions to support new users in learning and interacting with
-      network concepts and data.
+      `snet_*()` functions report what a function did, warn, abort, or show
+      progress, at the verbosity the user sets.
+      The other stocnet packages use them too, as well as the helpers for
+      old names, moved functions, and suggested packages.
     contents:
-      - glossary
       - interface
       - progress
+
+  - title: "Practicing"
+  - subtitle: "Glossary"
+    desc: |
+      Functions to support new users in learning network concepts.
+    contents:
+      - glossary
       
   - title: "Data"
     desc: |

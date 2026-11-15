@@ -15,6 +15,11 @@
 #'   - `snet_unavailable()` for a feature that is not yet available.
 #'   - `snet_warn()` for a result the user should not trust without reading,
 #'   such as a value that is dropped or a name that does not match.
+#'   - `snet_deprecated()` for an old name of a function, argument, or value.
+#'   An old name that is only superseded is reported as `snet_minor_info()`.
+#'   - `snet_moved()` for a function that moved to another package.
+#'   - `snet_requires()` for a package that a function needs and that is not
+#'   installed.
 #'   
 #'   A call that only reports is silenced under the default verbosity:
 #'   
@@ -100,6 +105,101 @@ snet_success <- function(..., .envir = parent.frame()){
 snet_prompt <- function(..., .envir = parent.frame()){
   cli::cli_text(cli::style_italic(paste(...)), 
                  .envir = .envir)
+}
+
+#' @rdname interface
+#' @param old,new The old name of a function, argument, or value,
+#'   and the name that replaces it.
+#' @param stage How far the old name is on its way out:
+#'   - `"superseded"` still works without a word, since a released package
+#'   that cannot yet be released again may use it.
+#'   It is reported only under the `'debug'` verbosity.
+#'   - `"deprecated"` still works, but warns whatever the verbosity, with the
+#'   class `"deprecatedWarning"` that [base::.Deprecated()] gives,
+#'   so that the warning can be caught or silenced as that one can.
+#'   - `"defunct"` no longer works, and aborts with the class
+#'   `"defunctError"` that [base::.Defunct()] gives.
+#' @param type What the old name names: a `"function"`, an `"argument"`,
+#'   or a `"value"` of an argument.
+#' @param why An optional sentence saying why the name changed,
+#'   or how to get the same result with the new one.
+#' @param msg A message to give instead of the one built from `old` and `new`.
+#' @export
+snet_deprecated <- function(old, new, stage = c("deprecated", "superseded", "defunct"),
+                            type = c("function", "argument", "value"),
+                            why = NULL, msg = NULL, .envir = parent.frame()){
+  stage <- match.arg(stage)
+  type <- match.arg(type)
+  if(is.null(msg)){
+    mark <- switch(type, "function" = "fn", "argument" = "arg", "value" = "code")
+    what <- switch(type, "function" = "", "argument" = " argument", "value" = "")
+    msg <- paste0("{.", mark, " ", old, "}", what, " is ", stage, ". ",
+                  "Use {.", mark, " ", new, "} instead.")
+  }
+  if(stage == "superseded"){
+    # A superseded name only reports, so the verbosity can silence it.
+    snet_minor_info(msg, .envir = .envir)
+    return(invisible(NULL))
+  }
+  bullets <- c(msg, if(!is.null(why)) c(i = why))
+  if(stage == "defunct")
+    cli::cli_abort(bullets, class = "defunctError", .envir = .envir)
+  cli::cli_warn(c(bullets, i = "See {.code help('defunct', package = 'manynet')}."),
+                class = "deprecatedWarning", .envir = .envir)
+}
+
+#' @rdname interface
+#' @param new_pkg,old_pkg The package that a function moved to,
+#'   and the package it moved from.
+#' @param version The version of `old_pkg` in which the function moved.
+#' @details
+#'   `snet_moved()` tells the user that a function moved to another package,
+#'   and how to install that package where it is missing.
+#'   By default it then aborts, since the old name is defunct.
+#'   With `stage = "deprecated"` it warns instead, so that a shim can go on to
+#'   call the function in its new package.
+#' @export
+snet_moved <- function(old, new, new_pkg = "netrics", version = NULL,
+                       old_pkg = "manynet",
+                       stage = c("defunct", "deprecated"),
+                       .envir = parent.frame()){
+  stage <- match.arg(stage)
+  since <- if(is.null(version)) paste0("out of {.pkg ", old_pkg, "}") else
+    paste0("in {.pkg ", old_pkg, "} ", version)
+  bullets <- c(paste0("{.fn ", old, "} moved ", since, " to {.pkg ", new_pkg,
+                      "}."),
+               i = paste0("Please use {.fn ", new_pkg, "::", new, "} instead."))
+  if(!nzchar(system.file(package = new_pkg)))
+    bullets <- c(bullets, i = paste0("Install {.pkg ", new_pkg, "} with ",
+                                     "{.run install.packages(\"", new_pkg,
+                                     "\")}."))
+  if(stage == "defunct")
+    cli::cli_abort(bullets, class = "defunctError", .envir = .envir)
+  cli::cli_warn(bullets, class = "deprecatedWarning", .envir = .envir)
+}
+
+#' @rdname interface
+#' @param pkg The name of a package that a function needs,
+#'   usually one the package only suggests.
+#' @param ask Whether to offer to install the package where it is missing.
+#'   By default this is offered only in an interactive session,
+#'   since a script would stall on the question.
+#' @details
+#'   `snet_requires()` checks that a package is installed before a function
+#'   uses it, and aborts with the command to install it where it is not.
+#' @export
+snet_requires <- function(pkg, why = "to run this function",
+                          ask = interactive(), .envir = parent.frame()){
+  if(requireNamespace(pkg, quietly = TRUE)) return(invisible(TRUE))
+  need <- paste0("The {.pkg ", pkg, "} package is required ", why, ".")
+  if(isTRUE(ask) &&
+     isTRUE(utils::askYesNo(paste0("The ", pkg, " package is required ", why,
+                                   ". Would you like to install it from CRAN?")))){
+    utils::install.packages(pkg)
+    if(requireNamespace(pkg, quietly = TRUE)) return(invisible(TRUE))
+  }
+  cli::cli_abort(c(need, i = paste0("Install it with {.run install.packages(\"",
+                                    pkg, "\")}.")), .envir = .envir)
 }
 
 #' @rdname interface

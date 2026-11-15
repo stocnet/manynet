@@ -140,10 +140,10 @@ for analysis. Here are just a few examples, all available in
 The package includes three families of network data:
 
 - Classic/instructional networks: `ison_adolescents`, `ison_algebra`,
-  `ison_bankwiring`, `ison_brandes`, `ison_classmates`, `ison_dolphins`,
+  `ison_bankwiring`, `ison_centrality`, `ison_classmates`, `ison_dolphins`,
   `ison_emotions`, `ison_florentine`, `ison_fraternity`,
   `ison_hightech`, `ison_judo_moves`, `ison_karateka`,
-  `ison_koenigsberg`, `ison_laterals`, `ison_lawfirm`, `ison_monks`,
+  `ison_koenigsberg`, `ison_lawfirm`, `ison_monks`,
   `ison_networkers`, `ison_physicians`, `ison_southern_women`,
   `ison_tailorshop`
 - Fictional networks: `fict_actually`, `fict_friends`, `fict_greys`,

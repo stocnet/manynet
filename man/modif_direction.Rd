@@ -114,6 +114,7 @@ Other ties:
 \code{\link{manip_ties_attr}},
 \code{\link{manip_ties_num}},
 \code{\link{modif_backbone}},
+\code{\link{modif_influence}},
 \code{\link{modif_weight}}
 
 Other modifications:
@@ -121,13 +122,15 @@ Other modifications:
 \code{\link{modif_concepts}},
 \code{\link{modif_from_parts}},
 \code{\link{modif_from_ternary}},
+\code{\link{modif_influence}},
 \code{\link{modif_labels}},
+\code{\link{modif_layers}},
 \code{\link{modif_levels}},
+\code{\link{modif_loops}},
 \code{\link{modif_miss}},
 \code{\link{modif_motifs}},
 \code{\link{modif_paths}},
 \code{\link{modif_permutation}},
-\code{\link{modif_plexity}},
 \code{\link{modif_project}},
 \code{\link{modif_proximity}},
 \code{\link{modif_scope}},

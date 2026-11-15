@@ -108,7 +108,7 @@ data_objs <- list(
     create_ring(12),
     seeds = 1,
     steps = 5,
-    latency = 0.75,
+    onset = 0.25,
     recovery = 0.25
   )
 )

@@ -365,21 +365,27 @@ is_egolist.default <- function(.data) {
 #'   or negative.
 #'   This is the case where the ties have a 'sign' attribute,
 #'   and also where they are weighted and any of those weights are negative.
-#'   - `is_complex()` marks networks TRUE if any ties are loops,
+#'   - `is_looped()` marks networks TRUE if any ties are loops,
 #'   with the sender and receiver being the same node.
 #'   - `is_multiplex()` marks networks TRUE if it contains multiple types
 #'   of ties, such that there can be multiple ties between the same
 #'   sender and receiver.
 #'   This is the case where the ties have a 'layer' (or 'type') attribute.
 #'   Other tie attributes, such as a covariate, do not make a network multiplex.
-#'   - `is_uniplex()` marks networks TRUE if it is neither complex nor multiplex.
+#'   - `is_uniplex()` marks networks TRUE if they are not multiplex,
+#'   that is, if their ties are in one layer or in none.
+#'   - `is_simplified()` marks networks TRUE if no tie is a loop and no ties
+#'   are parallel, as `tie_is_parallel()` marks them.
+#'   Ties in different layers, at different moments, or from different
+#'   reporters are not parallel, so a multiplex network can be simplified.
+#'   `to_simplified()` makes a network so.
 #'   - `is_disaggregated()` marks networks TRUE if any of their ties are
 #'   parallel, as `tie_is_parallel()` marks them, so that
 #'   `to_aggregated(over = NULL)` can combine them.
 #'   A network marked FALSE holds no parallel ties, which does not mean that
 #'   it was aggregated.
 #' @template param_data
-#' @eval detail_avail("is_(weighted|directed|signed|complex|multiplex|uniplex|disaggregated)")
+#' @eval detail_avail("is_(weighted|directed|signed|looped|multiplex|uniplex|simplified|disaggregated)")
 #' @family marks
 NULL
 
@@ -583,37 +589,37 @@ is_signed.network <- function(.data) {
 #' @rdname mark_format_tie
 #' @importFrom igraph any_loop
 #' @examples
-#' is_complex(create_lattice(4))
+#' is_looped(create_lattice(4))
 #' @export
-is_complex <- function(.data) UseMethod("is_complex")
+is_looped <- function(.data) UseMethod("is_looped")
 
 #' @export
-is_complex.default <- function(.data) {
-  is_complex(as_igraph(.data))
+is_looped.default <- function(.data) {
+  is_looped(as_igraph(.data))
 }
 
 #' @export
-is_complex.igraph <- function(.data) {
+is_looped.igraph <- function(.data) {
   igraph::any_loop(.data)
 }
 
 #' @export
-is_complex.tbl_graph <- function(.data) {
+is_looped.tbl_graph <- function(.data) {
   igraph::any_loop(.data)
 }
 
 #' @export
-is_complex.matrix <- function(.data) {
+is_looped.matrix <- function(.data) {
   !(is_twomode(.data) || all(is.na(diag(.data))) || all(diag(.data) == 0))
 }
 
 #' @export
-is_complex.data.frame <- function(.data) {
+is_looped.data.frame <- function(.data) {
   any(.data[[1]] == .data[[2]])
 }
 
 #' @export
-is_complex.stocnet <- function(.data) {
+is_looped.stocnet <- function(.data) {
   # a stocnet keeps its ties in `.data$ties`, not at the top level
   # a hyperedge names no node in either column, and cannot be a loop
   if(is.null(.data$ties)) FALSE else
@@ -621,14 +627,14 @@ is_complex.stocnet <- function(.data) {
 }
 
 #' @export
-is_complex.network <- function(.data) {
+is_looped.network <- function(.data) {
   network::has.loops(.data)
 }
 
 #' @export
-is_complex.list <- function(.data) {
+is_looped.list <- function(.data) {
   if(is_list(.data)){
-    is_complex(.data[[1]])
+    is_looped(.data[[1]])
   }
 }
 
@@ -697,20 +703,34 @@ is_disaggregated.default <- function(.data) {
 }
 
 #' @rdname mark_format_tie
-#' @importFrom igraph is_simple
 #' @examples
 #' is_uniplex(create_star(3))
+#' is_uniplex(ison_algebra)
 #' @export
 is_uniplex <- function(.data) UseMethod("is_uniplex")
 
+# A network is uniplex where it is not multiplex: its ties are all in one
+# layer, or in none. Until 2.5.0 this asked `igraph::is_simple()` instead,
+# which is now `is_simplified()`.
 #' @export
 is_uniplex.default <- function(.data) {
-  is_uniplex(as_igraph(.data))
+  !is_multiplex(.data)
 }
 
+#' @rdname mark_format_tie
+#' @examples
+#' is_simplified(ison_koenigsberg)
+#' is_simplified(to_simplified(ison_koenigsberg))
 #' @export
-is_uniplex.igraph <- function(.data) {
-  igraph::is_simple(.data)
+is_simplified <- function(.data) UseMethod("is_simplified")
+
+# A simplified network has no loops and no parallel ties. Parallel ties are
+# read as `tie_is_parallel()` reads them, within one layer, moment, reporter,
+# and target, rather than as `igraph::is_simple()` reads them, which counts
+# two layers' ties on one dyad as parallel too.
+#' @export
+is_simplified.default <- function(.data) {
+  !is_looped(.data) && !is_disaggregated(.data)
 }
 
 # Cognitive Formats ####

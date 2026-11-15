@@ -4,7 +4,7 @@
 
 
 test_that("to_giant works",{
-  fm <- to_uniplex(fict_marvel, layer = "relationship")
+  fm <- to_layer(fict_marvel, layer = "relationship")
   expect_equal(c(net_nodes(fm)), 53)
   expect_equal(c(net_nodes(to_giant(fm))), 50)
   expect_equal(c(net_nodes(to_giant(as_igraph(fm)))), 50)
@@ -30,14 +30,14 @@ test_that("net_name() and to_giant() work on a network", {
 })
 
 test_that("to_giant is a wrapper for the first component",{
-  fm <- to_uniplex(fict_marvel, layer = "relationship")
+  fm <- to_layer(fict_marvel, layer = "relationship")
   expect_identical(as_matrix(to_component(fm)), as_matrix(to_giant(fm)))
   expect_identical(as_matrix(to_component(fm, component = 1)),
                    as_matrix(to_giant(fm)))
 })
 
 test_that("to_component selects by size rank",{
-  fm <- to_uniplex(fict_marvel, layer = "relationship")
+  fm <- to_layer(fict_marvel, layer = "relationship")
   expect_equal(c(net_nodes(to_component(fm, 1))), 50)
   expect_equal(c(net_nodes(to_component(fm, 2))), 1)
   expect_error(to_component(fm, 99), "between 1 and 4")
@@ -45,7 +45,7 @@ test_that("to_component selects by size rank",{
 })
 
 test_that("to_component selects by node name",{
-  fm <- to_uniplex(fict_marvel, layer = "relationship")
+  fm <- to_layer(fict_marvel, layer = "relationship")
   # Cable is an isolate, and so its own component
   expect_equal(c(net_nodes(to_component(fm, "Cable"))), 1)
   expect_true("Cable" %in% node_names(to_component(fm, "Cable")))
@@ -238,12 +238,12 @@ test_that("to_mode reports a name matching both modes",{
                as_matrix(to_mode2(ison_southern_women)))
 })
 
-test_that("to_mode refuses a network of three or more modes",{
+test_that("to_mode projects a network of three or more modes",{
   # the only three-mode object the package can hold, built as in test-mark_is.R
   three <- as_stocnet(fict_marvel)
   three$nodes$mode[1:5] <- "third"
   expect_equal(net_modes(three), 3)
-  expect_error(to_mode(three, 1), "3 modes")
+  expect_equal(net_modes(to_mode(three, 1)), 1)
   # two-mode and one-mode networks are unaffected by that check
   expect_equal(net_modes(ison_southern_women), 2)
   expect_equal(net_modes(create_ring(5)), 1)
@@ -272,7 +272,7 @@ test_that("to, and from, waves work", {
   waves <- to_waves(orig, attribute = "wave")
   from_wave <- from_waves(waves)
   expect_length(waves, length(unique(tie_attribute(orig, "wave"))))
-  expect_length(from_wave, length(as_igraph(orig)))
+  expect_equal(net_nodes(from_wave), net_nodes(orig))
 })
 
 test_that("to and from slices work", {
@@ -328,9 +328,9 @@ test_that("to_layers splits a multiplex network into its layers", {
   expect_type(out, "list")
   expect_length(out, net_layers(net))
   expect_named(out, c("friend", "enemy"))
-  # Each layer is what to_uniplex() would return for that tie type,
+  # Each layer is what to_layer() would return for that tie type,
   # so the singular and plural forms cannot drift apart.
-  expect_equal(as_matrix(out$friend), as_matrix(to_uniplex(net, "friend")))
+  expect_equal(as_matrix(out$friend), as_matrix(to_layer(net, "friend")))
   expect_false(any(vapply(out, is_multiplex, logical(1))))
 })
 
@@ -341,11 +341,11 @@ test_that("to_layers returns one layer for an already uniplex network", {
   expect_equal(as_matrix(out[[1]]), as_matrix(ison_adolescents))
 })
 
-test_that("to_layer is an alias of to_uniplex", {
+test_that("to_layer is an alias of to_layer", {
   net <- as_tidygraph(create_filled(5)) |>
     mutate_ties(type = rep(c("friend", "enemy"), 5))
   expect_equal(as_matrix(to_layer(net, "friend")),
-               as_matrix(to_uniplex(net, "friend")))
+               as_matrix(to_layer(net, "friend")))
 })
 
 test_that("renamed to_*() functions are deprecated but still forward", {
@@ -520,7 +520,7 @@ test_that("the tie-dropping functions record what they left out", {
 test_that("nothing is recorded where nothing was excluded", {
   # a function with nothing to drop did not transform the network
   expect_length(as_infolist(delete_isolates(ison_adolescents))$transformations, 0)
-  expect_length(as_infolist(to_simplex(ison_adolescents))$transformations, 0)
+  expect_length(as_infolist(to_unlooped(ison_adolescents))$transformations, 0)
   # a matrix or an edgelist has nowhere to hold information about itself
   expect_true(is.matrix(to_component(as_matrix(fict_greys), 2)))
   expect_true(is.data.frame(to_component(as_edgelist(fict_greys), 2)))
@@ -570,7 +570,7 @@ test_that("the stocnet methods record without a round trip", {
 })
 
 test_that("the stocnet methods return what the other classes return", {
-  for (f in list(to_giant, to_simplex, to_acyclic, to_unweighted)) {
+  for (f in list(to_giant, to_unlooped, to_acyclic, to_unweighted)) {
     expect_equal(c(net_nodes(f(ison_networkers))),
                  c(net_nodes(f(as_stocnet(ison_networkers)))))
     expect_equal(c(net_ties(f(ison_networkers))),
@@ -580,10 +580,10 @@ test_that("the stocnet methods return what the other classes return", {
                c(net_ties(to_unsigned(as_stocnet(fict_marvel)))))
 })
 
-test_that("to_uniplex keeps the information of the layer it retains", {
-  # to_uniplex() and a node drop prune the per-layer information by the same
+test_that("to_layer keeps the information of the layer it retains", {
+  # to_layer() and a node drop prune the per-layer information by the same
   # rule, so both sides of that rule are tested.
-  out <- to_uniplex(ison_classmates, layer = "friends")
+  out <- to_layer(ison_classmates, layer = "friends")
   expect_equal(net_layers(out), 1)
   expect_equal(layer_names(out), "friends")
   info <- as_infolist(out)
@@ -793,7 +793,7 @@ test_that("to_backbone reports what would otherwise pass unnoticed", {
   # `snet_warn()` is silent at the default verbosity, so it is raised here
   # every filter builds its null model from the ties as the network holds
   # them, so a tie restated at each wave is tested once per wave
-  repeated <- to_uniplex(ison_monks, layer = "like")
+  repeated <- to_layer(ison_monks, layer = "like")
   expect_true(any(grepl("more than once",
                         capture_warnings(tie_is_backbone(repeated)))))
   expect_false(any(grepl("more than once",
@@ -815,7 +815,7 @@ test_that("to_mode resolves a mode by name on a stocnet", {
 
 test_that("to_undirected reconciles a tie only within one report", {
   arr <- css_array()
-  css <- as_stocnet(arr, attribute = "by")
+  css <- as_stocnet(arr, over = "by")
   reverse <- aperm(arr, c(2, 1, 3))
   und <- to_undirected(css)
   expect_false(is_directed(und))
@@ -874,17 +874,17 @@ test_that("to_undirected drops a layer that a rule leaves without ties", {
   expect_null(und$info$layers)
 })
 
-test_that("to_simplex removes loops and keeps parallel ties in every class", {
+test_that("to_unlooped removes loops and keeps parallel ties in every class", {
   # a tie from 1 to 2 recorded twice, and a loop on 2
   net <- make_stocnet(ties = data.frame(from = c(1L, 1L, 2L), to = c(2L, 2L, 2L)),
                       nodes = dplyr::tibble(.rows = 2),
                       info = list(directed = TRUE))
   for(cl in c("stocnet", "tidygraph", "igraph")){
-    out <- to_simplex(get(paste0("as_", cl))(net))
-    expect_false(is_complex(out), label = cl)
+    out <- to_unlooped(get(paste0("as_", cl))(net))
+    expect_false(is_looped(out), label = cl)
     expect_equal(as.numeric(net_ties(out)), 2, label = cl)
   }
-  mat <- to_simplex(as_matrix(net))
+  mat <- to_unlooped(as_matrix(net))
   expect_equal(unname(mat), matrix(c(0, 0, 2, 0), 2, 2))
-  expect_match(as_infolist(to_simplex(net))$transformations$exclusion, "loop")
+  expect_match(as_infolist(to_unlooped(net))$transformations$exclusion, "loop")
 })

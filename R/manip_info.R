@@ -38,6 +38,10 @@
 #'   was collected or generated. See the Transformations section.
 #'   Note that this records what has been done to the network,
 #'   where "method" records how the network was collected or modelled.
+#'   - "uncoded" is a data frame of the units of text still to code,
+#'   one row each with its 'document' and, where the unit is a part of a
+#'   document, its 'sentence' or 'paragraph'.
+#'   `collect_statements()` sets it, and removes it when all are coded.
 #'
 #'   If no arguments are used,
 #'   the function will check for missing information and prompt the user to add it.
@@ -52,8 +56,8 @@
 #'   - "projection" (4.3), which `to_mode1()`, `to_mode2()`, and
 #'   `to_concepts()` set.
 #'   - "exclusion" (4.4), which the functions that drop nodes or ties set,
-#'   such as `delete_isolates()`, `to_component()`, and `to_uniplex()`.
-#'   - "aggregation" (4.5), which `to_aggregated()`, `to_flat()`,
+#'   such as `delete_isolates()`, `to_component()`, and `to_layer()`.
+#'   - "aggregation" (4.5), which `to_aggregated()`,
 #'   `join_ties()`, and `to_blockmodel()` set.
 #'   - "imputation" (4.6), which `impute_ties()` and `impute_nodes()` set.
 #'
@@ -204,7 +208,7 @@ add_info.stocnet <- function(.data, ...){
                           "update", "sender", "receiver", "focal", "centered",
                           "source", "method", "location", "date", "boundary",
                           "doi", "system", "max_degree", "min_degree",
-                          "transformations")
+                          "transformations", "uncoded")
 
 .warn_unrecognised_info <- function(given){
   unrecog <- setdiff(given, .stocnet_info_fields)
@@ -521,7 +525,8 @@ snet_menu <- function(choices, title) utils::menu(choices = choices, title = tit
   dropped <- setdiff(info$layers, layers)
   if(length(dropped) == 0) return(info)
   info$layers <- if(length(layers) > 0) layers else NULL
-  for(field in c("directed", "signed", "observation", "update")){
+  for(field in c("directed", "signed", "observation", "update",
+                 "sender", "receiver")){
     vals <- info[[field]]
     if(is.null(vals) || is.null(names(vals))) next
     keep <- intersect(names(vals), layers)
@@ -533,6 +538,26 @@ snet_menu <- function(choices, title) utils::menu(choices = choices, title = tit
   if(!is.null(info$focal)){
     focal <- setdiff(info$focal, dropped)
     info$focal <- if(length(focal) > 0) focal else NULL
+  }
+  info
+}
+
+# A network that loses every node of a mode no longer has that mode, so the
+# names of its modes, and the senders and receivers of its layers, are cut
+# back to the modes that remain.
+.prune_mode_info <- function(info, modes){
+  if(is.null(info) || is.null(info$modes)) return(info)
+  if(all(info$modes %in% modes)) return(info)
+  info$modes <- intersect(info$modes, modes)
+  if(length(info$modes) == 0) info$modes <- NULL
+  # the sender and receiver of a layer are modes, so a layer that runs from
+  # or to a mode that is gone has none, and neither does a one-mode network
+  for(field in c("sender", "receiver")){
+    vals <- info[[field]]
+    if(is.null(vals)) next
+    vals <- vals[vals %in% info$modes]
+    info[[field]] <- if(length(vals) > 0 && length(info$modes) > 1) vals else
+      NULL
   }
   info
 }

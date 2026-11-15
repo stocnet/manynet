@@ -23,13 +23,13 @@ to_weighted(.data, measure = NULL)
 
 to_normalised(
   .data,
-  rule = c("max", "mean", "sum"),
+  rule = c("max", "mean", "sum", "tfidf"),
   across = c("both", "rows", "columns")
 )
 
 to_normalized(
   .data,
-  rule = c("max", "mean", "sum"),
+  rule = c("max", "mean", "sum", "tfidf"),
   across = c("both", "rows", "columns")
 )
 }
@@ -70,6 +70,17 @@ strongest tie is 1 and its others are read against that.
 those tied, so that 1 marks a tie of typical strength.
 \item "sum" divides by the total of them, so that they add to 1 and each reads
 as the share of the node's ties that goes to that partner.
+\item "tfidf" weights the ties of a two-mode network of documents and terms
+by term frequency-inverse document frequency.
+Each tie is divided by the total of its document's ties, its term
+frequency, and multiplied by \eqn{\log(N/n_t)}, where \eqn{N} is the
+number of documents and \eqn{n_t} the number of documents tied to the
+term. A term that every document uses thus weighs 0, and a term that
+few documents use weighs more. This is the definition of
+\code{tidytext::bind_tf_idf()}. The documents are the rows, the first mode,
+unless \code{across = "columns"}, which makes them the columns.
+Only a two-mode network has documents and terms, so a one-mode network
+gives an error.
 }
 
 Missing values propagate rather than being ignored,
@@ -111,7 +122,9 @@ It is a guard for the functions that cannot read a negative tie,
 such as the path-based measures, for which a negative tie is hostility
 rather than a channel.
 \item \code{to_normalised()} rescales tie weights relative to the other ties of the
-same node, so that a value reads as a share rather than a count.
+same node, so that a value reads as a share rather than a count,
+or weights the ties of a two-mode network of documents and terms by
+term frequency-inverse document frequency.
 }
 
 If the format condition is not met,
@@ -145,7 +158,7 @@ sends \eqn{i}. Where such a network is undirected, each tie is therefore
 split into two, and the network is returned directed.
 }
 \examples{
-marvel <- to_uniplex(fict_marvel, "relationship")
+marvel <- to_layer(fict_marvel, "relationship")
 to_unsigned(marvel, "positive")
 to_unsigned(marvel, "both")
 to_positive(marvel)
@@ -156,7 +169,8 @@ Other ties:
 \code{\link{manip_ties_attr}},
 \code{\link{manip_ties_num}},
 \code{\link{modif_backbone}},
-\code{\link{modif_direction}}
+\code{\link{modif_direction}},
+\code{\link{modif_influence}}
 
 Other modifications:
 \code{\link{modif_backbone}},
@@ -164,13 +178,15 @@ Other modifications:
 \code{\link{modif_direction}},
 \code{\link{modif_from_parts}},
 \code{\link{modif_from_ternary}},
+\code{\link{modif_influence}},
 \code{\link{modif_labels}},
+\code{\link{modif_layers}},
 \code{\link{modif_levels}},
+\code{\link{modif_loops}},
 \code{\link{modif_miss}},
 \code{\link{modif_motifs}},
 \code{\link{modif_paths}},
 \code{\link{modif_permutation}},
-\code{\link{modif_plexity}},
 \code{\link{modif_project}},
 \code{\link{modif_proximity}},
 \code{\link{modif_scope}},

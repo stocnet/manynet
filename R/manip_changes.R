@@ -80,6 +80,10 @@ mutate_changes.stocnet <- function(.data, ...){
 #'   This should have columns `time`, `node` (labelled), 
 #'   `var` (referencing an existing nodal attribute), 
 #'   and `value` (which can be of any class). 
+#'   A categorical variable that is not yet among the nodal attributes,
+#'   such as the state of a diffusion, is added to the nodes,
+#'   with all nodes starting as "S"
+#'   (or the first value of S in `compartments =`, given through `...`).
 #' @param var A character string specifying the nodal variable to which the changes apply,
 #'  if not already specified in the `changes` data frame. This is only used
 #'  when the `changes` data frame does not already have a `var` column, and is ignored otherwise.
@@ -108,9 +112,7 @@ bind_changes.igraph <- function(.data, changes, var, ...){
       out <- .infer_active(out, changes)
       # changes <- changes[changes[,1] != min(changes[,1]),]
     }
-    if("diffusion" %in% changes[,3] && !("diffusion" %in% net_node_attributes(.data))){
-      out <- .infer_susceptible(out, changes)
-    }
+    out <- .infer_susceptible(out, changes, ...)
     .check_changevars(changes)
     .check_varexists(out, changes)
     
@@ -230,8 +232,24 @@ bind_changes.igraph <- function(.data, changes, var, ...){
   type(x) == type(y)
 }
 
-.infer_susceptible <- function(.data, changes){
-  .data |> mutate_nodes(diffusion = "S")
+# A categorical state variable that is not yet on the nodes is made for them,
+# with every node starting in the susceptible value: the first value of S in
+# `compartments`, if given through `...`, and otherwise "S".
+.infer_susceptible <- function(.data, changes, ..., compartments = NULL){
+  vars <- unique(as.character(changes[["var"]]))
+  vars <- setdiff(vars, c("active", net_node_attributes(.data)))
+  start <- if(!is.null(compartments) && !is.null(compartments[["S"]]))
+    compartments[["S"]][1] else "S"
+  for(v in vars){
+    values <- changes[["value"]][changes[["var"]] == v]
+    if(is.list(values) && all(lengths(values) == 1L)) 
+      values <- unlist(values, use.names = FALSE)
+    if(v != "diffusion" && !(is.character(values) || is.factor(values))) next
+    if(v != "diffusion")
+      snet_info("Made the node attribute {.var {v}}, with all nodes starting as {.val {start}}.")
+    .data <- add_node_attribute(.data, v, rep(start, net_nodes(.data)))
+  }
+  .data
 }
 
 #' @export
@@ -273,11 +291,13 @@ bind_changes.stocnet <- function(.data, changes, var, ...){
   changes <- changes |> dplyr::select(time, node, var, value)
   .check_changevars(changes)
   
-  ## 5. Special-case inference for 'active'/'diffusion' -------------------------
+  ## 5. Special-case inference for 'active' and state variables ----------------
   if("active" %in% changes$var && !("active" %in% net_node_attributes(out)))
     out <- .infer_active(out, changes)
-  if("diffusion" %in% changes$var && !("diffusion" %in% net_node_attributes(out)))
-    out <- .infer_susceptible(out, changes)
+  out <- .infer_susceptible(out, changes, ...)
+  # the compartments are kept, so that `as_diffusion()` can read them
+  if(!is.null(list(...)$compartments))
+    out$info$compartments <- as.list(list(...)$compartments)
   
   .check_varexists(out, changes)
   

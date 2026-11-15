@@ -53,9 +53,9 @@ test_that("delete_node_attribute works", {
   expect_false("age" %in% net_node_attributes(delete_node_attribute(net, "age")))
   expect_true("sex" %in% net_node_attributes(delete_node_attribute(net, "age")))
   # Removes several at once
-  expect_equal(net_node_attributes(delete_node_attribute(net, c("age", "sex"))), "name")
+  expect_equal(net_node_attributes(delete_node_attribute(net, c("age", "sex"))), "label")
   # Returns the same class it was given
-  expect_s3_class(delete_node_attribute(net, "age"), "tbl_graph")
+  expect_s3_class(delete_node_attribute(net, "age"), class(net)[1])
   expect_s3_class(delete_node_attribute(as_igraph(net), "age"), "igraph")
   # Same result as the tidyverse-style NULL assignment
   expect_equal(net_node_attributes(delete_node_attribute(net, "age")),
@@ -68,7 +68,7 @@ test_that("delete_tie_attribute works", {
   expect_false("weight" %in% net_tie_attributes(delete_tie_attribute(net, "weight")))
   expect_equal(net_tie_attributes(delete_tie_attribute(net, c("weight", "kind"))),
                character(0))
-  expect_s3_class(delete_tie_attribute(net, "weight"), "tbl_graph")
+  expect_s3_class(delete_tie_attribute(net, "weight"), class(net)[1])
 })
 
 test_that("join_ties works", {
@@ -95,8 +95,8 @@ test_that("summarise_ties works", {
 })
 
 test_that("delete_nodes works", {
-  expect_length(ison_adolescents, 8)
-  expect_length(delete_nodes(ison_adolescents, "Betty"), 7)
+  expect_equal(as.numeric(net_nodes(ison_adolescents)), 8)
+  expect_equal(as.numeric(net_nodes(delete_nodes(ison_adolescents, "Betty"))), 7)
 })
 
 test_that("add_ties accepts an even vector of nodes", {
@@ -157,9 +157,9 @@ test_that("add_ties works across classes and keeps new ties weighted", {
   }
   # new ties are given a weight of 1 rather than a missing weight
   expect_false(anyNA(as_matrix(add_ties(as_matrix(wtd), c(1, 5)))))
-  expect_equal(igraph::edge_attr(add_ties(wtd, c(1, 5)), "weight")[11], 1)
-  expect_equal(igraph::edge_attr(add_ties(wtd, c(1, 5),
-                                          list(weight = 7)), "weight")[11], 7)
+  expect_equal(as.numeric(tie_attribute(add_ties(wtd, c(1, 5)), "weight"))[11], 1)
+  expect_equal(as.numeric(tie_attribute(add_ties(wtd, c(1, 5),
+                                                 list(weight = 7)), "weight"))[11], 7)
 })
 
 test_that("as_network() keeps a single node attribute per node", {
@@ -196,4 +196,13 @@ test_that("add_node_attribute takes a mode-length vector above two modes", {
   expect_equal(as.numeric(node_attribute(out, "size")), c(NA, NA, 7, NA, NA))
   # a length two modes share is ambiguous, so it is an error rather than a guess
   expect_error(add_node_attribute(three, "pair", c(1, 2)), "as long as")
+})
+
+test_that("summarise_ties keeps every node of a stocnet", {
+  moments <- sort(unique(tie_attribute(irps_nuclear, "time")))
+  first <- summarise_ties(filter_ties(irps_nuclear, time <= moments[2]),
+                          sum(weight))
+  expect_equal(net_nodes(first), net_nodes(irps_nuclear))
+  expect_true(all(first$ties$to > net_dims(irps_nuclear)[1]))
+  expect_true("weight" %in% net_tie_attributes(first))
 })

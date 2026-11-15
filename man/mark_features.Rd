@@ -8,9 +8,6 @@
 \alias{is_acyclic}
 \alias{is_aperiodic}
 \title{Marking networks features}
-\source{
-https://stackoverflow.com/questions/55091438/r-igraph-find-all-cycles
-}
 \usage{
 is_connected(.data, connectivity = c("strong", "weak"))
 
@@ -20,7 +17,7 @@ is_eulerian(.data)
 
 is_acyclic(.data)
 
-is_aperiodic(.data, max_path_length = 4)
+is_aperiodic(.data, max_path_length)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -44,9 +41,8 @@ network into components default to "weak".}
 \item{mark}{A logical vector marking two types or modes.
 By default "type".}
 
-\item{max_path_length}{Maximum path length considered.
-If negative, paths of all lengths are considered.
-By default 4, to avoid potentially very long computation times.}
+\item{max_path_length}{Deprecated, and no longer used,
+since the period is now found exactly.}
 }
 \value{
 TRUE if the condition is met, or FALSE otherwise.
@@ -102,19 +98,37 @@ the absence of cycles of a common length.
 Aperiodicity is a necessary condition for the existence of a
 unique stationary distribution in Markov chains, and thus is
 an important property for the analysis of dynamic processes on networks.
-The function \code{is_aperiodic()} tests for aperiodicity by finding
-all simple paths from each node back to itself, and then
-calculating the greatest common divisor of the lengths of these paths.
-If the greatest common divisor is 1, the network is aperiodic.
+The function \code{is_aperiodic()} finds the period of the network,
+the greatest common divisor of the lengths of all its cycles.
+If the period is 1, the network is aperiodic.
+
+Each cycle lies inside one strongly connected component.
+In each component, the nodes are numbered by their distance from one node,
+and the period of the component is the greatest common divisor of
+\code{level[i] + 1 - level[j]} over the ties from i to j inside it
+(Jarvis and Shier 1996).
+This is exact, and takes time in proportion to the number of ties.
+The network is aperiodic where every component with a cycle has
+a period of 1, as a Markov chain is aperiodic where every class is.
+So two components with cycles of 2 and of 3 are each periodic,
+and the network is not aperiodic, although the lengths 2 and 3
+have no common divisor.
+An undirected tie is a cycle of two, so an undirected network is
+aperiodic where it has a cycle of odd length.
+A self-tie is a cycle of length one, as a state that can stay where it is
+in a Markov chain, so a component with a self-tie is aperiodic.
+In an opinion model, a self-tie is a self-weight (see \code{\link[=to_influence]{to_influence()}}).
+A network with no cycle counts as aperiodic.
 }
 
 \examples{
 is_connected(ison_southern_women)
 is_connected(ison_algebra, connectivity = "weak")
 is_perfect_matching(ison_southern_women)
-is_eulerian(ison_brandes)
+is_eulerian(ison_centrality)
 is_acyclic(ison_algebra)
 is_aperiodic(ison_algebra)
+is_aperiodic(create_ring(31))
 }
 \references{
 \subsection{On perfect matching}{

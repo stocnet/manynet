@@ -5,18 +5,19 @@
 \alias{irps_revere}
 \title{Two-mode network of Paul Revere's (Fischer 1995)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, two-mode network of 254 nodes and 7 nodes and 319 ties
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Paul Revere's Boston ------------------------------------------------------
+#> # A labelled, two-mode network of 254 members and 7 organisations and 319 ties
 #> 
 #> -- Nodes
 #> # A tibble: 261 x 2
-#>   type  name              
-#>   <lgl> <chr>             
-#> 1 FALSE Adams.John        
-#> 2 FALSE Adams.Samuel      
-#> 3 FALSE Allen.Dr          
-#> 4 FALSE Appleton.Nathaniel
-#> 5 FALSE Ash.Gilbert       
-#> 6 FALSE Austin.Benjamin   
+#>   label              mode   
+#>   <chr>              <chr>  
+#> 1 Adams.John         members
+#> 2 Adams.Samuel       members
+#> 3 Allen.Dr           members
+#> 4 Appleton.Nathaniel members
+#> 5 Ash.Gilbert        members
+#> 6 Austin.Benjamin    members
 #> # i 255 more rows
 #> 
 #> -- Ties
@@ -41,6 +42,7 @@ This network is of Paul Revere and 253 of his contemporary's overlapping
 memberships in seven colonial organisations.
 The data has been collected by Kieran Healy from the appendix to
 David Hackett Fischer's "Paul Revere's Ride".
+The first mode is the 254 "members" and the second the 7 "organisations".
 It highlights Paul Revere's centrality in this network, and thus his
 ability to mobilise the towns he rode through on horseback north
 from Boston on the night of April 18, 1775.

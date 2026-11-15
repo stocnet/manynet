@@ -159,6 +159,7 @@
 #'   memberships in seven colonial organisations.
 #'   The data has been collected by Kieran Healy from the appendix to
 #'   David Hackett Fischer's "Paul Revere's Ride".
+#'   The first mode is the 254 "members" and the second the 7 "organisations".
 #'   It highlights Paul Revere's centrality in this network, and thus his
 #'   ability to mobilise the towns he rode through on horseback north
 #'   from Boston on the night of April 18, 1775.
@@ -357,7 +358,8 @@
 #'   The data is a network of 107 ties among 50 US states (nodes).
 #'   States are named by their two-letter ISO-3166 code.
 #'   This data includes also the names of the capitol cities of each state,
-#'   which are listed in the node attribute 'capitol'.
+#'   which are listed in the node attribute 'capitol',
+#'   and their populations, in the node attribute 'population'.
 #' @docType data
 #' @keywords datasets
 #' @name irps_usgeo

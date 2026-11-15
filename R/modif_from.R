@@ -137,7 +137,24 @@ from_waves <- function(netlist) {
   }
   if (.all_matrices(netlist)) return(.stack_matrices(netlist))
   ann <- lapply(netlist, as_igraph)
-  .as_class_of(.rebind_netlist(ann), netlist[[1]])
+  out <- .as_class_of(.rebind_netlist(ann), netlist[[1]])
+  .unrepeat_invariant(out, .invariant_layers(netlist[[1]]),
+                      intersect(c("wave", "panel", "time"),
+                                net_tie_attributes(out))[1])
+}
+
+# A layer that holds throughout is carried into every moment that a network
+# is split into, so joining the moments back would repeat its ties once for
+# each moment. Each such tie is kept once, at the first moment it is in.
+.unrepeat_invariant <- function(.data, invariant, stamp){
+  layer <- intersect(c("layer", "type"), net_tie_attributes(.data))[1]
+  if(!length(invariant) || is.na(layer) || is.na(stamp)) return(.data)
+  ties <- if(inherits(.data, "stocnet")) .data$ties else
+    igraph::as_data_frame(as_igraph(.data), what = "edges")
+  ties <- as.data.frame(ties)[setdiff(names(ties), stamp)]
+  repeated <- duplicated(ties) & as.character(ties[[layer]]) %in% invariant
+  if(!any(repeated)) return(.data)
+  .keep_ties_of(.data, which(!repeated))
 }
 
 # Reassemble a list of igraphs into one network, keeping isolates and node
@@ -145,11 +162,13 @@ from_waves <- function(netlist) {
 # For nodes whose attributes differ between waves/slices (e.g. 'active'),
 # the first appearance wins.
 .rebind_netlist <- function(ann, distinct_ties = FALSE) {
-  ties <- do.call(rbind, lapply(ann, igraph::as_data_frame, what = "edges"))
+  # The networks need not all carry the same attributes, as where one wave
+  # holds a layer that the others do not, so the tables are bound by name.
+  ties <- dplyr::bind_rows(lapply(ann, igraph::as_data_frame, what = "edges"))
   if (isTRUE(distinct_ties)) ties <- dplyr::distinct(ties)
   if (all(vapply(ann, is_labelled, logical(1)))) {
-    nodes <- do.call(rbind, lapply(ann, igraph::as_data_frame,
-                                   what = "vertices"))
+    nodes <- dplyr::bind_rows(lapply(ann, igraph::as_data_frame,
+                                     what = "vertices"))
     nodes <- nodes[!duplicated(nodes$name), , drop = FALSE]
     as_tidygraph(igraph::graph_from_data_frame(ties, vertices = nodes))
   } else {
@@ -204,11 +223,15 @@ from_times <- function(netlist) {
   # The names are the moments as characters, and a moment counted or dated is
   # not a character, so they are read back as what they were written from.
   moments <- utils::type.convert(moments, as.is = TRUE)
-  if(all(vapply(netlist, function(x) inherits(x, "stocnet"), logical(1))))
-    return(.join_stocnets(netlist, "time", moments))
-  stamped <- Map(function(net, at) mutate_ties(net, time = at),
-                 netlist, moments)
-  .as_class_of(.rebind_netlist(lapply(stamped, as_igraph)), netlist[[1]])
+  out <- if(all(vapply(netlist, function(x) inherits(x, "stocnet"),
+                       logical(1)))){
+    .join_stocnets(netlist, "time", moments)
+  } else {
+    stamped <- Map(function(net, at) mutate_ties(net, time = at),
+                   netlist, moments)
+    .as_class_of(.rebind_netlist(lapply(stamped, as_igraph)), netlist[[1]])
+  }
+  .unrepeat_invariant(out, .invariant_layers(netlist[[1]]), "time")
 }
 
 #' @rdname modif_from_ternary
@@ -221,8 +244,8 @@ from_times <- function(netlist) {
 #' @param layer_names A character vector of names for the different network objects,
 #'   if not already named within the list.
 #' @examples
-#' marriage <- to_uniplex(ison_florentine, "marriage")
-#' business <- to_uniplex(ison_florentine, "business")
+#' marriage <- to_layer(ison_florentine, "marriage")
+#' business <- to_layer(ison_florentine, "business")
 #' from_layers(marriage = marriage, business = business)
 #' @export
 from_layers <- function(..., layer_names){
@@ -280,6 +303,29 @@ from_reporters <- function(netlist) {
   .as_class_of(out, netlist[[1]])
 }
 
+#' @rdname modif_from_ternary
+#' @details
+#'   `from_targets()` joins a list of networks, each of the gossip about one
+#'   node, into one network that names that node in 'about'.
+#'   It takes the target of each network from the names of the list,
+#'   as `from_reporters()` takes the reporter.
+#'   A node that is not in the list is about nothing, and is not missing,
+#'   since nobody had to gossip about it.
+#' @examples
+#' gossip <- as_stocnet(array(rbinom(27, 1, 0.5), c(3, 3, 3)), over = "about")
+#' from_targets(to_targets(gossip))
+#' @export
+from_targets <- function(netlist) {
+  if(!is.list(netlist) || !length(netlist) || is_manynet(netlist))
+    snet_abort("Please declare a list of networks, one for each target.")
+  # A network that names no target is one view, which `to_targets()` gives
+  # back as a list of that one network alone.
+  if(length(netlist) == 1 && identical(names(netlist), "ties"))
+    return(netlist[[1]])
+  if(.all_matrices(netlist)) return(.stack_matrices(netlist))
+  .as_class_of(.join_third(netlist, "about"), netlist[[1]])
+}
+
 # Helpers for joining ####
 
 # A stocnet whose nonresponse records are replaced by the missing ties they
@@ -295,7 +341,7 @@ from_reporters <- function(netlist) {
 
 # The class a list of networks came in, which a join gives back.
 .as_class_of <- function(out, template){
-  cls <- setdiff(class(template), c("mnet", "tbl_df", "tbl"))[1]
+  cls <- setdiff(class(template), c("tbl_df", "tbl"))[1]
   switch(cls,
          stocnet = as_stocnet(out),
          tbl_graph = as_tidygraph(out),
@@ -377,6 +423,19 @@ from_reporters <- function(netlist) {
 # a node that did not report in one of them for that one alone.
 .join_stocnets <- function(netlist, col, values){
   first <- .clear_missing(netlist[[1]])
+  # Networks scoped to different moments need not hold the same nodes, as
+  # where a node has left, so their ties are matched to the nodes by label.
+  labels <- lapply(netlist, function(net) net$nodes[["label"]])
+  realign <- !all(vapply(labels, is.null, logical(1))) &&
+    !all(vapply(labels, identical, logical(1), labels[[1]]))
+  if(realign){
+    if(any(vapply(labels, is.null, logical(1))) ||
+       any(vapply(netlist, is_twomode, logical(1))))
+      snet_abort("Networks with different nodes can only be joined where",
+                 "they are all labelled and one-mode.")
+    nodes <- dplyr::bind_rows(lapply(netlist, function(net) net$nodes))
+    first$nodes <- nodes[!duplicated(nodes$label), , drop = FALSE]
+  }
   # The networks record one relation, which is directed wherever any of them
   # is, so the ties of an undirected one are then held in both directions.
   each <- vapply(netlist, is_directed, logical(1))
@@ -397,9 +456,25 @@ from_reporters <- function(netlist) {
       ties <- dplyr::bind_rows(ties, missing)
     }
     if(directed && !is_directed(net) && !is_twomode(net)) ties <- bothways(ties)
+    if(realign){
+      ties$from <- match(net$nodes$label[ties$from], first$nodes$label)
+      ties$to <- match(net$nodes$label[ties$to], first$nodes$label)
+    }
     ties[[col]] <- rep(value, nrow(ties))
     ties
   }, netlist, values)
+  # The structural zeros of each network come along as well, still fixed.
+  zeros <- dplyr::bind_rows(Map(function(net, value){
+    zero <- net$missings
+    if(is.null(zero) || !any(.fixed_rows(zero))) return(NULL)
+    zero <- zero[.fixed_rows(zero), , drop = FALSE]
+    if(realign){
+      zero$from <- match(net$nodes$label[zero$from], first$nodes$label)
+      zero$to <- match(net$nodes$label[zero$to], first$nodes$label)
+    }
+    zero[[col]] <- rep(value, nrow(zero))
+    zero
+  }, netlist, values))
   ties <- dplyr::bind_rows(rows)
   # A join of networks without ties still records what joins them.
   if(!nrow(ties)){
@@ -412,7 +487,8 @@ from_reporters <- function(netlist) {
   # be one for each layer, stands for them all.
   if(!all(each == directed)) info$directed <- directed
   make_stocnet(info = info, nodes = first$nodes, ties = ties,
-               changes = first$changes, globals = first$globals)
+               changes = first$changes, globals = first$globals,
+               missings = if(nrow(zeros)) zeros else NULL)
 }
 
 # Joins a list of networks, each the report of one reporter ('by') or each
@@ -523,6 +599,11 @@ from_reporters <- function(netlist) {
     # alone, so its missing ties are listed before the node tables are merged.
     net <- .explicit_missing(netlist[[i]])
     layers_i <- .get_layers(net, layer_names[i])
+    # The relation a network of one layer was known by in its info is renamed
+    # to the layer it now is, along with the fields named after it.
+    old <- net$info$layers
+    if(length(old) == 1 && length(layers_i) == 1 && old != layers_i)
+      net <- .rename_layers(net, stats::setNames(layers_i, old))
     clash <- intersect(layers_i, seen_layers)
     if(length(clash)){
       rn <- stats::setNames(paste0(layer_names[i], ".", clash), clash)
@@ -586,16 +667,18 @@ from_reporters <- function(netlist) {
 
 ## --- Helpers ----------------------------------------------------------------
 
-# Work out a network's layer name(s), preferring info$layers and any
-# 'layer' column on ties; falling back to the list-element name.
+# Work out a network's layer name(s). A network whose ties name their layers
+# keeps those names. A network of one relation becomes the layer it is given
+# as, so the name in the call wins over the one in its info. Only a network
+# that declares several layers without naming them on its ties keeps its info.
 .get_layers <- function(net, fallback_name){
-  layers <- net$info$layers
   if(!is.null(net$ties) && "layer" %in% names(net$ties)){
     tl <- unique(net$ties$layer)
-    layers <- union(layers, tl[!is.na(tl)])
+    tl <- tl[!is.na(tl)]
+    if(length(tl)) return(tl)
   }
-  if(is.null(layers) || length(layers) == 0) layers <- fallback_name
-  layers
+  layers <- net$info$layers
+  if(length(layers) > 1) layers else fallback_name
 }
 
 # Make sure info$layers and ties$layer are consistent with `layers`,

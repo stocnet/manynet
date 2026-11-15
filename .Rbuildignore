@@ -24,3 +24,4 @@ man-roxygen
 ^\.claude$
 ^CLAUDE\.md$
 ^revdep$
+^development$

@@ -421,7 +421,7 @@ to_imputed.default <- function(.data, ties = "zero", nodes = "modal"){
 .miss_statistic <- function(.data, rule){
   if(rule == "zero") return(0)
   x <- as_matrix(.data)
-  if(!is_twomode(.data) && !is_complex(.data)) diag(x) <- NA
+  if(!is_twomode(.data) && !is_looped(.data)) diag(x) <- NA
   switch(rule,
          mean = mean(x, na.rm = TRUE),
          median = stats::median(x, na.rm = TRUE),
@@ -435,7 +435,7 @@ to_imputed.default <- function(.data, ties = "zero", nodes = "modal"){
   x <- as_matrix(.data)
   # a node's tie to itself is not usually a tie that could have been observed,
   # so counting the diagonal would bias the average down by (n-1)/n
-  if(!is_twomode(.data) && !is_complex(.data)) diag(x) <- NA
+  if(!is_twomode(.data) && !is_looped(.data)) diag(x) <- NA
   mean(x, na.rm = TRUE)
 }
 

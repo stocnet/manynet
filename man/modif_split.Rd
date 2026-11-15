@@ -6,6 +6,7 @@
 \alias{to_subgraphs}
 \alias{to_layers}
 \alias{to_reporters}
+\alias{to_targets}
 \alias{to_components}
 \alias{to_waves}
 \alias{to_times}
@@ -20,11 +21,13 @@ to_layers(.data)
 
 to_reporters(.data)
 
+to_targets(.data)
+
 to_components(.data, connectivity = c("weak", "strong"))
 
 to_waves(.data, attribute = "wave", panels = NULL, cumulative = FALSE)
 
-to_times(.data, times = NULL)
+to_times(.data, times = NULL, window = NULL, kernel = "uniform")
 
 to_slices(.data, attribute = "time", slice = NULL)
 }
@@ -73,6 +76,23 @@ FALSE by default. That is, each wave is treated isolated.}
 By default \code{NULL}, in which case every moment the network records is
 returned, as \code{net_times()} counts them.}
 
+\item{window}{The width of a window of the moments up to \code{time}, or
+\code{NULL} (the default) for no window.
+Two widths, \code{c(before, after)}, give a window that also reaches past
+\code{time}, so that \code{c(15, 15)} gives a window centred on \code{time}.
+A width is in the units of the moments the network records:
+waves, years, or days where the moments are dates
+(or seconds where they are date-times).
+A \code{difftime}, such as \code{as.difftime(30, units = "days")}, is also accepted.}
+
+\item{kernel}{How each tie in a \code{window} is weighted by its distance
+from \code{time}.
+\code{"uniform"} (the default) weights every tie in the window the same,
+and so leaves the ties as they are.
+\code{"triangular"}, \code{"epanechnikov"}, and \code{"gaussian"} give a tie less weight
+the further it is from \code{time}.
+Only used with a \code{window}.}
+
 \item{slice}{Character string or character list indicating the date(s)
 or integer(s) range used to slice data (e.g slice = c(1:2, 3:4)).}
 }
@@ -90,7 +110,7 @@ These functions offer tools for splitting manynet-consistent objects
 attribute.
 \item \code{to_layers()} splits a multiplex network into its layers,
 i.e. a list of uniplex networks, one per tie type.
-Use \code{to_uniplex()}, or its alias \code{to_layer()}, to retain just one of them.
+Use \code{to_layer()}, or its alias \code{to_layer()}, to retain just one of them.
 \item \code{to_reporters()} splits a cognitive social structure into the report
 of each of its reporters, one network per reporter.
 Use \code{to_reporter()} to retain just one of them,
@@ -116,7 +136,7 @@ to_components                *       *                 *      *       *       *
 to_egos                      *       *                 *      *       *       *
 to_layers                    *       *                 *              *        
 to_reporters      *                  *                                        *
-to_slices                            *                 *                       
+to_slices                            *                 *                      *
 to_subgraphs                         *                 *              *       *
 to_times                             *                 *                      *
 to_waves                     *       *          *      *                       
@@ -139,12 +159,19 @@ an event network up to each of its moments.
 Unlike them, \code{to_times()} always returns a list, named by the moments and
 ordered by them, even where the network records only one, so that
 \code{net_times(.data)} and \code{length(to_times(.data))} always agree.
+
+With a \code{window}, \code{to_times()} returns a moving window:
+the ties recorded in the window up to each of the \code{times}
+(or around each, with two widths),
+weighted by the \code{kernel}, as \code{\link[=to_time]{to_time()}} describes.
+Where the \code{times} are closer together than the window is wide,
+the windows overlap, and a tie can be in more than one of them.
 }
 \section{\code{to_layers()}}{
 
 The layers of a multiplex network are held in a tie attribute,
 \code{type} in tidygraph/igraph objects and \code{layer} in 'stocnet' objects.
-Each layer is extracted by \code{to_uniplex()}, so that the layers returned
+Each layer is extracted by \code{to_layer()}, so that the layers returned
 here are the same networks as retrieving them one at a time,
 and the returned list is named by the tie types found in the network.
 Where a network holds no tie types it is already uniplex,
@@ -168,6 +195,17 @@ Egocentric data cannot be split this way, since each ego reports on its
 own alters; see \code{to_egos()}.
 }
 
+\section{\code{to_targets()}}{
+
+Gossip names in 'about' the node each tie is about, as a cognitive social
+structure names in 'by' the node that reported it.
+\code{to_targets()} splits gossip into one network for each node, named by its
+label, of the ties about that node, as \code{to_reporters()} splits reports.
+Ties that are about no node are kept in every network.
+\code{from_targets()} joins them again.
+A network that names no target is returned as a list of length one.
+}
+
 \examples{
   to_egos(ison_adolescents)
   # graphs(to_egos(ison_adolescents,2))
@@ -179,8 +217,10 @@ as_tidygraph(create_filled(5)) |>
   mutate_ties(type = sample(c("friend", "enemy"), 10, replace = TRUE)) |>
   to_layers()
 to_reporters(as_stocnet(array(rbinom(27, 1, 0.5), c(3, 3, 3)),
-                        attribute = "by"))
-  to_components(to_uniplex(fict_marvel, "relationship"))
+                        over = "by"))
+to_targets(as_stocnet(array(rbinom(27, 1, 0.5), c(3, 3, 3)),
+                      over = "about"))
+  to_components(to_layer(fict_marvel, "relationship"))
   # Strong decomposition of a directed network returns many small components,
   # ordered here from largest to smallest, so just the largest is shown:
   to_components(fict_starwars, connectivity = "strong")[[1]]
@@ -189,6 +229,9 @@ ison_adolescents |>
   to_waves(attribute = "wave")
   length(to_times(irps_wwi))
   to_times(ison_tailorshop)
+  # A window of 30 days moved along in steps of a week:
+  weeks <- seq(as.Date("2011-03-15"), as.Date("2011-06-30"), by = "week")
+  to_times(irps_nuclear, weeks, window = 30)
 ison_adolescents |>
   mutate_ties(time = 1:10, increment = 1) |> 
   add_ties(c(1,2), list(time = 3, increment = -1)) |> 
@@ -201,13 +244,15 @@ Other modifications:
 \code{\link{modif_direction}},
 \code{\link{modif_from_parts}},
 \code{\link{modif_from_ternary}},
+\code{\link{modif_influence}},
 \code{\link{modif_labels}},
+\code{\link{modif_layers}},
 \code{\link{modif_levels}},
+\code{\link{modif_loops}},
 \code{\link{modif_miss}},
 \code{\link{modif_motifs}},
 \code{\link{modif_paths}},
 \code{\link{modif_permutation}},
-\code{\link{modif_plexity}},
 \code{\link{modif_project}},
 \code{\link{modif_proximity}},
 \code{\link{modif_scope}},

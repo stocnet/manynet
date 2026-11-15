@@ -87,7 +87,7 @@ as_matrix <- function(.data,
   layers <- if(!is.null(ties[["layer"]])) unique(as.character(ties$layer)) else NULL
   if(length(layers) > 1){
     out <- lapply(layers, function(layer){
-      sub <- to_uniplex(net, layer)
+      sub <- to_layer(net, layer)
       if(.holds_node(sub$ties[[col]])) .third_node_array(sub, col) else
         as_matrix(sub)
     })
