@@ -11,7 +11,9 @@ It is a guard for the functions that cannot read a negative tie,
 such as the path-based measures, for which a negative tie is hostility
 rather than a channel.
 to_normalised() rescales tie weights relative to the other ties of the
-same node, so that a value reads as a share rather than a count.
+same node, so that a value reads as a share rather than a count,
+or weights the ties of a two-mode network of documents and terms by
+term frequency-inverse document frequency.
 
 
 If the format condition is not met,
@@ -38,7 +40,7 @@ only transforming these objects' properties."><meta property="og:image" content=
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.5.0</span>
       </span>
     </div>
 
@@ -122,7 +124,9 @@ It is a guard for the functions that cannot read a negative tie,
 such as the path-based measures, for which a negative tie is hostility
 rather than a channel.</p></li>
 <li><p><code>to_normalised()</code> rescales tie weights relative to the other ties of the
-same node, so that a value reads as a share rather than a count.</p></li>
+same node, so that a value reads as a share rather than a count,
+or weights the ties of a two-mode network of documents and terms by
+term frequency-inverse document frequency.</p></li>
 </ul><p>If the format condition is not met,
 for example <code><a href="modif_direction.html">to_undirected()</a></code> is used on a network that is already undirected,
 the network data is returned unaltered.
@@ -145,13 +149,13 @@ only transforming these objects' properties.</p>
 <span></span>
 <span><span class="fu">to_normalised</span><span class="op">(</span></span>
 <span>  <span class="va">.data</span>,</span>
-<span>  rule <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"max"</span>, <span class="st">"mean"</span>, <span class="st">"sum"</span><span class="op">)</span>,</span>
+<span>  rule <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"max"</span>, <span class="st">"mean"</span>, <span class="st">"sum"</span>, <span class="st">"tfidf"</span><span class="op">)</span>,</span>
 <span>  across <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"both"</span>, <span class="st">"rows"</span>, <span class="st">"columns"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">to_normalized</span><span class="op">(</span></span>
 <span>  <span class="va">.data</span>,</span>
-<span>  rule <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"max"</span>, <span class="st">"mean"</span>, <span class="st">"sum"</span><span class="op">)</span>,</span>
+<span>  rule <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"max"</span>, <span class="st">"mean"</span>, <span class="st">"sum"</span>, <span class="st">"tfidf"</span><span class="op">)</span>,</span>
 <span>  across <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"both"</span>, <span class="st">"rows"</span>, <span class="st">"columns"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -203,6 +207,17 @@ strongest tie is 1 and its others are read against that.</p></li>
 those tied, so that 1 marks a tie of typical strength.</p></li>
 <li><p>"sum" divides by the total of them, so that they add to 1 and each reads
 as the share of the node's ties that goes to that partner.</p></li>
+<li><p>"tfidf" weights the ties of a two-mode network of documents and terms
+by term frequency-inverse document frequency.
+Each tie is divided by the total of its document's ties, its term
+frequency, and multiplied by \(\log(N/n_t)\), where \(N\) is the
+number of documents and \(n_t\) the number of documents tied to the
+term. A term that every document uses thus weighs 0, and a term that
+few documents use weighs more. This is the definition of
+<code>tidytext::bind_tf_idf()</code>. The documents are the rows, the first mode,
+unless <code>across = "columns"</code>, which makes them the columns.
+Only a two-mode network has documents and terms, so a one-mode network
+gives an error.</p></li>
 </ul><p>Missing values propagate rather than being ignored,
 so that a node with an unobserved tie has all its values unobserved.
 Use <code><a href="modif_miss.html">impute_ties()</a></code> first to state a different assumption.</p></dd>
@@ -255,20 +270,23 @@ split into two, and the network is returned directed.</p>
 <code><a href="manip_ties_attr.html">manip_ties_attr</a></code>,
 <code><a href="manip_ties_num.html">manip_ties_num</a></code>,
 <code><a href="modif_backbone.html">modif_backbone</a></code>,
-<code><a href="modif_direction.html">modif_direction</a></code></p>
+<code><a href="modif_direction.html">modif_direction</a></code>,
+<code><a href="modif_influence.html">modif_influence</a></code></p>
 <p>Other modifications:
 <code><a href="modif_backbone.html">modif_backbone</a></code>,
 <code><a href="modif_concepts.html">modif_concepts</a></code>,
 <code><a href="modif_direction.html">modif_direction</a></code>,
 <code><a href="modif_from_parts.html">modif_from_parts</a></code>,
 <code><a href="modif_from_ternary.html">modif_from_ternary</a></code>,
+<code><a href="modif_influence.html">modif_influence</a></code>,
 <code><a href="modif_labels.html">modif_labels</a></code>,
+<code><a href="modif_layers.html">modif_layers</a></code>,
 <code><a href="modif_levels.html">modif_levels</a></code>,
+<code><a href="modif_loops.html">modif_loops</a></code>,
 <code><a href="modif_miss.html">modif_miss</a></code>,
 <code><a href="modif_motifs.html">modif_motifs</a></code>,
 <code><a href="modif_paths.html">modif_paths</a></code>,
 <code><a href="modif_permutation.html">modif_permutation</a></code>,
-<code><a href="modif_plexity.html">modif_plexity</a></code>,
 <code><a href="modif_project.html">modif_project</a></code>,
 <code><a href="modif_proximity.html">modif_proximity</a></code>,
 <code><a href="modif_scope.html">modif_scope</a></code>,
@@ -277,7 +295,7 @@ split into two, and the network is returned directed.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">marvel</span> <span class="op">&lt;-</span> <span class="fu"><a href="modif_plexity.html">to_uniplex</a></span><span class="op">(</span><span class="va">fict_marvel</span>, <span class="st">"relationship"</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">marvel</span> <span class="op">&lt;-</span> <span class="fu"><a href="modif_layers.html">to_layer</a></span><span class="op">(</span><span class="va">fict_marvel</span>, <span class="st">"relationship"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">to_unsigned</span><span class="op">(</span><span class="va">marvel</span>, <span class="st">"positive"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Marvel universe</span> <span style="color: #00BBBB;">───────────────────────────────────────────────────────────</span></span>
@@ -373,10 +391,11 @@ split into two, and the network is returned directed.</p>
 <span class="r-in"><span><span class="fu">to_normalised</span><span class="op">(</span><span class="va">ison_networkers</span>, rule <span class="op">=</span> <span class="st">"sum"</span>, across <span class="op">=</span> <span class="st">"rows"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># EIES Networkers</span> <span style="color: #00BBBB;">───────────────────────────────────────────────────────────</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, weighted, directed network of 32 nodes and 440 arcs</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># Transformed by normalisation: sum across rows</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 32 × 3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   name               Discipline   Citations</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   label              Discipline   Citations</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Lin Freeman        Sociology           19</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Doug White         Anthropology         3</span>

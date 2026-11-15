@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.5.0</span>
       </span>
     </div>
 
@@ -210,9 +210,8 @@ the operation intact.</p>
 </h3>
 <p>By the end of this tutorial, you should be able to:</p>
 <ul class="task-list">
-<li><label><input type="checkbox">  Examine and subset a network with
-the <code>[</code>, <code>[[</code>, and <code>$</code>
-operators</label></li>
+<li><label><input type="checkbox">  Examine a network’s nodes, ties,
+and adjacency matrix</label></li>
 <li><label><input type="checkbox">  Label, unlabel, and relabel a
 network’s nodes</label></li>
 <li><label><input type="checkbox">  Change a network’s direction,
@@ -248,62 +247,44 @@ with <code><a href="../reference/data_overview.html">table_data()</a></code>.</p
 <h2 id="operating-on-networks">Operating on networks<a class="anchor" aria-label="anchor" href="#operating-on-networks"></a>
 </h2>
 <p>Before changing anything, it helps to know how to look inside a
-network object, and this same syntax turns out to offer a do-it-yourself
-alternative to many of the named functions we meet later. Because the
-data in the <a href="https://stocnet.github.io/manynet/">manynet</a> package are either igraph objects at
-their core, or stocnet data, we can query (and manipulate) them using
-the same <code>[</code>, <code>[[</code>, and <code>$</code> operators
-used for matrices, lists, and data frames elsewhere in R. <strong>Run
-the following code and inspect the two outputs.</strong></p>
+network object. A network holds its nodes and its ties as two tables,
+and it can also be shown as an adjacency matrix. <strong>Run the
+following code and inspect the three outputs.</strong></p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ison_adolescents</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span></span>
-<span><span class="va">ison_adolescents</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/coerce_matrix.html">as_matrix</a></span><span class="op">(</span><span class="va">ison_adolescents</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span></span>
+<span><span class="fu"><a href="../reference/measure_attributes_nodes.html">node_attribute</a></span><span class="op">(</span><span class="va">ison_adolescents</span>, <span class="st">"label"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/coerce_list.html">as_edgelist</a></span><span class="op">(</span><span class="va">ison_adolescents</span><span class="op">)</span></span></code></pre></div>
 <p>The first line returns the corner of the network’s adjacency matrix,
 where a <code>1</code> indicates a tie between the row node and the
-column node and a <code>.</code> indicates no tie (because this is a
-sparse matrix representation; a ‘normal’ matrix representation would
-represent absence of a tie as a 0). The second line returns the second
-node’s
-<abbr><dfn title="The neighborhood of a node is the set of other nodes to which that node is connected.">
-neighborhood </dfn></abbr>: the set of nodes to which it is tied.</p>
-<p>The <code>$</code> operator extracts a named attribute, whether it
-belongs to the nodes, the ties, or the network itself.
-<a href="https://stocnet.github.io/manynet/">manynet</a> is set to try and autocomplete the attribute name
-for you, so you can type <code>ison_adolescents$</code> and then hit the
-Tab key to see the available attributes. <a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+column node and a <code>0</code> indicates no tie. The second line
+returns the labels of the nodes, and <code><a href="../reference/measure_attributes_nodes.html">node_attribute()</a></code>
+returns any other nodal attribute in the same way. The third line
+returns the ties as pairs of nodes, one row for each tie.</p>
+<p>The functions that change a network return the changed network, so
+you assign the result to keep it. Here the first line removes all of the
+first node’s ties, and the second adds a new nodal attribute (the vector
+is 8 values long, one value for each of the 8 nodes):</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ison_adolescents</span><span class="op">$</span><span class="va">name</span></span></code></pre></div>
-<p>The same operators can also be used to <em>assign</em> new values.
-Here the first line removes all of the first node’s ties, and the second
-adds a new nodal attribute (the vector is 8 values long, matching the 8
-nodes, which is how <a href="https://stocnet.github.io/manynet/">manynet</a> knows it belongs to the
-nodes):</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">test</span> <span class="op">&lt;-</span> <span class="va">ison_adolescents</span></span>
-<span><span class="va">test</span><span class="op">[</span><span class="fl">1</span>, <span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">FALSE</span></span>
-<span><span class="va">test</span><span class="op">$</span><span class="va">smoker</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="va">test</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span></span>
+<code class="sourceCode R"><span><span class="va">test</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/manip_ties_num.html">filter_ties</a></span><span class="op">(</span><span class="va">ison_adolescents</span>, <span class="va">from</span> <span class="op">!=</span> <span class="fl">1</span>, <span class="va">to</span> <span class="op">!=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">test</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/manip_nodes_attr.html">mutate_nodes</a></span><span class="op">(</span><span class="va">test</span>, smoker <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/coerce_matrix.html">as_matrix</a></span><span class="op">(</span><span class="va">test</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span></span>
 <span><span class="va">test</span></span></code></pre></div>
 <p>Note that because this is an undirected network, removing the tie
 from node 1 to node 2 means there is also now no reciprocal tie from
 node 2 to node 1.</p>
-<p>Throughout this tutorial, keep this assignment syntax in mind: many
-of the named functions we meet have an assignment equivalent, and we
-will point these out as we go. The named functions are usually clearer
-and safer (they check and update the network’s type for you), but the
-operators are handy for quick, surgical changes.</p>
+<p>Throughout this tutorial, keep in mind that each function returns a
+new network, and leaves the network you gave it as it was.</p>
 <div class="callout">
 <p><span class="callout-label"><strong>Try it yourself</strong>:</span>
 This section includes an interactive quiz in the live tutorial — run
 <code>run_tute()</code> at the R console to try it.</p>
 </div>
 <div class="callout">
-<p><span class="callout-label"><strong>In brief</strong>:</span> For
-igraph/tidygraph objects, <code>[</code> indexes a network like its
-adjacency matrix, <code>[[</code> returns a node’s neighbourhood, and
-<code>$</code> gets or sets a named node, tie, or network attribute. All
-three can be used with <code>&lt;-</code> to modify a network
-directly.</p>
+<p><span class="callout-label"><strong>In brief</strong>:</span>
+<code><a href="../reference/coerce_matrix.html">as_matrix()</a></code>, <code><a href="../reference/measure_attributes_nodes.html">node_attribute()</a></code>, and
+<code><a href="../reference/coerce_list.html">as_edgelist()</a></code> show what a network holds, and functions such
+as <code><a href="../reference/manip_ties_num.html">filter_ties()</a></code> and <code><a href="../reference/manip_nodes_attr.html">mutate_nodes()</a></code> return a
+changed network.</p>
 </div>
 </div>
 <div class="section level2">
@@ -312,11 +293,10 @@ directly.</p>
 <p><span class="page-toc">On this page: <span class="page-toc-link" onclick="document.getElementById('section-node-composition').scrollIntoView({behavior:'auto',block:'start'});">Adding
 &amp; removing</span> · <span class="page-toc-link" onclick="document.getElementById('section-labels').scrollIntoView({behavior:'auto',block:'start'});">Labels</span>
 · <span class="page-toc-link" onclick="document.getElementById('section-attributes').scrollIntoView({behavior:'auto',block:'start'});">Attributes</span></span></p>
-<p>The previous page showed how to <em>read</em> a network with
-operators. Now we start changing it, one element at a time, beginning
-with the nodes: which nodes are present (adding and removing them), the
-names that identify them (labels), and the other variables they carry
-(attributes).</p>
+<p>The previous page showed how to <em>read</em> a network. Now we start
+changing it, one element at a time, beginning with the nodes: which
+nodes are present (adding and removing them), the names that identify
+them (labels), and the other variables they carry (attributes).</p>
 <div class="section level3">
 <h3 id="node-composition">Adding &amp; removing<a class="anchor" aria-label="anchor" href="#node-composition"></a>
 </h3>
@@ -325,7 +305,7 @@ names that identify them (labels), and the other variables they carry
 <code><a href="../reference/manip_nodes_num.html">delete_nodes()</a></code> removes nodes by index or by name.
 <strong>Run the code and check the node count in each
 printout.</strong></p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/manip_nodes_num.html">add_nodes</a></span><span class="op">(</span><span class="va">ison_adolescents</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/manip_nodes_num.html">delete_nodes</a></span><span class="op">(</span><span class="va">ison_adolescents</span>, <span class="st">"Sue"</span><span class="op">)</span></span></code></pre></div>
 <p>A freshly added node has no ties yet — you would connect it with
@@ -348,17 +328,16 @@ students in an algebra class. Since working with indices gets confusing
 quickly, especially when discussing what we are seeing with others —
 node 1 is not the same as node 2, and so on — we want to give the nodes
 names.</p>
-<p>The assignment equivalent sets the names directly:
-<code>net$label &lt;- letters[1:8]</code> relabels an 8-node network,
-because a value with one entry per node is stored as a nodal attribute,
-and <code>label</code> is the reserved attribute for labels.</p>
-<p>we can use <code><a href="../reference/modif_labels.html">to_labelled()</a></code> to assign (random) names to the
-nodes. The function allows your chosen labels to be added, of course,
-but if called without further arguments it assigns random (U.S.)
-children’s names. <strong>Check whether <code>ison_algebra</code> is
-labelled, and then label it randomly.</strong></p>
+<p>Labels can be set directly:
+<code>mutate_nodes(net, label = letters[1:8])</code> relabels an 8-node
+network, because <code>label</code> is the reserved attribute for
+labels. Or we can use <code><a href="../reference/modif_labels.html">to_labelled()</a></code> to assign (random)
+names to the nodes. The function allows your chosen labels to be added,
+of course, but if called without further arguments it assigns random
+(U.S.) children’s names. <strong>Check whether <code>ison_algebra</code>
+is labelled, and then label it randomly.</strong></p>
 <p>To check your result: the printout should now say <em>labelled</em>,
-and the nodes table should have gained a <code>name</code> column of
+and the nodes table should have gained a <code>label</code> column of
 alphabetically ordered first names. Since these names are random, they
 are useful for <em>telling nodes apart</em>, not for identifying real
 people. Did you notice how the names are drawn in alphabetic
@@ -366,7 +345,7 @@ sequence?</p>
 <p>The reverse operation, <code><a href="../reference/modif_labels.html">to_unlabelled()</a></code>, strips all names
 from a network. This is a one-step anonymiser. <strong>Anonymise
 <code>ison_adolescents</code>, and then relabel it with letters using
-<code>$</code>.</strong></p>
+<code><a href="../reference/manip_nodes_attr.html">mutate_nodes()</a></code>.</strong></p>
 <p>Note that <code><a href="../reference/modif_labels.html">to_unlabelled()</a></code> removes the identifying labels
 but leaves any other attributes in place — full anonymisation of your
 data may require deleting or coarsening other attributes too, which
@@ -389,7 +368,7 @@ e.g. <code><a href="../reference/manip_nodes_attr.html">add_node_attribute()</a
 <a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a>-like syntax, e.g. <code><a href="../reference/manip_nodes_attr.html">mutate_nodes()</a></code>, for
 those already familiar with these tools in R. <strong>Run the following
 code and find the new columns in the printout.</strong></p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ison_adolescents</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/manip_nodes_attr.html">mutate_nodes</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"red"</span>,</span>
 <span>               degree <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">8</span><span class="op">)</span></span></code></pre></div>
@@ -401,7 +380,7 @@ equivalent ways: the <a href="https://dplyr.tidyverse.org" class="external-link"
 <a href="https://r.igraph.org/" class="external-link">igraph</a> way, with <code><a href="../reference/manip_nodes_attr.html">delete_node_attribute()</a></code>.
 <strong>Compare the printouts before and after the changes
 below.</strong></p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ison_southern_women</span></span>
 <span><span class="va">ison_southern_women</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/manip_nodes_attr.html">delete_node_attribute</a></span><span class="op">(</span><span class="st">"Surname"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -459,7 +438,7 @@ plain, undirected, unweighted, unsigned network.</p>
 with <code>|</code> between its two endpoints. <strong>Add a tie between
 the first and third adolescents, then delete the tie between Carol and
 Tina.</strong></p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/manip_ties_num.html">add_ties</a></span><span class="op">(</span><span class="va">ison_adolescents</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/manip_ties_num.html">delete_ties</a></span><span class="op">(</span><span class="va">ison_adolescents</span>, <span class="st">"Carol|Tina"</span><span class="op">)</span></span></code></pre></div>
 <p>With the ties in place, we can turn to what they carry.</p>
@@ -473,7 +452,7 @@ category, whatever your data records (<code><a href="../reference/manip_ties_att
 is the more <a href="https://r.igraph.org/" class="external-link">igraph</a>-like alternative). <strong>Add a
 <code>weight</code> to each of the adolescents’ 10
 friendships.</strong></p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ison_adolescents</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/manip_ties_attr.html">mutate_ties</a></span><span class="op">(</span>weight <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span></code></pre></div>
 <p>The <code>_ties</code> suffix carries across the
 <a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a>-style verbs (<code><a href="../reference/manip_ties_attr.html">mutate_ties()</a></code>,
@@ -568,10 +547,8 @@ This section includes an interactive quiz in the live tutorial — run
 </div>
 <p>Going the other way, <code><a href="../reference/modif_weight.html">to_weighted()</a></code> adds a weight
 attribute, and weights can also be assigned directly:
-<code>mutate_ties(net, weight = ...)</code> (the general tie-attribute
-tool from just above) or the operator shorthand
-<code>net$weight &lt;- ...</code>, which works because a value with one
-entry per tie is stored as a tie attribute.</p>
+<code>mutate_ties(net, weight = ...)</code>, the general tie-attribute
+tool from just above.</p>
 <p>Weights are often easier to read once they are put in proportion.
 <code><a href="../reference/modif_weight.html">to_normalised()</a></code> rescales each tie against the other ties of
 the same node, so that a value says what <em>share</em> of a node’s ties
@@ -605,7 +582,7 @@ powers of Europe before the First World War. <code><a href="../reference/mark_fo
 checks for signs, and <code><a href="../reference/measure_attributes_values.html">tie_signs()</a></code> retrieves them
 (<code>1</code> for positive, <code>-1</code> for negative).
 <strong>Print the network and retrieve its signs.</strong></p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">irps_wwi</span></span>
 <span><span class="fu"><a href="../reference/measure_attributes_values.html">tie_signs</a></span><span class="op">(</span><span class="va">irps_wwi</span><span class="op">)</span></span></code></pre></div>
 <p>Many measures are only defined for unsigned networks, and sometimes
@@ -694,7 +671,7 @@ another network’s ties into the current one as an additional
 <em>type</em> of tie. <strong>Join a ring network’s ties to the
 adolescents’ friendships and inspect the resulting tie
 table.</strong></p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ison_adolescents</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/manip_ties_attr.html">join_ties</a></span><span class="op">(</span><span class="fu"><a href="../reference/make_create.html">create_ring</a></span><span class="op">(</span><span class="fl">8</span><span class="op">)</span>, attr_name <span class="op">=</span> <span class="st">"ring"</span><span class="op">)</span></span></code></pre></div>
 <p>The printout now reports a <em>multiplex</em> network: the
 <code>type</code> column distinguishes the original ties
@@ -722,29 +699,28 @@ This section includes an interactive quiz in the live tutorial — run
 <code>run_tute()</code> at the R console to try it.</p>
 </div>
 <p>Most analyses of multiplex networks proceed one layer at a time, and
-<code><a href="../reference/modif_plexity.html">to_uniplex()</a></code> extracts a single layer by name.
-<strong>Extract the friendship layer from
-<code>ison_lawfirm</code>.</strong></p>
+<code><a href="../reference/modif_layers.html">to_layer()</a></code> extracts a single layer by name. <strong>Extract
+the friendship layer from <code>ison_lawfirm</code>.</strong></p>
 <p>To check your result: the friendship layer has 575 of the original
 network’s 2571 ties, and the printout no longer describes the network as
 multiplex. Note that the corresponding do-it-yourself route is
 <code>filter_ties(ison_lawfirm, type == "friends")</code> —
-<code><a href="../reference/modif_plexity.html">to_uniplex()</a></code> does this and additionally tidies up the
+<code><a href="../reference/modif_layers.html">to_layer()</a></code> does this and additionally tidies up the
 now-redundant type information.</p>
-<p><code><a href="../reference/modif_plexity.html">to_uniplex()</a></code> works one layer at a time.
+<p><code><a href="../reference/modif_layers.html">to_layer()</a></code> works one layer at a time.
 <code><a href="../reference/modif_split.html">to_layers()</a></code> splits a multiplex network into all of them at
 once, returning a named list with one network per layer, and
 <code><a href="../reference/modif_from_ternary.html">from_layers()</a></code> puts such a list back together again.
 <strong>Split <code>ison_lawfirm</code> into its layers.</strong></p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/modif_split.html">to_layers</a></span><span class="op">(</span><span class="va">ison_lawfirm</span><span class="op">)</span></span></code></pre></div>
 <p>Sometimes you want a single network that keeps what <em>every</em>
 layer records, rather than one layer or a list of them.
-<code><a href="../reference/modif_plexity.html">to_flat()</a></code> combines the layers dyad by dyad, according to a
-<code>rule</code>: “max” counts a tie in any layer as a tie, “min” keeps
-only the ties present in every layer, and “sum” adds the layers up.
-<strong>Flatten <code>ison_lawfirm</code> so that each tie records how
-many of the three relationships that pair holds.</strong></p>
+<code><a href="../reference/modif_layers.html">to_aggregated()</a></code> combines the layers dyad by dyad, according
+to a <code>rule</code>: “max” counts a tie in any layer as a tie, “min”
+keeps only the ties present in every layer, and “sum” adds the layers
+up. <strong>Flatten <code>ison_lawfirm</code> so that each tie records
+how many of the three relationships that pair holds.</strong></p>
 <p>To check your result: the flattened network is weighted, and 824
 pairs share one relationship, 503 share two, and 247 share all
 three.</p>
@@ -753,13 +729,13 @@ separately. Give it two or more networks over the same nodes and it
 makes each one a layer, which is the other way to build a multiplex
 network: <code><a href="../reference/manip_ties_attr.html">join_ties()</a></code> marks where each tie came from, and
 <code><a href="../reference/modif_from_ternary.html">from_layers()</a></code> names layers. Either way,
-<code><a href="../reference/modif_plexity.html">to_flat()</a></code> then combines them. <strong>Keep only the pairs
-who are both friends and advisors.</strong></p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">friends</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/modif_plexity.html">to_uniplex</a></span><span class="op">(</span><span class="va">ison_lawfirm</span>, <span class="st">"friends"</span><span class="op">)</span></span>
-<span><span class="va">advice</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/modif_plexity.html">to_uniplex</a></span><span class="op">(</span><span class="va">ison_lawfirm</span>, <span class="st">"advice"</span><span class="op">)</span></span>
+<code><a href="../reference/modif_layers.html">to_aggregated()</a></code> then combines them. <strong>Keep only the
+pairs who are both friends and advisors.</strong></p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">friends</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/modif_layers.html">to_layer</a></span><span class="op">(</span><span class="va">ison_lawfirm</span>, <span class="st">"friends"</span><span class="op">)</span></span>
+<span><span class="va">advice</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/modif_layers.html">to_layer</a></span><span class="op">(</span><span class="va">ison_lawfirm</span>, <span class="st">"advice"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/modif_from_ternary.html">from_layers</a></span><span class="op">(</span>friends <span class="op">=</span> <span class="va">friends</span>, advice <span class="op">=</span> <span class="va">advice</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/modif_from_ternary.html">from_layers</a></span><span class="op">(</span>friends <span class="op">=</span> <span class="va">friends</span>, advice <span class="op">=</span> <span class="va">advice</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/modif_plexity.html">to_flat</a></span><span class="op">(</span>rule <span class="op">=</span> <span class="st">"min"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/modif_from_ternary.html">from_layers</a></span><span class="op">(</span>friends <span class="op">=</span> <span class="va">friends</span>, advice <span class="op">=</span> <span class="va">advice</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/modif_layers.html">to_aggregated</a></span><span class="op">(</span>rule <span class="op">=</span> <span class="st">"min"</span><span class="op">)</span></span></code></pre></div>
 <p>The last line keeps the 358 pairs tied in both layers. Nodes are
 matched by name where the networks are labelled, and by position where
 they are not and are the same size.</p>
@@ -796,12 +772,13 @@ This section includes an interactive quiz in the live tutorial — run
 <em>type</em>, producing a multiplex network.
 <code><a href="../reference/mark_format_tie.html">is_multiplex()</a></code> checks for multiple tie types and
 <code><a href="../reference/member_names.html">layer_names()</a></code> lists them, while
-<code>to_uniplex(layer = )</code> extracts a single layer by name (the
+<code>to_layer(layer = )</code> extracts a single layer by name (the
 do-it-yourself equivalent of <code>filter_ties(type == ...)</code>).
 <code><a href="../reference/modif_split.html">to_layers()</a></code> splits a network into all of its layers and
 <code><a href="../reference/modif_from_ternary.html">from_layers()</a></code> reassembles them, or joins networks collected
-separately as layers, while <code><a href="../reference/modif_plexity.html">to_flat()</a></code> combines the layers
-of any multiplex network into one relation by a <code>rule</code>.</p>
+separately as layers, while <code><a href="../reference/modif_layers.html">to_aggregated()</a></code> combines the
+layers of any multiplex network into one relation by a
+<code>rule</code>.</p>
 </div>
 </div>
 </div>
@@ -937,7 +914,7 @@ American Revolution):</p>
 <code><a href="../reference/mark_format_tie.html">is_weighted()</a></code> should return <code>TRUE</code> on the
 projection. (The fiction two-mode networks such as
 <code>fict_actually</code> are <em>multiplex</em>, so projecting them
-first needs a single tie type extracted with <code><a href="../reference/modif_plexity.html">to_uniplex()</a></code> —
+first needs a single tie type extracted with <code><a href="../reference/modif_layers.html">to_layer()</a></code> —
 you now know how!)</p>
 <div class="callout">
 <p><span class="callout-label"><strong>In brief</strong>:</span>
@@ -983,7 +960,7 @@ they are present. Example: <code>fict_starwars</code>. Check with
 </ul>
 <p>The first two describe the ties, and the third describes the nodes,
 so a network can be changing and also longitudinal or dynamic. But a
-network is longitudinal or dynamic, never both.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> Which one it is
+network is longitudinal or dynamic, never both.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> Which one it is
 decides what “the network at a moment” means, and so what
 <code><a href="../reference/modif_scope.html">to_time()</a></code> returns: the ties observed at that wave, the ties
 accumulated up to that event, or the ties active over that interval.
@@ -1224,7 +1201,7 @@ answering pupils did.</p>
 <code><a href="../reference/modif_miss.html">impute_ties()</a></code> and <code><a href="../reference/modif_miss.html">impute_nodes()</a></code> record what
 they imputed, how much of it, and by which rule, which they record under
 the name “imputation”:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/class_describe.html">describe_transformations</a></span><span class="op">(</span><span class="fu"><a href="../reference/modif_miss.html">to_imputed</a></span><span class="op">(</span><span class="va">ison_classmates</span><span class="op">)</span>, details <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>This is item 4.6 of the GRAND reporting guidelines, which name six
 ways raw data is turned into analytic data. Each has a name of its own,
@@ -1311,8 +1288,8 @@ This section includes an interactive quiz in the live tutorial — run
 </div>
 <p>A related cleaning task concerns
 <abbr><dfn title="A loop is a self-tie with a single node as both endpoints, forming a cycle of length 1.">
-loops </dfn></abbr> (self-ties): <code><a href="../reference/modif_plexity.html">to_simplex()</a></code> removes them,
-turning a
+loops </dfn></abbr> (self-ties): <code><a href="../reference/modif_loops.html">to_unlooped()</a></code> removes
+them, turning a
 <abbr><dfn title="A complex network is one that includes or can include loops or self-ties.">
 complex </dfn></abbr> network into a
 <abbr><dfn title="A simplex network is one without loops or multiple adjacencies.">
@@ -1322,7 +1299,7 @@ simplex </dfn></abbr> one.</p>
 <code><a href="../reference/manip_nodes_num.html">filter_nodes()</a></code>/<code><a href="../reference/manip_ties_num.html">filter_ties()</a></code> and
 <code><a href="../reference/modif_scope.html">to_subgraph()</a></code> keep only the elements satisfying a
 condition, while <code><a href="../reference/manip_nodes_num.html">delete_isolates()</a></code>,
-<code><a href="../reference/modif_scope.html">to_giant()</a></code>, and <code><a href="../reference/modif_plexity.html">to_simplex()</a></code> prune stranded
+<code><a href="../reference/modif_scope.html">to_giant()</a></code>, and <code><a href="../reference/modif_loops.html">to_unlooped()</a></code> prune stranded
 nodes, minor components, and self-ties — all taking a whole network and
 returning a narrower or cleaner one.</p>
 </div>
@@ -1396,7 +1373,7 @@ political blogs. Suppose we only want the well-connected core, as a
 simple undirected network. We can chain reformatting and transforming
 verbs to get there. <strong>Run this and watch the tie and node counts
 fall as the network is tidied.</strong></p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">irps_blogs</span></span>
 <span><span class="va">irps_blogs</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/modif_direction.html">to_undirected</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/modif_scope.html">to_giant</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Notice how <code><a href="../reference/modif_direction.html">to_undirected()</a></code> keeps all 1490 nodes but
@@ -1439,9 +1416,10 @@ data! Along the way, you have learned to use these functions:</p>
 <tbody>
 <tr class="odd">
 <td>
-<code>[</code>, <code>[[</code>, <code>$</code>
+<code><a href="../reference/coerce_matrix.html">as_matrix()</a></code>, <code><a href="../reference/measure_attributes_nodes.html">node_attribute()</a></code>,
+<code><a href="../reference/coerce_list.html">as_edgelist()</a></code>
 </td>
-<td>examine and assign into a network directly</td>
+<td>look inside a network</td>
 </tr>
 <tr class="even">
 <td>
@@ -1461,7 +1439,7 @@ data! Along the way, you have learned to use these functions:</p>
 <td>
 <code><a href="../reference/manip_nodes_num.html">delete_isolates()</a></code>,
 <code><a href="../reference/modif_scope.html">to_giant()</a></code>/<code><a href="../reference/modif_scope.html">to_component()</a></code>,
-<code><a href="../reference/modif_plexity.html">to_simplex()</a></code>
+<code><a href="../reference/modif_loops.html">to_unlooped()</a></code>
 </td>
 <td>prune isolates, minor components, self-ties</td>
 </tr>
@@ -1509,14 +1487,14 @@ data! Along the way, you have learned to use these functions:</p>
 </tr>
 <tr class="odd">
 <td>
-<code>to_uniplex(layer = )</code>, <code><a href="../reference/member_names.html">layer_names()</a></code>
+<code>to_layer(layer = )</code>, <code><a href="../reference/member_names.html">layer_names()</a></code>
 </td>
 <td>extract a layer from a multiplex network</td>
 </tr>
 <tr class="even">
 <td>
 <code><a href="../reference/modif_split.html">to_layers()</a></code>, <code><a href="../reference/modif_from_ternary.html">from_layers()</a></code>,
-<code>to_flat(rule = )</code>
+<code>to_aggregated(rule = )</code>
 </td>
 <td>split a network into its layers, join networks as layers, or combine
 those layers into one relation</td>
@@ -1679,13 +1657,6 @@ Multiplex
 A network that includes multiple types of tie.
 </dd>
 <dt>
-Neighborhood
-</dt>
-<dd>
-The neighborhood of a node is the set of other nodes to which that node
-is connected.
-</dd>
-<dt>
 Order
 </dt>
 <dd>
@@ -1750,16 +1721,12 @@ A weighted network is where the ties have been assigned weights.
 <div class="footnotes footnotes-end-of-document">
 <hr>
 <ol>
-<li id="fn1"><p>Note though that for igraph/tidygraph objects, since the
-internal list elements are not named, the autocomplete necessarily
-braces the attribute names in backticks. This is not the case for
-stocnet objects, which are named lists.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
-<li id="fn2"><p>A dynamic network records its events either as
+<li id="fn1"><p>A dynamic network records its events either as
 intervals, in <code>begin</code>/<code>end</code> tie attributes, or as
 increments to a tie’s value, in an <code>increment</code> tie attribute.
 A longitudinal network records the wave each tie was observed at in a
 <code>time</code> tie attribute (<code>wave</code> in the older
-classes).<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+classes).<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
   </div>

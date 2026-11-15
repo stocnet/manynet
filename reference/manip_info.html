@@ -25,7 +25,7 @@ net_attributes() lists the information attributes of the network.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.5.0</span>
       </span>
     </div>
 
@@ -151,6 +151,10 @@ which <code><a href="modif_weight.html">to_signed()</a></code> sets and <code><a
 was collected or generated. See the Transformations section.
 Note that this records what has been done to the network,
 where "method" records how the network was collected or modelled.</p></li>
+<li><p>"uncoded" is a data frame of the units of text still to code,
+one row each with its 'document' and, where the unit is a part of a
+document, its 'sentence' or 'paragraph'.
+<code><a href="make_statements.html">collect_statements()</a></code> sets it, and removes it when all are coded.</p></li>
 </ul><p>If no arguments are used,
 the function will check for missing information and prompt the user to add it.
 If <code>optional = TRUE</code> is specified, the function will also prompt for optional information.</p></dd>
@@ -184,8 +188,8 @@ It holds a named list, one element for each of them:</p><ul><li><p>"symmetrisati
 <li><p>"projection" (4.3), which <code><a href="modif_project.html">to_mode1()</a></code>, <code><a href="modif_project.html">to_mode2()</a></code>, and
 <code><a href="modif_concepts.html">to_concepts()</a></code> set.</p></li>
 <li><p>"exclusion" (4.4), which the functions that drop nodes or ties set,
-such as <code><a href="manip_nodes_num.html">delete_isolates()</a></code>, <code><a href="modif_scope.html">to_component()</a></code>, and <code><a href="modif_plexity.html">to_uniplex()</a></code>.</p></li>
-<li><p>"aggregation" (4.5), which <code><a href="modif_plexity.html">to_aggregated()</a></code>, <code><a href="modif_plexity.html">to_flat()</a></code>,
+such as <code><a href="manip_nodes_num.html">delete_isolates()</a></code>, <code><a href="modif_scope.html">to_component()</a></code>, and <code><a href="modif_layers.html">to_layer()</a></code>.</p></li>
+<li><p>"aggregation" (4.5), which <code><a href="modif_layers.html">to_aggregated()</a></code>,
 <code><a href="manip_ties_attr.html">join_ties()</a></code>, and <code><a href="modif_scope.html">to_blockmodel()</a></code> set.</p></li>
 <li><p>"imputation" (4.6), which <code><a href="modif_miss.html">impute_ties()</a></code> and <code><a href="modif_miss.html">impute_nodes()</a></code> set.</p></li>
 </ul><p>One further name, "normalisation", records what <code><a href="modif_weight.html">to_normalised()</a></code> does.
@@ -193,7 +197,7 @@ The guidelines do not name it, since rescaling tie values neither
 dichotomises them (4.2 ends in an unweighted network)
 nor aggregates them (4.5 combines what was separate),
 but it changes the analytic network and so is recorded too.
-Nor do they name "disaggregation", which <code><a href="modif_plexity.html">to_disaggregated()</a></code> sets
+Nor do they name "disaggregation", which <code><a href="modif_layers.html">to_disaggregated()</a></code> sets
 where it turns tie weights back into that many parallel ties.</p>
 <p>A name that is absent means that transformation was not applied,
 so <code>"symmetrisation" %in% names(as_infolist(.data)$transformations)</code>
@@ -235,14 +239,14 @@ information on the Guidelines for Reporting About Network Data (GRAND).</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 279 × 4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to type   weight</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     5 social   1.2 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     1     5 tasks    0.3 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     1     8 social   0.15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     1     9 social   2.85</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     1     9 tasks    0.3 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     1    10 social   6.45</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to weight layer </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     5   1.2  social</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     1     5   0.3  tasks </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     1     8   0.15 social</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     1     9   2.85 social</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     1     9   0.3  tasks </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     1    10   6.45 social</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 273 more rows</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>

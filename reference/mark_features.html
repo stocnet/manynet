@@ -29,7 +29,7 @@ is_aperiodic() tests whether network is aperiodic.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.5.0</span>
       </span>
     </div>
 
@@ -123,13 +123,9 @@ where that path passes through every tie exactly once.</p></li>
 <span></span>
 <span><span class="fu">is_acyclic</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">is_aperiodic</span><span class="op">(</span><span class="va">.data</span>, max_path_length <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">is_aperiodic</span><span class="op">(</span><span class="va">.data</span>, <span class="va">max_path_length</span><span class="op">)</span></span></code></pre></div>
     </div>
 
-    <div id="source">
-    <h2>Source</h2>
-    <p>https://stackoverflow.com/questions/55091438/r-igraph-find-all-cycles</p>
-    </div>
     <div id="arguments">
     <h2>Arguments</h2>
 
@@ -160,9 +156,8 @@ By default "type".</p></dd>
 
 
 <dt id="arg-max-path-length">max_path_length<a class="anchor" aria-label="anchor" href="#arg-max-path-length"></a></dt>
-<dd><p>Maximum path length considered.
-If negative, paths of all lengths are considered.
-By default 4, to avoid potentially very long computation times.</p></dd>
+<dd><p>Deprecated, and no longer used,
+since the period is now found exactly.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -206,10 +201,26 @@ the absence of cycles of a common length.
 Aperiodicity is a necessary condition for the existence of a
 unique stationary distribution in Markov chains, and thus is
 an important property for the analysis of dynamic processes on networks.
-The function <code>is_aperiodic()</code> tests for aperiodicity by finding
-all simple paths from each node back to itself, and then
-calculating the greatest common divisor of the lengths of these paths.
-If the greatest common divisor is 1, the network is aperiodic.</p>
+The function <code>is_aperiodic()</code> finds the period of the network,
+the greatest common divisor of the lengths of all its cycles.
+If the period is 1, the network is aperiodic.</p>
+<p>Each cycle lies inside one strongly connected component.
+In each component, the nodes are numbered by their distance from one node,
+and the period of the component is the greatest common divisor of
+<code>level[i] + 1 - level[j]</code> over the ties from i to j inside it
+(Jarvis and Shier 1996).
+This is exact, and takes time in proportion to the number of ties.
+The network is aperiodic where every component with a cycle has
+a period of 1, as a Markov chain is aperiodic where every class is.
+So two components with cycles of 2 and of 3 are each periodic,
+and the network is not aperiodic, although the lengths 2 and 3
+have no common divisor.
+An undirected tie is a cycle of two, so an undirected network is
+aperiodic where it has a cycle of odd length.
+A self-tie is a cycle of length one, as a state that can stay where it is
+in a Markov chain, so a component with a self-tie is aperiodic.
+In an opinion model, a self-tie is a self-weight (see <code><a href="modif_influence.html">to_influence()</a></code>).
+A network with no cycle counts as aperiodic.</p>
     </div>
     <div id="references">
     <h2>References</h2>
@@ -262,11 +273,13 @@ CRC Press.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span><span class="fu">is_perfect_matching</span><span class="op">(</span><span class="va">ison_southern_women</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
-<span class="r-in"><span><span class="fu">is_eulerian</span><span class="op">(</span><span class="va">ison_brandes</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">is_eulerian</span><span class="op">(</span><span class="va">ison_centrality</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
 <span class="r-in"><span><span class="fu">is_acyclic</span><span class="op">(</span><span class="va">ison_algebra</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
 <span class="r-in"><span><span class="fu">is_aperiodic</span><span class="op">(</span><span class="va">ison_algebra</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-in"><span><span class="fu">is_aperiodic</span><span class="op">(</span><span class="fu"><a href="make_create.html">create_ring</a></span><span class="op">(</span><span class="fl">31</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 </code></pre></div>
     </div>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.5.0</span>
       </span>
     </div>
 
@@ -89,6 +89,308 @@
     </div>
 
     <div class="section level2">
+<h2 class="page-header" data-toc-text="2.5.0" id="manynet-250">manynet 2.5.0<a class="anchor" aria-label="anchor" href="#manynet-250"></a></h2>
+<div class="section level3">
+<h3 id="making-2-5-0">Making<a class="anchor" aria-label="anchor" href="#making-2-5-0"></a></h3>
+<ul><li>Improved the last five making functions to return a named ‘stocnet’
+<ul><li>
+<code><a href="../reference/make_create.html">create_ring()</a></code> and <code><a href="../reference/make_create.html">create_lattice()</a></code>
+</li>
+<li>
+<code><a href="../reference/make_random.html">generate_random()</a></code>, <code><a href="../reference/make_groups.html">generate_smallworld()</a></code>, and <code><a href="../reference/make_growth.html">generate_scalefree()</a></code>
+</li>
+</ul></li>
+<li>Improved <code><a href="../reference/make_random.html">generate_degree()</a></code> to keep repeated ties, tie attributes, and layers
+<ul><li>Fixed draws with repeated ties, which failed, to keep every node’s degree
+<ul><li>A configuration test on a network of tokens is then against shuffled texts</li>
+</ul></li>
+<li>Tie attributes, such as weights and signs, are kept
+<ul><li>With <code>p = 1</code>, the attributes are shuffled over the ties drawn</li>
+<li>With <code>p &lt; 1</code>, each tie keeps its attributes as its ends switch</li>
+</ul></li>
+<li>Added a draw for each layer, so every node keeps its degree in every layer</li>
+</ul></li>
+<li>Added <code><a href="../reference/make_text.html">collect_text()</a></code> for networks from text (closes <a href="https://github.com/stocnet/manynet/issues/15" class="external-link">#15</a>, <a href="https://github.com/henriquesposito" class="external-link">@henriquesposito</a>)
+<ul><li>Units are documents, paragraphs, sentences, or moving windows of words</li>
+<li>Terms are all words, or a dictionary of terms or of names and aliases</li>
+<li>
+<code>from</code> (and <code>to</code>) give mentions (or gossip) among speakers</li>
+<li>
+<code>token</code> takes lemmas or parts of speech from a data frame of tokens</li>
+<li>
+<code>lexicon</code> scores the sentiment of units, and signs the mentions of speakers</li>
+</ul></li>
+<li>Added <code><a href="../reference/make_bibliography.html">collect_bibliography()</a></code> for networks from bibliographic records
+<ul><li>Records from ‘bibliometrix’, ‘openalexR’, or a BibTeX or BibLaTeX file</li>
+<li>Modes of works, authors, keywords, and sources, and the year as <code>time</code>
+</li>
+<li>Layers of “cites”, “authored”, “tagged”, and “published” ties</li>
+<li>Cited works are named by first author, year, and source</li>
+<li>Works hold their global <code>citations</code>, and authors their <code>position</code>
+</li>
+</ul></li>
+<li>Added <code><a href="../reference/make_statements.html">collect_statements()</a></code> for networks from texts coded interactively
+<ul><li>Units are sentences, paragraphs, or documents,</li>
+<li>Each unit coded by concepts, speakers, and sign, can be skipped with “?”</li>
+<li>
+<code>roster</code> offers known speakers and concepts, or the terms of <code><a href="../reference/make_text.html">collect_text()</a></code>
+</li>
+<li>
+<code>.data</code> continues a network that is coded in part, with skips shown again first</li>
+</ul></li>
+<li>Improved <code><a href="../reference/make_play.html">play_diffusion()</a></code> arguments and handling different data shapes
+<ul><li>Added and improved arguments
+<ul><li>Added <code>attribute=</code> to name the node attribute that holds the state history/start</li>
+<li>Improved <code>seeds=</code> to take several labels or the name of a logical attribute</li>
+<li>Added <code>compartments=</code> to map the roles S, E, I, R, and D onto own values</li>
+<li>Added <code>background=</code> for adoption rate without exposure</li>
+<li>Added <code>direction=</code> for which ties expose a node, by default “in”</li>
+<li>Added <code>transitions=</code>, a table of transitions with competing risks
+<ul><li>Columns <code>from</code>, <code>to</code>, <code>rate</code>, <code>source</code>, <code>exposure</code>, <code>threshold</code>, <code>prevalence</code>
+</li>
+<li>
+<code>rate</code> is a hazard, the name of a node attribute, or a function</li>
+<li>
+<code>exposure</code> is “threshold”, “cascade”, or “voter”</li>
+</ul></li>
+<li>Fixed <code>prevalence=</code> lowers each threshold by the share infected in the network</li>
+<li>Renamed <code>thresholds=</code> to <code>threshold=</code>
+</li>
+<li>Renamed <code>latency=</code> to <code>onset=</code>
+</li>
+</ul></li>
+<li>Improved data shape handling
+<ul><li>Missing states start as S, and missing ties count as absent</li>
+<li>Inactive nodes are not at risk and do not transmit, also as <code>active</code> changes</li>
+<li>In each step, spontaneous transitions occur first, then contagion</li>
+<li>Follows the waves of a panel, each in force until the next</li>
+<li>Follows an event stream, where a tie transmits only once it occurs or while active</li>
+<li>Follows a list of networks with the same nodes as a panel, one wave each step</li>
+<li>Runs by default over the whole period of data that change in time</li>
+<li>Fixed exposed nodes, which counted all ties, not the ties of transmission</li>
+<li>Fixed two-mode exposure, which counted the wrong nodes</li>
+<li>Fixed multilevel networks, which failed as their matrix was squared twice</li>
+<li>Fixed infected nodes infected again at every step, as isolates were (closes <a href="https://github.com/stocnet/manynet/issues/203" class="external-link">#203</a>)</li>
+<li>Fixed dated changes exposure</li>
+<li>Fixed <code>fatality=</code>, which failed, and let the dead infect others</li>
+<li>Fixed <code>immune=</code> nodes to start as R in the record, not as S</li>
+<li>Fixed nodes with no contacts adopting under a fractional threshold</li>
+</ul></li>
+<li>Keeps the table of transitions of a ‘stocnet’ in <code>info$transitions</code>
+</li>
+<li>Accelerated <code><a href="../reference/make_play.html">play_diffusion()</a></code> ~2.5x by making each contact matrix once</li>
+</ul></li>
+<li>Renamed <code><a href="../reference/defunct.html">play_learning()</a></code> to <code><a href="../reference/make_opinion.html">play_opinion()</a></code>, which now returns the network with changes
+<ul><li>Renamed <code>beliefs=</code> to <code>opinions=</code>, which can also name node attributes or a matrix of issues</li>
+<li>Added <code>rule=</code> for the “degroot”, “hegselmann_krause”, and “deffuant” rules</li>
+<li>Added <code>stubbornness=</code>, for the model of Friedkin and Johnsen</li>
+<li>Renamed <code>closeness=</code> to <code>confidence=</code>, for the bounded-confidence rules only</li>
+<li>Renamed <code>epsilon=</code> to <code>tolerance=</code>
+</li>
+<li>Added <code>weights=</code> to weigh influence by a tie attribute or by a matrix</li>
+<li>Added repulsion along negative ties for the “degroot” rule (Altafini)</li>
+<li>Fixed “hegselmann_krause” to count each node’s own opinion</li>
+</ul></li>
+<li>Renamed <code><a href="../reference/defunct.html">play_segregation()</a></code> to <code><a href="../reference/make_mobility.html">play_mobility()</a></code>, after the mechanism
+<ul><li>Renamed <code>heterophily=</code> to <code>preference=</code>, which can also be a function</li>
+<li>
+<code>who_moves=</code> and <code>choice_function=</code> can also be functions that score nodes</li>
+<li>Added <code>max_dist=</code> to limit moves to a distance along ties, for vacancy chains</li>
+<li>All attributes of an occupant move with it, not only <code>attribute=</code>
+</li>
+<li>
+<code>choice_function = "minimising"</code> takes the nearest place that satisfies</li>
+<li>Returns the start state, with a record of the moves in the changes</li>
+<li>Added <code>occupant</code> and <code>satisfied</code> to the nodes, which the record follows</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="classes-2-5-0">Classes<a class="anchor" aria-label="anchor" href="#classes-2-5-0"></a></h3>
+<ul><li>Removed the ‘mnet’ class, now that no dataset uses it
+<ul><li>
+<code><a href="../reference/coerce_graph.html">as_tidygraph()</a></code> returns a plain ‘tbl_graph’, which prints as in ‘tidygraph’</li>
+<li>Deprecated <code><a href="../reference/defunct.html">print.mnet()</a></code>, which still prints a network saved with the class</li>
+<li>Removed the <code>$</code> accessors of ‘mnet’ objects</li>
+</ul></li>
+<li>Added the ‘diffusionModel’ class, with ‘diff_model’ second for one release</li>
+<li>Added the ‘opinionModel’ class, with ‘learn_model’ second for one release</li>
+<li>Added the ‘mobilityModel’ class, a table of moves with one row for each step</li>
+<li>Added <code>occupant</code> as a reserved node column, naming the occupant of a place</li>
+<li>Added <code>.stocnet$info$uncoded</code> for units of text still to code</li>
+<li>Added <code>.stocnet$info$compartments</code> for the roles of the values of a diffusion</li>
+<li>Added the ‘diffusionTransitions’ class, which prints a joint source as “E+I”</li>
+<li>Added structural zeros, dyads fixed at no tie, to the ‘stocnet’ (closes <a href="https://github.com/stocnet/manynet/issues/195" class="external-link">#195</a>)
+<ul><li>Held as rows of <code>.stocnet$missings</code> with <code>fixed = TRUE</code>
+</li>
+<li>Dyads of inactive nodes are implied, not held</li>
+<li>
+<code><a href="../reference/coerce_list.html">as_missinglist()</a></code> and imputation leave them out, since they are not missing</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="coercion-2-5-0">Coercion<a class="anchor" aria-label="anchor" href="#coercion-2-5-0"></a></h3>
+<ul><li>Added <code><a href="../reference/coerce_stocnet.html">as_stocnet()</a></code> methods for ‘quanteda’ and ‘tm’ matrices of documents
+<ul><li>
+<code>as_stocnet.dfm()</code> for a document-feature matrix of ‘quanteda’</li>
+<li>
+<code>as_stocnet.DocumentTermMatrix()</code> and <code>as_stocnet.TermDocumentMatrix()</code>
+</li>
+</ul></li>
+<li>Added <code>as_stocnet.bibliometrixDB()</code> for the records of ‘bibliometrix’</li>
+<li>Improved <code><a href="../reference/make_play.html">as_diffusion()</a></code> to count each value of any state attribute
+<ul><li>Added <code>attribute=</code> to name the attribute, by default “diffusion”</li>
+<li>Fixed the counts of E with <code>latency</code> and of S with waning on an ‘igraph’</li>
+<li>Added the nodes that die from <code>fatality=</code> to D, and not to their last value</li>
+<li>Fixed counting the inactive nodes as S; <code>n</code> counts the active nodes at each step</li>
+<li>A column <code>t</code> copies <code>time</code> until 2.6.0, and is not printed</li>
+</ul></li>
+<li>Added <code><a href="../reference/coerce_stocnet.html">as_monan()</a></code> to coerce a network of people and places for ‘MoNAn’
+<ul><li>Also takes a network of places with an <code>occupant</code> record of moves</li>
+</ul></li>
+<li>Added <code><a href="../reference/make_opinion.html">as_opinion()</a></code> to read a record of opinions as an ‘opinionModel’</li>
+<li>Added <code><a href="../reference/make_mobility.html">as_mobility()</a></code> to read a record of moves as a ‘mobilityModel’</li>
+<li>Fixed <code><a href="../reference/coerce_graph.html">as_igraph()</a></code> and <code><a href="../reference/coerce_graph.html">as_tidygraph()</a></code> reading edgelist <code>time</code> column as weights</li>
+<li>Renamed <code>attribute=</code>to <code>over=</code> in <code><a href="../reference/coerce_stocnet.html">as_stocnet.array()</a></code>
+</li>
+<li>Improved <code>as_stocnet.sienadata()</code> to read SIENA’s 10 as a structural zero, not as a non-tie</li>
+<li>Improved <code>as_siena.stocnet()</code>
+<ul><li>Writes structural zeros as SIENA’s 10</li>
+<li>Added <code>focal=</code> to name the dependent variables, in place of <code>info$focal</code>
+</li>
+<li>When no <code>focal</code> and session interactive, presents user with options in the console</li>
+<li>Fixed a tie layer at one wave only to be a constant dyadic covariate</li>
+<li>Added <code>...</code> for <code><a href="https://rdrr.io/pkg/RSiena/man/as_dependent_rsiena.html" class="external-link">RSiena::sienaDependent()</a></code>, for example <code>allowOnly = FALSE</code>
+</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="manipulating-2-5-0">Manipulating<a class="anchor" aria-label="anchor" href="#manipulating-2-5-0"></a></h3>
+<ul><li>Fixed <code><a href="../reference/manip_nodes_num.html">filter_nodes()</a></code> on a ‘stocnet’ where it drops every node of a mode</li>
+<li>Fixed <code><a href="../reference/manip_nodes_attr.html">bind_node_attributes()</a></code> to keep the names of the modes</li>
+<li>Fixed <code><a href="../reference/manip_nodes_num.html">delete_isolates()</a></code> on a list of ‘stocnet’ objects, which failed</li>
+<li>Fixed <code><a href="../reference/manip_ties_attr.html">summarise_ties()</a></code> on a ‘stocnet’, which dropped the nodes with no tie</li>
+<li>Improved <code><a href="../reference/manip_changes.html">bind_changes()</a></code> to start any categorical state variable
+<ul><li>Starts every node as “S”, or as the S of <code>compartments=</code>
+</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="modifying-2-5-0">Modifying<a class="anchor" aria-label="anchor" href="#modifying-2-5-0"></a></h3>
+<ul><li>Added <code><a href="../reference/modif_influence.html">to_influence()</a></code> for the row-stochastic influence matrix of a network
+<ul><li>A negative tie repels; the absolute weights of each row sum to 1</li>
+</ul></li>
+<li>Added <code><a href="../reference/modif_project.html">to_mobility()</a></code> for a network of places with one tie for each move
+<ul><li>Also takes a network of places with an <code>occupant</code> record of moves</li>
+</ul></li>
+<li>Improved <code><a href="../reference/modif_project.html">to_mode()</a></code> with new measures and with <code>through</code>
+<ul><li>Added <code>"agreement"</code>, <code>"disagreement"</code>, and <code>"signed"</code> for signed ties</li>
+<li>Added <code>"activity"</code>, the count over the pair’s mean number of ties</li>
+<li>Added <code>"association"</code>, the association strength of van Eck and Waltman</li>
+<li>Added <code>"fractional"</code>, the fractional counting of co-authorship
+<ul><li>The new measures are in <code><a href="../reference/modif_project.html">to_mode1()</a></code> and <code><a href="../reference/modif_project.html">to_mode2()</a></code> too</li>
+</ul></li>
+<li>Added <code>through</code> for networks of three or more modes
+<ul><li>By default, all the other modes</li>
+</ul></li>
+<li>Fixed <code>"count"</code>, which ignored weights and repeated ties, to add them</li>
+</ul></li>
+<li>Improved <code><a href="../reference/modif_levels.html">to_twomode()</a></code>
+<ul><li>Added <code>through</code> to project three or more modes onto two
+<ul><li>E.g. <code>to_twomode(.data, through = "works")</code> ties authors to keywords</li>
+</ul></li>
+<li>Fixed a two-mode network, which failed, to be returned as it is</li>
+</ul></li>
+<li>Improved <code><a href="../reference/modif_proximity.html">to_proximity()</a></code> with the new two-mode measures of <code><a href="../reference/modif_project.html">to_mode()</a></code>
+</li>
+<li>Added <code>"tfidf"</code> to <code><a href="../reference/modif_weight.html">to_normalised()</a></code> for networks of documents and terms</li>
+<li>Improved <code><a href="../reference/modif_scope.html">to_time()</a></code> with moving time windows
+<ul><li>Added <code>window</code> for the ties recorded in a window up to <code>time</code>
+<ul><li>E.g. <code>to_time(irps_nuclear, as.Date("2011-04-01"), window = 30)</code>
+</li>
+<li>
+<code>window = c(15, 15)</code> centres the window on <code>time</code>
+</li>
+</ul></li>
+<li>Added <code>kernel</code> to weight the ties in a window by their distance from <code>time</code>
+<ul><li>
+<code>"uniform"</code>, <code>"triangular"</code>, <code>"epanechnikov"</code>, or <code>"gaussian"</code>
+</li>
+</ul></li>
+<li>Fixed the increments of a ‘stocnet’, which were counted as ties, to add up</li>
+</ul></li>
+<li>Improved <code><a href="../reference/modif_split.html">to_times()</a></code> with <code>window</code> and <code>kernel</code> for moving windows</li>
+<li>Fixed <code><a href="../reference/modif_split.html">to_slices()</a></code> to add up the increments of a ‘stocnet’</li>
+<li>Fixed <code><a href="../reference/modif_split.html">to_waves()</a></code> to carry a cross-sectional layer into every wave (closes <a href="https://github.com/stocnet/manynet/issues/202" class="external-link">#202</a>)</li>
+<li>Fixed <code><a href="../reference/modif_from_ternary.html">from_waves()</a></code>, which failed where only some layers were longitudinal</li>
+<li>Fixed <code><a href="../reference/modif_from_ternary.html">from_times()</a></code> to keep a cross-sectional layer once, not for each moment</li>
+<li>Improved <code><a href="../reference/modif_from_ternary.html">from_layers()</a></code> on ‘stocnet’ objects
+<ul><li>Fixed a network of one layer to take the name it is given in the call</li>
+<li>Fixed layers renamed for a clash to be renamed in the info as well</li>
+</ul></li>
+<li>Renamed the functions for loops and layers, one word for each meaning (closes <a href="https://github.com/stocnet/manynet/issues/182" class="external-link">#182</a>)
+<ul><li>Renamed <code><a href="../reference/defunct.html">to_simplex()</a></code> to <code><a href="../reference/modif_loops.html">to_unlooped()</a></code>
+</li>
+<li>Renamed <code><a href="../reference/defunct.html">to_uniplex()</a></code> to <code><a href="../reference/modif_layers.html">to_layer()</a></code>, which was its alias</li>
+<li>Renamed <code><a href="../reference/defunct.html">to_flat()</a></code> to <code><a href="../reference/modif_layers.html">to_aggregated()</a></code>, which combines layers by default</li>
+</ul></li>
+<li>Added <code><a href="../reference/modif_loops.html">to_looped()</a></code> to give every node a loop, as a diagonal of ones</li>
+<li>Added <code><a href="../reference/modif_loops.html">to_simplified()</a></code> to remove loops and combine parallel ties by a rule</li>
+<li>Added <code><a href="../reference/modif_layers.html">to_firsthand()</a></code> for the locally aggregated structure of Krackhardt</li>
+<li>Added <code><a href="../reference/modif_layers.html">to_consensus()</a></code> for the consensus structure of Krackhardt, by a <code>threshold</code> share</li>
+<li>Added <code><a href="../reference/modif_split.html">to_targets()</a></code> and <code><a href="../reference/modif_from_ternary.html">from_targets()</a></code> to split and join gossip by its targets</li>
+</ul></div>
+<div class="section level3">
+<h3 id="describing-2-5-0">Describing<a class="anchor" aria-label="anchor" href="#describing-2-5-0"></a></h3>
+<ul><li>Renamed <code><a href="../reference/defunct.html">is_complex()</a></code> to <code><a href="../reference/mark_format_tie.html">is_looped()</a></code>
+</li>
+<li>Improved <code><a href="../reference/mark_format_tie.html">is_uniplex()</a></code> to count layers only, as the opposite of <code><a href="../reference/mark_format_tie.html">is_multiplex()</a></code>
+<ul><li>It asked <code><a href="https://r.igraph.org/reference/simplify.html" class="external-link">igraph::is_simple()</a></code> before, which is now <code><a href="../reference/mark_format_tie.html">is_simplified()</a></code>
+</li>
+</ul></li>
+<li>Added <code><a href="../reference/mark_format_tie.html">is_simplified()</a></code> for a network without loops or parallel ties</li>
+<li>Fixed <code><a href="../reference/measure_dims.html">layer_ties()</a></code> to count a layer without ties as none</li>
+<li>Fixed <code><a href="../reference/mark_features.html">is_aperiodic()</a></code> to find the period exactly
+<ul><li>A self-tie is a cycle of length one, so it makes its component aperiodic</li>
+</ul></li>
+<li>Added <code><a href="../reference/interface.html">snet_deprecated()</a></code> for the old name of a function, argument, or value
+<ul><li>A “superseded” name still works without a warning, for one minor release</li>
+<li>A “deprecated” name warns with the class <code><a href="https://rdrr.io/r/base/Deprecated.html" class="external-link">.Deprecated()</a></code> gives</li>
+<li>A “defunct” name aborts with the class <code><a href="https://rdrr.io/r/base/Defunct.html" class="external-link">.Defunct()</a></code> gives</li>
+</ul></li>
+<li>Replaced <code>fn_moved()</code> with <code><a href="../reference/interface.html">snet_moved()</a></code> for a function that moved to another package</li>
+<li>Added <code><a href="../reference/interface.html">snet_requires()</a></code> for a package that a function needs
+<ul><li>Aborts with the command to install it where it is missing, also in a script</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="glossary-2-5-0">Glossary<a class="anchor" aria-label="anchor" href="#glossary-2-5-0"></a></h3>
+<ul><li>Added glossary entries for diffusion and opinion models
+<ul><li>‘cascade’, ‘voter’, ‘stubbornness’, ‘wisdom of crowds’, and ‘zealot’</li>
+<li>‘balance’, ‘bounded confidence’, ‘periodic’</li>
+<li>‘adopter category’, ‘exposure’, ‘long tie’, and ‘tipping point’</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="data-2-5-0">Data<a class="anchor" aria-label="anchor" href="#data-2-5-0"></a></h3>
+<ul><li>Converted the last single ‘mnet’ datasets to ‘stocnet’ objects (closes <a href="https://github.com/stocnet/manynet/issues/186" class="external-link">#186</a>)
+<ul><li>
+<code>ison_adolescents</code>, <code>ison_lawfirm</code>, <code>ison_networkers</code>, and <code>ison_algebra</code>
+</li>
+<li>
+<code>fict_lotr</code>, <code>irps_usgeo</code>, and <code>irps_revere</code>
+</li>
+</ul></li>
+<li>Renamed <code>ison_brandes</code> to <code>ison_centrality</code>, converted it, and added info
+<ul><li>
+<code>rename_nodes(ison_centrality, mode = twomode_type)</code> gives the two-mode version</li>
+<li>
+<code>ison_brandes</code> remains as a deprecated copy until 2.6.0</li>
+</ul></li>
+<li>Improved <code>ison_physicians</code> to be one ‘stocnet’, not a list of four (closes <a href="https://github.com/stocnet/manynet/issues/185" class="external-link">#185</a>)</li>
+<li>Removed <code>ison_laterals</code>, which nothing used (<a href="https://github.com/stocnet/manynet/issues/185" class="external-link">#185</a>)</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="2.4.5" id="manynet-245">manynet 2.4.5<a class="anchor" aria-label="anchor" href="#manynet-245"></a></h2>
 <div class="section level3">
 <h3 id="coercion-2-4-5">Coercion<a class="anchor" aria-label="anchor" href="#coercion-2-4-5"></a></h3>
@@ -116,7 +418,7 @@
 <h2 class="page-header" data-toc-text="2.4.4" id="manynet-244">manynet 2.4.4<a class="anchor" aria-label="anchor" href="#manynet-244"></a></h2>
 <div class="section level3">
 <h3 id="making-2-4-4">Making<a class="anchor" aria-label="anchor" href="#making-2-4-4"></a></h3>
-<ul><li>Improved <code><a href="../reference/make_collect.html">collect_cran()</a></code> to record the minimum R each package declares as <code>min_r</code>
+<ul><li>Improved <code><a href="../reference/make_packages.html">collect_cran()</a></code> to record the minimum R each package declares as <code>min_r</code>
 </li>
 </ul></div>
 <div class="section level3">
@@ -142,11 +444,11 @@
 </ul></div>
 <div class="section level3">
 <h3 id="coercion-2-4-3">Coercion<a class="anchor" aria-label="anchor" href="#coercion-2-4-3"></a></h3>
-<ul><li>Improved <code><a href="../reference/coerce_graph.html">as_siena()</a></code> to write a fixed tie as SIENA’s structural one, <code>11</code> (closes <a href="https://github.com/stocnet/manynet/issues/165" class="external-link">#165</a>)
+<ul><li>Improved <code><a href="../reference/coerce_stocnet.html">as_siena()</a></code> to write a fixed tie as SIENA’s structural one, <code>11</code> (closes <a href="https://github.com/stocnet/manynet/issues/165" class="external-link">#165</a>)
 <ul><li>
-<code><a href="../reference/coerce_graph.html">as_stocnet()</a></code> reads a <code>11</code> back as a fixed tie of weight 1</li>
+<code><a href="../reference/coerce_stocnet.html">as_stocnet()</a></code> reads a <code>11</code> back as a fixed tie of weight 1</li>
 <li>
-<code><a href="../reference/coerce_graph.html">as_stocnet()</a></code> reads a <code>10</code> as no tie, with a warning, until <a href="https://github.com/stocnet/manynet/issues/195" class="external-link">#195</a></li>
+<code><a href="../reference/coerce_stocnet.html">as_stocnet()</a></code> reads a <code>10</code> as no tie, with a warning, until <a href="https://github.com/stocnet/manynet/issues/195" class="external-link">#195</a></li>
 <li>
 <code>fixed</code> is kept through <code><a href="../reference/coerce_graph.html">as_igraph()</a></code>, <code><a href="../reference/coerce_graph.html">as_tidygraph()</a></code>, and <code><a href="../reference/coerce_graph.html">as_network()</a></code>
 </li>
@@ -176,7 +478,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="coercion-2-4-2">Coercion<a class="anchor" aria-label="anchor" href="#coercion-2-4-2"></a></h3>
-<ul><li>Accelerated <code><a href="../reference/coerce_graph.html">as_siena()</a></code> by writing all ties into each array at once
+<ul><li>Accelerated <code><a href="../reference/coerce_stocnet.html">as_siena()</a></code> by writing all ties into each array at once
 <ul><li>~5x faster for three waves of 300 nodes</li>
 </ul></li>
 <li>Accelerated <code>as_network.igraph()</code> and <code>as_network.tbl_graph()</code> by matching ties at once
@@ -393,9 +695,9 @@
 <ul><li>Neither needs <code>{HyperG}</code> to be installed</li>
 </ul></li>
 <li>Improved <code><a href="../reference/coerce_graph.html">as_igraph()</a></code> and <code><a href="../reference/coerce_graph.html">as_tidygraph()</a></code> to hold each hyperedge as a node of a second mode
-<ul><li>A <code>hyper</code> graph attribute marks the result, and <code><a href="../reference/coerce_graph.html">as_stocnet()</a></code> returns the hyperedges from it</li>
+<ul><li>A <code>hyper</code> graph attribute marks the result, and <code><a href="../reference/coerce_stocnet.html">as_stocnet()</a></code> returns the hyperedges from it</li>
 </ul></li>
-<li>Improved <code><a href="../reference/coerce_graph.html">as_network()</a></code> to hold hyperedges as <a href="https://statnet.org/" class="external-link">network</a> does, and <code><a href="../reference/coerce_graph.html">as_stocnet()</a></code> to read them
+<li>Improved <code><a href="../reference/coerce_graph.html">as_network()</a></code> to hold hyperedges as <a href="https://statnet.org/" class="external-link">network</a> does, and <code><a href="../reference/coerce_stocnet.html">as_stocnet()</a></code> to read them
 <ul><li>A hyperedge with no members, or none on one side, is kept as a network attribute, with a warning</li>
 </ul></li>
 <li>Improved <code><a href="../reference/coerce_matrix.html">as_matrix()</a></code> to return the incidence matrix of a hypergraph, of nodes by hyperedges
@@ -403,11 +705,11 @@
 </ul></li>
 <li>Improved <code><a href="../reference/coerce_list.html">as_edgelist()</a></code> to list the memberships of the nodes of a hypergraph in its hyperedges</li>
 <li>Fixed <code><a href="../reference/coerce_list.html">as_nodelist()</a></code> to return <code>NULL</code> for a ‘stocnet’ whose nodes have neither labels nor attributes</li>
-<li>Fixed <code><a href="../reference/coerce_graph.html">as_igraph()</a></code> and <code><a href="../reference/coerce_graph.html">as_stocnet()</a></code> to coerce a network in which only some nodes are labelled, where a ‘stocnet’ could not be coerced and the ties of an ‘igraph’ object lost their place</li>
+<li>Fixed <code><a href="../reference/coerce_graph.html">as_igraph()</a></code> and <code><a href="../reference/coerce_stocnet.html">as_stocnet()</a></code> to coerce a network in which only some nodes are labelled, where a ‘stocnet’ could not be coerced and the ties of an ‘igraph’ object lost their place</li>
 <li>Added conversion from node_measure and node_member to matrices and stocnets (closes <a href="https://github.com/stocnet/manynet/issues/161" class="external-link">#161</a>)
 <ul><li>Added <code><a href="../reference/coerce_matrix.html">as_matrix.node_measure()</a></code> and <code><a href="../reference/coerce_matrix.html">as_matrix.node_member()</a></code>
 </li>
-<li>Added <code><a href="../reference/coerce_graph.html">as_stocnet.node_measure()</a></code> and <code><a href="../reference/coerce_graph.html">as_stocnet.node_member()</a></code>
+<li>Added <code><a href="../reference/coerce_stocnet.html">as_stocnet.node_measure()</a></code> and <code><a href="../reference/coerce_stocnet.html">as_stocnet.node_member()</a></code>
 </li>
 <li>
 <code>compare=</code> takes “absdiff”, “diff”, “sender”, or “receiver” for a measure</li>
@@ -422,13 +724,13 @@
 <li>Improved <code><a href="../reference/coerce_graph.html">as_network()</a></code> to keep the direction of a two-mode network (closes <a href="https://github.com/stocnet/manynet/issues/157" class="external-link">#157</a>)
 <ul><li>Fixed <code>as_network.stocnet()</code> to count the modes of a stocnet listed out of order</li>
 </ul></li>
-<li>Fixed <code><a href="../reference/coerce_graph.html">as_diffusion()</a></code> to report every step of a diffusion (closes <a href="https://github.com/stocnet/manynet/issues/179" class="external-link">#179</a>)
+<li>Fixed <code><a href="../reference/make_play.html">as_diffusion()</a></code> to report every step of a diffusion (closes <a href="https://github.com/stocnet/manynet/issues/179" class="external-link">#179</a>)
 <ul><li>A diffusion that does not leave its seeds now reports the step in which they were seeded, rather than an empty report</li>
 <li>The last step of a diffusion is no longer left out</li>
 <li>Added <code>as_diffusion.stocnet()</code>, with a <code>time</code> column and the nodes newly susceptible in <code>S_new</code>
 </li>
 </ul></li>
-<li>Improved how <code><a href="../reference/coerce_graph.html">as_stocnet.array()</a></code> handles slices
+<li>Improved how <code><a href="../reference/coerce_stocnet.html">as_stocnet.array()</a></code> handles slices
 <ul><li>Joins <code><a href="../reference/modif_from_ternary.html">from_times()</a></code>, <code><a href="../reference/modif_from_ternary.html">from_layers()</a></code>, or <code><a href="../reference/modif_from_ternary.html">from_reporters()</a></code> slices</li>
 <li>Warns where a slice of time holds no ties, since such a moment is not recorded</li>
 </ul></li>
@@ -463,7 +765,7 @@
 <ul><li>A stronger tie is a shorter step where the network is weighted (Opsahl et al. 2010), and only positive ties are paths</li>
 <li>Returns the lengths of the paths through the hyperedges of a hypergraph (Berge 1973)</li>
 </ul></li>
-<li>Fixed <code><a href="../reference/modif_scope.html">to_ego()</a></code>, <code><a href="../reference/modif_scope.html">to_component()</a></code>, <code><a href="../reference/modif_scope.html">to_giant()</a></code>, and <code><a href="../reference/modif_plexity.html">to_simplex()</a></code> for a hypergraph</li>
+<li>Fixed <code><a href="../reference/modif_scope.html">to_ego()</a></code>, <code><a href="../reference/modif_scope.html">to_component()</a></code>, <code><a href="../reference/modif_scope.html">to_giant()</a></code>, and <code><a href="../reference/defunct.html">to_simplex()</a></code> for a hypergraph</li>
 <li>Fixed <code><a href="../reference/modif_backbone.html">to_backbone()</a></code> and <code><a href="../reference/modif_weight.html">to_normalised()</a></code> to say that they need ties between two nodes</li>
 <li>Fixed <code><a href="../reference/modif_scope.html">to_blockmodel()</a></code> and <code><a href="../reference/modif_proximity.html">to_correlation()</a></code> to take a hypergraph as the two-mode network of its nodes and hyperedges</li>
 <li>Fixed <code><a href="../reference/modif_from_ternary.html">from_layers()</a></code> to stack a ‘stocnet’ as it does other classes
@@ -485,22 +787,22 @@
 <li>Breaks a caller that relied on it to square the matrix, so it waits for 2.4</li>
 </ul></li>
 <li>Split <code>from_*()</code> documentation into joining subgraphs and joining along a third dimension (a moment, a layer, or a reporter)</li>
-<li>Fixed <code><a href="../reference/modif_plexity.html">to_simplex()</a></code> to remove only loops and keeps parallel ties</li>
+<li>Fixed <code><a href="../reference/defunct.html">to_simplex()</a></code> to remove only loops and keeps parallel ties</li>
 <li>Fixed <code><a href="../reference/modif_proximity.html">to_correlation()</a></code> to return the class of object it was given</li>
 <li>Added <code><a href="../reference/modif_concepts.html">to_concepts()</a></code> for projecting a network into its concept (Galois) lattice
 <ul><li>Reinstates <code>to_galois()</code> without a dependency on ‘multiplex’, and faster</li>
 </ul></li>
 <li>Added <code><a href="../reference/modif_from_ternary.html">from_reporters()</a></code> to join each reporter’s network into one structure</li>
 <li>Added <code><a href="../reference/modif_scope.html">to_reporter()</a></code> and <code><a href="../reference/modif_split.html">to_reporters()</a></code> to split a CSS into one or each reporter’s report</li>
-<li>Added <code><a href="../reference/modif_plexity.html">to_aggregated()</a></code> to combine ties over layers, reporters, targets, or moments, dyad by dyad, according to a <code>rule</code> (Krackhardt 1987)
+<li>Added <code><a href="../reference/modif_layers.html">to_aggregated()</a></code> to combine ties over layers, reporters, targets, or moments, dyad by dyad, according to a <code>rule</code> (Krackhardt 1987)
 <ul><li>
-<code>over = NULL</code> combines parallel ties, which <code><a href="../reference/modif_plexity.html">to_simplex()</a></code> no longer does</li>
+<code>over = NULL</code> combines parallel ties, which <code><a href="../reference/defunct.html">to_simplex()</a></code> no longer does</li>
 <li>
 <code>reporters</code> gives sender’s, receiver’s, or locally aggregated reports of a CSS</li>
 <li>
-<code><a href="../reference/modif_plexity.html">to_flat()</a></code> is now an alias that combines layers</li>
+<code><a href="../reference/defunct.html">to_flat()</a></code> is now an alias that combines layers</li>
 </ul></li>
-<li>Added <code><a href="../reference/modif_plexity.html">to_disaggregated()</a></code> to turn tie weights into that many parallel ties
+<li>Added <code><a href="../reference/modif_layers.html">to_disaggregated()</a></code> to turn tie weights into that many parallel ties
 <ul><li>Reverses <code>to_aggregated(over = NULL, rule = "sum")</code>
 </li>
 </ul></li>
@@ -514,7 +816,7 @@
 <div class="section level3">
 <h3 id="marking-2-4-0">Marking<a class="anchor" aria-label="anchor" href="#marking-2-4-0"></a></h3>
 <ul><li>Improved <code><a href="../reference/mark_format_node.html">is_hypergraph()</a></code> to mark hypergraphs TRUE in the ‘igraph’, ‘tbl_graph’, and ‘network’ classes</li>
-<li>Fixed <code><a href="../reference/mark_format_tie.html">is_complex()</a></code>, <code><a href="../reference/mark_format_tie.html">is_weighted()</a></code>, and <code><a href="../reference/measure_attributes_ties.html">tie_is_parallel()</a></code> for a hypergraph</li>
+<li>Fixed <code><a href="../reference/defunct.html">is_complex()</a></code>, <code><a href="../reference/mark_format_tie.html">is_weighted()</a></code>, and <code><a href="../reference/measure_attributes_ties.html">tie_is_parallel()</a></code> for a hypergraph</li>
 <li>Fixed <code><a href="../reference/mark_format_tie.html">is_signed()</a></code> to mark a network signed with <code><a href="../reference/modif_weight.html">to_signed()</a></code> TRUE in every class where all its ties are positive</li>
 <li>Renamed <code><a href="../reference/defunct.html">is_egonet()</a></code> to <code><a href="../reference/mark_format_node.html">is_egolist()</a></code>, since it marks a list of networks
 <ul><li>
@@ -594,7 +896,7 @@
 <ul><li>No longer renames <code>by</code> and <code>about</code> to <code>from</code> and <code>to</code> or <code>weight</code>
 </li>
 </ul></li>
-<li>Added <code><a href="../reference/coerce_graph.html">as_stocnet.array()</a></code> for arrays of layers, waves, reporters, or targets</li>
+<li>Added <code><a href="../reference/coerce_stocnet.html">as_stocnet.array()</a></code> for arrays of layers, waves, reporters, or targets</li>
 </ul></div>
 <div class="section level3">
 <h3 id="manipulating-2-3-5">Manipulating<a class="anchor" aria-label="anchor" href="#manipulating-2-3-5"></a></h3>
@@ -689,7 +991,7 @@
 <div class="section level3">
 <h3 id="coercion-2-3-3">Coercion<a class="anchor" aria-label="anchor" href="#coercion-2-3-3"></a></h3>
 <ul><li>Fixed <code><a href="../reference/coerce_graph.html">as_network()</a></code> losing the graph attributes on the way through igraph</li>
-<li>Fixed <code><a href="../reference/coerce_graph.html">as_siena()</a></code> rendering a node’s non-response as a changing covariate</li>
+<li>Fixed <code><a href="../reference/coerce_stocnet.html">as_siena()</a></code> rendering a node’s non-response as a changing covariate</li>
 </ul></div>
 <div class="section level3">
 <h3 id="making-2-3-3">Making<a class="anchor" aria-label="anchor" href="#making-2-3-3"></a></h3>
@@ -753,7 +1055,7 @@
 <li>now reads signs held as negative weights as well as in a ‘sign’ column</li>
 </ul></li>
 <li>Fixed <code>to_unsigned.network()</code> ignoring its <code>keep</code> argument</li>
-<li>Fixed <code><a href="../reference/modif_plexity.html">to_layer()</a></code> pointing arcs at the wrong nodes (closes <a href="https://github.com/stocnet/manynet/issues/170" class="external-link">#170</a>)</li>
+<li>Fixed <code><a href="../reference/modif_layers.html">to_layer()</a></code> pointing arcs at the wrong nodes (closes <a href="https://github.com/stocnet/manynet/issues/170" class="external-link">#170</a>)</li>
 </ul></div>
 <div class="section level3">
 <h3 id="marking-2-3-2">Marking<a class="anchor" aria-label="anchor" href="#marking-2-3-2"></a></h3>
@@ -1005,17 +1307,17 @@
 </li>
 </ul></li>
 <li>Added <code><a href="../reference/modif_split.html">to_layers()</a></code> to split multiplex networks into a named list of its layers</li>
-<li>Added <code><a href="../reference/modif_plexity.html">to_layer()</a></code> as a vocabulary-consistent alias of <code><a href="../reference/modif_plexity.html">to_uniplex()</a></code>
-<ul><li>Fixed <code><a href="../reference/modif_plexity.html">to_uniplex()</a></code> to keep info only about the retained layer</li>
-<li>Fixed <code><a href="../reference/modif_plexity.html">to_uniplex()</a></code> to return undirected network where retained layer retained is undirected</li>
+<li>Added <code><a href="../reference/modif_layers.html">to_layer()</a></code> as a vocabulary-consistent alias of <code><a href="../reference/defunct.html">to_uniplex()</a></code>
+<ul><li>Fixed <code><a href="../reference/defunct.html">to_uniplex()</a></code> to keep info only about the retained layer</li>
+<li>Fixed <code><a href="../reference/defunct.html">to_uniplex()</a></code> to return undirected network where retained layer retained is undirected</li>
 </ul></li>
-<li>Added <code><a href="../reference/modif_plexity.html">to_flat()</a></code> to reduce a multiplex network to a uniplex one
+<li>Added <code><a href="../reference/defunct.html">to_flat()</a></code> to reduce a multiplex network to a uniplex one
 <ul><li>
 <code>rule</code> includes “max”, “min”, “mean”, “sum”, or “product”</li>
 <li>Missing values propagate rather than being ignored</li>
 <li>Records the method used in <code>info$transformations$summarization</code> per GRAND item 4.5</li>
 </ul></li>
-<li>Renamed <code>tie</code> argument of <code><a href="../reference/modif_plexity.html">to_uniplex()</a></code> to <code>layer</code> for layer-vocabulary consistency; <code>tie</code> still works but warns (closed <a href="https://github.com/stocnet/manynet/issues/159" class="external-link">#159</a>)</li>
+<li>Renamed <code>tie</code> argument of <code><a href="../reference/defunct.html">to_uniplex()</a></code> to <code>layer</code> for layer-vocabulary consistency; <code>tie</code> still works but warns (closed <a href="https://github.com/stocnet/manynet/issues/159" class="external-link">#159</a>)</li>
 </ul></li>
 <li>Added <code><a href="../reference/modif_miss.html">impute_ties()</a></code> to replace <code><a href="../reference/defunct.html">na_to_zero()</a></code> and <code><a href="../reference/defunct.html">na_to_mean()</a></code>
 <ul><li>
@@ -1046,7 +1348,7 @@
 <ul><li>Fixed it silently dropping incomplete ties</li>
 <li>Records threshold and number of ties deleted per GRAND item 4.2</li>
 </ul></li>
-<li>Added <code>stocnet</code> methods to <code><a href="../reference/modif_scope.html">to_ego()</a></code>, <code><a href="../reference/modif_scope.html">to_component()</a></code>, <code><a href="../reference/modif_scope.html">to_subgraph()</a></code>, <code><a href="../reference/modif_split.html">to_egos()</a></code>, <code><a href="../reference/modif_split.html">to_subgraphs()</a></code>, <code><a href="../reference/modif_split.html">to_components()</a></code>, <code><a href="../reference/modif_weight.html">to_unweighted()</a></code>, <code><a href="../reference/modif_weight.html">to_unsigned()</a></code>, <code><a href="../reference/modif_plexity.html">to_simplex()</a></code>, and <code><a href="../reference/modif_direction.html">to_acyclic()</a></code>
+<li>Added <code>stocnet</code> methods to <code><a href="../reference/modif_scope.html">to_ego()</a></code>, <code><a href="../reference/modif_scope.html">to_component()</a></code>, <code><a href="../reference/modif_scope.html">to_subgraph()</a></code>, <code><a href="../reference/modif_split.html">to_egos()</a></code>, <code><a href="../reference/modif_split.html">to_subgraphs()</a></code>, <code><a href="../reference/modif_split.html">to_components()</a></code>, <code><a href="../reference/modif_weight.html">to_unweighted()</a></code>, <code><a href="../reference/modif_weight.html">to_unsigned()</a></code>, <code><a href="../reference/defunct.html">to_simplex()</a></code>, and <code><a href="../reference/modif_direction.html">to_acyclic()</a></code>
 </li>
 <li>Added <code>to_simplex.tbl_graph()</code> and <code>to_acyclic.tbl_graph()</code>
 </li>
@@ -1115,7 +1417,7 @@
 <ul><li>Added “Missing data” page to the “Manipulating” tutorial with <code>ison_classmates</code> example</li>
 <li>Added “Backbones” section to the “Manipulating” tutorial’s “Modifying networks” page</li>
 <li>Updated “Manipulating” tutorial’s “Layers” page to cover layer-vocabulary with <code>ison_lawfirm</code> example</li>
-<li>Updated tutorial and cheatsheet references to <code><a href="../reference/modif_plexity.html">to_uniplex()</a></code> to use <code>layer</code> argument</li>
+<li>Updated tutorial and cheatsheet references to <code><a href="../reference/defunct.html">to_uniplex()</a></code> to use <code>layer</code> argument</li>
 <li>Moved gifs to question feedback and added more questions:
 <ul><li>“Making” tutorial gains question on reading files</li>
 <li>“Manipulating” tutorial gains questions on operators, layers, missing data, and more</li>
@@ -1149,7 +1451,7 @@
 <li>A <code>man</code> of the wrong length now reports what was expected and what was given, instead of the message for <code>man</code> not having been given at all</li>
 <li>Corrected the documentation for <code>man</code>, which promised that a count such as <code>c(10,0,20)</code> would be treated as a count; such vectors are normalised into proportions, so the dyad census of an existing network is reproduced in expectation rather than exactly</li>
 </ul></li>
-<li>Improved <code><a href="../reference/make_collect.html">collect_cran()</a></code> so that it returns a scoped, correctly parsed network of package dependencies
+<li>Improved <code><a href="../reference/make_packages.html">collect_cran()</a></code> so that it returns a scoped, correctly parsed network of package dependencies
 <ul><li>Added <code>dependencies</code>, which selects the fields to collect and defaults to <code>c("Depends", "Imports", "LinkingTo")</code>, the dependencies that must be installed alongside a package, as in <code><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages()</a></code>; <code>Suggests</code> is no longer collected by default, since including it grows the dependency closure of <code>manynet</code> from 28 packages to 2348</li>
 <li>
 <code>LinkingTo</code> and <code>Enhances</code> can now be collected, where they were previously ignored altogether</li>
@@ -1158,11 +1460,11 @@
 <li>
 <code>pkg</code> now accepts a vector of package names, where more than one name previously raised a “the condition has length &gt; 1” error, and names that are not on CRAN are now reported instead of silently returning an empty network</li>
 <li>Fixed the parsing of the dependency fields, which dropped any dependency written without a space before its version constraint, admitted malformed nodes such as “Matrix(&lt; 1.8-0)” and “&lt;= 3.6.1)”, and left a leading newline or space on 14 names, so that e.g. “” was a separate node from “dplyr”</li>
-<li>Fixed <code><a href="../reference/make_collect.html">collect_cran()</a></code> raising a “trying to use CRAN without setting a mirror” error wherever no repository is set, as in non-interactive sessions, which had made it impossible to test</li>
+<li>Fixed <code><a href="../reference/make_packages.html">collect_cran()</a></code> raising a “trying to use CRAN without setting a mirror” error wherever no repository is set, as in non-interactive sessions, which had made it impossible to test</li>
 <li>Nodes now record <code>version</code>, <code>published</code>, <code>compiled</code>, <code>priority</code>, <code>license</code>, and <code>on_cran</code>, the last of which distinguishes the several hundred dependencies, mostly Bioconductor packages, that are not themselves on CRAN; <code>Compilation</code> is renamed <code>compiled</code> and is no longer missing for every node</li>
 <li>Ties now record which field declared them, so that e.g. <code>to_uniplex(net, "Imports")</code> scopes the network to one kind of dependency</li>
 </ul></li>
-<li>Improved <code><a href="../reference/make_collect.html">collect_pkg()</a></code> to use R’s own parser rather than regular expressions to find function definitions and calls
+<li>Improved <code><a href="../reference/make_packages.html">collect_pkg()</a></code> to use R’s own parser rather than regular expressions to find function definitions and calls
 <ul><li>Calls are now identified from the parsed tokens, so they are no longer counted inside comments, roxygen prose, or strings, and no longer attributed by substring collision; <code><a href="../reference/modif_scope.html">to_ego()</a></code> previously had an in-degree of 10 in <code>manynet</code>’s own network, where it is in fact called nowhere</li>
 <li>Functions assigned with <code>=</code>, defined as a <code>\(x)</code> lambda, or whose <code>function</code> keyword falls on a later line are now found, where only four hardcoded spacings of <code>&lt;- function</code> were recognised</li>
 <li>Calls are attributed to the innermost function enclosing them, however deeply nested, replacing the brace-counting used to find sub-functions</li>
@@ -1171,10 +1473,10 @@
 </li>
 <li>Nodes now record <code>file</code>, <code>lines</code>, <code>exported</code>, and <code>generic</code>, and ties are weighted by the number of call sites</li>
 <li>
-<code><a href="../reference/make_collect.html">collect_pkg()</a></code> now reports through the usual console interface rather than base <code><a href="https://rdrr.io/r/base/warning.html" class="external-link">warning()</a></code>, no longer raises a “number of items to replace is not a multiple of replacement length” error, and returns a network rather than a list where no functions are found</li>
+<code><a href="../reference/make_packages.html">collect_pkg()</a></code> now reports through the usual console interface rather than base <code><a href="https://rdrr.io/r/base/warning.html" class="external-link">warning()</a></code>, no longer raises a “number of items to replace is not a multiple of replacement length” error, and returns a network rather than a list where no functions are found</li>
 <li>Scripts that cannot be parsed are now named, instead of the whole directory silently returning a mangled network</li>
 </ul></li>
-<li>Renamed the documentation topic <code>make_cran</code> to <code>make_collect</code>, and corrected it where it still described <code><a href="../reference/make_collect.html">collect_cran()</a></code> and <code><a href="../reference/make_collect.html">collect_pkg()</a></code> under their former names <code><a href="../reference/defunct.html">read_cran()</a></code> and <code><a href="../reference/defunct.html">read_pkg()</a></code>
+<li>Renamed the documentation topic <code>make_cran</code> to <code>make_collect</code>, and corrected it where it still described <code><a href="../reference/make_packages.html">collect_cran()</a></code> and <code><a href="../reference/make_packages.html">collect_pkg()</a></code> under their former names <code><a href="../reference/defunct.html">read_cran()</a></code> and <code><a href="../reference/defunct.html">read_pkg()</a></code>
 </li>
 <li>Fixed <code>create_cycle(n, directed = TRUE)</code> to construct its cycle directed rather than relying on edgelist coercion to do so</li>
 </ul></div>
@@ -1204,7 +1506,7 @@
 <ul><li>Argument is named <code>connectivity</code> rather than igraph’s <code>mode</code>, which is reserved in this package for one- and two-mode networks</li>
 <li>Connectivity type, if applicable, is now reported in the network’s name, e.g. <code>to_giant(fict_starwars, connectivity = "strong")</code> is a “Giant strong component of Star Wars network data”</li>
 </ul></li>
-<li>Fixed <code><a href="../reference/modif_plexity.html">to_uniplex()</a></code> erroring on networks it cannot reduce, and generalised where it looks for the tie types:
+<li>Fixed <code><a href="../reference/defunct.html">to_uniplex()</a></code> erroring on networks it cannot reduce, and generalised where it looks for the tie types:
 <ul><li>Uniplex networks raised an “In argument: <code>type == tie</code>” error, and are now returned unchanged, as in <code><a href="../reference/modif_split.html">to_waves()</a></code> and <code><a href="../reference/modif_split.html">to_slices()</a></code>
 </li>
 <li>Where a non-existent layer is requested or none is given, available layers are now reported instead of raising an uninformative error while printing the (empty) result</li>
@@ -1358,20 +1660,20 @@
 </ul></div>
 <div class="section level3">
 <h3 id="coercion-2-2-0">Coercion<a class="anchor" aria-label="anchor" href="#coercion-2-2-0"></a></h3>
-<ul><li>Added lossless coercion between ‘stocnet’ and ‘RSiena’ ‘sienadata’ objects via <code><a href="../reference/coerce_graph.html">as_stocnet()</a></code> and <code><a href="../reference/coerce_graph.html">as_siena()</a></code>
+<ul><li>Added lossless coercion between ‘stocnet’ and ‘RSiena’ ‘sienadata’ objects via <code><a href="../reference/coerce_stocnet.html">as_stocnet()</a></code> and <code><a href="../reference/coerce_stocnet.html">as_siena()</a></code>
 <ul><li>
-<code><a href="../reference/coerce_graph.html">as_stocnet()</a></code> now unpacks the full contents of a ‘sienadata’ object: multiple dependent networks (as tie layers), behavioural dependents and varying covariates (as nodal changes), constant covariates (as nodal attributes), constant and varying dyadic covariates (as tie layers), composition change (as nodal changes), and multiple node sets (as modes), preserving node labels and missing values</li>
+<code><a href="../reference/coerce_stocnet.html">as_stocnet()</a></code> now unpacks the full contents of a ‘sienadata’ object: multiple dependent networks (as tie layers), behavioural dependents and varying covariates (as nodal changes), constant covariates (as nodal attributes), constant and varying dyadic covariates (as tie layers), composition change (as nodal changes), and multiple node sets (as modes), preserving node labels and missing values</li>
 <li>
 <code>as_siena.stocnet()</code> reconstructs an equivalent ‘sienadata’ object, round-tripping values exactly (including covariate centering, which RSiena stores mean-centered)</li>
 <li>Introduced reserved <code>info</code> slots to support this: <code>focal</code> (now a character vector naming all dependent variables), <code>centered</code> (a named logical vector of covariate centering), and <code>siena</code> (a sublist carrying RSiena-specific estimation metadata)</li>
 <li>
-<code><a href="../reference/coerce_graph.html">as_siena()</a></code> now routes any coercible object (igraph, tidygraph/mnet, matrix, network, …) through the ‘stocnet’ path via a single <code>as_siena.default()</code> method, so multiplex layers, waves, and covariates are carried across; longitudinal networks whose waves are held in a <code>wave</code>/<code>time</code> tie attribute now convert directly</li>
+<code><a href="../reference/coerce_stocnet.html">as_siena()</a></code> now routes any coercible object (igraph, tidygraph/mnet, matrix, network, …) through the ‘stocnet’ path via a single <code>as_siena.default()</code> method, so multiplex layers, waves, and covariates are carried across; longitudinal networks whose waves are held in a <code>wave</code>/<code>time</code> tie attribute now convert directly</li>
 <li>
-<code><a href="../reference/coerce_graph.html">as_siena()</a></code> gives clearer errors: a helpful message when a network has fewer than two waves (e.g. <code>as_siena(ison_adolescents)</code>) or when a dependent network is valued/signed rather than binary (suggesting <code><a href="../reference/modif_weight.html">to_unweighted()</a></code>), and passes categorical nodal attributes to SIENA as numeric-coded covariates</li>
+<code><a href="../reference/coerce_stocnet.html">as_siena()</a></code> gives clearer errors: a helpful message when a network has fewer than two waves (e.g. <code>as_siena(ison_adolescents)</code>) or when a dependent network is valued/signed rather than binary (suggesting <code><a href="../reference/modif_weight.html">to_unweighted()</a></code>), and passes categorical nodal attributes to SIENA as numeric-coded covariates</li>
 <li>Fixed the <code><a href="../reference/coerce_graph.html">as_igraph()</a></code>/<code><a href="../reference/coerce_graph.html">as_tidygraph()</a></code>/<code><a href="../reference/coerce_graph.html">as_network()</a></code> coercions of ‘sienadata’ objects, which previously did not dispatch because RSiena objects are classed <code>sienadata</code> rather than <code>siena</code>; these now route through the richer ‘stocnet’ path</li>
 </ul></li>
 <li>Fixed <code>as_nodelist.network()</code> retaining a spurious all-<code>FALSE</code> <code>na</code> column, caused by testing a non-existent <code>names</code> field instead of the <code>na</code> column when deciding whether to drop it</li>
-<li>Fixed <code><a href="../reference/coerce_graph.html">as_stocnet()</a></code> warning about an unknown <code>type</code> column when coercing an igraph-like network that counts as multiplex only by virtue of carrying a non-reserved tie attribute; the <code>type</code>-to-<code>layer</code> renaming now only runs when a <code>type</code> column is present</li>
+<li>Fixed <code><a href="../reference/coerce_stocnet.html">as_stocnet()</a></code> warning about an unknown <code>type</code> column when coercing an igraph-like network that counts as multiplex only by virtue of carrying a non-reserved tie attribute; the <code>type</code>-to-<code>layer</code> renaming now only runs when a <code>type</code> column is present</li>
 </ul></div>
 <div class="section level3">
 <h3 id="manipulating-2-2-0">Manipulating<a class="anchor" aria-label="anchor" href="#manipulating-2-2-0"></a></h3>
@@ -1398,7 +1700,7 @@
 <li>Renamed <code><a href="../reference/modif_labels.html">to_named()</a></code> to <code><a href="../reference/modif_labels.html">to_labelled()</a></code> and <code><a href="../reference/modif_labels.html">to_unnamed()</a></code> to <code><a href="../reference/modif_labels.html">to_unlabelled()</a></code> for consistency with <code><a href="../reference/mark_format_node.html">is_labelled()</a></code> and <code><a href="../reference/measure_attributes_nodes.html">node_labels()</a></code>; <code><a href="../reference/modif_labels.html">to_named()</a></code> and <code><a href="../reference/modif_labels.html">to_unnamed()</a></code> remain available as aliases since they are relied upon by other <code>stocnet</code> packages</li>
 <li>Added <code><a href="../reference/modif_scope.html">to_wave()</a></code> as an alias of <code><a href="../reference/modif_scope.html">to_time()</a></code>, matching the wave-based vocabulary of <code><a href="../reference/measure_dims.html">net_waves()</a></code> and <code><a href="../reference/modif_split.html">to_waves()</a></code> when extracting a single wave of a longitudinal network</li>
 <li>Added <code><a href="../reference/modif_scope.html">to_component()</a></code> as an alias of <code><a href="../reference/modif_scope.html">to_giant()</a></code>, giving the “keep the one main component” verb a singular name that corresponds to the plural <code><a href="../reference/modif_split.html">to_components()</a></code> (which returns a list of all components), following the <code><a href="../reference/modif_scope.html">to_subgraph()</a></code>/<code><a href="../reference/modif_split.html">to_subgraphs()</a></code> pattern</li>
-<li>Fixed <code><a href="../reference/modif_plexity.html">to_uniplex()</a></code> throwing an error on unsigned multiplex networks (e.g. <code>to_uniplex(irps_911, "trust")</code>) due to an operator precedence bug in the check for dropping an all-positive/all-<code>NA</code> <code>sign</code> column</li>
+<li>Fixed <code><a href="../reference/defunct.html">to_uniplex()</a></code> throwing an error on unsigned multiplex networks (e.g. <code>to_uniplex(irps_911, "trust")</code>) due to an operator precedence bug in the check for dropping an all-positive/all-<code>NA</code> <code>sign</code> column</li>
 <li>Fixed <code><a href="../reference/modif_project.html">to_hypergraph()</a></code> crashing the R session (“segfault from C stack overflow”) on directed networks, by converting to undirected before the maximal clique search; the crash is an upstream igraph 2.3.3 bug triggered when <code><a href="https://r.igraph.org/reference/cliques.html" class="external-link">igraph::max_cliques()</a></code> is called on a directed graph after <code><a href="https://r.igraph.org/reference/which_multiple.html" class="external-link">igraph::any_multiple()</a></code>
 </li>
 <li>Improved <code><a href="../reference/modif_project.html">to_mode1()</a></code> and <code><a href="../reference/modif_project.html">to_mode2()</a></code> to return one-mode networks unchanged, so projection is a no-op rather than an error when the network is already one-mode</li>
@@ -1449,7 +1751,7 @@
 <li>Improved the “Manipulating Data” tutorial (manynet2) around the parts of a network rather than the reformatting/transforming distinction, so students can jump straight to the section matching their data: Operating on networks (the <code>[</code>/<code>[[</code>/<code>$</code> operators); Nodal properties (adding/removing nodes, labels, attributes); Tie properties (adding/removing ties, attributes, direction, weights, signs); Multiplex networks (joining, layers); Multimodal networks (modes); Dynamic networks (waves, changes); and a closing Selecting and cleaning section (subgraph filtering, isolates/giant/simplex) that narrows the fully built-up object down before the summary pipeline. The reformatting/transforming vocabulary is kept as a callout rather than the organising structure, and each element’s composition verbs (<code><a href="../reference/manip_nodes_num.html">add_nodes()</a></code>/<code><a href="../reference/manip_nodes_num.html">delete_nodes()</a></code>, <code><a href="../reference/manip_ties_num.html">add_ties()</a></code>/<code><a href="../reference/manip_ties_num.html">delete_ties()</a></code>) lead into that element’s own section
 <ul><li>Added a “Changing networks” section covering <code><a href="../reference/mark_format_change.html">is_longitudinal()</a></code>/<code><a href="../reference/mark_format_change.html">is_dynamic()</a></code>/<code><a href="../reference/mark_format_change.html">is_changing()</a></code>, <code><a href="../reference/measure_dims.html">net_waves()</a></code>, <code><a href="../reference/modif_scope.html">to_time()</a></code>, <code><a href="../reference/modif_split.html">to_waves()</a></code>, and the <code>*_changes()</code> family (<code><a href="../reference/manip_changes.html">filter_changes()</a></code>, <code><a href="../reference/defunct.html">apply_changes()</a></code>), previously untreated in the tutorials</li>
 <li>Extended the opening <code>[</code>/<code>[[</code> operators section with <code>$</code> get/set, and cross-referenced it as the do-it-yourself alternative alongside named functions throughout (e.g. <code>net$name &lt;-</code> beside <code><a href="../reference/modif_labels.html">to_labelled()</a></code>)</li>
-<li>Added <code><a href="../reference/member_names.html">layer_names()</a></code>/<code><a href="../reference/modif_plexity.html">to_uniplex()</a></code> (multiplex layers) and <code><a href="../reference/modif_levels.html">to_onemode()</a></code>/<code><a href="../reference/modif_levels.html">to_twomode()</a></code>/<code><a href="../reference/modif_levels.html">to_multilevel()</a></code> (mode conversion) coverage alongside the existing two-mode projection material</li>
+<li>Added <code><a href="../reference/member_names.html">layer_names()</a></code>/<code><a href="../reference/defunct.html">to_uniplex()</a></code> (multiplex layers) and <code><a href="../reference/modif_levels.html">to_onemode()</a></code>/<code><a href="../reference/modif_levels.html">to_twomode()</a></code>/<code><a href="../reference/modif_levels.html">to_multilevel()</a></code> (mode conversion) coverage alongside the existing two-mode projection material</li>
 <li>Added <code>signed</code>, <code>longitudinal</code>, and <code>dynamic</code> glossary entries to support the new sections’ hover-term definitions</li>
 </ul></li>
 </ul></div>
@@ -1558,7 +1860,7 @@
 <ul><li>Added <code><a href="../reference/coerce_list.html">as_globallist()</a></code> for extracting global variables from ‘igraph’ and ‘stocnet’ objects</li>
 <li>Added <code>as_stocnet.data.frame()</code> for coercing edgelists to stocnet objects (closes <a href="https://github.com/stocnet/manynet/issues/138" class="external-link">#138</a>)</li>
 <li>Improved <code><a href="../reference/make_stocnet.html">make_stocnet()</a></code> construction, indexing, and validation of nodes, ties, changes, info, and globals</li>
-<li>Improved <code><a href="../reference/coerce_graph.html">as_stocnet()</a></code> coercion for <code>data.frame</code> and <code>tbl_graph</code> inputs</li>
+<li>Improved <code><a href="../reference/coerce_stocnet.html">as_stocnet()</a></code> coercion for <code>data.frame</code> and <code>tbl_graph</code> inputs</li>
 <li>Fixed <a href="https://github.com/stocnet/manynet/issues/137" class="external-link">#137</a> by extending time variable class validation to include integer and POSIXlt (thanks <a href="https://github.com/auzaheta" class="external-link">@auzaheta</a>)</li>
 <li>Fixed <a href="https://github.com/stocnet/manynet/issues/140" class="external-link">#140</a> and <a href="https://github.com/stocnet/manynet/issues/141" class="external-link">#141</a> by making sure <code><a href="../reference/make_stocnet.html">make_stocnet()</a></code> aborts early and informatively when node labels do not match (thanks <a href="https://github.com/auzaheta" class="external-link">@auzaheta</a>)</li>
 </ul></div>
@@ -1640,10 +1942,10 @@
 <div class="section level3">
 <h3 id="making-2-0-0">Making<a class="anchor" aria-label="anchor" href="#making-2-0-0"></a></h3>
 <ul><li>Renamed <code>create_ego()</code> to <code><a href="../reference/make_ego.html">collect_ego()</a></code> to better signal the different input structure expected</li>
-<li>Renamed <code><a href="../reference/defunct.html">read_cran()</a></code> and <code><a href="../reference/defunct.html">read_pkg()</a></code> to <code><a href="../reference/make_collect.html">collect_cran()</a></code> and <code><a href="../reference/make_collect.html">collect_pkg()</a></code> for consistency with other collecting functions</li>
+<li>Renamed <code><a href="../reference/defunct.html">read_cran()</a></code> and <code><a href="../reference/defunct.html">read_pkg()</a></code> to <code><a href="../reference/make_packages.html">collect_cran()</a></code> and <code><a href="../reference/make_packages.html">collect_pkg()</a></code> for consistency with other collecting functions</li>
 <li>Added directed parameters to <code><a href="../reference/make_create.html">create_cycle()</a></code> and <code><a href="../reference/make_create.html">create_wheel()</a></code> (undirected by default)</li>
 <li>Dropped <code>generate_permutation()</code> as no longer necessary</li>
-<li>Fixed <code><a href="../reference/make_learning.html">play_segregation()</a></code> to be less verbose</li>
+<li>Fixed <code><a href="../reference/defunct.html">play_segregation()</a></code> to be less verbose</li>
 <li>Most common read/write methods now add file suffixes if passed filenames without them</li>
 </ul></div>
 <div class="section level3">
@@ -1702,7 +2004,7 @@
 </li>
 <li>
 <code><a href="../reference/mark_is.html">is_manynet()</a></code> now recognises the <code>stocnet</code> class</li>
-<li>Added <code>stocnet</code> methods for <code><a href="../reference/mark_format_node.html">is_labelled()</a></code>, <code><a href="../reference/mark_format_tie.html">is_signed()</a></code>, <code><a href="../reference/mark_format_tie.html">is_complex()</a></code>, <code><a href="../reference/mark_format_tie.html">is_multiplex()</a></code>, <code><a href="../reference/mark_format_change.html">is_changing()</a></code>, <code><a href="../reference/mark_format_change.html">is_longitudinal()</a></code>, <code><a href="../reference/mark_format_change.html">is_dynamic()</a></code>, <code><a href="../reference/mark_format_node.html">is_twomode()</a></code>, and <code><a href="../reference/mark_format_tie.html">is_directed()</a></code>
+<li>Added <code>stocnet</code> methods for <code><a href="../reference/mark_format_node.html">is_labelled()</a></code>, <code><a href="../reference/mark_format_tie.html">is_signed()</a></code>, <code><a href="../reference/defunct.html">is_complex()</a></code>, <code><a href="../reference/mark_format_tie.html">is_multiplex()</a></code>, <code><a href="../reference/mark_format_change.html">is_changing()</a></code>, <code><a href="../reference/mark_format_change.html">is_longitudinal()</a></code>, <code><a href="../reference/mark_format_change.html">is_dynamic()</a></code>, <code><a href="../reference/mark_format_node.html">is_twomode()</a></code>, and <code><a href="../reference/mark_format_tie.html">is_directed()</a></code>
 </li>
 </ul></div>
 </div>
@@ -1749,7 +2051,7 @@
 <h3 id="modifying-1-7-1">Modifying<a class="anchor" aria-label="anchor" href="#modifying-1-7-1"></a></h3>
 <ul><li>Improved <code><a href="../reference/modif_project.html">to_mode1()</a></code> and <code><a href="../reference/modif_project.html">to_mode2()</a></code> to carry forward nodal and tie attributes during projection</li>
 <li>Improved <code><a href="../reference/modif_project.html">to_mode1()</a></code> and <code><a href="../reference/modif_project.html">to_mode2()</a></code> to drop unnecessary nodal information</li>
-<li>Improved <code><a href="../reference/modif_plexity.html">to_uniplex()</a></code> to handle multimodal multiplex filtering correctly and retain tie type information</li>
+<li>Improved <code><a href="../reference/defunct.html">to_uniplex()</a></code> to handle multimodal multiplex filtering correctly and retain tie type information</li>
 <li>Fixed <a href="https://github.com/stocnet/manynet/issues/123" class="external-link">#123</a> by inserting NAs before converting networkDynamic to igraph</li>
 <li>Fixed <code><a href="../reference/defunct.html">add_changes()</a></code> to work with tbl_graph</li>
 <li>Fixed <code><a href="../reference/manip_nodes_num.html">filter_nodes()</a></code> to use <code><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">dplyr::all_of()</a></code>
@@ -1774,7 +2076,7 @@
 <h2 class="page-header" data-toc-text="1.7.0" id="manynet-170">manynet 1.7.0<small>2025-11-19</small><a class="anchor" aria-label="anchor" href="#manynet-170"></a></h2>
 <div class="section level3">
 <h3 id="making-1-7-0">Making<a class="anchor" aria-label="anchor" href="#making-1-7-0"></a></h3>
-<ul><li>Improved vector printing to be more succinct and suggest <code><a href="../reference/make_mnet.html">print_all()</a></code>
+<ul><li>Improved vector printing to be more succinct and suggest <code><a href="../reference/make_stocnet.html">print_all()</a></code>
 </li>
 <li>Improved printing methods for changing mnet objects</li>
 </ul></div>
@@ -1782,8 +2084,8 @@
 <h3 id="modifying-1-7-0">Modifying<a class="anchor" aria-label="anchor" href="#modifying-1-7-0"></a></h3>
 <ul><li>Added <code><a href="../reference/manip_changes.html">delete_changes()</a></code> for deleting all changes from a changing network</li>
 <li>Improved <code><a href="../reference/modif_split.html">to_waves()</a></code> to work with networks that are changing, longitudinal, or both</li>
-<li>Fixed <code><a href="../reference/coerce_graph.html">as_diffusion()</a></code> to not trim off final wave in the report</li>
-<li>Fixed <code><a href="../reference/coerce_graph.html">as_diffusion()</a></code> to return correct E and R compartments for waning diffusion models</li>
+<li>Fixed <code><a href="../reference/make_play.html">as_diffusion()</a></code> to not trim off final wave in the report</li>
+<li>Fixed <code><a href="../reference/make_play.html">as_diffusion()</a></code> to return correct E and R compartments for waning diffusion models</li>
 </ul></div>
 <div class="section level3">
 <h3 id="marking-1-7-0">Marking<a class="anchor" aria-label="anchor" href="#marking-1-7-0"></a></h3>
@@ -1958,7 +2260,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="modifying-1-6-1">Modifying<a class="anchor" aria-label="anchor" href="#modifying-1-6-1"></a></h3>
-<ul><li>Fixed <code><a href="../reference/modif_plexity.html">to_uniplex()</a></code> test so that it doesn’t rely on random sampling</li>
+<ul><li>Fixed <code><a href="../reference/defunct.html">to_uniplex()</a></code> test so that it doesn’t rely on random sampling</li>
 </ul></div>
 <div class="section level3">
 <h3 id="marking-1-6-1">Marking<a class="anchor" aria-label="anchor" href="#marking-1-6-1"></a></h3>
@@ -2063,7 +2365,7 @@
 <h2 class="page-header" data-toc-text="1.4.1" id="manynet-141">manynet 1.4.1<a class="anchor" aria-label="anchor" href="#manynet-141"></a></h2>
 <div class="section level3">
 <h3 id="making-1-4-1">Making<a class="anchor" aria-label="anchor" href="#making-1-4-1"></a></h3>
-<ul><li>Added Deffuant model to <code><a href="../reference/make_learning.html">play_learning()</a></code>
+<ul><li>Added Deffuant model to <code><a href="../reference/defunct.html">play_learning()</a></code>
 </li>
 <li>Added fatality parameter to <code><a href="../reference/make_play.html">play_diffusion()</a></code> for e.g. SID models</li>
 <li>Improvements to <code>create_ego()</code>
@@ -2095,8 +2397,8 @@
 <div class="section level3">
 <h3 id="making-1-4-0">Making<a class="anchor" aria-label="anchor" href="#making-1-4-0"></a></h3>
 <ul><li>Updated documentation on “mnet” class objects</li>
-<li>Improved <code><a href="../reference/make_mnet.html">print.mnet()</a></code> to print sections more prettily and accommodate changes when present</li>
-<li>Added <code><a href="../reference/make_mnet.html">print_all()</a></code> for printing infinite rows</li>
+<li>Improved <code><a href="../reference/defunct.html">print.mnet()</a></code> to print sections more prettily and accommodate changes when present</li>
+<li>Added <code><a href="../reference/make_stocnet.html">print_all()</a></code> for printing infinite rows</li>
 <li>Moved <code>play_diffusions()</code> to <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a> (but not <code><a href="../reference/make_play.html">play_diffusion()</a></code>)</li>
 <li>Improved <code><a href="../reference/make_play.html">play_diffusion()</a></code> to return an ‘mnet’ class object with changes instead of a ‘diff_model’ object with hidden network
 <ul><li>Older behavior can still be obtained using <code>old_version = TRUE</code>
@@ -2416,7 +2718,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="modifying-1-2-0">Modifying<a class="anchor" aria-label="anchor" href="#modifying-1-2-0"></a></h3>
-<ul><li>Improved <code><a href="../reference/make_mnet.html">print.mnet()</a></code>
+<ul><li>Improved <code><a href="../reference/defunct.html">print.mnet()</a></code>
 <ul><li>Prints multiplex types if available</li>
 <li>Prints both nodesets for two-mode networks</li>
 </ul></li>
@@ -2503,12 +2805,12 @@
 <div class="section level3">
 <h3 id="manipulating-1-1-0">Manipulating<a class="anchor" aria-label="anchor" href="#manipulating-1-1-0"></a></h3>
 <ul><li>Improved <code><a href="../reference/coerce_graph.html">as_tidygraph()</a></code> to add an additional class ‘mnet’ that is used for prettier printing
-<ul><li>Uses <code><a href="../reference/make_mnet.html">make_mnet()</a></code> (internally) for future-proofing</li>
+<ul><li>Uses <code>make_mnet()</code> (internally) for future-proofing</li>
 <li>
-<code>print.tbl_graph()</code> renamed to <code><a href="../reference/make_mnet.html">print.mnet()</a></code>
+<code>print.tbl_graph()</code> renamed to <code><a href="../reference/defunct.html">print.mnet()</a></code>
 </li>
 <li>
-<code><a href="../reference/make_mnet.html">print.mnet()</a></code> uses ‘grand’ data if available</li>
+<code><a href="../reference/defunct.html">print.mnet()</a></code> uses ‘grand’ data if available</li>
 </ul></li>
 <li>Improved <code><a href="../reference/manip_ties_num.html">bind_ties()</a></code> to be more flexible about the input it accepts, converting all input into the required edgelist</li>
 <li>Added <code><a href="../reference/modif_scope.html">to_ego()</a></code> for obtaining a single neighbourhood</li>
@@ -2704,7 +3006,7 @@
 <code><a href="../reference/mark_format_tie.html">is_multiplex()</a></code> now excludes reserved tie attribute names other than type, such as “weight”, “sign”, or “wave”</li>
 <li>Added <code><a href="../reference/mark_format_node.html">is_attributed()</a></code> to check for non-name nodal attributes</li>
 <li>Fixed issues with ordering in <code>node_is_latent()</code>, <code>node_is_recovered()</code>, and <code>node_is_infected()</code> (closes <a href="https://github.com/stocnet/manynet/issues/71" class="external-link">#71</a>)</li>
-<li>Added list methods for <code><a href="../reference/mark_format_node.html">is_twomode()</a></code>, <code><a href="../reference/mark_format_node.html">is_labelled()</a></code>, and <code><a href="../reference/mark_format_tie.html">is_complex()</a></code>
+<li>Added list methods for <code><a href="../reference/mark_format_node.html">is_twomode()</a></code>, <code><a href="../reference/mark_format_node.html">is_labelled()</a></code>, and <code><a href="../reference/defunct.html">is_complex()</a></code>
 </li>
 </ul></div>
 <div class="section level3">
@@ -2908,7 +3210,7 @@
 <li>Split documentation of many functions to provide more space for explanation</li>
 <li>Moved some functions around for more thematic documentation</li>
 </ul></li>
-<li>Added <code><a href="../reference/defunct.html">pkg_data()</a></code> to report an overview of data contained within the package(s)</li>
+<li>Added <code>pkg_data()</code> to report an overview of data contained within the package(s)</li>
 <li>Updated README and DESCRIPTION with new organisational affiliation: stocnet/manynet</li>
 <li>Updated tests to be consistent with future <a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a> release</li>
 </ul></div>
@@ -2917,14 +3219,14 @@
 <ul><li>Migrated <code><a href="../reference/make_play.html">play_diffusion()</a></code> and <code>play_diffusions()</code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
 <ul><li>Including class creation, and <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>, <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code>, and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> methods</li>
 </ul></li>
-<li>Migrated <code><a href="../reference/make_learning.html">play_learning()</a></code> and <code><a href="../reference/make_learning.html">play_segregation()</a></code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
+<li>Migrated <code><a href="../reference/defunct.html">play_learning()</a></code> and <code><a href="../reference/defunct.html">play_segregation()</a></code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
 <ul><li>Including class creation, and <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>, <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code>, and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> methods</li>
 </ul></li>
 <li>Fixed bug in <code><a href="../reference/make_create.html">create_tree()</a></code> where it was not returning a two-mode network correctly</li>
 </ul></div>
 <div class="section level3">
 <h3 id="modifying-0-4-0">Modifying<a class="anchor" aria-label="anchor" href="#modifying-0-4-0"></a></h3>
-<ul><li>Added <code><a href="../reference/coerce_graph.html">as_diffusion()</a></code> to coerce a table of diffusion events into diff_model class
+<ul><li>Added <code><a href="../reference/make_play.html">as_diffusion()</a></code> to coerce a table of diffusion events into diff_model class
 <ul><li>
 <code>as_*()</code> functions are now considered modifications</li>
 </ul></li>
@@ -3034,7 +3336,7 @@
 <div class="section level3">
 <h3 id="making-0-3-0">Making<a class="anchor" aria-label="anchor" href="#making-0-3-0"></a></h3>
 <ul><li>Added <code><a href="../reference/coerce_graph.html">as_tidygraph()</a></code> method for diff_model objects</li>
-<li>Added <code><a href="../reference/coerce_graph.html">as_siena()</a></code> method for tidygraph objects</li>
+<li>Added <code><a href="../reference/coerce_stocnet.html">as_siena()</a></code> method for tidygraph objects</li>
 </ul></div>
 <div class="section level3">
 <h3 id="modifying-0-3-0">Modifying<a class="anchor" aria-label="anchor" href="#modifying-0-3-0"></a></h3>
@@ -3350,7 +3652,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="maps-0-1-1">Maps<a class="anchor" aria-label="anchor" href="#maps-0-1-1"></a></h3>
-<ul><li>Added <code><a href="../reference/defunct.html">network_dims.network()</a></code>
+<ul><li>Added <code>network_dims.network()</code>
 </li>
 </ul></div>
 </div>
@@ -3433,9 +3735,9 @@
 <ul><li>Fixed <code><a href="../reference/modif_from_parts.html">from_subgraphs()</a></code>
 </li>
 </ul></li>
-<li>Added “grab” functions, e.g. <code><a href="../reference/defunct.html">network_nodes()</a></code>
+<li>Added “grab” functions, e.g. <code>network_nodes()</code>
 <ul><li>
-<code><a href="../reference/defunct.html">network_dims()</a></code> is now a method</li>
+<code>network_dims()</code> is now a method</li>
 </ul></li>
 </ul></div>
 <div class="section level3">

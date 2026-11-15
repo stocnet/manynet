@@ -24,7 +24,7 @@ network, and 1 for every tie where the network records no such value."><meta pro
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.5.0</span>
       </span>
     </div>
 
@@ -169,7 +169,7 @@ To read the lengths as weights, or the reverse, use for example
 <span class="r-in"><span><span class="fu">tie_lengths</span><span class="op">(</span><span class="fu"><a href="manip_ties_attr.html">mutate_ties</a></span><span class="op">(</span><span class="fu"><a href="make_create.html">create_ring</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>, length <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2.5</span>, <span class="fl">1</span>, <span class="fl">2.5</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   `1-2` `2-3` `3-4` `1-4`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1   2.5     1   2.5</span>
-<span class="r-in"><span><span class="fu">tie_signs</span><span class="op">(</span><span class="fu"><a href="modif_plexity.html">to_uniplex</a></span><span class="op">(</span><span class="va">fict_marvel</span>,<span class="st">"relationship"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">tie_signs</span><span class="op">(</span><span class="fu"><a href="modif_layers.html">to_layer</a></span><span class="op">(</span><span class="va">fict_marvel</span>,<span class="st">"relationship"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   `Abomination-Abomination` `Abomination-Beast` `Abomination-Colossus`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>                        -<span style="color: #BB0000;">1</span>                  -<span style="color: #BB0000;">1</span>                     -<span style="color: #BB0000;">1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... and 555 more values from this nodeset. Use `print_all(...)` to print all values.</span></span>

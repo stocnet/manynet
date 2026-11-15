@@ -31,7 +31,7 @@ For coercion into a matrix, see as_matrix()."><meta property="og:image" content=
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.5.0</span>
       </span>
     </div>
 
@@ -250,7 +250,8 @@ A matrix holds each as a missing cell.</p>
     <h2>See also</h2>
     <div class="dont-index"><p>Other coercions:
 <code><a href="coerce_graph.html">coerce_graph</a></code>,
-<code><a href="coerce_matrix.html">coerce_matrix</a></code></p></div>
+<code><a href="coerce_matrix.html">coerce_matrix</a></code>,
+<code><a href="coerce_stocnet.html">coerce_stocnet</a></code></p></div>
     </div>
 
     <div id="ref-examples">
@@ -264,15 +265,16 @@ A matrix holds each as a missing cell.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4    C  G</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5    C  H</span>
 <span class="r-in"><span><span class="fu"><a href="coerce_graph.html">as_igraph</a></span><span class="op">(</span><span class="va">test</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 2f87673 UN-B 6 5 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 7e095e7 UN-B 6 5 -- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (v/c), type (v/l)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 2f87673 (vertex names):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 7e095e7 (vertex names):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] A--I B--G B--I C--G C--H</span>
 <span class="r-in"><span><span class="fu"><a href="coerce_graph.html">as_tidygraph</a></span><span class="op">(</span><span class="va">test</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, two-mode network of 3 nodes and 3 nodes and 5 ties</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tbl_graph: 6 nodes and 5 edges</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># An unrooted tree</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Node Data: 6 × 2 (active)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   name  type </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A     FALSE</span>
@@ -281,17 +283,14 @@ A matrix holds each as a missing cell.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> I     TRUE </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> G     TRUE </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> H     TRUE </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Edge Data: 5 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     2     5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     2     4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     3     5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     3     6</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more rows</span></span>
 <span class="r-in"><span><span class="fu"><a href="coerce_graph.html">as_network</a></span><span class="op">(</span><span class="va">test</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Network attributes:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   vertices = 6 </span>

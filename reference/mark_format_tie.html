@@ -22,14 +22,20 @@ is_signed() marks networks TRUE if the ties can be either positive
 or negative.
 This is the case where the ties have a 'sign' attribute,
 and also where they are weighted and any of those weights are negative.
-is_complex() marks networks TRUE if any ties are loops,
+is_looped() marks networks TRUE if any ties are loops,
 with the sender and receiver being the same node.
 is_multiplex() marks networks TRUE if it contains multiple types
 of ties, such that there can be multiple ties between the same
 sender and receiver.
 This is the case where the ties have a 'layer' (or 'type') attribute.
 Other tie attributes, such as a covariate, do not make a network multiplex.
-is_uniplex() marks networks TRUE if it is neither complex nor multiplex.
+is_uniplex() marks networks TRUE if they are not multiplex,
+that is, if their ties are in one layer or in none.
+is_simplified() marks networks TRUE if no tie is a loop and no ties
+are parallel, as tie_is_parallel() marks them.
+Ties in different layers, at different moments, or from different
+reporters are not parallel, so a multiplex network can be simplified.
+to_simplified() makes a network so.
 is_disaggregated() marks networks TRUE if any of their ties are
 parallel, as tie_is_parallel() marks them, so that
 to_aggregated(over = NULL) can combine them.
@@ -54,7 +60,7 @@ it was aggregated.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.5.0</span>
       </span>
     </div>
 
@@ -149,14 +155,20 @@ than 'names' or 'type'.</p></li>
 or negative.
 This is the case where the ties have a 'sign' attribute,
 and also where they are weighted and any of those weights are negative.</p></li>
-<li><p><code>is_complex()</code> marks networks TRUE if any ties are loops,
+<li><p><code>is_looped()</code> marks networks TRUE if any ties are loops,
 with the sender and receiver being the same node.</p></li>
 <li><p><code>is_multiplex()</code> marks networks TRUE if it contains multiple types
 of ties, such that there can be multiple ties between the same
 sender and receiver.
 This is the case where the ties have a 'layer' (or 'type') attribute.
 Other tie attributes, such as a covariate, do not make a network multiplex.</p></li>
-<li><p><code>is_uniplex()</code> marks networks TRUE if it is neither complex nor multiplex.</p></li>
+<li><p><code>is_uniplex()</code> marks networks TRUE if they are not multiplex,
+that is, if their ties are in one layer or in none.</p></li>
+<li><p><code>is_simplified()</code> marks networks TRUE if no tie is a loop and no ties
+are parallel, as <code><a href="measure_attributes_ties.html">tie_is_parallel()</a></code> marks them.
+Ties in different layers, at different moments, or from different
+reporters are not parallel, so a multiplex network can be simplified.
+<code><a href="modif_loops.html">to_simplified()</a></code> makes a network so.</p></li>
 <li><p><code>is_disaggregated()</code> marks networks TRUE if any of their ties are
 parallel, as <code><a href="measure_attributes_ties.html">tie_is_parallel()</a></code> marks them, so that
 <code>to_aggregated(over = NULL)</code> can combine them.
@@ -171,13 +183,15 @@ it was aggregated.</p></li>
 <span></span>
 <span><span class="fu">is_signed</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">is_complex</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
+<span><span class="fu">is_looped</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">is_multiplex</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">is_disaggregated</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">is_uniplex</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">is_uniplex</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">is_simplified</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -199,23 +213,25 @@ it was aggregated.</p></li>
     <p>Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods for these functions:</p>
 <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>                  data.frame default igraph list matrix network stocnet</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>is_complex                 <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>    <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span>       <span class="er">*</span></span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>is_directed                <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>           <span class="er">*</span>       <span class="er">*</span>       <span class="er">*</span></span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>is_disaggregated                   <span class="sc">*</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>is_directed                <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>           <span class="er">*</span>       <span class="er">*</span>       <span class="er">*</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>is_disaggregated                   <span class="sc">*</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>is_looped                  <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>    <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span>       <span class="er">*</span></span>
 <span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>is_multiplex               <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>           <span class="er">*</span>       <span class="er">*</span>       <span class="er">*</span></span>
 <span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>is_signed                  <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>           <span class="er">*</span>       <span class="er">*</span>       <span class="er">*</span></span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>is_uniplex                         <span class="sc">*</span>      <span class="er">*</span></span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>is_weighted                <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>           <span class="er">*</span>       <span class="er">*</span>       <span class="er">*</span></span>
-<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>layer_is_directed                  <span class="sc">*</span>      <span class="er">*</span>                           <span class="er">*</span></span>
-<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>                  tbl_graph</span>
-<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>is_complex                <span class="sc">*</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>is_simplified                      <span class="sc">*</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>is_uniplex                         <span class="sc">*</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>is_weighted                <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>           <span class="er">*</span>       <span class="er">*</span>       <span class="er">*</span></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>layer_is_directed                  <span class="sc">*</span>      <span class="er">*</span>                           <span class="er">*</span></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>                  tbl_graph</span>
 <span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a>is_directed               <span class="sc">*</span></span>
 <span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a>is_disaggregated</span>
-<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>is_multiplex              <span class="sc">*</span></span>
-<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>is_signed                 <span class="sc">*</span></span>
-<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a>is_uniplex</span>
-<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a>is_weighted               <span class="sc">*</span></span>
-<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a>layer_is_directed</span></code></pre><p></p></div>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>is_looped                 <span class="sc">*</span></span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>is_multiplex              <span class="sc">*</span></span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a>is_signed                 <span class="sc">*</span></span>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a>is_simplified</span>
+<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a>is_uniplex</span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a>is_weighted               <span class="sc">*</span></span>
+<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a>layer_is_directed</span></code></pre><p></p></div>
 <p>If a method is not available for a particular class, but a default method is,
 the default method will attempt to coerce the object to a class for which a method is defined,
 and then coerce the output back to the original class.
@@ -239,13 +255,19 @@ If no method is available for any class, an error will be thrown.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span><span class="fu">is_signed</span><span class="op">(</span><span class="fu"><a href="make_create.html">create_lattice</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
-<span class="r-in"><span><span class="fu">is_complex</span><span class="op">(</span><span class="fu"><a href="make_create.html">create_lattice</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">is_looped</span><span class="op">(</span><span class="fu"><a href="make_create.html">create_lattice</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
 <span class="r-in"><span><span class="fu">is_multiplex</span><span class="op">(</span><span class="fu"><a href="make_create.html">create_filled</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
 <span class="r-in"><span><span class="fu">is_disaggregated</span><span class="op">(</span><span class="va">ison_koenigsberg</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span><span class="fu">is_uniplex</span><span class="op">(</span><span class="fu"><a href="make_create.html">create_star</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-in"><span><span class="fu">is_uniplex</span><span class="op">(</span><span class="va">ison_algebra</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-in"><span><span class="fu">is_simplified</span><span class="op">(</span><span class="va">ison_koenigsberg</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-in"><span><span class="fu">is_simplified</span><span class="op">(</span><span class="fu"><a href="modif_loops.html">to_simplified</a></span><span class="op">(</span><span class="va">ison_koenigsberg</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 </code></pre></div>
     </div>

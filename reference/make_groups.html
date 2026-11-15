@@ -44,7 +44,7 @@ and the number of modes, nodes, and directedness will be inferred."><meta proper
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.5.0</span>
       </span>
     </div>
 
@@ -256,7 +256,8 @@ By default 1.</p></dd>
 <dd><p>A logical vector the length of the nodes in the network,
 with <code>TRUE</code> for a node of the core.
 This can be created by, among other things, any <code>node_is_*()</code> function.
-Where <code>mark</code> is not logical, the core is the first of its two groups.</p></dd>
+Where <code>mark</code> is not logical, the core is the first of its two groups.
+By default the first half of the nodes, or of each mode, are in the core.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -264,12 +265,7 @@ Where <code>mark</code> is not logical, the core is the first of its two groups.
     <p>A <code>stocnet</code> object is returned,
 which can be coerced into other types of objects
 using <code><a href="coerce_list.html">as_edgelist()</a></code>, <code><a href="coerce_matrix.html">as_matrix()</a></code>,
-<code><a href="coerce_graph.html">as_tidygraph()</a></code>, <code><a href="coerce_graph.html">as_igraph()</a></code>, or <code><a href="coerce_graph.html">as_network()</a></code>.
-<code><a href="make_create.html">create_ring()</a></code>, <code><a href="make_create.html">create_lattice()</a></code>,
-<code><a href="make_random.html">generate_random()</a></code>, <code>generate_smallworld()</code>, and
-<code><a href="make_growth.html">generate_scalefree()</a></code> return a <code>tbl_graph</code> or <code>igraph</code> object for now,
-since the released versions of the packages built on this one expect
-one from them.</p>
+<code><a href="coerce_graph.html">as_tidygraph()</a></code>, <code><a href="coerce_graph.html">as_igraph()</a></code>, or <code><a href="coerce_graph.html">as_network()</a></code>.</p>
 <p>By default, most networks are created as undirected.
 This can be overruled with the argument <code>directed = TRUE</code>.
 This will return a directed network in which the arcs are
@@ -377,39 +373,59 @@ Weighted Graphs with Overlapping Communities.”
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p>Other makes:
-<code><a href="make_collect.html">make_collect</a></code>,
+<code><a href="make_play.html">as_diffusion()</a></code>,
+<code><a href="make_mobility.html">as_mobility()</a></code>,
+<code><a href="make_opinion.html">as_opinion()</a></code>,
+<code><a href="make_bibliography.html">make_bibliography</a></code>,
 <code><a href="make_create.html">make_create</a></code>,
 <code><a href="make_ego.html">make_ego</a></code>,
 <code><a href="make_emails.html">make_emails</a></code>,
 <code><a href="make_explicit.html">make_explicit</a></code>,
 <code><a href="make_growth.html">make_growth</a></code>,
-<code><a href="make_learning.html">make_learning</a></code>,
-<code><a href="make_play.html">make_play</a></code>,
+<code><a href="make_packages.html">make_packages</a></code>,
 <code><a href="make_random.html">make_random</a></code>,
 <code><a href="make_read.html">make_read</a></code>,
+<code><a href="make_statements.html">make_statements</a></code>,
+<code><a href="make_text.html">make_text</a></code>,
 <code><a href="make_write.html">make_write</a></code></p></div>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">generate_smallworld</span><span class="op">(</span><span class="fl">12</span>, <span class="fl">0.025</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 21bcf6b U--- 12 24 -- Watts-Strogatz random graph</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (g/c), dim (g/n), size (g/n), nei (g/n), p (g/n), loops</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | (g/l), multiple (g/l)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 21bcf6b:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1-- 2  2-- 3  3-- 4  4-- 5  5-- 6  6-- 7  7-- 8  8-- 9  9--10 10--11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [11] 11--12  1--12  1-- 3  1--11  2--12  2-- 4  3-- 5  4-- 6  5-- 7  6-- 8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [21]  7-- 9  8--10  9--11 10--12</span>
-<span class="r-in"><span><span class="fu">generate_smallworld</span><span class="op">(</span><span class="fl">12</span>, <span class="fl">0.25</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH e765e61 U--- 12 24 -- Watts-Strogatz random graph</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (g/c), dim (g/n), size (g/n), nei (g/n), p (g/n), loops</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | (g/l), multiple (g/l)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from e765e61:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  7-- 9  2-- 3  3-- 4  4-- 5  7--11  6-- 7  7-- 8  8-- 9  9--10  6--12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [11] 11--12  1--12  3-- 6  1--11  2--12  4-- 8  3-- 5  4-- 6  5-- 7  5-- 8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [21]  3-- 7  8--10  9--11  5--10</span>
-<span class="r-in"><span><span class="fu">generate_islands</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Small-world network</span> <span style="color: #00BBBB;">───────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A undirected network of 12 nodes and 24 ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 24 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     2     3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     3     4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     4     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     5     6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     6     7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 18 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu">generate_smallworld</span><span class="op">(</span><span class="fl">12</span>, <span class="fl">0.25</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Small-world network</span> <span style="color: #00BBBB;">───────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A undirected network of 12 nodes and 24 ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 24 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     7     9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     2     3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     3     4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     4     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     7    11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     6     7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 18 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu">generate_islands</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Islands network</span> <span style="color: #00BBBB;">───────────────────────────────────────────────────────────</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A undirected network of 10 nodes and 12 ties</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>

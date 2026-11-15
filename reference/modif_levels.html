@@ -10,6 +10,16 @@ using a mark to distinguish the two sets of nodes.
 It also reformats a hypergraph into a two-mode network,
 in which each hyperedge is a node of the second mode,
 and for this needs no mark.
+With through, it projects a network of three or more modes
+onto the two modes that through does not name.
+Two nodes of these modes get a tie when they have ties
+to the same node of through.
+For example, in a network of authors, works, and keywords,
+to_twomode(.data, through = &quot;works&quot;) ties each author
+to the keywords of their works.
+The weight of the tie is the number of these works.
+For valued ties, it adds the products of the two weights.
+Other tie attributes, such as layers, are lost.
 to_multilevel() reformats two-mode network data into multimodal network data,
 which allows for more levels and ties within modes.
 
@@ -41,7 +51,7 @@ only transforming these objects' properties."><meta property="og:image" content=
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.5.0</span>
       </span>
     </div>
 
@@ -123,7 +133,17 @@ but rather simply removes the distinction between the two modes.</p></li>
 using a mark to distinguish the two sets of nodes.
 It also reformats a hypergraph into a two-mode network,
 in which each hyperedge is a node of the second mode,
-and for this needs no mark.</p></li>
+and for this needs no mark.
+With <code>through</code>, it projects a network of three or more modes
+onto the two modes that <code>through</code> does not name.
+Two nodes of these modes get a tie when they have ties
+to the same node of <code>through</code>.
+For example, in a network of authors, works, and keywords,
+<code>to_twomode(.data, through = "works")</code> ties each author
+to the keywords of their works.
+The weight of the tie is the number of these works.
+For valued ties, it adds the products of the two weights.
+Other tie attributes, such as layers, are lost.</p></li>
 <li><p><code>to_multilevel()</code> reformats two-mode network data into multimodal network data,
 which allows for more levels and ties within modes.</p></li>
 </ul><p>If the format condition is not met,
@@ -141,7 +161,7 @@ only transforming these objects' properties.</p>
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">to_onemode</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">to_twomode</span><span class="op">(</span><span class="va">.data</span>, <span class="va">mark</span><span class="op">)</span></span>
+<span><span class="fu">to_twomode</span><span class="op">(</span><span class="va">.data</span>, <span class="va">mark</span>, through <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">to_multilevel</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -163,6 +183,13 @@ only transforming these objects' properties.</p>
 <dt id="arg-mark">mark<a class="anchor" aria-label="anchor" href="#arg-mark"></a></dt>
 <dd><p>A logical vector marking two types or modes.
 By default "type".</p></dd>
+
+
+<dt id="arg-through">through<a class="anchor" aria-label="anchor" href="#arg-through"></a></dt>
+<dd><p>For a network of three or more modes,
+the modes to project through, as indices or names, as for <code><a href="modif_project.html">to_mode()</a></code>.
+The result is a two-mode network of the two other modes.
+Leave <code>mark</code> out when you give <code>through</code>.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -188,12 +215,14 @@ Below are the currently implemented S3 methods:</p>
 <code><a href="modif_direction.html">modif_direction</a></code>,
 <code><a href="modif_from_parts.html">modif_from_parts</a></code>,
 <code><a href="modif_from_ternary.html">modif_from_ternary</a></code>,
+<code><a href="modif_influence.html">modif_influence</a></code>,
 <code><a href="modif_labels.html">modif_labels</a></code>,
+<code><a href="modif_layers.html">modif_layers</a></code>,
+<code><a href="modif_loops.html">modif_loops</a></code>,
 <code><a href="modif_miss.html">modif_miss</a></code>,
 <code><a href="modif_motifs.html">modif_motifs</a></code>,
 <code><a href="modif_paths.html">modif_paths</a></code>,
 <code><a href="modif_permutation.html">modif_permutation</a></code>,
-<code><a href="modif_plexity.html">modif_plexity</a></code>,
 <code><a href="modif_project.html">modif_project</a></code>,
 <code><a href="modif_proximity.html">modif_proximity</a></code>,
 <code><a href="modif_scope.html">modif_scope</a></code>,

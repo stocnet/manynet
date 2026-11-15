@@ -32,7 +32,7 @@ nodal attributes."><meta property="og:image" content="https://stocnet.github.io/
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.5.0</span>
       </span>
     </div>
 
@@ -158,7 +158,11 @@ nodal attributes.</p>
 <dd><p>A data frame containing the changes to be added.
 This should have columns <code>time</code>, <code>node</code> (labelled),
 <code>var</code> (referencing an existing nodal attribute),
-and <code>value</code> (which can be of any class).</p></dd>
+and <code>value</code> (which can be of any class).
+A categorical variable that is not yet among the nodal attributes,
+such as the state of a diffusion, is added to the nodes,
+with all nodes starting as "S"
+(or the first value of S in <code>compartments =</code>, given through <code>...</code>).</p></dd>
 
 
 <dt id="arg-var">var<a class="anchor" aria-label="anchor" href="#arg-var"></a></dt>
