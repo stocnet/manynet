@@ -170,6 +170,7 @@
 \alias{to_simplex}
 \alias{to_uniplex}
 \alias{to_flat}
+\alias{network_tie_attributes}
 \title{Functions that have been renamed, superseded, moved, or are no longer working}
 \usage{
 node_mode(.data)
@@ -518,6 +519,8 @@ to_flat(
   rule = c("max", "min", "mean", "sum", "product"),
   over = "layer"
 )
+
+network_tie_attributes(.data)
 }
 \arguments{
 \item{.data}{A manynet-consistent network.}
@@ -894,6 +897,10 @@ This name gives a warning from 2.6.0.
 \item \code{to_flat()}: Superseded by \code{to_aggregated()} on 2026-11-12,
 which combines layers by default and takes the \code{rule} third.
 This name gives a warning from 2.6.0.
+
+\item \code{network_tie_attributes()}: Superseded by \code{net_tie_attributes()} on 2026-11-15,
+since migraph 1.7.2 still calls it.
+This name is removed in 2.6.0.
 
 }}
 \section{The 'mnet' class}{

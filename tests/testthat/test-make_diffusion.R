@@ -42,6 +42,10 @@ test_that("as_diffusion reports a diffusion alike whatever it was played on", {
                                       recovery = 0.2))
   expect_named(stoc, names(graph))
   expect_true(all(c("time", "S_new") %in% names(stoc)))
+  # the superseded copy of time is kept, but not printed
+  expect_equal(stoc$t, stoc$time)
+  header <- utils::capture.output(print(stoc))[2]
+  expect_false("t" %in% strsplit(trimws(header), "\\s+")[[1]])
   expect_equal(as.data.frame(stoc), as.data.frame(graph), ignore_attr = TRUE)
   # other changes that a network records are not read as a diffusion
   expect_true("time" %in% names(as_diffusion(play_diffusion(create_filled(5),
@@ -529,18 +533,17 @@ test_that("as_diffusion() does not count inactive nodes", {
   expect_equal(report$S, c(3, 3))
 })
 
-test_that("play_diffusion() deprecates thresholds and latency", {
+test_that("play_diffusion() supersedes thresholds and latency", {
   set.seed(1)
-  expect_warning(old <- play_diffusion(create_ring(8), seeds = 1:2, thresholds = 2,
-                                       steps = 3),
-                 class = "deprecatedWarning")
+  expect_no_warning(old <- play_diffusion(create_ring(8), seeds = 1:2,
+                                          thresholds = 2, steps = 3))
   set.seed(1)
   expect_equal(old, play_diffusion(create_ring(8), seeds = 1:2, threshold = 2,
                                    steps = 3))
   # onset is the chance to leave the exposed state, so onset = 1 - latency
   set.seed(2)
-  expect_warning(old <- play_diffusion(create_ring(8), latency = 0.75, steps = 5),
-                 class = "deprecatedWarning")
+  expect_no_warning(old <- play_diffusion(create_ring(8), latency = 0.75,
+                                          steps = 5))
   set.seed(2)
   expect_equal(old, play_diffusion(create_ring(8), onset = 0.25, steps = 5))
   # an onset of 1 needs no exposed state

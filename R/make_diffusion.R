@@ -300,7 +300,8 @@
 #'   By default 0, which means any recovered individuals retain lifelong immunity (i.e. an SIR model).
 #'   Anything higher results in e.g. a SIRS model.
 #'   \eqn{\xi = 1} would mean there is no period of immunity, e.g. an SIS model.
-#' @param thresholds,latency Deprecated.
+#' @param thresholds,latency Superseded on 2026-11-14,
+#'   and give a warning from 2.6.0.
 #'   Use `threshold` (the name of the column in `transitions`, and of the
 #'   argument in `netrics::node_by_contagion()`)
 #'   and `onset = 1 - latency` instead.
@@ -384,11 +385,11 @@ play_diffusion <- function(.data,
     .check_dots_empty(stats::setNames(as.list(partial), partial), choices,
                       "play_diffusion")
   if(!missing(thresholds)){
-    snet_deprecated("thresholds", "threshold", type = "argument")
+    snet_deprecated("thresholds", "threshold", "superseded", type = "argument")
     if(missing(threshold)) threshold <- thresholds
   }
   if(!missing(latency)){
-    snet_deprecated("latency", "onset", type = "argument",
+    snet_deprecated("latency", "onset", "superseded", type = "argument",
                     why = paste("{.arg onset} is the chance to leave the exposed state",
                                 "at a step, as {.arg recovery} is for the infected state,",
                                 "so {.code onset = 1 - latency}."))

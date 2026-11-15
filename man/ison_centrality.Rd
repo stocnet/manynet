@@ -3,6 +3,7 @@
 \docType{data}
 \name{ison_centrality}
 \alias{ison_centrality}
+\alias{ison_brandes}
 \title{One-mode and two-mode centrality demonstration networks}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Centrality example --------------------------------------------------------
@@ -36,6 +37,8 @@
 }
 \usage{
 data(ison_centrality)
+
+data(ison_brandes)
 }
 \description{
 This network should solely be used
@@ -47,6 +50,14 @@ To convert into the two-mode version,
 assign \code{ison_centrality |> rename_nodes(mode = twomode_type)}.
 Before version 2.5.0, this network was called \code{ison_brandes}.
 }
+\section{Deprecated}{
+
+\code{ison_brandes} is deprecated on 2026-11-15.
+It is a copy of \code{ison_centrality} under its former name,
+and will be removed in version 2.6.0.
+Use \code{ison_centrality} instead.
+}
+
 \references{
 Brandes, Ulrik, and Jan Hildenbrand. 2014.
 "Smallest graphs with distinct singleton centers".

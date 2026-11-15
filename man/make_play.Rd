@@ -177,7 +177,8 @@ object.
 The new version adds the diffusion event record as changes to the
 original network.}
 
-\item{thresholds, latency}{Deprecated.
+\item{thresholds, latency}{Superseded on 2026-11-14,
+and give a warning from 2.6.0.
 Use \code{threshold} (the name of the column in \code{transitions}, and of the
 argument in \code{netrics::node_by_contagion()})
 and \code{onset = 1 - latency} instead.}
@@ -196,6 +197,7 @@ and is counted in the value of D (and \code{D_new}) from then on,
 and not in the value it held when it died.
 Any other node that is not \code{active} is not counted,
 and \code{n} counts the nodes that are counted at each step.
+Until 2.6.0, a column \code{t} also copies \code{time}, but is not printed.
 The table keeps the name of the attribute in \code{attr(, "attribute")},
 and the roles of its values in \code{attr(, "compartments")},
 where these are known.

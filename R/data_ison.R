@@ -137,6 +137,11 @@
 #' To convert into the two-mode version,
 #' assign `ison_centrality |> rename_nodes(mode = twomode_type)`.
 #' Before version 2.5.0, this network was called `ison_brandes`.
+#' @section Deprecated:
+#'   `ison_brandes` is deprecated on 2026-11-15.
+#'   It is a copy of `ison_centrality` under its former name,
+#'   and will be removed in version 2.6.0.
+#'   Use `ison_centrality` instead.
 #' @docType data
 #' @keywords datasets
 #' @name ison_centrality
@@ -151,6 +156,11 @@
 #'   ison_centrality
 #'   ```
 "ison_centrality"
+
+#' @rdname ison_centrality
+#' @format NULL
+#' @usage data(ison_brandes)
+"ison_brandes"
 
 ## Classmates ####
 

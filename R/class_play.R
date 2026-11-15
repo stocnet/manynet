@@ -21,6 +21,8 @@ print.diff_model <- function(x, ..., verbose = FALSE){
   keep <- vapply(x, function(col) !is.numeric(col) || inherits(col, "Date") ||
                    sum(col, na.rm = TRUE) != 0, logical(1))
   keep[names(x) %in% c("t", "time")] <- TRUE
+  # the superseded copy of `time` is not printed
+  if(all(c("t", "time") %in% names(x))) keep[names(x) == "t"] <- FALSE
   x <- x[, keep]
   if(!verbose){
     x$n <- NULL
@@ -56,6 +58,7 @@ summary.diff_model <- function(object, ...) {
 #'   and not in the value it held when it died.
 #'   Any other node that is not `active` is not counted,
 #'   and `n` counts the nodes that are counted at each step.
+#'   Until 2.6.0, a column `t` also copies `time`, but is not printed.
 #'   The table keeps the name of the attribute in `attr(, "attribute")`,
 #'   and the roles of its values in `attr(, "compartments")`,
 #'   where these are known.
@@ -84,6 +87,8 @@ as_diffusion.tbl_graph <- function(.data, attribute = "diffusion", twomode = FAL
   if (missing(events)) events <- as_changelist(.data)
   report <- .diffusion_report(.data, attribute, events)
   keys <- attributes(report)[c("attribute", "compartments")]
+  # `t` copies `time` until 2.6.0, since migraph 1.7.2 reads it.
+  report$t <- report$time
   class(report) <- c("diffusionModel", "diff_model", class(report))
   attributes(report)[names(keys)] <- keys
   report

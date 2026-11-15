@@ -108,6 +108,7 @@
   - Fixed the counts of E with `latency` and of S with waning on an 'igraph'
   - Added the nodes that die from `fatality=` to D, and not to their last value
   - Fixed counting the inactive nodes as S; `n` counts the active nodes at each step
+  - A column `t` copies `time` until 2.6.0, and is not printed
 - Added `as_monan()` to coerce a network of people and places for 'MoNAn'
   - Also takes a network of places with an `occupant` record of moves
 - Added `as_opinion()` to read a record of opinions as an 'opinionModel'
@@ -208,6 +209,7 @@
   - `fict_lotr`, `irps_usgeo`, and `irps_revere` 
 - Renamed `ison_brandes` to `ison_centrality`, converted it, and added info
   - `rename_nodes(ison_centrality, mode = twomode_type)` gives the two-mode version
+  - `ison_brandes` remains as a deprecated copy until 2.6.0
 - Improved `ison_physicians` to be one 'stocnet', not a list of four (closes #185)
 - Removed `ison_laterals`, which nothing used (#185)
 

@@ -94,6 +94,8 @@ test_that("the superseded names work without a warning (#182)", {
   expect_no_warning(expect_equal(to_simplex(fict_lotr), to_unlooped(fict_lotr)))
   expect_no_warning(expect_equal(as_edgelist(to_uniplex(uni, "friend")),
                                  as_edgelist(to_layer(uni, "friend"))))
+  expect_no_warning(expect_equal(network_tie_attributes(ison_algebra),
+                                 net_tie_attributes(ison_algebra)))
   expect_warning(snet_deprecated("old_name", "new_name"),
                  class = "deprecatedWarning")
 })

@@ -420,6 +420,10 @@ ison_algebra <- add_info(ison_algebra,
            doi = "10.1086/338779")
 
 usethis::use_data(ison_centrality, overwrite = TRUE, compress = "bzip2")
+# A copy under the former name, which netrics 1.1.0 and autograph 1.2.8 use.
+# It is deprecated, and is removed in manynet 2.6.0.
+ison_brandes <- ison_centrality
+usethis::use_data(ison_brandes, overwrite = TRUE, compress = "bzip2")
 usethis::use_data(ison_networkers, overwrite = TRUE, compress = "bzip2")
 usethis::use_data(irps_revere, overwrite = TRUE, compress = "bzip2")
 usethis::use_data(ison_adolescents, overwrite = TRUE, compress = "bzip2")

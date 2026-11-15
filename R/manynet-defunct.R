@@ -904,3 +904,12 @@ to_flat <- function(.data, rule = c("max","min","mean","sum","product"),
   snet_deprecated("to_flat", "to_aggregated", "superseded")
   to_aggregated(.data, over = over, rule = match.arg(rule))
 }
+
+#' @describeIn defunct Superseded by `net_tie_attributes()` on 2026-11-15,
+#'   since migraph 1.7.2 still calls it.
+#'   This name is removed in 2.6.0.
+#' @export
+network_tie_attributes <- function(.data) {
+  snet_deprecated("network_tie_attributes", "net_tie_attributes", "superseded")
+  net_tie_attributes(.data)
+}
