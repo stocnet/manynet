@@ -235,6 +235,8 @@ A \code{threshold} less than one is a \emph{fractional} threshold:
 the share of the node's contacts that must be infected.
 A fractional threshold is not always complex:
 a threshold of 0.1 on a node with five contacts needs only one of them.
+A node with no contacts never reaches a fractional threshold,
+so it adopts only as a seed or from \code{background}.
 
 Nodes that cannot be infected can be indicated as \code{immune}
 with a logical vector or index, similar to how \code{seeds} are identified.

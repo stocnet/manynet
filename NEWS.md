@@ -58,6 +58,7 @@
     - Fixed dated changes exposure
     - Fixed `fatality=`, which failed, and let the dead infect others
     - Fixed `immune=` nodes to start as R in the record, not as S
+    - Fixed nodes with no contacts adopting under a fractional threshold
   - Keeps the table of transitions of a 'stocnet' in `info$transitions`
   - Accelerated `play_diffusion()` ~2.5x by making each contact matrix once
 - Renamed `play_learning()` to `play_opinion()`, which now returns the network with changes

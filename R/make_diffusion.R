@@ -33,6 +33,8 @@
 #' the share of the node's contacts that must be infected.
 #' A fractional threshold is not always complex:
 #' a threshold of 0.1 on a node with five contacts needs only one of them.
+#' A node with no contacts never reaches a fractional threshold,
+#' so it adopts only as a seed or from `background`.
 #' 
 #' Nodes that cannot be infected can be indicated as `immune`
 #' with a logical vector or index, similar to how `seeds` are identified.
@@ -725,7 +727,11 @@ make_transitions <- function(transitions = NULL, values = NULL,
     if(!is.null(source)){
       thr <- attr_vector(transitions$threshold[[r]], "threshold", r)
       # a threshold of a share of the contacts, as before
-      if(all(thr <= 1) && !all(thr == 1)) thr <- thr * deg
+      if(all(thr <= 1) && !all(thr == 1)){
+        thr <- thr * deg
+        # a node with no contacts has no share to reach, so it is never exposed
+        thr[deg == 0] <- Inf
+      }
     }
     list(from = transitions$from[r], to = transitions$to[r], rate = rate,
          source = source, exposure = transitions$exposure[r], threshold = thr,
@@ -820,7 +826,8 @@ make_transitions <- function(transitions = NULL, values = NULL,
     } else {
       thr <- row$threshold
       if(row$prevalence > 0)
-        thr <- thr * (1 - row$prevalence * mean(state[live] %in% row$source))
+        thr <- ifelse(is.infinite(thr), Inf,
+                      thr * (1 - row$prevalence * mean(state[live] %in% row$source)))
       h <- switch(row$exposure,
                   threshold = row$rate,
                   cascade = ifelse(k > 0, row$rate * k, 0),

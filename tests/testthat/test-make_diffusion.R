@@ -547,3 +547,14 @@ test_that("play_diffusion() deprecates thresholds and latency", {
   expect_false("E" %in% as_changelist(play_diffusion(create_ring(8), onset = 1,
                                                      steps = 5))$value)
 })
+
+test_that("a node with no contacts does not reach a fractional threshold", {
+  net <- add_nodes(create_filled(4), 1)
+  set.seed(1)
+  diff <- play_diffusion(net, seeds = 1:4, threshold = 0.5, steps = 3)
+  expect_false(5 %in% as_changelist(diff)$node)
+  # with prevalence, as a share of the network lowers the threshold
+  diff <- play_diffusion(net, seeds = 1:4, threshold = 0.5, prevalence = 1,
+                         steps = 3)
+  expect_false(5 %in% as_changelist(diff)$node)
+})
